@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/views/auth/sign_in_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 
@@ -14,7 +15,9 @@ class _WelcomePageState extends State<WelcomePage> {
   final introKey = GlobalKey<IntroductionScreenState>();
 
   void _onIntroEnd(context) {
-    // TODO: Navigate to next screen or home
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (context) => SignInPage()));
   }
 
   Widget _buildImage(String assetName, [double width = 250]) {
@@ -27,7 +30,7 @@ class _WelcomePageState extends State<WelcomePage> {
       fontWeight: FontWeight.bold,
       color: Color(0xFFE91E63),
     ),
-    bodyTextStyle: TextStyle(fontSize: 18.0, color: Colors.black87),
+    bodyTextStyle: GoogleFonts.poppins(fontSize: 24, color: Colors.black87),
     bodyPadding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
     imagePadding: EdgeInsets.only(top: 24.0),
     pageColor: Colors.transparent,
@@ -57,9 +60,13 @@ class _WelcomePageState extends State<WelcomePage> {
             showSkipButton: true,
             skip: Text(
               context.tr("skip"),
-              style: TextStyle(fontWeight: FontWeight.w600),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300),
             ),
-            next: const Icon(Icons.arrow_forward, color: Color(0xFFE91E63)),
+            next: const Icon(
+              Icons.arrow_forward,
+              color: Color(0xFFE91E63),
+              size: 24,
+            ),
             done: Text(
               context.tr("start"),
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
