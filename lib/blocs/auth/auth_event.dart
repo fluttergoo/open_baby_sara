@@ -14,11 +14,23 @@ class RegisterUser extends AuthEvent {
     required this.firstname,
   });
 }
-class SignInWithEmailAndPassword extends AuthEvent{
-final String email;
-final String password;
+
+class SignInWithEmailAndPassword extends AuthEvent {
+  final String email;
+  final String password;
 
   SignInWithEmailAndPassword({required this.email, required this.password});
-
 }
+
 class AppStarted extends AuthEvent {}
+
+class GetUserModel extends AuthEvent {}
+
+class SignOut extends AuthEvent {}
+
+class ChangePassword extends AuthEvent {
+  final String password;
+
+  ChangePassword({required this.password});
+}
+class DeleteUser extends AuthEvent{}

@@ -24,4 +24,14 @@ class Authenticated extends AuthState {
 
   Authenticated({required this.userModel});
 }
-class Unauthenticated extends AuthState{}
+
+class Unauthenticated extends AuthState {}
+
+class AuthSignOut extends AuthState {}
+
+class PasswordChanged extends AuthState {
+  final String message;
+
+  PasswordChanged(this.message);
+}
+class UserDeleted extends AuthState{}
