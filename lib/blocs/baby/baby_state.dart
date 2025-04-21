@@ -13,3 +13,36 @@ final class BabyFailure extends BabyState {
   final String message;
   BabyFailure(this.message);
 }
+class BabyLoaded extends BabyState {
+  final List<BabyModel> babies;
+  BabyLoaded(this.babies);
+}
+class GotBabyInfo extends BabyState{
+  final BabyModel babyModel;
+  GotBabyInfo({required this.babyModel});
+}
+
+class onGenderSelectedState extends BabyState{
+  Gender newGender;
+  onGenderSelectedState({required this.newGender});
+}
+
+class UploadBabyImageUrl extends BabyState{
+  final String imageUrl;
+  UploadBabyImageUrl({required this.imageUrl});
+}
+class BabyUpdated extends BabyState {
+  final String message;
+
+  BabyUpdated({this.message = "Baby info successfully updated"});
+}
+class BabyDeleted extends BabyState {
+  final String message;
+
+  BabyDeleted({this.message = "Baby profile deleted successfully."});
+}
+class AddedBaby extends BabyState {
+  final String message;
+
+  AddedBaby({this.message = "Baby profile created successfully."});
+}
