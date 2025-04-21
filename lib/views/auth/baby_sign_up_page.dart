@@ -55,6 +55,7 @@ class _BabySignUpPageState extends State<BabySignUpPage> {
           return "";
       }
     }
+
     if (_formKey.currentState!.validate()) {
       final babiesData =
           babies.map((baby) {
@@ -87,38 +88,31 @@ class _BabySignUpPageState extends State<BabySignUpPage> {
             SnackBar(
               content: Row(
                 children: [
-                  Icon(
-                    Icons.check_circle_outline, // Success için uygun ikon
-                    color: Colors.white,
-                  ),
-                  SizedBox(width: 10), // İkon ile metin arasına boşluk ekle
+                  Icon(Icons.check_circle_outline, color: Colors.white),
+                  SizedBox(width: 10),
                   Expanded(
                     child: Text(
                       context.tr('successfully_you_created'),
                       style: TextStyle(
-                        color: Colors.white, // Yazı rengi
-                        fontSize: 16.sp, // Yazı boyutu
-                        fontWeight: FontWeight.bold, // Yazı kalınlık
+                        color: Colors.white,
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
                       ),
-                      overflow:
-                          TextOverflow.ellipsis, // Metin taşarsa '...' ekle
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
               ),
               backgroundColor: Colors.green.shade600,
-              // SnackBar arka plan rengi
               behavior: SnackBarBehavior.floating,
-              // SnackBar'ı ekranın üstünde sabit bırak
+
               shape: RoundedRectangleBorder(
-                // Köşeleri yuvarla
                 borderRadius: BorderRadius.circular(10.r),
               ),
               margin: EdgeInsets.all(16.r),
-              // Kenar boşluğu
               duration: Duration(
                 seconds: 3,
-              ), // SnackBar'ın ne kadar süre görüneceği
+              ),
             ),
           );
           Navigator.of(context).push(
@@ -161,12 +155,12 @@ class _BabySignUpPageState extends State<BabySignUpPage> {
                           SizedBox(height: 20.h),
                           Text(
                             context.tr("you_are_almost_there"),
-                            style: Theme.of(context).textTheme.headlineLarge,
+                            style: Theme.of(context).textTheme.titleLarge,
                           ),
                           SizedBox(height: 8.h),
                           Text(
                             context.tr("lets_fill_in_your_baby_information"),
-                            style: Theme.of(context).textTheme.headlineMedium,
+                            style: Theme.of(context).textTheme.titleMedium,
                           ),
                           SizedBox(height: 24.h),
 
@@ -195,17 +189,14 @@ class _BabySignUpPageState extends State<BabySignUpPage> {
                                           style:
                                               Theme.of(
                                                 context,
-                                              ).textTheme.headlineSmall,
+                                              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
                                         ),
                                         if (index != 0)
                                           Row(
                                             children: [
                                               Text(
                                                 context.tr("delete"),
-                                                style: TextStyle(
-                                                  color: Colors.red,
-                                                  fontSize: 14.sp,
-                                                ),
+                                                style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.redAccent,fontSize: 14.sp),
                                               ),
                                               IconButton(
                                                 icon: const Icon(
