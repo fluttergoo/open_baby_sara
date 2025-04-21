@@ -1,9 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/data/models/invite_model.dart';
+
 class UserModel {
   final String userID;
   final String email;
   final String firstName;
+  final String? parentID;
   final DateTime createdAt;
-   List<Caregivers>? caregivers;
+   List<InviteModel>? caregivers;
 
   UserModel({
     required this.userID,
@@ -11,6 +15,7 @@ class UserModel {
     required this.firstName,
     DateTime? createdAt,
     this.caregivers,
+    this.parentID,
   }) : createdAt = createdAt ?? DateTime.now();
 
   Map<String, dynamic> toMap() {
@@ -18,26 +23,30 @@ class UserModel {
       'userID': userID,
       'email': email,
       'firstName': firstName,
+      'parentID' : parentID,
       'createdAt': createdAt.toIso8601String(),
       'caregivers': caregivers ==null ? [] : caregivers?.map((e) => e.toMap()).toList(),
     };
   }
+
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
       userID: map['userID'] ?? '',
       email: map['email'] ?? '',
       firstName: map['firstName'] ?? '',
-      createdAt: map['createdAt']
-          ? (map['createdAt']).toDate()
+      parentID: map['parentID'] ?? '',
+      createdAt: map['createdAt'] is Timestamp
+          ? (map['createdAt'] as Timestamp).toDate()
           : DateTime.tryParse(map['createdAt'] ?? '') ?? DateTime.now(),
       caregivers: (map['caregivers'] as List<dynamic>? ?? []).map((e) {
-        return Caregivers.fromMap(e as Map<String, dynamic>);
+        return InviteModel.fromMap(e as Map<String, dynamic>);
       }).toList(),
     );
   }
 }
 
+/*
 class Caregivers {
   final String caregiverID;
   final String email;
@@ -65,9 +74,9 @@ class Caregivers {
       caregiverID: map['caregiverID'] ?? '',
       email: map['email'] ?? '',
       firstName: map['firstName'] ?? '',
-      createdAt: map['createdAt']
-          ? (map['createdAt']).toDate()
+      createdAt: map['createdAt'] is Timestamp
+          ? (map['createdAt'] as Timestamp).toDate()
           : DateTime.tryParse(map['createdAt'] ?? '') ?? DateTime.now(),
     );
   }
-}
+}*/
