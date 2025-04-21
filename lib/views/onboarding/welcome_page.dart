@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/app/routes/app_router.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/views/auth/sign_in_page.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 
@@ -15,22 +17,20 @@ class _WelcomePageState extends State<WelcomePage> {
   final introKey = GlobalKey<IntroductionScreenState>();
 
   void _onIntroEnd(context) {
-    Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (context) => SignInPage()));
+    Navigator.of(context).pushReplacementNamed(AppRoutes.signinOptions);
   }
 
-  Widget _buildImage(String assetName, [double width = 250]) {
-    return Image.asset('assets/images/$assetName', width: width);
+  Widget _buildImage(String assetName, [double width = 200]) {
+    return Image.asset('assets/images/$assetName', width: width.sp);
   }
 
   final pageDecoration = PageDecoration(
     titleTextStyle: GoogleFonts.dancingScript(
-      fontSize: 40,
+      fontSize: 40.sp,
       fontWeight: FontWeight.bold,
       color: Color(0xFFE91E63),
     ),
-    bodyTextStyle: GoogleFonts.poppins(fontSize: 24, color: Colors.black87),
+    bodyTextStyle: GoogleFonts.poppins(fontSize: 20.sp, color: Colors.black87),
     bodyPadding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
     imagePadding: EdgeInsets.only(top: 24.0),
     pageColor: Colors.transparent,
@@ -45,9 +45,9 @@ class _WelcomePageState extends State<WelcomePage> {
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
             colors: [
-              Color(0xFFFFF9C4), // Açık sarı
-              Color(0xFFFFE0B2), // Peach (şeftali ton)
-              Color(0xFFFFCDD2), // Baby pink],
+              Color(0xFFFFF9C4),
+              Color(0xFFFFE0B2),
+              Color(0xFFFFCDD2),
             ],
           ),
         ),
@@ -60,23 +60,23 @@ class _WelcomePageState extends State<WelcomePage> {
             showSkipButton: true,
             skip: Text(
               context.tr("skip"),
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300),
+              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w300),
             ),
-            next: const Icon(
+            next: Icon(
               Icons.arrow_forward,
               color: Color(0xFFE91E63),
-              size: 24,
+              size: 24.sp,
             ),
             done: Text(
               context.tr("start"),
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+              style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w600),
             ),
             onDone: () => _onIntroEnd(context),
             onSkip: () => _onIntroEnd(context),
-            dotsDecorator: const DotsDecorator(
-              size: Size(10.0, 10.0),
+            dotsDecorator: DotsDecorator(
+              size: Size(7.0.sp, 7.0.sp),
               color: Color(0xFFBDBDBD),
-              activeSize: Size(22.0, 10.0),
+              activeSize: Size(15.0.sp, 10.0.sp),
               activeColor: Color(0xFFE91E63),
               activeShape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(25.0)),
