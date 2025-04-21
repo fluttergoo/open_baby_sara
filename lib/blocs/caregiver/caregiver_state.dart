@@ -13,7 +13,12 @@ class CaregiverAdded extends CaregiverState {
   CaregiverAdded({this.message = 'Caregiver added!'});
 }
 
-class CaregiverDeleted extends CaregiverState {}
+class CaregiverDeleted extends CaregiverState {
+  final String message;
+
+  CaregiverDeleted({this.message='Caregiver deleted'});
+
+}
 
 class CaregiverError extends CaregiverState {
   final String message;

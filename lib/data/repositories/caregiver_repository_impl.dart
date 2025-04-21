@@ -23,78 +23,86 @@ class CaregiverRepositoryImpl extends CaregiverRepository {
     String email,
     String password,
   ) async {
-    var caregiver =
-        await _firestore
-            .collection('invites')
-            .where('receiverEmail', isEqualTo: email)
-            .where('status', isEqualTo: 'pending')
-            .get();
-    var caregiverActive =
-        await _firestore
-            .collection('invites')
-            .where('receiverEmail', isEqualTo: email)
-            .where('status', isEqualTo: 'active')
-            .get();
+    try {
+      var caregiver =
+          await _firestore
+              .collection('invites')
+              .where('receiverEmail', isEqualTo: email)
+              .where('status', isEqualTo: 'pending')
+              .get();
 
-    if (caregiver.docs.isEmpty && caregiverActive.docs.isEmpty) {
-      //TODO: There is not caregiver
-    } else if (caregiverActive.docs.isNotEmpty && caregiver.docs.isEmpty) {
-      // TODO: There is active caregiver, you should show warning about direct to sign in page
-    } else if (caregiver.docs.isNotEmpty && caregiverActive.docs.isEmpty) {
-      // TODO: There is pending caregiver
-      try {
-        var caregiverAuth = await _auth.createUserWithEmailAndPassword(
-          email: email,
-          password: password,
+      var caregiverActive =
+          await _firestore
+              .collection('invites')
+              .where('receiverEmail', isEqualTo: email)
+              .where('status', isEqualTo: 'active')
+              .get();
+
+      if (caregiver.docs.isEmpty && caregiverActive.docs.isEmpty) {
+        throw Exception('There is no invitation found for this email.');
+      } else if (caregiverActive.docs.isNotEmpty && caregiver.docs.isEmpty) {
+        throw Exception(
+          'This email is already linked to an active caregiver. Please sign in.',
         );
-        if (caregiverAuth.user?.uid != null) {
-          var caregiverMap = caregiver.docs.first.data();
-          var userID = caregiverMap['senderID'];
-          try {
-            final userDoc =
-                await _firestore.collection('users').doc(userID).get();
-            List<dynamic> caregivers = userDoc.data()?['caregivers'] ?? [];
-            String parentID = userDoc.data()!['parentID'];
-            caregivers.removeWhere((cg) => cg['receiverEmail'] == email);
-            caregivers.add(
-              InviteModel(
-                senderID: userID,
-                receiverEmail: email,
-                status: 'active',
-                parentID: parentID,
-                firstName: firstName,
-                createdAt: DateTime.now(),
-                caregiverID: caregiverAuth.user!.uid,
-              ).toMap(),
-            );
+      } else if (caregiver.docs.isNotEmpty && caregiverActive.docs.isEmpty) {
+        try {
+          var caregiverAuth = await _auth.createUserWithEmailAndPassword(
+            email: email,
+            password: password,
+          );
+          if (caregiverAuth.user?.uid != null) {
+            var caregiverMap = caregiver.docs.first.data();
+            var userID = caregiverMap['senderID'];
             try {
-              await _firestore.collection('users').doc(userID).update({
-                'caregivers': caregivers,
-              });
-              await _firestore
-                  .collection('invites')
-                  .doc(caregiverMap['caregiverID'])
-                  .delete();
-              UserModel userModel = UserModel(
-                userID: caregiverAuth.user!.uid,
-                email: email,
-                firstName: firstName,
-                parentID: parentID,
+              final userDoc =
+                  await _firestore.collection('users').doc(userID).get();
+              List<dynamic> caregivers = userDoc.data()?['caregivers'] ?? [];
+              String parentID = userDoc.data()!['parentID'];
+              caregivers.removeWhere((cg) => cg['receiverEmail'] == email);
+              caregivers.add(
+                InviteModel(
+                  senderID: userID,
+                  receiverEmail: email,
+                  status: 'active',
+                  parentID: parentID,
+                  firstName: firstName,
+                  createdAt: DateTime.now(),
+                  caregiverID: caregiverAuth.user!.uid,
+                ).toMap(),
               );
-              await _firestore
-                  .collection('users')
-                  .doc(caregiverAuth.user!.uid)
-                  .set(userModel.toMap());
+              try {
+                await _firestore.collection('users').doc(userID).update({
+                  'caregivers': caregivers,
+                });
+                await _firestore
+                    .collection('invites')
+                    .doc(caregiverMap['caregiverID'])
+                    .delete();
+                UserModel userModel = UserModel(
+                  userID: caregiverAuth.user!.uid,
+                  email: email,
+                  firstName: firstName,
+                  parentID: parentID,
+                );
+                await _firestore
+                    .collection('users')
+                    .doc(caregiverAuth.user!.uid)
+                    .set(userModel.toMap());
+              } catch (e) {
+                debugPrint(e.toString());
+              }
             } catch (e) {
               debugPrint(e.toString());
             }
-          } catch (e) {
-            debugPrint(e.toString());
           }
+        } catch (e) {
+          debugPrint(e.toString());
         }
-      } catch (e) {
-        debugPrint(e.toString());
       }
+    } on FirebaseAuthException catch (e) {
+      throw Exception('Authentication failed. ${e.message}');
+    } catch (e) {
+      throw Exception('Authentication failed. ${e.toString()}');
     }
   }
 
@@ -112,5 +120,47 @@ class CaregiverRepositoryImpl extends CaregiverRepository {
           .toList();
     }
     return [];
+  }
+
+  @override
+  Future<void> deleteCaregiver(String caregiverID) async {
+    var userID = _auth.currentUser?.uid;
+
+    List caregiversList =
+        (await _firestore.collection('users').doc(userID).get())
+            .data()?['caregivers'] ??
+        [];
+    String? isCaregiverActive;
+    for(var cg in caregiversList){
+      if (cg['caregiverID']==caregiverID) {
+        isCaregiverActive=cg['status'];
+      }
+    }
+    try{
+      if (isCaregiverActive=='active') {
+        caregiversList.removeWhere((cg)=>cg['caregiverID']==caregiverID);
+        await _firestore.collection('users').doc(userID).update({
+          'caregivers': caregiversList,
+        });
+
+        await _firestore.collection('users').doc(caregiverID).delete();
+
+      }else{
+        caregiversList.removeWhere((cg)=>cg['caregiverID']==caregiverID);
+        await _firestore.collection('users').doc(userID).update({
+          'caregivers': caregiversList,
+        });
+        await _firestore
+            .collection('invites')
+            .doc(caregiverID)
+            .delete();
+      }
+    }on FirebaseAuthException catch(e){
+      throw e.toString();
+    }catch (e){
+      throw e.toString();
+    }
+
+
   }
 }

@@ -4,5 +4,6 @@ abstract class CaregiverRepository{
   Future<void> createCaregiver(InviteModel caregiver);
   Future<void>signUpCaregiverAndCheck(String firstName, String email, String password);
   Future<List<InviteModel>?> getCaregiverList();
+  Future<void> deleteCaregiver(String caregiverID);
 
 }
