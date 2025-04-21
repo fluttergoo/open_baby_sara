@@ -43,13 +43,18 @@ class CaregiverBloc extends Bloc<CaregiverEvent, CaregiverState> {
     });
     on<CaregiverSignUp>((event, emit) async {
       emit(CaregiverLoading());
+      try{
+        await _caregiverRepository.signUpCaregiverAndCheck(
+          event.firstName,
+          event.email,
+          event.password,
+        );
+        emit(CaregiverSignedUp());
+      }catch(e){
+        emit(CaregiverError(e.toString()));
+      }
 
-      await _caregiverRepository.signUpCaregiverAndCheck(
-        event.firstName,
-        event.email,
-        event.password,
-      );
-      emit(CaregiverSignedUp());
+      
     });
     on<GetCaregivers>((event, emit) async {
       final caregiverList  = await _caregiverRepository.getCaregiverList();
@@ -59,6 +64,16 @@ class CaregiverBloc extends Bloc<CaregiverEvent, CaregiverState> {
       }else{
         emit(GetCaregiverList(caregiverList: caregiverList));
       }
+    });
+    
+    on<DeleteCaregiver>((event,emit)async{
+      try{
+        await _caregiverRepository.deleteCaregiver(event.caregiverID);
+        emit(CaregiverDeleted());
+      }catch(e){
+        emit(CaregiverError(e.toString()));
+      }
+      
     });
   }
 }
