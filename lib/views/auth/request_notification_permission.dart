@@ -1,5 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/app/routes/navigation_wrapper.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/views/home.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class RequestNotificationPermission extends StatefulWidget {
@@ -31,7 +33,6 @@ class _RequestNotificationPermissionState
               height: MediaQuery.of(context).size.height,
               child: Center(
                 child: Column(
-
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Image.asset(
@@ -43,19 +44,22 @@ class _RequestNotificationPermissionState
                     SizedBox(height: 10.h),
                     Text(
                       context.tr("do_not_miss_a_moment"),
-                      textAlign:TextAlign.center,
+                      textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.headlineLarge,
                     ),
                     SizedBox(height: 20.h),
                     Text(
                       context.tr("get_gentle_reminders"),
-                      textAlign:TextAlign.center,style: Theme.of(context).textTheme.headlineMedium,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.headlineMedium,
                     ),
                     SizedBox(height: 40.h),
 
                     ElevatedButton(
                       onPressed: () {
-                        // TODO: Sign up logic
+                        Navigator.of(
+                          context,
+                        ).push(MaterialPageRoute(builder: (context) => NavigationWrapper()));
                       },
                       style: ElevatedButton.styleFrom(
                         minimumSize: Size(double.infinity, 40.h),
