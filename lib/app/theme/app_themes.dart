@@ -56,13 +56,15 @@ class AppThemes {
 
   static TextTheme _commonTextTheme() {
     return TextTheme(
-      headlineLarge: GoogleFonts.fredoka(fontSize: 32.sp, fontWeight: FontWeight.w300, color: const Color(0xFF333333)),
-      headlineMedium: GoogleFonts.fredoka(fontSize: 20.sp, fontWeight: FontWeight.w300, color: const Color(0xFF333333)),
-      headlineSmall: GoogleFonts.fredoka(fontSize: 12.sp, fontWeight: FontWeight.w300, color: const Color(0xFF333333)),
+      headlineLarge: GoogleFonts.dancingScript(fontSize: 32.sp, fontWeight: FontWeight.w300, color: const Color(0xFF333333)),
+      headlineMedium: GoogleFonts.dancingScript(fontSize: 20.sp, fontWeight: FontWeight.w300, color: const Color(0xFF333333)),
+      headlineSmall: GoogleFonts.dancingScript(fontSize: 12.sp, fontWeight: FontWeight.w300, color: const Color(0xFF333333)),
       bodyLarge: TextStyle(fontSize: 20.sp, color: const Color(0xFF333333)),
       bodyMedium: TextStyle(fontSize: 14.sp, color: const Color(0xFF333333)),
       bodySmall: TextStyle(fontSize: 10.sp, color: const Color(0xFF333333)),
-      titleMedium: TextStyle(fontSize: 10.sp, color: const Color(0xFF7B7B7B)),
+      titleLarge: GoogleFonts.fredoka(fontSize: 32.sp, fontWeight: FontWeight.w300, color: const Color(0xFF333333)),
+      titleMedium: GoogleFonts.fredoka(fontSize: 20.sp, fontWeight: FontWeight.w300, color: const Color(0xFF333333)),
+      titleSmall: GoogleFonts.fredoka(fontSize: 12.sp, fontWeight: FontWeight.w300, color: const Color(0xFF333333)),
     );
   }
 
