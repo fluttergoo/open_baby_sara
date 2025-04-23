@@ -34,7 +34,7 @@ class _BirthdayFieldState extends State<BirthdayField> {
         fontSize: 16.sp,
       ),
       onSubmit: (date) {
-        widget.controller.text = "${date.day}/${date.month}/${date.year}";
+        widget.controller.text = DateFormat('M/d/yyyy').format(date);
       },
       onChange: (date) {
       },
