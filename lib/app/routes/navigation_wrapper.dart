@@ -38,7 +38,7 @@ class NavigationWrapper extends StatelessWidget {
             activeColor: Colors.white,
             color: Colors.white70,
             items: [
-              TabItem(icon: Icons.history_outlined, title: 'History'),
+              TabItem(icon: Icons.history_outlined, title: 'History',),
               TabItem(icon: Icons.surround_sound_outlined, title: 'Sounds'),
               TabItem(icon: Icons.local_activity_outlined, title: 'Activity'),
               TabItem(icon: Icons.receipt_long_outlined, title: 'Recipes'),
