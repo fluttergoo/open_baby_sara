@@ -95,7 +95,7 @@ class _AccountPageState extends State<AccountPage> {
                                         style: Theme.of(
                                           context,
                                         ).textTheme.headlineLarge?.copyWith(
-                                          color: AppColors.girlPrimary,
+                                          color: Theme.of(context).primaryColor,
                                         ),
                                       ),
                                     ],
@@ -404,7 +404,7 @@ class _AccountPageState extends State<AccountPage> {
       margin: EdgeInsets.symmetric(vertical: 6.h),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
       child: ListTile(
-        leading: Icon(icon, color: AppColors.girlPrimary),
+        leading: Icon(icon, color: Theme.of(context).primaryColor),
         title: Text(
           title,
           style:Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900, fontSize: 16.sp),
