@@ -1,6 +1,11 @@
 import 'dart:ui';
 
 class AppColors{
+  static const Color feedColor = Color(0xFFFFF4CC);
+  static const Color pumpColor = Color(0xFFFFD6E8);
+  static const Color diaperColor = Color(0xFFD7F5DC);
+  static const Color sleepColor = Color(0xFFD9E4FF);
+
   // 🎀 GIRL THEME COLORS
   static const Color girlPrimary = Color(0xFFE91E63);
   static const Color girlBackground = Color(0xFFFFF8E1);
