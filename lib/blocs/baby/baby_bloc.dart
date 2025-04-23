@@ -21,8 +21,13 @@ class BabyBloc extends Bloc<BabyEvent, BabyState> {
       emit(BabyLoading());
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) throw Exception("User not logged in");
-      var userMap=(await FirebaseFirestore.instance.collection('users').doc(user.uid).get()).data();
-      final String parentID=userMap!['parentID'];
+      var userMap =
+          (await FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(user.uid)
+                  .get())
+              .data();
+      final String parentID = userMap!['parentID'];
       final babyId = const Uuid().v4(); // v4 = random ID
       final baby = BabyModel(
         firstName: event.firstName,
@@ -38,7 +43,12 @@ class BabyBloc extends Bloc<BabyEvent, BabyState> {
     });
     on<LoadBabies>((event, emit) async {
       final babies = await _babyRepository.getBabies();
-      emit(BabyLoaded(babies));
+      emit(
+        BabyLoaded(
+          babies: babies,
+          selectedBaby: babies.isNotEmpty ? babies.first : null,
+        ),
+      );
     });
     on<GetBabyInfo>((event, emit) async {
       final babyModel = await _babyRepository.getSelectedBaby(event.babyID);
@@ -86,8 +96,13 @@ class BabyBloc extends Bloc<BabyEvent, BabyState> {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) throw Exception("User not logged in");
 
-      var userMap=(await FirebaseFirestore.instance.collection('users').doc(user!.uid).get()).data();
-      final String parentID=userMap!['parentID'].toString();
+      var userMap =
+          (await FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(user!.uid)
+                  .get())
+              .data();
+      final String parentID = userMap!['parentID'].toString();
       final babyId = const Uuid().v4(); // v4 = random ID
       if (event.file != null) {
         final getImageUrl = await _babyRepository.uploadBabyImageToFile(
@@ -122,6 +137,12 @@ class BabyBloc extends Bloc<BabyEvent, BabyState> {
         );
         await _babyRepository.createBaby(baby);
         emit(AddedBaby());
+      }
+    });
+    on<SelectBaby>((event, emit){
+      if (state is BabyLoaded) {
+        final currentState=state as BabyLoaded;
+        emit(BabyLoaded(babies: currentState.babies,selectedBaby: event.selectBabyModel));
       }
     });
   }

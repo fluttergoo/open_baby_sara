@@ -15,7 +15,8 @@ final class BabyFailure extends BabyState {
 }
 class BabyLoaded extends BabyState {
   final List<BabyModel> babies;
-  BabyLoaded(this.babies);
+  BabyModel? selectedBaby;
+  BabyLoaded({required this.babies,this.selectedBaby});
 }
 class GotBabyInfo extends BabyState{
   final BabyModel babyModel;

@@ -65,3 +65,11 @@ class AddBaby extends BabyEvent {
     this.file
   });
 }
+
+class SelectBaby extends BabyEvent{
+  final BabyModel selectBabyModel;
+
+  SelectBaby({required this.selectBabyModel});
+
+}
+
