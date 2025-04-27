@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/baby/baby_bloc.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/blocs/timer/timer_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/core/app_colors.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/baby_model.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_avatar.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_sleep_tracker_bottom_sheet.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/timer_circle.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
@@ -19,6 +21,13 @@ class ActivityPage extends StatefulWidget {
 class _ActivityPageState extends State<ActivityPage> {
   List<BabyModel> babiesList = [];
   String? dropdownValue;
+
+  TimeOfDay? timerStart;
+  TimeOfDay? timerEnd;
+  String? timerStartText = 'Add';
+  String? timerEndText = 'Add';
+  TimeOfDay? start;
+  TimeOfDay? endTime;
 
   @override
   void initState() {
@@ -36,6 +45,7 @@ class _ActivityPageState extends State<ActivityPage> {
             babiesList = state.babies;
           }
           return Scaffold(
+            resizeToAvoidBottomInset: true,
             body: SafeArea(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
@@ -233,7 +243,6 @@ class _ActivityPageState extends State<ActivityPage> {
                         mainAxisSpacing: 6.h,
                         childAspectRatio: 1.6,
                         children: [
-
                           ///
                           /// Feed Activity
                           ///
@@ -420,7 +429,6 @@ class _ActivityPageState extends State<ActivityPage> {
                             ),
                           ),
 
-
                           Card(
                             color: AppColors.diaperColor,
                             shape: RoundedRectangleBorder(
@@ -548,7 +556,20 @@ class _ActivityPageState extends State<ActivityPage> {
                                           Theme.of(context).primaryColor,
                                       child: IconButton(
                                         onPressed: () {
-                                          showSleepTrackerBottomSheet(context);
+                                          showModalBottomSheet(
+                                            context: context,
+                                            isScrollControlled: true,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.vertical(
+                                                    top: Radius.circular(20.r),
+                                                  ),
+                                            ),
+                                            builder:
+                                                (context) =>
+                                                    CustomSleepTrackerBottomSheet(),
+                                          );
+                                          // showSleepTrackerBottomSheet(context);
                                         },
                                         icon: Icon(
                                           Icons.add,
@@ -766,6 +787,7 @@ class _ActivityPageState extends State<ActivityPage> {
 
     return age.isEmpty ? '0 day' : age;
   }
+
   void showSleepTrackerBottomSheet(BuildContext context) {
     showModalBottomSheet<void>(
       context: context,
@@ -832,15 +854,73 @@ class _ActivityPageState extends State<ActivityPage> {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      Text('Start Time - End Time Picker Placeholder'),
-                      SizedBox(height: 16),
-                      TimerCircle(),
-                      Divider(color: Colors.grey,),
-                      Row(children: [Text('Start Time'),Text('Start Time') ],),
+                  child: BlocBuilder<TimerBloc, TimerState>(
+                    builder: (context, state) {
+                      if (state is TimerStopped) {
+                        endTime = state.endTime;
+                      }
+                      if (state is TimerRunning) {
+                        endTime = null;
+                        start = state.startTime;
+                      }
 
-                    ],
+                      if (state is TimerReset) {
+                        start = null;
+                        endTime = null;
+                      }
+
+                      return Column(
+                        children: [
+                          Text('Start Time - End Time Picker Placeholder'),
+                          SizedBox(height: 16),
+                          TimerCircle(),
+                          SizedBox(height: 32.h),
+                          Divider(color: Colors.grey.shade300),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Start Time'),
+                              TextButton(
+                                onPressed: () {
+                                  _onPressedShowTimePicker(context);
+                                },
+                                child:
+                                    start != null
+                                        ? Text(start!.format(context))
+                                        : Text('Add'),
+                              ),
+                            ],
+                          ),
+                          Divider(color: Colors.grey.shade300),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('End Time'),
+                              TextButton(
+                                onPressed: () {
+                                  _onPressedEndTimeShowPicker(context);
+                                },
+                                child:
+                                    endTime != null
+                                        ? Text(endTime!.format(context))
+                                        : Text('Add'),
+                              ),
+                            ],
+                          ),
+                          Divider(color: Colors.grey.shade300),
+
+                          Divider(color: Colors.grey.shade300),
+
+                          TextButton(
+                            onPressed: () {
+                              _onPressedDelete(context);
+                            },
+                            child: Text('Reset'),
+                          ),
+                          Divider(color: Colors.grey.shade300),
+                        ],
+                      );
+                    },
                   ),
                 ),
               ),
@@ -851,5 +931,31 @@ class _ActivityPageState extends State<ActivityPage> {
     );
   }
 
+  void _onPressedShowTimePicker(BuildContext context) async {
+    start = await showTimePicker(
+      context: context,
+      initialTime:
+          timerStart ??
+          TimeOfDay(hour: DateTime.now().hour, minute: DateTime.now().minute),
+    );
+    if (start != null) {
+      context.read<TimerBloc>().add(SetTimer(setTimer: start));
+    }
+  }
 
+  void _onPressedEndTimeShowPicker(BuildContext context) async {
+    endTime = await showTimePicker(
+      context: context,
+      initialTime:
+          timerEnd ??
+          TimeOfDay(hour: DateTime.now().hour, minute: DateTime.now().minute),
+    );
+    if (endTime != null) {
+      context.read<TimerBloc>().add(SetEndTimer(setTimer: endTime!));
+    }
+  }
+
+  void _onPressedDelete(BuildContext context) {
+    context.read<TimerBloc>().add(CancelTimer());
+  }
 }
