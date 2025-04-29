@@ -5,11 +5,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/app/routes/app_router.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/app/routes/navigation_wrapper.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/app/theme/app_themes.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/blocs/activity/activity_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/auth/auth_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/baby/baby_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/bottom_nav/bottom_nav_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/caregiver/caregiver_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/theme/theme_bloc.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/blocs/timer/timer_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/core/locator.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/views/onboarding/welcome_page.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -21,7 +23,7 @@ void main() async {
   await EasyLocalization.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  setupLocator();
+  await setupLocator();
 
   runApp(
     EasyLocalization(
@@ -35,7 +37,7 @@ void main() async {
         builder: (context, child) {
           return child!;
         },
-        child: const MyApp(),
+        child: MyApp(),
       ),
     ),
   );
@@ -52,8 +54,16 @@ class MyApp extends StatelessWidget {
         BlocProvider<BabyBloc>(create: (_) => BabyBloc()..add(LoadBabies())),
         BlocProvider<ThemeBloc>(create: (_) => ThemeBloc()),
         BlocProvider<BottomNavBloc>(create: (_) => BottomNavBloc()),
-        BlocProvider<CaregiverBloc>(create: (_)=>CaregiverBloc()),
-        BlocProvider<AuthBloc>(create: (context) => AuthBloc()..add(AppStarted())),
+        BlocProvider<CaregiverBloc>(create: (_) => CaregiverBloc()),
+        BlocProvider<AuthBloc>(
+          create: (context) => AuthBloc()..add(AppStarted()),
+        ),
+        BlocProvider<TimerBloc>(
+          create: (context) => TimerBloc()..add(LoadTimerFromLocalDatabase()),
+        ),
+        BlocProvider<ActivityBloc>(
+          create: (context) => ActivityBloc()..add(StartAutoSync()),
+        ),
       ],
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, state) {
