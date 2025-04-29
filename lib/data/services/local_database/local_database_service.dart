@@ -1,0 +1,39 @@
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
+
+class LocalDatabaseService {
+  static Database? _database;
+
+  static Future<Database> get database async {
+    if (_database != null) return _database!;
+    _database = await _initDatabase();
+    return _database!;
+  }
+
+  static Future<Database> _initDatabase() async {
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, 'timer.db');
+
+    return await openDatabase(
+      path,
+      version: 1,
+      onCreate: (db, version) async {
+        await db.execute(
+          '''CREATE TABLE timer(id INTEGER PRIMARY KEY,startTime TEXT, isRunning INTEGER)''',
+        );
+        await db.execute(
+          '''CREATE TABLE activities(activityID TEXT PRIMARY KEY, activityType TEXT, createdAt TEXT,updatedAt TEXT,data TEXT,createdBy TEXT,babyID TEXT,isSynced INTEGER)''',
+        );
+      },
+    );
+  }
+
+  static Future<void> closeDatabase() async {
+    final db = _database;
+
+    if (db != null) {
+      await db.close();
+    }
+    _database = null;
+  }
+}
