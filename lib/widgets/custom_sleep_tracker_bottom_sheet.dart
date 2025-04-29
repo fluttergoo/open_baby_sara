@@ -1,13 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/blocs/activity/activity_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/timer/timer_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/core/app_colors.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/data/models/activity_model.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/widgets/build_custom_snack_bar.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_text_form_field.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/timer_circle.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:uuid/uuid.dart';
 
 class CustomSleepTrackerBottomSheet extends StatefulWidget {
-  const CustomSleepTrackerBottomSheet({super.key});
+  final String babyID;
+  final String firstName;
+  Duration? duration;
+
+  CustomSleepTrackerBottomSheet({
+    super.key,
+    required this.babyID,
+    required this.firstName,
+  });
 
   @override
   State<CustomSleepTrackerBottomSheet> createState() =>
@@ -23,7 +35,13 @@ class _CustomSleepTrackerBottomSheetState
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return BlocListener<ActivityBloc, ActivityState>(
+  listener: (context, state) {
+    if (state is ActivityAdded) {
+      ScaffoldMessenger.of(context).showSnackBar(buildCustomSnackBar(state.message));
+    }
+  },
+  child: GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: SingleChildScrollView(
         padding: EdgeInsets.only(
@@ -68,7 +86,7 @@ class _CustomSleepTrackerBottomSheetState
                     // Save button
                     TextButton(
                       onPressed: () {
-                        // TODO: Save logic
+                        onPressedSave();
                         Navigator.of(context).pop();
                       },
                       child: Text(
@@ -94,6 +112,7 @@ class _CustomSleepTrackerBottomSheetState
                     builder: (context, state) {
                       if (state is TimerStopped) {
                         endTime = state.endTime;
+                        widget.duration = state.duration;
                       }
                       if (state is TimerRunning) {
                         endTime = null;
@@ -187,7 +206,8 @@ class _CustomSleepTrackerBottomSheetState
           ),
         ),
       ),
-    );
+    ),
+);
   }
 
   void _onPressedShowTimePicker(BuildContext context) async {
@@ -212,5 +232,34 @@ class _CustomSleepTrackerBottomSheetState
 
   void _onPressedDelete(BuildContext context) {
     context.read<TimerBloc>().add(CancelTimer());
+  }
+
+  void onPressedSave() {
+
+    final activityName = ActivityType.sleep.name;
+    try{
+      final activityModel = ActivityModel(
+        activityID: Uuid().v4(),
+        activityType: activityName ?? '',
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+        data: {
+          'startTimeHour': start?.hour,
+          'startTimeMin':start?.minute,
+          'endTimeHour': endTime?.hour,
+          'endTimeMin':endTime?.minute,
+          'totalTime': widget.duration?.inMilliseconds,
+          'notes': notesController.text ,
+        },
+        isSynced: false,
+        createdBy: widget.firstName,
+        babyID: widget.babyID,
+      );
+      context.read<ActivityBloc>().add(AddActivity(activityModel: activityModel));
+    }catch(e,stack){
+      print('HATA YAKALANDI: $e');
+      print(stack);
+    }
+    
   }
 }
