@@ -6,6 +6,7 @@ class CustomTextFormField extends StatefulWidget {
   final TextEditingController? controller;
   final String? Function(String?)? validator;
   final bool isPassword;
+  final bool isNotes;
 
   const CustomTextFormField({
     super.key,
@@ -13,6 +14,7 @@ class CustomTextFormField extends StatefulWidget {
     this.controller,
     this.validator,
     this.isPassword = false,
+    this.isNotes=false
   });
 
   @override
@@ -34,6 +36,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       controller: widget.controller,
       obscureText: widget.isPassword ? _obscure : false,
       validator: widget.validator,
+      maxLines: widget.isNotes ? null : 1,
+      keyboardType: widget.isNotes ? TextInputType.multiline : null,
       style: Theme.of(
         context,
       ).textTheme.titleMedium?.copyWith(color: Colors.black, fontSize: 16.sp),
