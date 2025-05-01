@@ -41,5 +41,10 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
         }
       });
     });
+
+    on<FetchActivitySleepLoad>((event,emit)async{
+      final result=await _activityRepository.fetchLastSleepActivity(event.babyID);
+      emit(SleepActivityLoaded(activityModel: result));
+    });
   }
 }

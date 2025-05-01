@@ -1,6 +1,4 @@
-import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/core/locator.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/activity_model.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/activity_reposityory.dart';
@@ -48,6 +46,19 @@ class ActivityRepositoryImpl extends ActivityRepository {
           whereArgs: [activity.activityID],
         );
       }
+    }
+  }
+
+  Future<ActivityModel?> fetchLastSleepActivity(String babyID) async {
+    final result = await database.rawQuery(
+      'SELECT * FROM activities WHERE activityType = ? AND babyID = ? ORDER BY createdAt DESC LIMIT 1',
+      ['sleep', babyID],
+    );
+
+    if (result.isNotEmpty) {
+      return ActivityModel.fromSqlite(result.first);
+    } else {
+      return null;
     }
   }
 }

@@ -5,12 +5,20 @@ sealed class ActivityState {}
 
 final class ActivityInitial extends ActivityState {}
 
-final class ActivityAdded extends ActivityState{
+final class ActivityAdded extends ActivityState {
   final String message;
 
-  ActivityAdded({this.message='Successfully'});
+  ActivityAdded({this.message = 'Successfully'});
 }
+
 class ActivityError extends ActivityState {
   final String message;
+
   ActivityError(this.message);
+}
+
+class SleepActivityLoaded extends ActivityState {
+  final ActivityModel? activityModel;
+
+  SleepActivityLoaded({this.activityModel});
 }

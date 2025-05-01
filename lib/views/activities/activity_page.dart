@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/blocs/activity/activity_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/auth/auth_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/baby/baby_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/core/app_colors.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/baby_model.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_avatar.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_card.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_pump_tracker_bottom_sheet.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_sleep_tracker_bottom_sheet.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
 class ActivityPage extends StatefulWidget {
-  ActivityPage({super.key});
+  const ActivityPage({super.key});
 
   @override
   State<ActivityPage> createState() => _ActivityPageState();
@@ -42,6 +45,11 @@ class _ActivityPageState extends State<ActivityPage> {
               if (state is BabyLoaded) {
                 babiesList = state.babies;
                 babyID = state.selectedBaby!.babyID;
+                if (babyID != null) {
+                  context.read<ActivityBloc>().add(
+                    FetchActivitySleepLoad(babyID: babyID!),
+                  );
+                }
               }
               return Scaffold(
                 resizeToAvoidBottomInset: true,
@@ -55,6 +63,7 @@ class _ActivityPageState extends State<ActivityPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+
                           ///
                           /// Avatar Image, Age, 3 dots.
                           ///
@@ -63,9 +72,9 @@ class _ActivityPageState extends State<ActivityPage> {
                               CustomAvatar(
                                 size: 60.sp,
                                 imageUrl:
-                                    state is BabyLoaded
-                                        ? state.selectedBaby?.imageUrl
-                                        : null,
+                                state is BabyLoaded
+                                    ? state.selectedBaby?.imageUrl
+                                    : null,
                               ),
                               SizedBox(width: 2.h),
                               Column(
@@ -73,16 +82,16 @@ class _ActivityPageState extends State<ActivityPage> {
                                 children: [
                                   DropdownButton<BabyModel>(
                                     value:
-                                        state is BabyLoaded
-                                            ? state.selectedBaby
-                                            : null,
+                                    state is BabyLoaded
+                                        ? state.selectedBaby
+                                        : null,
                                     items:
-                                        babiesList.map((baby) {
-                                          return DropdownMenuItem(
-                                            value: baby,
-                                            child: Text(baby.firstName),
-                                          );
-                                        }).toList(),
+                                    babiesList.map((baby) {
+                                      return DropdownMenuItem(
+                                        value: baby,
+                                        child: Text(baby.firstName),
+                                      );
+                                    }).toList(),
                                     onChanged: (newBaby) {
                                       if (newBaby != null) {
                                         context.read<BabyBloc>().add(
@@ -90,9 +99,13 @@ class _ActivityPageState extends State<ActivityPage> {
                                         );
                                       }
                                     },
-                                    style: Theme.of(
+                                    style: Theme
+                                        .of(
                                       context,
-                                    ).textTheme.titleSmall!.copyWith(
+                                    )
+                                        .textTheme
+                                        .titleSmall!
+                                        .copyWith(
                                       color: Colors.black,
                                       fontSize: 16.sp,
                                       fontWeight: FontWeight.bold,
@@ -102,27 +115,37 @@ class _ActivityPageState extends State<ActivityPage> {
                                   RichText(
                                     text: TextSpan(
                                       text: 'Age: ',
-                                      style: Theme.of(
+                                      style: Theme
+                                          .of(
                                         context,
-                                      ).textTheme.titleSmall!.copyWith(
+                                      )
+                                          .textTheme
+                                          .titleSmall!
+                                          .copyWith(
                                         color: Colors.black,
                                         fontSize: 14.sp,
                                       ),
                                       children: [
                                         TextSpan(
                                           text:
-                                              state is BabyLoaded
-                                                  ? calculateBabyAge(
-                                                    state
-                                                        .selectedBaby!
-                                                        .dateTime,
-                                                  )
-                                                  : 'unknown',
-                                          style: Theme.of(
+                                          state is BabyLoaded
+                                              ? calculateBabyAge(
+                                            state
+                                                .selectedBaby!
+                                                .dateTime,
+                                          )
+                                              : 'unknown',
+                                          style: Theme
+                                              .of(
                                             context,
-                                          ).textTheme.titleSmall!.copyWith(
+                                          )
+                                              .textTheme
+                                              .titleSmall!
+                                              .copyWith(
                                             color:
-                                                Theme.of(context).primaryColor,
+                                            Theme
+                                                .of(context)
+                                                .primaryColor,
                                             fontSize: 14.sp,
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -137,14 +160,18 @@ class _ActivityPageState extends State<ActivityPage> {
                                 onPressed: () {},
                                 icon: Icon(
                                   Icons.today_outlined,
-                                  color: Theme.of(context).primaryColor,
+                                  color: Theme
+                                      .of(context)
+                                      .primaryColor,
                                 ),
                               ),
                               IconButton(
                                 onPressed: () {},
                                 icon: Icon(
                                   Icons.more_horiz_outlined,
-                                  color: Theme.of(context).primaryColor,
+                                  color: Theme
+                                      .of(context)
+                                      .primaryColor,
                                 ),
                               ),
                             ],
@@ -168,9 +195,13 @@ class _ActivityPageState extends State<ActivityPage> {
                                       children: [
                                         Text(
                                           'Today\'s Summary',
-                                          style: Theme.of(
+                                          style: Theme
+                                              .of(
                                             context,
-                                          ).textTheme.titleMedium?.copyWith(
+                                          )
+                                              .textTheme
+                                              .titleMedium
+                                              ?.copyWith(
                                             fontWeight: FontWeight.w900,
                                           ),
                                         ),
@@ -179,9 +210,13 @@ class _ActivityPageState extends State<ActivityPage> {
                                           DateFormat(
                                             'MMM dd, yyyy',
                                           ).format(DateTime.now()),
-                                          style: Theme.of(
+                                          style: Theme
+                                              .of(
                                             context,
-                                          ).textTheme.titleSmall?.copyWith(
+                                          )
+                                              .textTheme
+                                              .titleSmall
+                                              ?.copyWith(
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -194,7 +229,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                         itemBuilder: (context, index) {
                                           return Column(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.center,
+                                            MainAxisAlignment.center,
                                             children: [
                                               Icon(
                                                 Icons
@@ -205,9 +240,12 @@ class _ActivityPageState extends State<ActivityPage> {
                                               Text(
                                                 '6 Times',
                                                 style:
-                                                    Theme.of(
-                                                      context,
-                                                    ).textTheme.bodyMedium,
+                                                Theme
+                                                    .of(
+                                                  context,
+                                                )
+                                                    .textTheme
+                                                    .bodyMedium,
                                               ),
                                             ],
                                           );
@@ -230,7 +268,10 @@ class _ActivityPageState extends State<ActivityPage> {
                             alignment: Alignment.center,
                             child: Text(
                               'Track New Activity',
-                              style: Theme.of(context).textTheme.titleMedium
+                              style: Theme
+                                  .of(context)
+                                  .textTheme
+                                  .titleMedium
                                   ?.copyWith(fontWeight: FontWeight.w900),
                             ),
                           ),
@@ -248,397 +289,121 @@ class _ActivityPageState extends State<ActivityPage> {
                             mainAxisSpacing: 6.h,
                             childAspectRatio: 1.6,
                             children: [
+
                               ///
                               /// Feed Activity
                               ///
-                              Card(
+                              CustomCard(
                                 color: AppColors.feedColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16.r),
-                                ),
-                                child: SizedBox(
-                                  height: 110.h,
-                                  child: Stack(
-                                    children: [
-                                      // Başlık (sol üst)
-                                      Positioned(
-                                        top: 6.h,
-                                        left: 10.w,
-                                        child: Text(
-                                          'Feed',
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.bodyMedium?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18.sp,
-                                          ),
-                                        ),
+                                title: 'Feed',
+                                babyID: babyID ?? '',
+                                firstName: firstName ?? '',
+                                imgUrl: 'assets/images/feed_icon.png',
+                                voidCallback: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(20.r),
                                       ),
-
-                                      // Sağ üstte "+" ikonu
-                                      Positioned(
-                                        top: 4.h,
-                                        right: 6.w,
-                                        child: CircleAvatar(
-                                          radius: 16.r,
-                                          backgroundColor:
-                                              Theme.of(context).primaryColor,
-                                          child: Icon(
-                                            Icons.add,
-                                            color: Colors.white,
-                                            size: 20.sp,
-                                          ),
+                                    ),
+                                    builder:
+                                        (context) =>
+                                        CustomSleepTrackerBottomSheet(
+                                          babyID: babyID ?? '',
+                                          firstName: firstName ?? '',
                                         ),
-                                      ),
-
-                                      // Sol alt icon (asset image)
-                                      Positioned(
-                                        bottom: 10.h,
-                                        left: 6.w,
-                                        child: Image.asset(
-                                          'assets/images/feed_icon.png',
-                                          height: 40.h,
-                                          width: 40.w,
-                                          fit: BoxFit.contain,
-                                        ),
-                                      ),
-
-                                      // Icon'un yanındaki metin
-                                      Positioned(
-                                        bottom: 4.h,
-                                        left: 45.w,
-                                        right: 10.w,
-                                        child: Column(
-                                          children: [
-                                            Text(
-                                              'Last Updated:',
-                                              overflow: TextOverflow.ellipsis,
-                                              style: Theme.of(
-                                                context,
-                                              ).textTheme.bodyMedium!.copyWith(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 12.sp,
-                                                color: Colors.black87,
-                                              ),
-                                            ),
-                                            Text(
-                                              '500 ML sleepdasdasdsaddsadasdsdaadssda',
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: Theme.of(
-                                                context,
-                                              ).textTheme.bodyMedium!.copyWith(
-                                                fontWeight: FontWeight.w300,
-                                                fontSize: 10.sp,
-                                                color: Colors.black87,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                  );
+                                  // showSleepTrackerBottomSheet(context);
+                                },
                               ),
 
                               ///
                               /// Pump Activity
                               ///
-                              Card(
+                              CustomCard(
                                 color: AppColors.pumpColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16.r),
-                                ),
-                                child: SizedBox(
-                                  height: 110.h,
-                                  child: Stack(
-                                    children: [
-                                      // Başlık (sol üst)
-                                      Positioned(
-                                        top: 6.h,
-                                        left: 10.w,
-                                        child: Text(
-                                          'Pump',
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.bodyMedium?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18.sp,
-                                          ),
-                                        ),
+                                title: 'Pump',
+                                babyID: babyID ?? '',
+                                firstName: firstName ?? '',
+                                imgUrl: 'assets/images/pump_icon.png',
+                                voidCallback: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(20.r),
                                       ),
-
-                                      // Sağ üstte "+" ikonu
-                                      Positioned(
-                                        top: 4.h,
-                                        right: 6.w,
-                                        child: CircleAvatar(
-                                          radius: 16.r,
-                                          backgroundColor:
-                                              Theme.of(context).primaryColor,
-                                          child: Icon(
-                                            Icons.add,
-                                            color: Colors.white,
-                                            size: 20.sp,
-                                          ),
+                                    ),
+                                    builder:
+                                        (context) =>
+                                        CustomPumpTrackerBottomSheet(
+                                          babyID: babyID ?? '',
+                                          firstName: firstName ?? '',
                                         ),
-                                      ),
-
-                                      // Sol alt icon (asset image)
-                                      Positioned(
-                                        bottom: 10.h,
-                                        left: 6.w,
-                                        child: Image.asset(
-                                          'assets/images/pump_icon.png',
-                                          height: 40.h,
-                                          width: 40.w,
-                                          fit: BoxFit.contain,
-                                        ),
-                                      ),
-
-                                      // Icon'un yanındaki metin
-                                      Positioned(
-                                        bottom: 4.h,
-                                        left: 45.w,
-                                        right: 10.w,
-                                        child: Column(
-                                          children: [
-                                            Text(
-                                              'Last Updated:',
-                                              overflow: TextOverflow.ellipsis,
-                                              style: Theme.of(
-                                                context,
-                                              ).textTheme.bodyMedium!.copyWith(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 12.sp,
-                                                color: Colors.black87,
-                                              ),
-                                            ),
-                                            Text(
-                                              '1 hr 38 mins sleepdasdasdsaddsadasdsdaadssda',
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: Theme.of(
-                                                context,
-                                              ).textTheme.bodyMedium!.copyWith(
-                                                fontWeight: FontWeight.w300,
-                                                fontSize: 10.sp,
-                                                color: Colors.black87,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                  );
+                                  // showSleepTrackerBottomSheet(context);
+                                },
                               ),
 
-                              Card(
+                              ///
+                              /// Diaper Activity
+                              ///
+                              CustomCard(
                                 color: AppColors.diaperColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16.r),
-                                ),
-                                child: SizedBox(
-                                  height: 110.h,
-                                  child: Stack(
-                                    children: [
-                                      // Başlık (sol üst)
-                                      Positioned(
-                                        top: 6.h,
-                                        left: 10.w,
-                                        child: Text(
-                                          'Diaper',
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.bodyMedium?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18.sp,
-                                          ),
-                                        ),
+                                title: 'Diaper',
+                                babyID: babyID ?? '',
+                                firstName: firstName ?? '',
+                                imgUrl: 'assets/images/diaper_icon.png',
+                                voidCallback: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(20.r),
                                       ),
-
-                                      // Sağ üstte "+" ikonu
-                                      Positioned(
-                                        top: 4.h,
-                                        right: 6.w,
-                                        child: CircleAvatar(
-                                          radius: 16.r,
-                                          backgroundColor:
-                                              Theme.of(context).primaryColor,
-                                          child: Icon(
-                                            Icons.add,
-                                            color: Colors.white,
-                                            size: 20.sp,
-                                          ),
+                                    ),
+                                    builder:
+                                        (context) =>
+                                        CustomSleepTrackerBottomSheet(
+                                          babyID: babyID ?? '',
+                                          firstName: firstName ?? '',
                                         ),
-                                      ),
-
-                                      // Sol alt icon (asset image)
-                                      Positioned(
-                                        bottom: 10.h,
-                                        left: 6.w,
-                                        child: Image.asset(
-                                          'assets/images/diaper_icon.png',
-                                          height: 40.h,
-                                          width: 40.w,
-                                          fit: BoxFit.contain,
-                                        ),
-                                      ),
-
-                                      // Icon'un yanındaki metin
-                                      Positioned(
-                                        bottom: 4.h,
-                                        left: 45.w,
-                                        right: 10.w,
-                                        child: Column(
-                                          children: [
-                                            Text(
-                                              'Last Updated:',
-                                              overflow: TextOverflow.ellipsis,
-                                              style: Theme.of(
-                                                context,
-                                              ).textTheme.bodyMedium!.copyWith(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 12.sp,
-                                                color: Colors.black87,
-                                              ),
-                                            ),
-                                            Text(
-                                              '11:30 - Changed',
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: Theme.of(
-                                                context,
-                                              ).textTheme.bodyMedium!.copyWith(
-                                                fontWeight: FontWeight.w300,
-                                                fontSize: 10.sp,
-                                                color: Colors.black87,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                  );
+                                  // showSleepTrackerBottomSheet(context);
+                                },
                               ),
 
                               ///
                               /// Sleep Activity
                               ///
-                              Card(
+                              CustomCard(
                                 color: AppColors.sleepColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16.r),
-                                ),
-                                child: SizedBox(
-                                  height: 110.h,
-                                  child: Stack(
-                                    children: [
-                                      // Başlık (sol üst)
-                                      Positioned(
-                                        top: 6.h,
-                                        left: 10.w,
-                                        child: Text(
-                                          'Sleep',
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.bodyMedium?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18.sp,
-                                          ),
-                                        ),
+                                title: 'Sleep',
+                                babyID: babyID ?? '',
+                                firstName: firstName ?? '',
+                                imgUrl: 'assets/images/sleep_icon.png',
+                                voidCallback: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(20.r),
                                       ),
-
-                                      // Sağ üstte "+" ikonu
-                                      Positioned(
-                                        top: 4.h,
-                                        right: 6.w,
-                                        child: CircleAvatar(
-                                          radius: 16.r,
-                                          backgroundColor:
-                                              Theme.of(context).primaryColor,
-                                          child: IconButton(
-                                            onPressed: () {
-                                              showModalBottomSheet(
-                                                context: context,
-                                                isScrollControlled: true,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.vertical(
-                                                        top: Radius.circular(
-                                                          20.r,
-                                                        ),
-                                                      ),
-                                                ),
-                                                builder:
-                                                    (context) =>
-                                                        CustomSleepTrackerBottomSheet(
-                                                          babyID: babyID ?? '',
-                                                          firstName:
-                                                              firstName ?? '',
-                                                        ),
-                                              );
-                                              // showSleepTrackerBottomSheet(context);
-                                            },
-                                            icon: Icon(
-                                              Icons.add,
-                                              color: Colors.white,
-                                              size: 20.sp,
-                                            ),
-                                          ),
+                                    ),
+                                    builder:
+                                        (context) =>
+                                        CustomSleepTrackerBottomSheet(
+                                          babyID: babyID ?? '',
+                                          firstName: firstName ?? '',
                                         ),
-                                      ),
-
-                                      // Sol alt icon (asset image)
-                                      Positioned(
-                                        bottom: 10.h,
-                                        left: 6.w,
-                                        child: Image.asset(
-                                          'assets/images/sleep_icon.png',
-                                          height: 40.h,
-                                          width: 40.w,
-                                          fit: BoxFit.contain,
-                                        ),
-                                      ),
-
-                                      // Icon'un yanındaki metin
-                                      Positioned(
-                                        bottom: 4.h,
-                                        left: 45.w,
-                                        right: 10.w,
-                                        child: Column(
-                                          children: [
-                                            Text(
-                                              'Last Updated:',
-                                              overflow: TextOverflow.ellipsis,
-                                              style: Theme.of(
-                                                context,
-                                              ).textTheme.bodyMedium!.copyWith(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 12.sp,
-                                                color: Colors.black87,
-                                              ),
-                                            ),
-                                            Text(
-                                              '11:30 - Changed',
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: Theme.of(
-                                                context,
-                                              ).textTheme.bodyMedium!.copyWith(
-                                                fontWeight: FontWeight.w300,
-                                                fontSize: 10.sp,
-                                                color: Colors.black87,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                  );
+                                  // showSleepTrackerBottomSheet(context);
+                                },
                               ),
                             ],
                           ),
@@ -649,7 +414,10 @@ class _ActivityPageState extends State<ActivityPage> {
                             alignment: Alignment.center,
                             child: Text(
                               'Growth & Development',
-                              style: Theme.of(context).textTheme.titleMedium
+                              style: Theme
+                                  .of(context)
+                                  .textTheme
+                                  .titleMedium
                                   ?.copyWith(fontWeight: FontWeight.w900),
                             ),
                           ),
@@ -673,22 +441,28 @@ class _ActivityPageState extends State<ActivityPage> {
                                         itemBuilder: (context, index) {
                                           return Column(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.center,
+                                            MainAxisAlignment.center,
                                             children: [
                                               Text(
                                                 'Weight',
                                                 style:
-                                                    Theme.of(
-                                                      context,
-                                                    ).textTheme.bodyMedium,
+                                                Theme
+                                                    .of(
+                                                  context,
+                                                )
+                                                    .textTheme
+                                                    .bodyMedium,
                                               ),
                                               SizedBox(height: 4.h),
                                               Text(
                                                 '6 Times',
                                                 style:
-                                                    Theme.of(
-                                                      context,
-                                                    ).textTheme.bodyMedium,
+                                                Theme
+                                                    .of(
+                                                  context,
+                                                )
+                                                    .textTheme
+                                                    .bodyMedium,
                                               ),
                                             ],
                                           );
@@ -719,22 +493,28 @@ class _ActivityPageState extends State<ActivityPage> {
                                         itemBuilder: (context, index) {
                                           return Column(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.center,
+                                            MainAxisAlignment.center,
                                             children: [
                                               Text(
                                                 'Weight',
                                                 style:
-                                                    Theme.of(
-                                                      context,
-                                                    ).textTheme.bodyMedium,
+                                                Theme
+                                                    .of(
+                                                  context,
+                                                )
+                                                    .textTheme
+                                                    .bodyMedium,
                                               ),
                                               SizedBox(height: 4.h),
                                               Text(
                                                 '6 Times',
                                                 style:
-                                                    Theme.of(
-                                                      context,
-                                                    ).textTheme.bodyMedium,
+                                                Theme
+                                                    .of(
+                                                  context,
+                                                )
+                                                    .textTheme
+                                                    .bodyMedium,
                                               ),
                                             ],
                                           );

@@ -8,6 +8,13 @@ class AddActivity extends ActivityEvent {
 
   AddActivity({required this.activityModel});
 }
-class StartAutoSync extends ActivityEvent{}
-class StopAutoSync extends ActivityEvent{}
 
+class StartAutoSync extends ActivityEvent {}
+
+class StopAutoSync extends ActivityEvent {}
+
+class FetchActivitySleepLoad extends ActivityEvent {
+  final String babyID;
+
+  FetchActivitySleepLoad({required this.babyID});
+}
