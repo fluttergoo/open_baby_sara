@@ -7,8 +7,8 @@ class TimerRepositoryImpl extends TimerRepository {
   TimerRepositoryImpl({required this.database});
 
   @override
-  Future<void> saveTimerStart(DateTime startTime) async {
-    await database.insert('timer', {
+  Future<void> saveTimerStart(DateTime startTime,String activityType) async {
+    await database.insert(activityType, {
       'id': 1,
       'startTime': startTime.toIso8601String(),
       'isRunning': 1,
@@ -16,9 +16,9 @@ class TimerRepositoryImpl extends TimerRepository {
   }
 
   @override
-  Future<void> stopTimer() async {
+  Future<void> stopTimer(String activityType) async {
     await database.update(
-      'timer',
+      activityType,
       {'isRunning': 0},
       where: 'id=?',
       whereArgs: [1],
@@ -26,14 +26,14 @@ class TimerRepositoryImpl extends TimerRepository {
   }
 
   @override
-  Future<Map<String, dynamic>?> loadTimer() async{
-    final result=await database.query('timer',where: 'id=?',whereArgs: [1]);
+  Future<Map<String, dynamic>?> loadTimer(String activityType) async{
+    final result=await database.query(activityType,where: 'id=?',whereArgs: [1]);
     if (result.isEmpty) {
       return null;
     }
     return result.first;
   }
-  Future<void> clearTimer() async {
-    await database.delete('timer', where: 'id = ?', whereArgs: [1]);
+  Future<void> clearTimer(String activityType) async {
+    await database.delete(activityType, where: 'id = ?', whereArgs: [1]);
   }
 }
