@@ -6,12 +6,16 @@ import 'package:flutter_sara_baby_tracker_and_sound/app/routes/app_router.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/app/routes/navigation_wrapper.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/app/theme/app_themes.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/activity/activity_bloc.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/blocs/all_timer/pump_left_side_timer/pump_left_side_timer_bloc.dart'
+    as leftPump;
+import 'package:flutter_sara_baby_tracker_and_sound/blocs/all_timer/pump_right_side_timer/pump_right_side_timer_bloc.dart' as rightPump;
+import 'package:flutter_sara_baby_tracker_and_sound/blocs/all_timer/sleep_timer/sleep_timer_bloc.dart'
+    as sleep;
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/auth/auth_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/baby/baby_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/bottom_nav/bottom_nav_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/caregiver/caregiver_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/theme/theme_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/timer/timer_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/core/locator.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/views/onboarding/welcome_page.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -44,7 +48,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
 
   // This widget is the root of your application.
   @override
@@ -58,9 +62,35 @@ class MyApp extends StatelessWidget {
         BlocProvider<AuthBloc>(
           create: (context) => AuthBloc()..add(AppStarted()),
         ),
-        BlocProvider<TimerBloc>(
-          create: (context) => TimerBloc()..add(LoadTimerFromLocalDatabase()),
+
+        BlocProvider<sleep.SleepTimerBloc>(
+          create:
+              (_) =>
+                  sleep.SleepTimerBloc()..add(
+                    sleep.LoadTimerFromLocalDatabase(
+                      activityType: 'sleepTimer',
+                    ),
+                  ),
         ),
+        BlocProvider<leftPump.PumpLeftSideTimerBloc>(
+          create:
+              (_) =>
+                  leftPump.PumpLeftSideTimerBloc()..add(
+                    leftPump.LoadTimerFromLocalDatabase(
+                      activityType: 'leftPumpTimer',
+                    ),
+                  ),
+        ),
+        BlocProvider<rightPump.PumpRightSideTimerBloc>(
+          create:
+              (_) =>
+              rightPump.PumpRightSideTimerBloc()..add(
+                rightPump.LoadTimerFromLocalDatabase(
+              activityType: 'rightPumpTimer',
+            ),
+          ),
+        ),
+
         BlocProvider<ActivityBloc>(
           create: (context) => ActivityBloc()..add(StartAutoSync()),
         ),
