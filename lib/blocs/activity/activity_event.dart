@@ -18,3 +18,9 @@ class FetchActivitySleepLoad extends ActivityEvent {
 
   FetchActivitySleepLoad({required this.babyID});
 }
+class FetchActivityPumpLoad extends ActivityEvent{
+  final String babyID;
+
+  FetchActivityPumpLoad({required this.babyID});
+
+}

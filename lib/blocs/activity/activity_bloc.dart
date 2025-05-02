@@ -29,7 +29,7 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
     });
     on<StartAutoSync>((event,emit){
       _syncTimer?.cancel();
-      _syncTimer=Timer.periodic(Duration(seconds: 1), (_)async{
+      _syncTimer=Timer.periodic(Duration(minutes: 15), (_)async{
         try{
             final  connectivityResult=Connectivity().checkConnectivity();
             if (connectivityResult != ConnectivityResult.none) {
@@ -45,6 +45,10 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
     on<FetchActivitySleepLoad>((event,emit)async{
       final result=await _activityRepository.fetchLastSleepActivity(event.babyID);
       emit(SleepActivityLoaded(activityModel: result));
+    });
+    on<FetchActivityPumpLoad>((event, emit)async{
+      final result= await _activityRepository.fetchLastPumpActivity(event.babyID);
+      emit(PumpActivityLoaded(activityModel: result));
     });
   }
 }
