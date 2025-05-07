@@ -33,6 +33,9 @@ class LocalDatabaseService {
         await db.execute(
           '''CREATE TABLE sleepTimer(id INTEGER PRIMARY KEY,startTime TEXT, isRunning INTEGER)''',
         );
+        await db.execute(
+          '''CREATE TABLE pumpTotalTimer(id INTEGER PRIMARY KEY,startTime TEXT, isRunning INTEGER)''',
+        );
       },
     );
   }
