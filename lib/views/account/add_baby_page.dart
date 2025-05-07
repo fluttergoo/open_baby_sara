@@ -75,6 +75,7 @@ class _EditBabyPageState extends State<AddBabyPage> {
               child: BlocListener<BabyBloc, BabyState>(
                 listener: (context, state) {
                   if (state is onGenderSelectedState) {
+                    //TODO: BLoC listener, consumer, builder,
                     setState(() {
                       babyGenderGenerate = state.newGender;
                     });
@@ -335,6 +336,8 @@ class _EditBabyPageState extends State<AddBabyPage> {
             '${nightEnd!.hour}:${nightEnd!.minute.toString().padLeft(2, '0')}',
       };
       final parsedDate = DateFormat('M/d/yyyy').parse(babyDOBController.text);
+
+      //TODO: Check duplicated code
       if (newFile != null) {
         context.read<BabyBloc>().add(
           AddBaby(
@@ -355,6 +358,7 @@ class _EditBabyPageState extends State<AddBabyPage> {
           ),
         );
       }
+      //TODO: Check if you not validated put first
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         buildCustomSnackBar(

@@ -24,6 +24,7 @@ class GetBabyInfo extends BabyEvent {
   GetBabyInfo({required this.babyID});
 }
 
+//TODO: Change Class Name
 class onGenderSelectedEvent extends BabyEvent {
   final Gender gender;
 
@@ -49,6 +50,7 @@ class DeletedBaby extends BabyEvent {
   DeletedBaby({required this.babyID});
 }
 
+//TODO: AddBaby and RegisterBaby has to different business
 class AddBaby extends BabyEvent {
   final String firstName;
 

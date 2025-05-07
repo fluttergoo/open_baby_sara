@@ -22,6 +22,7 @@ class BabyRepositoryImpl extends BabyRepository {
     if (userID == null) return null;
 
     try {
+      //TODO: Baby Null check
       if (babyID == null) {
         final querySnapshot =
             await _firestore

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+//TODO: mapping class property name and database field name for example :it should be first_name
 class BabyModel {
   final String firstName;
 

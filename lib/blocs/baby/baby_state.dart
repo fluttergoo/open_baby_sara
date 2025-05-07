@@ -1,7 +1,12 @@
 part of 'baby_bloc.dart';
+enum BabyStatus{
+ loading, loaded,failure
+}
 
+//TODO: sealed abstract interface class?
 @immutable
 sealed class BabyState {}
+
 
 final class BabyInitial extends BabyState {}
 
