@@ -6,10 +6,11 @@ import 'package:flutter_sara_baby_tracker_and_sound/blocs/auth/auth_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/baby/baby_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/core/app_colors.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/baby_model.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_diaper_tracker_bottom_sheet.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_sleep_tracker_bottom_sheet.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_avatar.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_card.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_pump_tracker_bottom_sheet.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_sleep_tracker_bottom_sheet.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_pump_tracker_bottom_sheet.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
@@ -49,6 +50,9 @@ class _ActivityPageState extends State<ActivityPage> {
                   context.read<ActivityBloc>().add(
                     FetchActivitySleepLoad(babyID: babyID!),
                   );
+                  context.read<ActivityBloc>().add(
+                    FetchActivityPumpLoad(babyID: babyID!),
+                  );
                 }
               }
               return Scaffold(
@@ -63,7 +67,6 @@ class _ActivityPageState extends State<ActivityPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-
                           ///
                           /// Avatar Image, Age, 3 dots.
                           ///
@@ -72,9 +75,9 @@ class _ActivityPageState extends State<ActivityPage> {
                               CustomAvatar(
                                 size: 60.sp,
                                 imageUrl:
-                                state is BabyLoaded
-                                    ? state.selectedBaby?.imageUrl
-                                    : null,
+                                    state is BabyLoaded
+                                        ? state.selectedBaby?.imageUrl
+                                        : null,
                               ),
                               SizedBox(width: 2.h),
                               Column(
@@ -82,16 +85,16 @@ class _ActivityPageState extends State<ActivityPage> {
                                 children: [
                                   DropdownButton<BabyModel>(
                                     value:
-                                    state is BabyLoaded
-                                        ? state.selectedBaby
-                                        : null,
+                                        state is BabyLoaded
+                                            ? state.selectedBaby
+                                            : null,
                                     items:
-                                    babiesList.map((baby) {
-                                      return DropdownMenuItem(
-                                        value: baby,
-                                        child: Text(baby.firstName),
-                                      );
-                                    }).toList(),
+                                        babiesList.map((baby) {
+                                          return DropdownMenuItem(
+                                            value: baby,
+                                            child: Text(baby.firstName),
+                                          );
+                                        }).toList(),
                                     onChanged: (newBaby) {
                                       if (newBaby != null) {
                                         context.read<BabyBloc>().add(
@@ -99,13 +102,9 @@ class _ActivityPageState extends State<ActivityPage> {
                                         );
                                       }
                                     },
-                                    style: Theme
-                                        .of(
+                                    style: Theme.of(
                                       context,
-                                    )
-                                        .textTheme
-                                        .titleSmall!
-                                        .copyWith(
+                                    ).textTheme.titleSmall!.copyWith(
                                       color: Colors.black,
                                       fontSize: 16.sp,
                                       fontWeight: FontWeight.bold,
@@ -115,37 +114,27 @@ class _ActivityPageState extends State<ActivityPage> {
                                   RichText(
                                     text: TextSpan(
                                       text: 'Age: ',
-                                      style: Theme
-                                          .of(
+                                      style: Theme.of(
                                         context,
-                                      )
-                                          .textTheme
-                                          .titleSmall!
-                                          .copyWith(
+                                      ).textTheme.titleSmall!.copyWith(
                                         color: Colors.black,
                                         fontSize: 14.sp,
                                       ),
                                       children: [
                                         TextSpan(
                                           text:
-                                          state is BabyLoaded
-                                              ? calculateBabyAge(
-                                            state
-                                                .selectedBaby!
-                                                .dateTime,
-                                          )
-                                              : 'unknown',
-                                          style: Theme
-                                              .of(
+                                              state is BabyLoaded
+                                                  ? calculateBabyAge(
+                                                    state
+                                                        .selectedBaby!
+                                                        .dateTime,
+                                                  )
+                                                  : 'unknown',
+                                          style: Theme.of(
                                             context,
-                                          )
-                                              .textTheme
-                                              .titleSmall!
-                                              .copyWith(
+                                          ).textTheme.titleSmall!.copyWith(
                                             color:
-                                            Theme
-                                                .of(context)
-                                                .primaryColor,
+                                                Theme.of(context).primaryColor,
                                             fontSize: 14.sp,
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -160,18 +149,14 @@ class _ActivityPageState extends State<ActivityPage> {
                                 onPressed: () {},
                                 icon: Icon(
                                   Icons.today_outlined,
-                                  color: Theme
-                                      .of(context)
-                                      .primaryColor,
+                                  color: Theme.of(context).primaryColor,
                                 ),
                               ),
                               IconButton(
                                 onPressed: () {},
                                 icon: Icon(
                                   Icons.more_horiz_outlined,
-                                  color: Theme
-                                      .of(context)
-                                      .primaryColor,
+                                  color: Theme.of(context).primaryColor,
                                 ),
                               ),
                             ],
@@ -195,13 +180,9 @@ class _ActivityPageState extends State<ActivityPage> {
                                       children: [
                                         Text(
                                           'Today\'s Summary',
-                                          style: Theme
-                                              .of(
+                                          style: Theme.of(
                                             context,
-                                          )
-                                              .textTheme
-                                              .titleMedium
-                                              ?.copyWith(
+                                          ).textTheme.titleMedium?.copyWith(
                                             fontWeight: FontWeight.w900,
                                           ),
                                         ),
@@ -210,13 +191,9 @@ class _ActivityPageState extends State<ActivityPage> {
                                           DateFormat(
                                             'MMM dd, yyyy',
                                           ).format(DateTime.now()),
-                                          style: Theme
-                                              .of(
+                                          style: Theme.of(
                                             context,
-                                          )
-                                              .textTheme
-                                              .titleSmall
-                                              ?.copyWith(
+                                          ).textTheme.titleSmall?.copyWith(
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -229,7 +206,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                         itemBuilder: (context, index) {
                                           return Column(
                                             mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                                MainAxisAlignment.center,
                                             children: [
                                               Icon(
                                                 Icons
@@ -240,12 +217,9 @@ class _ActivityPageState extends State<ActivityPage> {
                                               Text(
                                                 '6 Times',
                                                 style:
-                                                Theme
-                                                    .of(
-                                                  context,
-                                                )
-                                                    .textTheme
-                                                    .bodyMedium,
+                                                    Theme.of(
+                                                      context,
+                                                    ).textTheme.bodyMedium,
                                               ),
                                             ],
                                           );
@@ -268,10 +242,7 @@ class _ActivityPageState extends State<ActivityPage> {
                             alignment: Alignment.center,
                             child: Text(
                               'Track New Activity',
-                              style: Theme
-                                  .of(context)
-                                  .textTheme
-                                  .titleMedium
+                              style: Theme.of(context).textTheme.titleMedium
                                   ?.copyWith(fontWeight: FontWeight.w900),
                             ),
                           ),
@@ -289,7 +260,6 @@ class _ActivityPageState extends State<ActivityPage> {
                             mainAxisSpacing: 6.h,
                             childAspectRatio: 1.6,
                             children: [
-
                               ///
                               /// Feed Activity
                               ///
@@ -310,10 +280,10 @@ class _ActivityPageState extends State<ActivityPage> {
                                     ),
                                     builder:
                                         (context) =>
-                                        CustomSleepTrackerBottomSheet(
-                                          babyID: babyID ?? '',
-                                          firstName: firstName ?? '',
-                                        ),
+                                            CustomSleepTrackerBottomSheet(
+                                              babyID: babyID ?? '',
+                                              firstName: firstName ?? '',
+                                            ),
                                   );
                                   // showSleepTrackerBottomSheet(context);
                                 },
@@ -339,10 +309,10 @@ class _ActivityPageState extends State<ActivityPage> {
                                     ),
                                     builder:
                                         (context) =>
-                                        CustomPumpTrackerBottomSheet(
-                                          babyID: babyID ?? '',
-                                          firstName: firstName ?? '',
-                                        ),
+                                            CustomPumpTrackerBottomSheet(
+                                              babyID: babyID ?? '',
+                                              firstName: firstName ?? '',
+                                            ),
                                   );
                                   // showSleepTrackerBottomSheet(context);
                                 },
@@ -368,13 +338,14 @@ class _ActivityPageState extends State<ActivityPage> {
                                     ),
                                     builder:
                                         (context) =>
-                                        CustomSleepTrackerBottomSheet(
-                                          babyID: babyID ?? '',
-                                          firstName: firstName ?? '',
-                                        ),
+                                            CustomDiaperTrackerBottomSheet(
+                                              babyID: babyID ?? '',
+                                              firstName: firstName ?? '',
+                                            ),
                                   );
                                   // showSleepTrackerBottomSheet(context);
                                 },
+
                               ),
 
                               ///
@@ -397,10 +368,10 @@ class _ActivityPageState extends State<ActivityPage> {
                                     ),
                                     builder:
                                         (context) =>
-                                        CustomSleepTrackerBottomSheet(
-                                          babyID: babyID ?? '',
-                                          firstName: firstName ?? '',
-                                        ),
+                                            CustomSleepTrackerBottomSheet(
+                                              babyID: babyID ?? '',
+                                              firstName: firstName ?? '',
+                                            ),
                                   );
                                   // showSleepTrackerBottomSheet(context);
                                 },
@@ -414,10 +385,7 @@ class _ActivityPageState extends State<ActivityPage> {
                             alignment: Alignment.center,
                             child: Text(
                               'Growth & Development',
-                              style: Theme
-                                  .of(context)
-                                  .textTheme
-                                  .titleMedium
+                              style: Theme.of(context).textTheme.titleMedium
                                   ?.copyWith(fontWeight: FontWeight.w900),
                             ),
                           ),
@@ -441,28 +409,22 @@ class _ActivityPageState extends State<ActivityPage> {
                                         itemBuilder: (context, index) {
                                           return Column(
                                             mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                                MainAxisAlignment.center,
                                             children: [
                                               Text(
                                                 'Weight',
                                                 style:
-                                                Theme
-                                                    .of(
-                                                  context,
-                                                )
-                                                    .textTheme
-                                                    .bodyMedium,
+                                                    Theme.of(
+                                                      context,
+                                                    ).textTheme.bodyMedium,
                                               ),
                                               SizedBox(height: 4.h),
                                               Text(
                                                 '6 Times',
                                                 style:
-                                                Theme
-                                                    .of(
-                                                  context,
-                                                )
-                                                    .textTheme
-                                                    .bodyMedium,
+                                                    Theme.of(
+                                                      context,
+                                                    ).textTheme.bodyMedium,
                                               ),
                                             ],
                                           );
@@ -493,28 +455,22 @@ class _ActivityPageState extends State<ActivityPage> {
                                         itemBuilder: (context, index) {
                                           return Column(
                                             mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                                MainAxisAlignment.center,
                                             children: [
                                               Text(
                                                 'Weight',
                                                 style:
-                                                Theme
-                                                    .of(
-                                                  context,
-                                                )
-                                                    .textTheme
-                                                    .bodyMedium,
+                                                    Theme.of(
+                                                      context,
+                                                    ).textTheme.bodyMedium,
                                               ),
                                               SizedBox(height: 4.h),
                                               Text(
                                                 '6 Times',
                                                 style:
-                                                Theme
-                                                    .of(
-                                                  context,
-                                                )
-                                                    .textTheme
-                                                    .bodyMedium,
+                                                    Theme.of(
+                                                      context,
+                                                    ).textTheme.bodyMedium,
                                               ),
                                             ],
                                           );

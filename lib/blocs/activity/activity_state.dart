@@ -22,3 +22,10 @@ class SleepActivityLoaded extends ActivityState {
 
   SleepActivityLoaded({this.activityModel});
 }
+
+class PumpActivityLoaded extends ActivityState{
+  final ActivityModel? activityModel;
+
+  PumpActivityLoaded({required this.activityModel});
+
+}

@@ -61,4 +61,18 @@ class ActivityRepositoryImpl extends ActivityRepository {
       return null;
     }
   }
+
+  @override
+  Future<ActivityModel?> fetchLastPumpActivity(String babyID) async{
+    final result = await database.rawQuery(
+      'SELECT * FROM activities WHERE activityType IN(?,?) AND babyID = ? ORDER BY createdAt DESC LIMIT 1',
+      ['pumpTotal','pumpLeftRight', babyID],
+    );
+
+    if (result.isNotEmpty) {
+      return ActivityModel.fromSqlite(result.first);
+    } else {
+      return null;
+    }
+  }
 }

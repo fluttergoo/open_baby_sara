@@ -5,4 +5,5 @@ abstract class ActivityRepository{
   Future<List<ActivityModel>?> fetchLocalActivities();
   Future<void> syncActivities();
   Future<ActivityModel?> fetchLastSleepActivity(String babyID);
+  Future<ActivityModel?> fetchLastPumpActivity(String babyID);
 }
