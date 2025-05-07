@@ -55,6 +55,7 @@ dependencies:
   connectivity_plus: ^6.1.4
   another_flushbar: ^1.12.30
   duration_picker: ^1.2.0
+  flutter_datetime_picker_plus: ^2.2.0
 
 
 

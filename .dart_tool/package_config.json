@@ -260,6 +260,12 @@
       "languageVersion": "2.14"
     },
     {
+      "name": "flutter_datetime_picker_plus",
+      "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/flutter_datetime_picker_plus-2.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "flutter_keyboard_visibility",
       "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/flutter_keyboard_visibility-6.0.0",
       "packageUri": "lib/",
@@ -722,7 +728,7 @@
       "languageVersion": "3.7"
     }
   ],
-  "generated": "2025-04-30T21:26:47.182607Z",
+  "generated": "2025-05-06T20:32:28.761739Z",
   "generator": "pub",
   "generatorVersion": "3.7.2",
   "flutterRoot": "file:///Users/suleymansurucu/development/flutter",
