@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/activity/activity_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_sleep_tracker_bottom_sheet.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../data/models/activity_model.dart';
@@ -30,6 +29,8 @@ class CustomCard extends StatefulWidget {
 class _CustomCardState extends State<CustomCard> {
   String lastSleepActivityText = '';
   String lastSleepActivityTimeText = '';
+  String lastPumpActivityText='';
+  String lastPumpActivityTimeText='';
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ActivityBloc, ActivityState>(
@@ -38,6 +39,10 @@ class _CustomCardState extends State<CustomCard> {
       final ActivityModel? lastSleepActivity =
           state.activityModel;
       getFormatLastSleepActivity(lastSleepActivity);
+    }
+    if (state is PumpActivityLoaded) {
+      final ActivityModel? lastPumpActivity=state.activityModel;
+      getFormatLastPumpActivity(lastPumpActivity);
     }
     return Card(
       color: widget.color,
@@ -90,7 +95,10 @@ class _CustomCardState extends State<CustomCard> {
               bottom: 4.h,
               left: 45.w,
               right: 10.w,
-              child: Column(children: [getLastUpdated()]),
+              child: Column(children: [
+                widget.title == 'Sleep' ? getLastUpdated() : SizedBox(),
+                widget.title == 'Pump' ? getLastPumpUpdated() : SizedBox(),
+              ]),
             ),
           ],
         ),
@@ -152,6 +160,67 @@ class _CustomCardState extends State<CustomCard> {
             ),
             TextSpan(
               text: lastSleepActivityText,
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                fontWeight: FontWeight.w700,
+                fontSize: 11.sp,
+                color: Colors.black87,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  void getFormatLastPumpActivity(ActivityModel? lastPumpActivity) {
+    if (lastPumpActivity != null) {
+      final startTime = TimeOfDay(
+        hour: lastPumpActivity.data['totalEndTimeHour'] ?? lastPumpActivity.data['leftSideEndTimeHour'],
+        minute: lastPumpActivity.data['totalEndTimeMin'] ?? lastPumpActivity.data['leftSideEndTimeMin'],
+      );
+      lastPumpActivityTimeText = startTime.format(context);
+      final double amount=  lastPumpActivity.data['totalAmount'] ?? 0.0;
+      final String unit = lastPumpActivity.data['totalUnit'] ?? 'mL';
+
+      lastPumpActivityText = '$amount $unit was pumped';
+    } else {
+      lastSleepActivityText = '0';
+    }
+  }
+
+  getLastPumpUpdated() {
+    if (lastSleepActivityText == '0') {
+      return Align(
+        alignment: Alignment.center,
+        child: Text(
+          'No pump tracked.\nTap + to add.',
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+            fontWeight: FontWeight.w600,
+            fontSize: 12.sp,
+            color: Colors.black87,
+          ),
+        ),
+      );
+    } else {
+      return RichText(
+        text: TextSpan(
+          text: 'Last Updated\n',
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+            fontWeight: FontWeight.w600,
+            fontSize: 10.sp,
+            color: Colors.black87,
+          ),
+          children: [
+            TextSpan(
+              text: '$lastPumpActivityTimeText\n',
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                fontWeight: FontWeight.w300,
+                fontSize: 11.sp,
+                color: Colors.black87,
+              ),
+            ),
+            TextSpan(
+              text: lastPumpActivityText,
               style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                 fontWeight: FontWeight.w700,
                 fontSize: 11.sp,
