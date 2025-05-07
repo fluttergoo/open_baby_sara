@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/core/locator.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/baby_repository.dart';
 import 'package:gender_picker/source/enums.dart';
@@ -17,6 +18,7 @@ class BabyBloc extends Bloc<BabyEvent, BabyState> {
   final BabyRepository _babyRepository = getIt<BabyRepository>();
 
   BabyBloc() : super(BabyInitial()) {
+
     on<RegisterBaby>((event, emit) async {
       emit(BabyLoading());
       final user = FirebaseAuth.instance.currentUser;
@@ -41,6 +43,7 @@ class BabyBloc extends Bloc<BabyEvent, BabyState> {
       await _babyRepository.createBaby(baby);
       emit(BabySuccess());
     });
+    //TODO: Get Babies is performance issue!
     on<LoadBabies>((event, emit) async {
       final babies = await _babyRepository.getBabies();
       emit(
@@ -51,9 +54,15 @@ class BabyBloc extends Bloc<BabyEvent, BabyState> {
       );
     });
     on<GetBabyInfo>((event, emit) async {
-      final babyModel = await _babyRepository.getSelectedBaby(event.babyID);
-      if (babyModel != null) {
-        emit(GotBabyInfo(babyModel: babyModel));
+      emit(BabyLoading());
+      try{
+        final babyModel = await _babyRepository.getSelectedBaby(event.babyID);
+        if (babyModel != null) {
+          emit(GotBabyInfo(babyModel: babyModel));
+        }
+      } catch(e){
+        debugPrint(e.toString());
+        emit(BabyFailure('Get Baby selected Error!: ${e.toString()}'));
       }
     });
     on<onGenderSelectedEvent>((event, emit) {
