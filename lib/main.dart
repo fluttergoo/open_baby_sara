@@ -8,7 +8,10 @@ import 'package:flutter_sara_baby_tracker_and_sound/app/theme/app_themes.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/activity/activity_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/all_timer/pump_left_side_timer/pump_left_side_timer_bloc.dart'
     as leftPump;
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/all_timer/pump_right_side_timer/pump_right_side_timer_bloc.dart' as rightPump;
+import 'package:flutter_sara_baby_tracker_and_sound/blocs/all_timer/pump_right_side_timer/pump_right_side_timer_bloc.dart'
+    as rightPump;
+import 'package:flutter_sara_baby_tracker_and_sound/blocs/all_timer/pump_total_timer/pump_total_timer_bloc.dart'
+    as totalPump;
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/all_timer/sleep_timer/sleep_timer_bloc.dart'
     as sleep;
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/auth/auth_bloc.dart';
@@ -84,11 +87,21 @@ class MyApp extends StatelessWidget {
         BlocProvider<rightPump.PumpRightSideTimerBloc>(
           create:
               (_) =>
-              rightPump.PumpRightSideTimerBloc()..add(
-                rightPump.LoadTimerFromLocalDatabase(
-              activityType: 'rightPumpTimer',
-            ),
-          ),
+                  rightPump.PumpRightSideTimerBloc()..add(
+                    rightPump.LoadTimerFromLocalDatabase(
+                      activityType: 'rightPumpTimer',
+                    ),
+                  ),
+        ),
+
+        BlocProvider<totalPump.PumpTotalTimerBloc>(
+          create:
+              (_) =>
+                  totalPump.PumpTotalTimerBloc()..add(
+                    totalPump.LoadTimerFromLocalDatabase(
+                      activityType: 'pumpTotalTimer',
+                    ),
+                  ),
         ),
 
         BlocProvider<ActivityBloc>(
