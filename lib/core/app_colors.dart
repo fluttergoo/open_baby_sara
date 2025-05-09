@@ -5,6 +5,12 @@ class AppColors{
   static const Color pumpColor = Color(0xFFFFD6E8);
   static const Color diaperColor = Color(0xFFD7F5DC);
   static const Color sleepColor = Color(0xFFD9E4FF);
+  static const Color growthColor = Color(0xFFE7E0FF);
+  static const Color babyFirstsColor = Color(0xFFFFE0E0);
+  static const Color teethingColor   = Color(0xFFE0F7FA);
+  static const Color medicalColor    = Color(0xFFFFEEDD);
+  static const Color vaccineColor = Color(0xFFE0CFFF);
+  static const Color summaryColor = Color(0xFFFFF0E1);
 
   // 🎀 GIRL THEME COLORS
   static const Color girlPrimary = Color(0xFFE91E63);
