@@ -6,6 +6,10 @@ import 'package:flutter_sara_baby_tracker_and_sound/app/routes/app_router.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/app/routes/navigation_wrapper.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/app/theme/app_themes.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/activity/activity_bloc.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/blocs/all_timer/breasfeed_left_side_timer/breasfeed_left_side_timer_bloc.dart'
+    as leftBreastfeed;
+import 'package:flutter_sara_baby_tracker_and_sound/blocs/all_timer/breastfeed_right_side_timer/breastfeed_right_side_timer_bloc.dart'
+    as rightBreastfeed;
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/all_timer/pump_left_side_timer/pump_left_side_timer_bloc.dart'
     as leftPump;
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/all_timer/pump_right_side_timer/pump_right_side_timer_bloc.dart'
@@ -90,6 +94,24 @@ class MyApp extends StatelessWidget {
                   rightPump.PumpRightSideTimerBloc()..add(
                     rightPump.LoadTimerFromLocalDatabase(
                       activityType: 'rightPumpTimer',
+                    ),
+                  ),
+        ),
+        BlocProvider<rightBreastfeed.BreastfeedRightSideTimerBloc>(
+          create:
+              (_) =>
+              rightBreastfeed.BreastfeedRightSideTimerBloc()..add(
+                rightBreastfeed.LoadTimerFromLocalDatabase(
+                      activityType: 'rightBreastfeedTimer',
+                    ),
+                  ),
+        ),
+        BlocProvider<leftBreastfeed.BreasfeedLeftSideTimerBloc>(
+          create:
+              (_) =>
+              leftBreastfeed.BreasfeedLeftSideTimerBloc()..add(
+                leftBreastfeed.LoadTimerFromLocalDatabase(
+                      activityType: 'leftBreastfeedTimer',
                     ),
                   ),
         ),
