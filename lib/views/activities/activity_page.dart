@@ -7,10 +7,13 @@ import 'package:flutter_sara_baby_tracker_and_sound/blocs/baby/baby_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/core/app_colors.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/baby_model.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_diaper_tracker_bottom_sheet.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_feed_tracker_bottom_sheet.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_sleep_tracker_bottom_sheet.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_avatar.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_card.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_pump_tracker_bottom_sheet.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_today_summary_card.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/widgets/customize_growth_card.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
@@ -170,70 +173,7 @@ class _ActivityPageState extends State<ActivityPage> {
                           SizedBox(
                             width: double.infinity,
                             height: 120.h,
-                            child: Card(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          'Today\'s Summary',
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.titleMedium?.copyWith(
-                                            fontWeight: FontWeight.w900,
-                                          ),
-                                        ),
-                                        Spacer(),
-                                        Text(
-                                          DateFormat(
-                                            'MMM dd, yyyy',
-                                          ).format(DateTime.now()),
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.titleSmall?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(height: 5.h),
-                                    SizedBox(
-                                      height: 60.h,
-                                      child: ListView.separated(
-                                        itemBuilder: (context, index) {
-                                          return Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Icon(
-                                                Icons
-                                                    .baby_changing_station_outlined,
-                                                size: 28.sp,
-                                              ),
-                                              SizedBox(height: 4.h),
-                                              Text(
-                                                '6 Times',
-                                                style:
-                                                    Theme.of(
-                                                      context,
-                                                    ).textTheme.bodyMedium,
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                        separatorBuilder:
-                                            (_, __) => SizedBox(width: 25.w),
-                                        itemCount: 10,
-                                        scrollDirection: Axis.horizontal,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
+                            child: CustomTodaySummaryCard(color: AppColors.summaryColor, title: 'title', babyID: babyID??'', firstName: firstName??''),
                           ),
 
                           SizedBox(height: 10.h),
@@ -280,7 +220,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                     ),
                                     builder:
                                         (context) =>
-                                            CustomSleepTrackerBottomSheet(
+                                            CustomFeedTrackerBottomSheet(
                                               babyID: babyID ?? '',
                                               firstName: firstName ?? '',
                                             ),
@@ -345,7 +285,6 @@ class _ActivityPageState extends State<ActivityPage> {
                                   );
                                   // showSleepTrackerBottomSheet(context);
                                 },
-
                               ),
 
                               ///
@@ -398,93 +337,180 @@ class _ActivityPageState extends State<ActivityPage> {
                           SizedBox(
                             width: double.infinity,
                             height: 80.h,
-                            child: Card(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      child: ListView.separated(
-                                        itemBuilder: (context, index) {
-                                          return Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                'Weight',
-                                                style:
-                                                    Theme.of(
-                                                      context,
-                                                    ).textTheme.bodyMedium,
-                                              ),
-                                              SizedBox(height: 4.h),
-                                              Text(
-                                                '6 Times',
-                                                style:
-                                                    Theme.of(
-                                                      context,
-                                                    ).textTheme.bodyMedium,
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                        separatorBuilder:
-                                            (_, __) => SizedBox(width: 25.w),
-                                        itemCount: 10,
-                                        scrollDirection: Axis.horizontal,
-                                      ),
+                            child: CustomizeGrowthCard(
+                              color: AppColors.growthColor,
+                              title: 'Weight',
+                              babyID: babyID ?? '',
+                              firstName: firstName ?? '',
+                              imgUrl: 'assets/images/growth_icon.png',
+                              voidCallback: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(20.r),
                                     ),
-                                  ],
-                                ),
-                              ),
+                                  ),
+                                  builder:
+                                      (context) =>
+                                          CustomSleepTrackerBottomSheet(
+                                            babyID: babyID ?? '',
+                                            firstName: firstName ?? '',
+                                          ),
+                                );
+                              },
                             ),
                           ),
 
-                          SizedBox(
-                            width: double.infinity,
-                            height: 80.h,
-                            child: Card(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      child: ListView.separated(
-                                        itemBuilder: (context, index) {
-                                          return Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                'Weight',
-                                                style:
-                                                    Theme.of(
-                                                      context,
-                                                    ).textTheme.bodyMedium,
-                                              ),
-                                              SizedBox(height: 4.h),
-                                              Text(
-                                                '6 Times',
-                                                style:
-                                                    Theme.of(
-                                                      context,
-                                                    ).textTheme.bodyMedium,
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                        separatorBuilder:
-                                            (_, __) => SizedBox(width: 25.w),
-                                        itemCount: 10,
-                                        scrollDirection: Axis.horizontal,
+                          SizedBox(height: 5.h),
+
+                          GridView.count(
+                            crossAxisCount: 2,
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            crossAxisSpacing: 6.w,
+                            mainAxisSpacing: 6.h,
+                            childAspectRatio: 1.6,
+                            children: [
+                              ///
+                              /// Feed Activity
+                              ///
+                              CustomCard(
+                                color: AppColors.babyFirstsColor,
+                                title: 'Baby Firsts',
+                                babyID: babyID ?? '',
+                                firstName: firstName ?? '',
+                                imgUrl: 'assets/images/baby_firsts_icon.png',
+                                voidCallback: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(20.r),
                                       ),
                                     ),
-                                  ],
-                                ),
+                                    builder:
+                                        (context) =>
+                                        CustomFeedTrackerBottomSheet(
+                                          babyID: babyID ?? '',
+                                          firstName: firstName ?? '',
+                                        ),
+                                  );
+                                  // showSleepTrackerBottomSheet(context);
+                                },
                               ),
+
+                              ///
+                              /// Pump Activity
+                              ///
+                              CustomCard(
+                                color: AppColors.teethingColor,
+                                title: 'Teething',
+                                babyID: babyID ?? '',
+                                firstName: firstName ?? '',
+                                imgUrl: 'assets/images/teething_icon.png',
+                                voidCallback: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(20.r),
+                                      ),
+                                    ),
+                                    builder:
+                                        (context) =>
+                                        CustomPumpTrackerBottomSheet(
+                                          babyID: babyID ?? '',
+                                          firstName: firstName ?? '',
+                                        ),
+                                  );
+                                  // showSleepTrackerBottomSheet(context);
+                                },
+                              ),
+
+                            ],
+                          ),
+                          SizedBox(height: 10.h),
+
+                          Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Health',
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.w900),
                             ),
+                          ),
+
+                          GridView.count(
+                            crossAxisCount: 2,
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            crossAxisSpacing: 6.w,
+                            mainAxisSpacing: 6.h,
+                            childAspectRatio: 1.6,
+                            children: [
+                              ///
+                              /// Feed Activity
+                              ///
+                              CustomCard(
+                                color: AppColors.medicalColor,
+                                title: 'Medical',
+                                babyID: babyID ?? '',
+                                firstName: firstName ?? '',
+                                imgUrl: 'assets/images/medical_icon.png',
+                                voidCallback: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(20.r),
+                                      ),
+                                    ),
+                                    builder:
+                                        (context) =>
+                                        CustomFeedTrackerBottomSheet(
+                                          babyID: babyID ?? '',
+                                          firstName: firstName ?? '',
+                                        ),
+                                  );
+                                  // showSleepTrackerBottomSheet(context);
+                                },
+                              ),
+
+                              ///
+                              /// Pump Activity
+                              ///
+                              CustomCard(
+                                color: AppColors.vaccineColor,
+                                title: 'Vaccine',
+                                babyID: babyID ?? '',
+                                firstName: firstName ?? '',
+                                imgUrl: 'assets/images/vaccine_icon.png',
+                                voidCallback: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(20.r),
+                                      ),
+                                    ),
+                                    builder:
+                                        (context) =>
+                                        CustomPumpTrackerBottomSheet(
+                                          babyID: babyID ?? '',
+                                          firstName: firstName ?? '',
+                                        ),
+                                  );
+                                  // showSleepTrackerBottomSheet(context);
+                                },
+                              ),
+
+                            ],
                           ),
                         ],
                       ),
