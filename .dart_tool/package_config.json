@@ -428,6 +428,12 @@
       "languageVersion": "2.17"
     },
     {
+      "name": "keyboard_actions",
+      "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/keyboard_actions-4.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
       "name": "leak_tracker",
       "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/leak_tracker-10.0.8",
       "packageUri": "lib/",
@@ -728,7 +734,7 @@
       "languageVersion": "3.7"
     }
   ],
-  "generated": "2025-05-06T20:32:28.761739Z",
+  "generated": "2025-05-08T21:04:07.200249Z",
   "generator": "pub",
   "generatorVersion": "3.7.2",
   "flutterRoot": "file:///Users/suleymansurucu/development/flutter",
