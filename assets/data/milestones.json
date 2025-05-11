@@ -1,0 +1,378 @@
+[
+  {
+    "month": 1,
+    "milestones": [
+      {
+        "titleKey": "first_look",
+        "descriptionKey": "first_look_desc"
+      },
+      {
+        "titleKey": "first_response_sound",
+        "descriptionKey": "first_response_sound_desc"
+      },
+      {
+        "titleKey": "first_grasp_reflex",
+        "descriptionKey": "first_grasp_reflex_desc"
+      }
+    ]
+  },
+  {
+    "month": 2,
+    "milestones": [
+      {
+        "titleKey": "first_smile",
+        "descriptionKey": "first_smile_desc"
+      },
+      {
+        "titleKey": "lift_head",
+        "descriptionKey": "lift_head_desc"
+      },
+      {
+        "titleKey": "first_cuddle_reaction",
+        "descriptionKey": "first_cuddle_reaction_desc"
+      },
+      {
+        "titleKey": "first_eye_contact",
+        "descriptionKey": "first_eye_contact_desc"
+      },
+      {
+        "titleKey": "first_cooing_sound",
+        "descriptionKey": "first_cooing_sound_desc"
+      }
+    ]
+  },
+  {
+    "month": 3,
+    "milestones": [
+      {
+        "titleKey": "follow_object",
+        "descriptionKey": "follow_object_desc"
+      },
+      {
+        "titleKey": "hand_to_mouth",
+        "descriptionKey": "hand_to_mouth_desc"
+      },
+      {
+        "titleKey": "first_babbling_sounds",
+        "descriptionKey": "first_babbling_sounds_desc"
+      },
+      {
+        "titleKey": "recognize_parent_voice",
+        "descriptionKey": "recognize_parent_voice_desc"
+      },
+      {
+        "titleKey": "first_intentional_movement",
+        "descriptionKey": "first_intentional_movement_desc"
+      }
+    ]
+  },
+  {
+    "month": 4,
+    "milestones": [
+      {
+        "titleKey": "roll_over",
+        "descriptionKey": "roll_over_desc"
+      },
+      {
+        "titleKey": "first_laugh",
+        "descriptionKey": "first_laugh_desc"
+      },
+      {
+        "titleKey": "respond_smile",
+        "descriptionKey": "respond_smile_desc"
+      },
+      {
+        "titleKey": "laugh_out_loud",
+        "descriptionKey": "laugh_out_loud_desc"
+      },
+      {
+        "titleKey": "first_squeal_of_joy",
+        "descriptionKey": "first_squeal_of_joy_desc"
+      }
+    ]
+  },
+  {
+    "month": 5,
+    "milestones": [
+      {
+        "titleKey": "reach_for_toys",
+        "descriptionKey": "reach_for_toys_desc"
+      },
+      {
+        "titleKey": "recognize_faces",
+        "descriptionKey": "recognize_faces_desc"
+      },
+      {
+        "titleKey": "grab_parents_finger",
+        "descriptionKey": "grab_parents_finger_desc"
+      },
+      {
+        "titleKey": "mirror_smile",
+        "descriptionKey": "mirror_smile_desc"
+      },
+      {
+        "titleKey": "first_attempt_to_sit",
+        "descriptionKey": "first_attempt_to_sit_desc"
+      }
+    ]
+  },
+  {
+    "month": 6,
+    "milestones": [
+      {
+        "titleKey": "sit_with_support",
+        "descriptionKey": "sit_with_support_desc"
+      },
+      {
+        "titleKey": "babbling",
+        "descriptionKey": "babbling_desc"
+      },
+      {
+        "titleKey": "first_solid_food",
+        "descriptionKey": "first_solid_food_desc"
+      },
+      {
+        "titleKey": "first_sit_photoshoot",
+        "descriptionKey": "first_sit_photoshoot_desc"
+      },
+      {
+        "titleKey": "first_time_eating_from_spoon",
+        "descriptionKey": "first_time_eating_from_spoon_desc"
+      }
+    ]
+  },
+  {
+    "month": 7,
+    "milestones": [
+      {
+        "titleKey": "transfer_objects",
+        "descriptionKey": "transfer_objects_desc"
+      },
+      {
+        "titleKey": "responds_name",
+        "descriptionKey": "responds_name_desc"
+      },
+      {
+        "titleKey": "play_with_toys",
+        "descriptionKey": "play_with_toys_desc"
+      },
+      {
+        "titleKey": "peekaboo_reaction",
+        "descriptionKey": "peekaboo_reaction_desc"
+      },
+      {
+        "titleKey": "first_gum_eruption",
+        "descriptionKey": "first_gum_eruption_desc"
+      }
+    ]
+  },
+  {
+    "month": 8,
+    "milestones": [
+      {
+        "titleKey": "sit_without_support",
+        "descriptionKey": "sit_without_support_desc"
+      },
+      {
+        "titleKey": "stranger_anxiety",
+        "descriptionKey": "stranger_anxiety_desc"
+      },
+      {
+        "titleKey": "first_time_wave",
+        "descriptionKey": "first_time_wave_desc"
+      },
+      {
+        "titleKey": "recognize_name",
+        "descriptionKey": "recognize_name_desc"
+      },
+      {
+        "titleKey": "first_clapping_attempt",
+        "descriptionKey": "first_clapping_attempt_desc"
+      }
+    ]
+  },
+  {
+    "month": 9,
+    "milestones": [
+      {
+        "titleKey": "crawl",
+        "descriptionKey": "crawl_desc"
+      },
+      {
+        "titleKey": "pincher_grasp",
+        "descriptionKey": "pincher_grasp_desc"
+      },
+      {
+        "titleKey": "dance_to_music",
+        "descriptionKey": "dance_to_music_desc"
+      },
+      {
+        "titleKey": "understand_simple_words",
+        "descriptionKey": "understand_simple_words_desc"
+      },
+      {
+        "titleKey": "first_time_pulling_to_stand",
+        "descriptionKey": "first_time_pulling_to_stand_desc"
+      }
+    ]
+  },
+  {
+    "month": 10,
+    "milestones": [
+      {
+        "titleKey": "stand_with_support",
+        "descriptionKey": "stand_with_support_desc"
+      },
+      {
+        "titleKey": "wave_bye",
+        "descriptionKey": "wave_bye_desc"
+      },
+      {
+        "titleKey": "first_words_try",
+        "descriptionKey": "first_words_try_desc"
+      },
+      {
+        "titleKey": "emotional_reaction",
+        "descriptionKey": "emotional_reaction_desc"
+      },
+      {
+        "titleKey": "first_cruising_along_furniture",
+        "descriptionKey": "first_cruising_along_furniture_desc"
+      }
+    ]
+  },
+  {
+    "month": 11,
+    "milestones": [
+      {
+        "titleKey": "say_mama_dada",
+        "descriptionKey": "say_mama_dada_desc"
+      },
+      {
+        "titleKey": "understand_no",
+        "descriptionKey": "understand_no_desc"
+      },
+      {
+        "titleKey": "kiss_gesture",
+        "descriptionKey": "kiss_gesture_desc"
+      },
+      {
+        "titleKey": "favorite_toy",
+        "descriptionKey": "favorite_toy_desc"
+      },
+      {
+        "titleKey": "first_imitation_of_actions",
+        "descriptionKey": "first_imitation_of_actions_desc"
+      }
+    ]
+  },
+  {
+    "month": 12,
+    "milestones": [
+      {
+        "titleKey": "first_steps",
+        "descriptionKey": "first_steps_desc"
+      },
+      {
+        "titleKey": "clap_hands",
+        "descriptionKey": "clap_hands_desc"
+      },
+      {
+        "titleKey": "first_real_word",
+        "descriptionKey": "first_real_word_desc"
+      },
+      {
+        "titleKey": "blow_candle",
+        "descriptionKey": "blow_candle_desc"
+      },
+      {
+        "titleKey": "first_birthday_celebration",
+        "descriptionKey": "first_birthday_celebration_desc"
+      }
+    ]
+  },
+  {
+    "month": 15,
+    "milestones": [
+      {
+        "titleKey": "stack_blocks",
+        "descriptionKey": "stack_blocks_desc"
+      },
+      {
+        "titleKey": "use_spoon",
+        "descriptionKey": "use_spoon_desc"
+      },
+      {
+        "titleKey": "first_scribble",
+        "descriptionKey": "first_scribble_desc"
+      }
+    ]
+  },
+  {
+    "month": 18,
+    "milestones": [
+      {
+        "titleKey": "run",
+        "descriptionKey": "run_desc"
+      },
+      {
+        "titleKey": "say_words",
+        "descriptionKey": "say_words_desc"
+      },
+      {
+        "titleKey": "first_drawing",
+        "descriptionKey": "first_drawing_desc"
+      },
+      {
+        "titleKey": "help_with_dressing",
+        "descriptionKey": "help_with_dressing_desc"
+      }
+    ]
+  },
+  {
+    "month": 21,
+    "milestones": [
+      {
+        "titleKey": "kick_ball",
+        "descriptionKey": "kick_ball_desc"
+      },
+      {
+        "titleKey": "point_objects",
+        "descriptionKey": "point_objects_desc"
+      },
+      {
+        "titleKey": "first_steps_outside",
+        "descriptionKey": "first_steps_outside_desc"
+      },
+      {
+        "titleKey": "understand_two_step_commands",
+        "descriptionKey": "understand_two_step_commands_desc"
+      }
+    ]
+  },
+  {
+    "month": 24,
+    "milestones": [
+      {
+        "titleKey": "form_sentences",
+        "descriptionKey": "form_sentences_desc"
+      },
+      {
+        "titleKey": "brush_teeth",
+        "descriptionKey": "brush_teeth_desc"
+      },
+      {
+        "titleKey": "first_friend",
+        "descriptionKey": "first_friend_desc"
+      },
+      {
+        "titleKey": "first_sleepover",
+        "descriptionKey": "first_sleepover_desc"
+      },
+      {
+        "titleKey": "name_body_parts",
+        "descriptionKey": "name_body_parts_desc"
+      }
+    ]
+  }
+]
