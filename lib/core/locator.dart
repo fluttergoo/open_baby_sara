@@ -11,6 +11,8 @@ import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/user_repos
 import 'package:flutter_sara_baby_tracker_and_sound/data/services/firebase/activity_service.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/services/firebase/activity_service_impl.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/services/firebase/auth_service.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/data/services/local_database/milestone_service.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/data/services/local_database/milestone_service_impl.dart';
 import 'package:get_it/get_it.dart';
 
 import '../data/services/local_database/local_database_service.dart';
@@ -33,4 +35,5 @@ Future<void> setupLocator() async {
     () => ActivityRepositoryImpl(database: database),
   );
   getIt.registerLazySingleton<ActivityService>(() => ActivityServiceImpl());
+  getIt.registerLazySingleton<MilestoneService>(() => MilestoneServiceImpl());
 }
