@@ -18,9 +18,22 @@ class FetchActivitySleepLoad extends ActivityEvent {
 
   FetchActivitySleepLoad({required this.babyID});
 }
-class FetchActivityPumpLoad extends ActivityEvent{
+
+class FetchActivityPumpLoad extends ActivityEvent {
   final String babyID;
 
   FetchActivityPumpLoad({required this.babyID});
+}
 
+class FetchAllTypeOfActivity extends ActivityEvent {
+  final String babyID;
+  final String activityType;
+
+  FetchAllTypeOfActivity({required this.babyID, required this.activityType});
+}
+class FetchToothIsoNumber extends ActivityEvent {
+  final String babyID;
+  final String activityType;
+
+  FetchToothIsoNumber({required this.babyID, required this.activityType});
 }

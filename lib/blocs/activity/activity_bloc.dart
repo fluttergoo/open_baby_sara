@@ -29,9 +29,9 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
     });
     on<StartAutoSync>((event,emit){
       _syncTimer?.cancel();
-      _syncTimer=Timer.periodic(Duration(hours: 1), (_)async{
+      _syncTimer=Timer.periodic(Duration(days: 15), (_)async{
         try{
-            final  connectivityResult=Connectivity().checkConnectivity();
+            final  connectivityResult= await Connectivity().checkConnectivity();
             if (connectivityResult != ConnectivityResult.none) {
               await _activityRepository.syncActivities();
             }  
@@ -50,5 +50,31 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
       final result= await _activityRepository.fetchLastPumpActivity(event.babyID);
       emit(PumpActivityLoaded(activityModel: result));
     });
+    on<FetchToothIsoNumber>((event, emit) async {
+      try {
+        emit(ActivityLoading());
+
+        final List<ActivityModel>? result =
+        await _activityRepository.fetchAllTypeOfActivity(event.babyID, event.activityType);
+
+        final List<String> toothIsoNumberList = [];
+
+        if (result != null) {
+          for (final activity in result) {
+            final dynamic teeth = activity.data['teethingIsoNumber'];
+            if (teeth is List) {
+              toothIsoNumberList.addAll(teeth.map((e) => e.toString()));
+            } else if (teeth is String) {
+              toothIsoNumberList.add(teeth); // tekli kayıt varsa
+            }
+          }
+        }
+
+        emit(FetchToothIsoNumberLoaded(toothIsoNumber: toothIsoNumberList));
+      } catch (e) {
+        emit(ActivityError( e.toString()));
+      }
+    });
+
   }
 }

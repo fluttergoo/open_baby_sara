@@ -5,6 +5,8 @@ sealed class ActivityState {}
 
 final class ActivityInitial extends ActivityState {}
 
+final class ActivityLoading extends ActivityState {}
+
 final class ActivityAdded extends ActivityState {
   final String message;
 
@@ -28,4 +30,10 @@ class PumpActivityLoaded extends ActivityState{
 
   PumpActivityLoaded({required this.activityModel});
 
+}
+
+class FetchToothIsoNumberLoaded extends ActivityState{
+  final List<String> toothIsoNumber;
+
+  FetchToothIsoNumberLoaded({required this.toothIsoNumber});
 }
