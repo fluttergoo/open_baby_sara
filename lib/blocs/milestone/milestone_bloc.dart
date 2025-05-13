@@ -22,5 +22,14 @@ class MilestoneBloc extends Bloc<MilestoneEvent, MilestoneState> {
         emit(MilestoneError(e.toString()));
       }
     });
+    on<LoadMilestonesTitleFromDB>((event, emit) async {
+      emit(MilestoneLoading());
+      try {
+        final milestonesTitle = await _milestoneService.fetchMilestonesFromDB(event.babyID);
+        emit(MilestoneTitleLoadedFromDB(milestoneTitle: milestonesTitle));
+      } catch (e) {
+        emit(MilestoneError(e.toString()));
+      }
+    });
   }
 }

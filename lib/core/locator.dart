@@ -35,5 +35,5 @@ Future<void> setupLocator() async {
     () => ActivityRepositoryImpl(database: database),
   );
   getIt.registerLazySingleton<ActivityService>(() => ActivityServiceImpl());
-  getIt.registerLazySingleton<MilestoneService>(() => MilestoneServiceImpl());
+  getIt.registerLazySingleton<MilestoneService>(() => MilestoneServiceImpl(database: database));
 }
