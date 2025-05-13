@@ -1,12 +1,18 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/app/routes/navigation_wrapper.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/blocs/activity/activity_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/milestone/milestone_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/core/app_colors.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/data/models/activity_model.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/milestones_model.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/widgets/build_custom_snack_bar.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_date_time_picker.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_show_flush_bar.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_text_form_field.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:uuid/uuid.dart';
 
 class CustomBabyFirstsTrackerBottomSheet extends StatefulWidget {
   final String babyID;
@@ -34,16 +40,27 @@ class _CustomBabyFirstsTrackerBottomSheetState
   DateTime? selectedDatetime = DateTime.now();
   TextEditingController notesController = TextEditingController();
   List<MonthlyMilestonesModel>? monthlyMilestone;
+  List<String>? selectedMilestoneTitle;
+  List<String>? selectedMilestoneDesc;
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MilestoneBloc, MilestoneState>(
+    return BlocListener<ActivityBloc, ActivityState>(
+  listener: (context, state) {
+    if (state is ActivityAdded) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(buildCustomSnackBar(state.message));
+    }  },
+  child: BlocBuilder<MilestoneBloc, MilestoneState>(
       builder: (context, state) {
         if (state is MilestoneLoaded) {
           monthlyMilestone = state.milestones;
-          debugPrint('buradayiz');
+          context.read<MilestoneBloc>().add(
+            LoadMilestonesTitleFromDB(babyID: widget.babyID),
+          );
         }
-        if(state is MilestoneError){
+        if (state is MilestoneError) {
           debugPrint(state.message);
         }
         return GestureDetector(
@@ -138,12 +155,16 @@ class _CustomBabyFirstsTrackerBottomSheetState
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text('Baby firsts'),
-                              TextButton(onPressed: (){
-                                _onPressedAdd();
-                              }, child: Text('Add'))
+                              TextButton(
+                                onPressed: () {
+                                  _onPressedAdd();
+                                },
+                                child: Text('Add'),
+                              ),
                             ],
                           ),
-
+                          Divider(color: Colors.grey.shade300),
+                          selectedMilestoneToggleWidget(),
                           SizedBox(height: 5.h),
                           Align(
                             alignment: Alignment.centerLeft,
@@ -196,10 +217,54 @@ class _CustomBabyFirstsTrackerBottomSheetState
           ),
         );
       },
-    );
+    ),
+);
   }
 
-  void onPressedSave() {}
+  void onPressedSave() {
+    final activityName = ActivityType.babyFirsts.name;
+
+    if (selectedMilestoneTitle == null && selectedMilestoneDesc == null) {
+      showCustomFlushbar(
+        context,
+        'Warning',
+        'Please enter baby first activity',
+        Icons.warning_outlined,
+      );
+    } else {
+      final activityModel = ActivityModel(
+        activityID: Uuid().v4(),
+        activityType: activityName,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+        data: {
+          'startTimeHour': selectedDatetime?.hour,
+          'startTimeMin': selectedDatetime?.minute,
+          'notes': notesController.text,
+          'milestoneTitle': selectedMilestoneTitle,
+          'milestoneDesc': selectedMilestoneDesc,
+        },
+        isSynced: false,
+        createdBy: widget.firstName,
+        babyID: widget.babyID,
+      );
+      try {
+        context.read<ActivityBloc>().add(
+          AddActivity(activityModel: activityModel),
+        );
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => NavigationWrapper()),
+        );
+      } catch (e) {
+        showCustomFlushbar(
+          context,
+          'Warning',
+          'Error ${e.toString()}',
+          Icons.warning_outlined,
+        );
+      }
+    }
+  }
 
   _onPressedDelete(BuildContext context) {}
 
@@ -209,131 +274,250 @@ class _CustomBabyFirstsTrackerBottomSheetState
     showDialog(
       context: context,
       builder: (context) {
-        final selectedMilestones = <String>{};
+        List<String> selectedMilestones = [];
+        final List<String> selectedMilestonesTitle = [];
+        final List<String> selectedMilestonesDesc = [];
+        Set<String>? savedTitleSet;
 
-        return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
-          child: Container(
-            padding: EdgeInsets.all(16.r),
-            constraints: BoxConstraints(maxHeight: 600.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                /// Header
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        return BlocBuilder<MilestoneBloc, MilestoneState>(
+          builder: (context, state) {
+            if (state is MilestoneTitleLoadedFromDB) {
+              selectedMilestones = state.milestoneTitle;
+              savedTitleSet=selectedMilestones.toSet();
+              debugPrint(selectedMilestones.length.toString());
+            }
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.r),
+              ),
+              child: Container(
+                padding: EdgeInsets.all(16.r),
+                constraints: BoxConstraints(maxHeight: 600.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Select Baby Firsts',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    /// Header
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Select Baby Firsts',
+                          style: Theme.of(
+                            context,
+                          ).textTheme.titleMedium?.copyWith(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => Navigator.pop(context),
+                          icon: Icon(Icons.close),
+                        ),
+                      ],
                     ),
-                    IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: Icon(Icons.close),
-                    )
-                  ],
-                ),
-                Divider(),
+                    Divider(color: Colors.grey.shade300),
 
-                /// Body
-                Expanded(
-                  child: StatefulBuilder(
-                    builder: (context, setState) {
-                      return Scrollbar(
-                        child: ListView.builder(
-                          itemCount: monthlyMilestone!.length,
-                          itemBuilder: (context, index) {
-                            final monthData = monthlyMilestone![index];
+                    /// Body
+                    Expanded(
+                      child: StatefulBuilder(
+                        builder: (context, setState) {
+                          return Scrollbar(
+                            child: ListView.builder(
+                              itemCount: monthlyMilestone!.length,
+                              itemBuilder: (context, index) {
+                                final monthData = monthlyMilestone![index];
 
-                            return Card(
-                              margin: EdgeInsets.symmetric(vertical: 8.r),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.r),
-                              ),
-                              elevation: 2,
-                              child: ExpansionTile(
-                                title: Text(
-                                  'Month ${monthData.month}',
-                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16.sp,
+                                return Card(
+                                  margin: EdgeInsets.symmetric(
+                                    vertical: 4.r,
+                                    horizontal: 0,
                                   ),
-                                ),
-                                children: monthData.milestones.map((milestone) {
-                                  final isSelected =
-                                  selectedMilestones.contains(milestone.titleKey);
-
-                                  return CheckboxListTile(
-                                    controlAffinity: ListTileControlAffinity.leading,
-                                    title: Text(
-                                      context.tr(milestone.titleKey),
-                                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 14.sp,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12.r),
+                                  ),
+                                  elevation: 1,
+                                  child: Theme(
+                                    data: Theme.of(context).copyWith(
+                                      dividerColor: Colors.transparent,
+                                    ),
+                                    child: ExpansionTile(
+                                      title: Text(
+                                        'Month ${monthData.month}',
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.titleMedium?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.sp,
+                                        ),
                                       ),
-                                    ),
-                                    subtitle: Text(
-                                      context.tr(milestone.descriptionKey),
-                                      style: Theme.of(context).textTheme.bodySmall,
-                                    ),
-                                    value: isSelected,
-                                    onChanged: (val) {
-                                      setState(() {
-                                        if (val == true) {
-                                          selectedMilestones.add(milestone.titleKey);
-                                        } else {
-                                          selectedMilestones.remove(milestone.titleKey);
-                                        }
-                                      });
-                                    },
-                                  );
-                                }).toList(),
-                              ),
-                            );
-                          },
-                        ),
-                      );
-                    },
-                  ),
-                ),
+                                      children:
+                                          monthData.milestones.map((milestone) {
+                                            final bool isPreviouslySelected;
+                                            if (savedTitleSet== null ) {
+                                               isPreviouslySelected = false;
 
-                SizedBox(height: 12.h),
+                                            }  else{
+                                               isPreviouslySelected = savedTitleSet!.contains(milestone.titleKey);
 
-                /// Buttons
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: Text('Cancel'),
-                    ),
-                    SizedBox(width: 10.w),
-                    ElevatedButton.icon(
-                      icon: Icon(Icons.check),
-                      onPressed: () {
-                        print('Selected Milestones: $selectedMilestones');
-                        Navigator.of(context).pop();
-                      },
-                      label: Text('Save'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).primaryColor,
-                        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
+                                            }
+                                            final isSelected = selectedMilestones.contains(milestone.titleKey);
+                                            return CheckboxListTile(
+                                              controlAffinity:
+                                                  ListTileControlAffinity
+                                                      .leading,
+                                              title: Text(
+                                                context.tr(milestone.titleKey),
+                                                style: Theme.of(
+                                                  context,
+                                                ).textTheme.bodyLarge?.copyWith(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 14.sp,
+                                                ),
+                                              ),
+                                              subtitle: Text(
+                                                context.tr(
+                                                  milestone.descriptionKey,
+                                                ),
+                                                style:
+                                                    Theme.of(
+                                                      context,
+                                                    ).textTheme.bodyMedium,
+                                              ),
+                                              value: isSelected,
+                                              onChanged:isPreviouslySelected ? null : (val) {
+                                                setState(() {
+                                                  if (val == true) {
+                                                    selectedMilestones.add(
+                                                      milestone.titleKey,
+                                                    );
+                                                    selectedMilestonesTitle.add(
+                                                      milestone.titleKey,
+                                                    );
+                                                    selectedMilestonesDesc.add(
+                                                      milestone.descriptionKey,
+                                                    );
+                                                  } else {
+                                                    selectedMilestones.remove(
+                                                      milestone.titleKey,
+                                                    );
+                                                    selectedMilestonesTitle
+                                                        .remove(
+                                                          milestone.titleKey,
+                                                        );
+                                                    selectedMilestonesDesc
+                                                        .remove(
+                                                          milestone
+                                                              .descriptionKey,
+                                                        );
+                                                  }
+                                                });
+                                              },
+                                            );
+                                          }).toList(),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        },
                       ),
+                    ),
+
+                    SizedBox(height: 12.h),
+
+                    /// Buttons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text('Cancel'),
+                        ),
+                        SizedBox(width: 10.w),
+                        ElevatedButton.icon(
+                          icon: Icon(Icons.check, color: Colors.white),
+                          onPressed: () {
+                            print('Selected Milestones: $selectedMilestones');
+                            selectedMilestoneTitle = selectedMilestonesTitle;
+                            selectedMilestoneDesc = selectedMilestonesDesc;
+                            setState(() {});
+                            Navigator.of(context).pop();
+                          },
+                          label: Text(
+                            'Add',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.titleSmall?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(context).primaryColor,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 20.w,
+                              vertical: 12.h,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
       },
     );
   }
 
+  Widget selectedMilestoneToggleWidget() {
+    if (selectedMilestoneTitle == null || selectedMilestoneTitle!.isEmpty) {
+      return SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Selected Baby Firsts:'),
+          SizedBox(height: 4.h),
+          Wrap(
+            spacing: 6,
+            runSpacing: 4,
+            children:
+                selectedMilestoneTitle!
+                    .map(
+                      (title) => Chip(
+                        label: Text(context.tr(title)),
+                        backgroundColor: AppColors.babyFirstsColor,
+
+                        labelStyle: TextStyle(
+                          color: Theme.of(context).primaryColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        deleteIcon: Icon(Icons.close, size: 18.sp),
+                        onDeleted: () {
+                          setState(() {
+                            final index = selectedMilestoneTitle!.indexOf(
+                              title,
+                            );
+                            selectedMilestoneDesc?.removeAt(index);
+                            selectedMilestoneTitle?.removeAt(index);
+                          });
+                        },
+                      ),
+                    )
+                    .toList(),
+          ),
+        ],
+      ),
+    );
+  }
 }
