@@ -1,4 +1,5 @@
 
+import 'package:flutter/material.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/core/locator.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/activity_model.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/activity_reposityory.dart';
@@ -21,30 +22,31 @@ class ActivityRepositoryImpl extends ActivityRepository {
   }
 
   @override
-  Future<List<ActivityModel>?> fetchLocalActivities() async {
-    final result = await database.query('activities');
-    return result.map((e) {
-      return ActivityModel.fromSqlite(e);
-    }).toList();
+  Future<List<ActivityModel>> fetchLocalActivities({bool onlyUnsynced = false}) async {
+    final result = await database.query(
+      'activities',
+      where: onlyUnsynced ? 'isSynced = ?' : null,
+      whereArgs: onlyUnsynced ? [0] : null,
+    );
+
+    return result.map((e) => ActivityModel.fromSqlite(e)).toList();
   }
 
   @override
   Future<void> syncActivities() async {
-    final activities = await fetchLocalActivities();
+    final unsyncedActivities = await fetchLocalActivities(onlyUnsynced: true);
 
-    for (var activity in activities!) {
-      final remote = await _activityService.getActivity(
-        activity.babyID,
-        activity.activityID,
-      );
-      if (remote == null || activity.updatedAt.isAfter(remote.updatedAt)) {
+    for (var activity in unsyncedActivities) {
+      try {
         await _activityService.uploadActivity(activity);
         await database.update(
           'activities',
           {'isSynced': 1},
-          where: 'activityID=?',
+          where: 'activityID = ?',
           whereArgs: [activity.activityID],
         );
+      } catch (e) {
+        debugPrint('Failed to sync activity ${activity.activityID}: $e');
       }
     }
   }
@@ -74,5 +76,15 @@ class ActivityRepositoryImpl extends ActivityRepository {
     } else {
       return null;
     }
+  }
+
+  @override
+  Future<List<ActivityModel>?> fetchAllTypeOfActivity(String babyID, String activityType) async {
+    final result = await database.rawQuery(
+      'SELECT * FROM activities WHERE activityType = ? AND babyID = ?',
+      [activityType, babyID],
+    );
+
+    return result.map((e) => ActivityModel.fromSqlite(e)).toList();
   }
 }
