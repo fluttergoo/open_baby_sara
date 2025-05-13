@@ -314,6 +314,14 @@ path
 3.4
 file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/path-1.9.1/
 file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/path-1.9.1/lib/
+path_drawing
+2.12
+file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/path_drawing-1.0.1/
+file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/path_drawing-1.0.1/lib/
+path_parsing
+3.3
+file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/path_parsing-1.1.0/
+file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/path_parsing-1.1.0/lib/
 path_provider
 3.4
 file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/path_provider-2.1.5/
@@ -426,6 +434,10 @@ synchronized
 3.7
 file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/synchronized-3.3.1/
 file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/synchronized-3.3.1/lib/
+teeth_selector
+3.0
+file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/teeth_selector-0.2.2/
+file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/teeth_selector-0.2.2/lib/
 term_glyph
 3.1
 file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/term_glyph-1.2.2/

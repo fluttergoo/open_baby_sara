@@ -500,6 +500,18 @@
       "languageVersion": "3.4"
     },
     {
+      "name": "path_drawing",
+      "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/path_drawing-1.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "path_parsing",
+      "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/path_parsing-1.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
       "name": "path_provider",
       "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/path_provider-2.1.5",
       "packageUri": "lib/",
@@ -674,6 +686,12 @@
       "languageVersion": "3.7"
     },
     {
+      "name": "teeth_selector",
+      "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/teeth_selector-0.2.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "term_glyph",
       "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/term_glyph-1.2.2",
       "packageUri": "lib/",
@@ -734,7 +752,7 @@
       "languageVersion": "3.7"
     }
   ],
-  "generated": "2025-05-11T02:17:10.698595Z",
+  "generated": "2025-05-12T17:50:16.102709Z",
   "generator": "pub",
   "generatorVersion": "3.7.2",
   "flutterRoot": "file:///Users/suleymansurucu/development/flutter",

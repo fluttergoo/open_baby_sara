@@ -57,6 +57,7 @@ dependencies:
   duration_picker: ^1.2.0
   flutter_datetime_picker_plus: ^2.2.0
   keyboard_actions: ^4.2.0
+  teeth_selector: ^0.2.2
 
 
 
