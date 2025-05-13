@@ -11,6 +11,7 @@ import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_feed_tracker_bottom_sheet.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_growth_development_tracker_bottom_sheet.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_sleep_tracker_bottom_sheet.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_teething_tracker_bottom_sheet.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_avatar.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_card.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_pump_tracker_bottom_sheet.dart';
@@ -424,7 +425,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                     ),
                                     builder:
                                         (context) =>
-                                        CustomPumpTrackerBottomSheet(
+                                        CustomTeethingTrackerBottomSheet(
                                           babyID: babyID ?? '',
                                           firstName: firstName ?? '',
                                         ),
