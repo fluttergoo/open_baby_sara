@@ -9,7 +9,9 @@ import 'package:flutter_sara_baby_tracker_and_sound/data/models/baby_model.dart'
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_baby_firsts_tracker_bottom_sheet.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_diaper_tracker_bottom_sheet.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_feed_tracker_bottom_sheet.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_fever_tracker_bottom_sheet.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_growth_development_tracker_bottom_sheet.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_medical_tracker_bottom_sheet.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_sleep_tracker_bottom_sheet.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_teething_tracker_bottom_sheet.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_avatar.dart';
@@ -460,10 +462,10 @@ class _ActivityPageState extends State<ActivityPage> {
                               ///
                               CustomCard(
                                 color: AppColors.medicalColor,
-                                title: 'Medical',
+                                title: 'Medication',
                                 babyID: babyID ?? '',
                                 firstName: firstName ?? '',
-                                imgUrl: 'assets/images/medical_icon.png',
+                                imgUrl: 'assets/images/medication_icon.png',
                                 voidCallback: () {
                                   showModalBottomSheet(
                                     context: context,
@@ -475,7 +477,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                     ),
                                     builder:
                                         (context) =>
-                                        CustomFeedTrackerBottomSheet(
+                                        CustomMedicalTrackerBottomSheet(
                                           babyID: babyID ?? '',
                                           firstName: firstName ?? '',
                                         ),
@@ -488,8 +490,34 @@ class _ActivityPageState extends State<ActivityPage> {
                               /// Pump Activity
                               ///
                               CustomCard(
+                                color: AppColors.doctorVisitColor,
+                                title: 'Doctor Visit',
+                                babyID: babyID ?? '',
+                                firstName: firstName ?? '',
+                                imgUrl: 'assets/images/doctor_visit_icon.png',
+                                voidCallback: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(20.r),
+                                      ),
+                                    ),
+                                    builder:
+                                        (context) =>
+                                        CustomPumpTrackerBottomSheet(
+                                          babyID: babyID ?? '',
+                                          firstName: firstName ?? '',
+                                        ),
+                                  );
+                                  // showSleepTrackerBottomSheet(context);
+                                },
+                              ),
+
+                              CustomCard(
                                 color: AppColors.vaccineColor,
-                                title: 'Vaccine',
+                                title: 'Vaccination',
                                 babyID: babyID ?? '',
                                 firstName: firstName ?? '',
                                 imgUrl: 'assets/images/vaccine_icon.png',
@@ -505,6 +533,32 @@ class _ActivityPageState extends State<ActivityPage> {
                                     builder:
                                         (context) =>
                                         CustomPumpTrackerBottomSheet(
+                                          babyID: babyID ?? '',
+                                          firstName: firstName ?? '',
+                                        ),
+                                  );
+                                  // showSleepTrackerBottomSheet(context);
+                                },
+                              ),
+
+                              CustomCard(
+                                color: AppColors.feverTrackerColor,
+                                title: 'Fever',
+                                babyID: babyID ?? '',
+                                firstName: firstName ?? '',
+                                imgUrl: 'assets/images/fever_icon.png',
+                                voidCallback: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(20.r),
+                                      ),
+                                    ),
+                                    builder:
+                                        (context) =>
+                                        CustomFeverTrackerBottomSheet(
                                           babyID: babyID ?? '',
                                           firstName: firstName ?? '',
                                         ),
