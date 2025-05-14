@@ -42,6 +42,10 @@ class LocalDatabaseService {
         await db.execute(
           '''CREATE TABLE leftBreastfeedTimer(id INTEGER PRIMARY KEY,startTime TEXT, isRunning INTEGER)''',
         );
+        await db.execute(
+          '''CREATE TABLE medications(id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT)''',
+        );
+
       },
     );
   }
