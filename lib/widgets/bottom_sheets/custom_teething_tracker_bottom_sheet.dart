@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/app/routes/navigation_wrapper.dart';
@@ -11,6 +12,7 @@ import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_show_flush_ba
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_teeth_selector.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_text_form_field.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:teeth_selector/teeth_selector.dart';
 import 'package:uuid/uuid.dart';
 
 class CustomTeethingTrackerBottomSheet extends StatefulWidget {
@@ -35,7 +37,8 @@ class _CustomTeethingTrackerBottomSheetState
   bool isErupted = false;
   bool isShed = false;
   String? teethingIsoNumber;
-  List<String>? initilizeTeeth;
+  List<String>? initilizeTeeth=[];
+  List<ActivityModel>? fetchTeethingActivity;
 
   @override
   void initState() {
@@ -63,7 +66,7 @@ class _CustomTeethingTrackerBottomSheetState
         builder: (context, state) {
           if (state is FetchToothIsoNumberLoaded) {
             initilizeTeeth = state.toothIsoNumber;
-            debugPrint('tamamdir ');
+            fetchTeethingActivity = state.toothActivities;
 
             debugPrint(initilizeTeeth!.length.toString());
           }
@@ -158,75 +161,17 @@ class _CustomTeethingTrackerBottomSheetState
                                     ),
                                   ],
                                 ),
-
+                                Divider(color: Colors.grey.shade300),
                                 CustomTeethSelector(
                                   key: ValueKey(initilizeTeeth?.join(',')),
                                   onSave: null,
                                   isShowDetailTooth: true,
                                   initilizeTeeth: initilizeTeeth,
-                                  isColor: false,
+                                  isColor: true,
                                   isMultiSelect: false,
                                 ),
-                                Divider(color: Colors.grey.shade300),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Time'),
-                                    CustomDateTimePicker(
-                                      initialText: 'initialText',
-                                      onDateTimeSelected: (selected) {
-                                        selectedDatetime = selected;
-                                      },
-                                    ),
-                                  ],
-                                ),
-
-                                Divider(color: Colors.grey.shade300),
-                                SizedBox(height: 5.h),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    'Notes:',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleSmall!
-                                        .copyWith(fontSize: 16.sp),
-                                  ),
-                                ),
-
-                                SizedBox(height: 5.h),
-                                CustomTextFormField(
-                                  hintText: '',
-                                  isNotes: true,
-                                  controller: notesController,
-                                ),
-                                Divider(color: Colors.grey.shade300),
-                                SizedBox(height: 20.h),
-                                Center(
-                                  child: Text(
-                                    'Created by ${widget.firstName}',
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.titleSmall!.copyWith(
-                                      fontSize: 12.sp,
-                                      fontStyle: FontStyle.italic,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 10.h),
-                                TextButton(
-                                  onPressed: () => _onPressedDelete(context),
-                                  child: Text(
-                                    'Reset',
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.titleMedium?.copyWith(
-                                      color: Theme.of(context).primaryColor,
-                                      fontSize: 16.sp,
-                                    ),
-                                  ),
-                                ),
+                                SizedBox(height: 20.h,),
+                                getTeethingTimeLine(),
                               ],
                             ),
                           ),
@@ -251,7 +196,15 @@ class _CustomTeethingTrackerBottomSheetState
         'Please enter teething information',
         Icons.warning_outlined,
       );
-    } else {
+    } else if (initilizeTeeth!.contains(teethingIsoNumber)) {
+      showCustomFlushbar(
+        context,
+        'Already Added',
+        'This tooth has already been tracked. Please review the teething timeline.',
+        Icons.warning_outlined,
+      );
+    }
+    else {
       final activityModel = ActivityModel(
         activityID: Uuid().v4(),
         activityType: activityName,
@@ -442,6 +395,110 @@ class _CustomTeethingTrackerBottomSheetState
       },
     );
   }
+
+  Widget getTeethingTimeLine() {
+    if (fetchTeethingActivity == null || fetchTeethingActivity!.isEmpty) {
+      return const Center(child: Text('There is no teething activity'));
+    }
+
+    final reversedList = fetchTeethingActivity!.reversed.toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Center(
+            child: Text(
+              '🦷 Teething Timeline',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Colors.deepPurple,
+                fontSize: 18,
+              ),
+            ),
+          ),
+        ),
+        Divider(color: Colors.grey.shade300),
+
+        ...reversedList.asMap().entries.map((entry) {
+          final index = entry.key + 1;
+          final activity = entry.value;
+
+          final toothData = activity.data['teethingIsoNumber'];
+          final isoList = toothData is List
+              ? toothData.map((e) => e.toString()).toList()
+              : [toothData.toString()];
+
+          return Card(
+            elevation: 3,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Row(
+                children: [
+                  // Sol: Diş gösterimi
+                  Column(
+                    children: [
+                      SizedBox(
+                        width: 120,
+                        height: 120,
+                        child: CustomTeethSelector(
+                          size: 120,
+                          isShowDetailTooth: false,
+                          isColor: false,
+                          isMultiSelect: false,
+                          initilizeTeeth: isoList,
+                          onSave: null,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(width: 12),
+                  // Sağ: Bilgi metni
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Text(
+                          '#$index',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.deepPurple,
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              DateFormat('MMM dd, yyyy').format(activity.createdAt!),
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                            Text(
+                              'Time: ${activity.createdAt!.hour.toString().padLeft(2, '0')}:${activity.createdAt!.minute.toString().padLeft(2, '0')}',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                            Text(
+                              'Created by ${activity.createdBy ?? 'Unknown'}',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }).toList(),
+      ],
+    );
+  }
+
 }
 
 /*
