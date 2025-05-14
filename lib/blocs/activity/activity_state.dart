@@ -34,6 +34,7 @@ class PumpActivityLoaded extends ActivityState{
 
 class FetchToothIsoNumberLoaded extends ActivityState{
   final List<String> toothIsoNumber;
+  final List<ActivityModel> toothActivities;
 
-  FetchToothIsoNumberLoaded({required this.toothIsoNumber});
+  FetchToothIsoNumberLoaded({required this.toothIsoNumber,required this.toothActivities});
 }
