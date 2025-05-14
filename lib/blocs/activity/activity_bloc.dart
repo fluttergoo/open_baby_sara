@@ -29,7 +29,7 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
     });
     on<StartAutoSync>((event,emit){
       _syncTimer?.cancel();
-      _syncTimer=Timer.periodic(Duration(days: 15), (_)async{
+      _syncTimer=Timer.periodic(Duration(days: 5), (_)async{
         try{
             final  connectivityResult= await Connectivity().checkConnectivity();
             if (connectivityResult != ConnectivityResult.none) {
@@ -70,7 +70,7 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
           }
         }
 
-        emit(FetchToothIsoNumberLoaded(toothIsoNumber: toothIsoNumberList));
+        emit(FetchToothIsoNumberLoaded(toothIsoNumber: toothIsoNumberList, toothActivities: result ?? []));
       } catch (e) {
         emit(ActivityError( e.toString()));
       }
