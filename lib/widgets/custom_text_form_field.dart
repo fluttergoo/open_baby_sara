@@ -7,6 +7,9 @@ class CustomTextFormField extends StatefulWidget {
   final String? Function(String?)? validator;
   final bool isPassword;
   final bool isNotes;
+  final void Function(String)? onChanged;
+  final TextInputType? keyboardType;
+
 
   const CustomTextFormField({
     super.key,
@@ -14,7 +17,9 @@ class CustomTextFormField extends StatefulWidget {
     this.controller,
     this.validator,
     this.isPassword = false,
-    this.isNotes=false
+    this.isNotes=false,
+    this.onChanged,
+    this.keyboardType=TextInputType.text
   });
 
   @override
@@ -37,7 +42,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       obscureText: widget.isPassword ? _obscure : false,
       validator: widget.validator,
       maxLines: widget.isNotes ? null : 1,
-      keyboardType: widget.isNotes ? TextInputType.multiline : null,
+      onChanged: widget.onChanged,
+      keyboardType: widget.isNotes ? TextInputType.multiline : widget.keyboardType,
       style: Theme.of(
         context,
       ).textTheme.titleMedium?.copyWith(color: Colors.black, fontSize: 16.sp),
@@ -66,6 +72,12 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           borderSide: BorderSide(color: Colors.grey.shade300),
         ),
         contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+
+        floatingLabelStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
+          color: Theme.of(context).primaryColor,
+          fontSize: 14.sp,
+          fontWeight: FontWeight.bold,
+        ),
 
         hintText: widget.hintText,
         suffixIcon:
