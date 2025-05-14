@@ -4,6 +4,8 @@ import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/baby_repos
 import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/baby_repsitory_impl.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/caregiver_repository.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/caregiver_repository_impl.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/medication_repository.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/medication_repository_impl.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/timer_repository.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/timer_repository_impl.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/user_repository.dart';
@@ -36,4 +38,5 @@ Future<void> setupLocator() async {
   );
   getIt.registerLazySingleton<ActivityService>(() => ActivityServiceImpl());
   getIt.registerLazySingleton<MilestoneService>(() => MilestoneServiceImpl(database: database));
+  getIt.registerLazySingleton<MedicationRepository>(()=>MedicationRepositoryImpl(database: database));
 }
