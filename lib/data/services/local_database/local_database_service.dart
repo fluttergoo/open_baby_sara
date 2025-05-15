@@ -45,6 +45,9 @@ class LocalDatabaseService {
         await db.execute(
           '''CREATE TABLE medications(id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT)''',
         );
+        await db.execute(
+          '''CREATE TABLE vaccinations(id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT)''',
+        );
 
       },
     );
