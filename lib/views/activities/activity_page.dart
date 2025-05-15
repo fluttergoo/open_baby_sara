@@ -8,12 +8,14 @@ import 'package:flutter_sara_baby_tracker_and_sound/core/app_colors.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/baby_model.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_baby_firsts_tracker_bottom_sheet.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_diaper_tracker_bottom_sheet.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_doctor_visit_tracker_bottom_sheet.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_feed_tracker_bottom_sheet.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_fever_tracker_bottom_sheet.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_growth_development_tracker_bottom_sheet.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_medical_tracker_bottom_sheet.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_sleep_tracker_bottom_sheet.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_teething_tracker_bottom_sheet.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_vaccination_tracker_bottom_sheet.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_avatar.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_card.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_pump_tracker_bottom_sheet.dart';
@@ -506,7 +508,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                     ),
                                     builder:
                                         (context) =>
-                                        CustomPumpTrackerBottomSheet(
+                                        CustomDoctorVisitTrackerBottomSheet(
                                           babyID: babyID ?? '',
                                           firstName: firstName ?? '',
                                         ),
@@ -532,7 +534,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                     ),
                                     builder:
                                         (context) =>
-                                        CustomPumpTrackerBottomSheet(
+                                        CustomVaccinationTrackerBottomSheet(
                                           babyID: babyID ?? '',
                                           firstName: firstName ?? '',
                                         ),
