@@ -25,6 +25,7 @@ import 'package:flutter_sara_baby_tracker_and_sound/blocs/caregiver/caregiver_bl
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/medication/medication_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/milestone/milestone_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/theme/theme_bloc.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/blocs/vaccination/vaccination_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/core/locator.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/services/local_database/milestone_service.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/views/onboarding/welcome_page.dart';
@@ -132,10 +133,12 @@ class MyApp extends StatelessWidget {
         BlocProvider<ActivityBloc>(
           create: (context) => ActivityBloc()..add(StartAutoSync()),
         ),
-        BlocProvider(
+        BlocProvider<MilestoneBloc>(
           create: (context) => MilestoneBloc()..add(LoadMilestones()),
         ),
-        BlocProvider(create: (context) => MedicationBloc()),
+        BlocProvider<MedicationBloc>(create: (context) => MedicationBloc()),
+        BlocProvider<VaccinationBloc>(create: (context) => VaccinationBloc()),
+
       ],
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, state) {
