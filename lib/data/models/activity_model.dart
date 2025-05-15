@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-enum ActivityType { breastFeed, bottleFeed, solids, pumpTotal,pumpLeftRight, diaper, sleep, growth,babyFirsts, teething, medication,fever}
+enum ActivityType { breastFeed, bottleFeed, solids, pumpTotal,pumpLeftRight, diaper, sleep, growth,babyFirsts, teething, medication,fever,vaccination,doctorVisit}
 
 class ActivityModel {
   final String activityID;
