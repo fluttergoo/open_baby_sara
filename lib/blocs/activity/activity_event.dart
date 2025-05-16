@@ -36,4 +36,14 @@ class FetchToothIsoNumber extends ActivityEvent {
   final String activityType;
 
   FetchToothIsoNumber({required this.babyID, required this.activityType});
+
+}
+
+class LoadActivitiesWithDate extends ActivityEvent{
+  final String babyID;
+  final DateTime day;
+
+  LoadActivitiesWithDate({required this.babyID, required this.day});
+
+
 }
