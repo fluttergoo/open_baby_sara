@@ -13,6 +13,9 @@ class AppColors{
   static const Color summaryColor = Color(0xFFFFF0E1);
   static const Color doctorVisitColor = Color(0xFFD0F0FF);
   static const Color feverTrackerColor = Color(0xFFFFD1D1);
+  static const Color summaryHeader = Color(0xFFFFF0D9);
+  static const Color summaryBody=Color(0xFFFFF4E2);
+
 
   // 🎀 GIRL THEME COLORS
   static const Color girlPrimary = Color(0xFFE91E63);
