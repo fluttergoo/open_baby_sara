@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/activity/activity_bloc.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/core/utils/helper_activities.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../data/models/activity_model.dart';
@@ -12,14 +13,17 @@ class CustomCard extends StatefulWidget {
   final String firstName;
   final String imgUrl;
   final VoidCallback voidCallback;
-
+  final ActivityModel? activityModel;
 
   const CustomCard({
     super.key,
     required this.color,
     required this.title,
     required this.babyID,
-    required this.firstName, required this.imgUrl, required this.voidCallback,
+    required this.firstName,
+    required this.imgUrl,
+    required this.voidCallback,
+    this.activityModel,
   });
 
   @override
@@ -29,83 +33,100 @@ class CustomCard extends StatefulWidget {
 class _CustomCardState extends State<CustomCard> {
   String lastSleepActivityText = '';
   String lastSleepActivityTimeText = '';
-  String lastPumpActivityText='';
-  String lastPumpActivityTimeText='';
+  String lastPumpActivityText = '';
+  String lastPumpActivityTimeText = '';
+
+  List<ActivityModel>? feedActivities;
+  List<ActivityModel>? sleepActivities;
+  List<ActivityModel>? diaperActivities;
+  List<ActivityModel>? pumpActivities;
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ActivityBloc, ActivityState>(
-  builder: (context, state) {
-    if (state is SleepActivityLoaded) {
-      final ActivityModel? lastSleepActivity =
-          state.activityModel;
-      getFormatLastSleepActivity(lastSleepActivity);
-    }
-    if (state is PumpActivityLoaded) {
-      final ActivityModel? lastPumpActivity=state.activityModel;
-      getFormatLastPumpActivity(lastPumpActivity);
-    }
-    return Card(
-      color: widget.color,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
-      child: SizedBox(
-        height: 110.h,
-        child: Stack(
-          children: [
-            /// Title
-            Positioned(
-              top: 6.h,
-              left: 10.w,
-              child: Text(
-                widget.title,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18.sp,
+      builder: (context, state) {
+        if (state is SleepActivityLoaded) {
+          final ActivityModel? lastSleepActivity = state.activityModel;
+          getFormatLastSleepActivity(lastSleepActivity);
+        }
+        if (state is PumpActivityLoaded) {
+          final ActivityModel? lastPumpActivity = state.activityModel;
+          getFormatLastPumpActivity(lastPumpActivity);
+        }
+        if (state is ActivitiesWithDateLoaded) {
+          feedActivities = state.feedActivities;
+          sleepActivities = state.sleepActivities;
+          pumpActivities = state.pumpActivities;
+          diaperActivities = state.diaperActivities;
+        }
+
+        return state is ActivityLoading
+            ? Center(child: CircularProgressIndicator())
+            : Card(
+              color: widget.color,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.r),
+              ),
+              child: SizedBox(
+                height: 110.h,
+                child: Stack(
+                  children: [
+                    /// Title
+                    Positioned(
+                      top: 6.h,
+                      left: 10.w,
+                      child: Text(
+                        widget.title,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18.sp,
+                        ),
+                      ),
+                    ),
+
+                    /// Add new activity icon
+                    Positioned(
+                      top: 4.h,
+                      right: 6.w,
+                      child: CircleAvatar(
+                        radius: 16.r,
+                        backgroundColor: Theme.of(context).primaryColor,
+                        child: IconButton(
+                          onPressed: widget.voidCallback,
+                          icon: Icon(
+                            Icons.add,
+                            color: Colors.white,
+                            size: 20.sp,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    // Sol alt icon (asset image)
+                    Positioned(
+                      bottom: 10.h,
+                      left: 6.w,
+                      child: Image.asset(
+                        widget.imgUrl,
+                        height: 40.h,
+                        width: 40.w,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+
+                    // Icon'un yanındaki metin
+                    Positioned(
+                      bottom: 4.h,
+                      left: 45.w,
+                      right: 10.w,
+                      child: getLastActivityText(widget.title),
+                    ),
+                  ],
                 ),
               ),
-            ),
-
-            /// Add new activity icon
-            Positioned(
-              top: 4.h,
-              right: 6.w,
-              child: CircleAvatar(
-                radius: 16.r,
-                backgroundColor: Theme.of(context).primaryColor,
-                child: IconButton(
-                  onPressed: widget.voidCallback,
-                  icon: Icon(Icons.add, color: Colors.white, size: 20.sp),
-                ),
-              ),
-            ),
-
-            // Sol alt icon (asset image)
-            Positioned(
-              bottom: 10.h,
-              left: 6.w,
-              child: Image.asset(
-                widget.imgUrl,
-                height: 40.h,
-                width: 40.w,
-                fit: BoxFit.contain,
-              ),
-            ),
-
-            // Icon'un yanındaki metin
-            Positioned(
-              bottom: 4.h,
-              left: 45.w,
-              right: 10.w,
-              child: Column(children: [
-                widget.title == 'Sleep' ? getLastUpdated() : SizedBox(),
-                widget.title == 'Pump' ? getLastPumpUpdated() : SizedBox(),
-              ]),
-            ),
-          ],
-        ),
-      ),
+            );
+      },
     );
-  },
-);
   }
 
   void getFormatLastSleepActivity(ActivityModel? lastSleepActivity) {
@@ -175,11 +196,15 @@ class _CustomCardState extends State<CustomCard> {
   void getFormatLastPumpActivity(ActivityModel? lastPumpActivity) {
     if (lastPumpActivity != null) {
       final startTime = TimeOfDay(
-        hour: lastPumpActivity.data['totalEndTimeHour'] ?? lastPumpActivity.data['leftSideEndTimeHour'],
-        minute: lastPumpActivity.data['totalEndTimeMin'] ?? lastPumpActivity.data['leftSideEndTimeMin'],
+        hour:
+            lastPumpActivity.data['totalEndTimeHour'] ??
+            lastPumpActivity.data['leftSideEndTimeHour'],
+        minute:
+            lastPumpActivity.data['totalEndTimeMin'] ??
+            lastPumpActivity.data['leftSideEndTimeMin'],
       );
       lastPumpActivityTimeText = startTime.format(context);
-      final double amount=  lastPumpActivity.data['totalAmount'] ?? 0.0;
+      final double amount = lastPumpActivity.data['totalAmount'] ?? 0.0;
       final String unit = lastPumpActivity.data['totalUnit'] ?? 'mL';
 
       lastPumpActivityText = '$amount $unit was pumped';
@@ -231,5 +256,39 @@ class _CustomCardState extends State<CustomCard> {
         ),
       );
     }
+  }
+
+  Widget getLastActivityText(String title) {
+    final String? displayText;
+    switch (title) {
+      case 'Sleep':
+        displayText =
+            sleepActivities != null
+                ? getLastSleepSummary(sleepActivities!)
+                : '➕ Tap to start';
+      case 'Feed':
+        displayText =
+            feedActivities != null
+                ? getLastFeedSummary(feedActivities!)
+                : '➕ Tap to start';
+      case 'Pump':
+        displayText =
+            pumpActivities != null
+                ? getLastPumpSummary(pumpActivities!)
+                : '➕ Tap to start';
+      case 'Diaper':
+        displayText =
+            pumpActivities != null
+                ? getLastDiaperSummary(diaperActivities!)
+                : '➕ Tap to start';
+      default:
+        displayText= '➕ Tap to start';
+    }
+
+    return Column(
+      children: [
+        Text(displayText!, style: Theme.of(context).textTheme.titleSmall),
+      ],
+    );
   }
 }
