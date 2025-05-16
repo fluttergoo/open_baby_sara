@@ -68,20 +68,38 @@ String summarizeDiaperTypes(List<ActivityModel> diaperActivities) {
   return parts.join(', ');
 }
 
+
 /// Calculates to Last Activities
 
 
 ActivityModel? getLastActivity(List<ActivityModel> activities) {
   if (activities.isEmpty) return null;
-  return activities.reduce((a, b) => a.createdAt.isAfter(b.createdAt) ? a : b);
+
+  return activities.reduce((a, b) {
+    final aDayStr = a.data['activityDay'] as String?;
+    final bDayStr = b.data['activityDay'] as String?;
+
+    if (aDayStr == null) return b;
+    if (bDayStr == null) return a;
+
+    final aDate = DateTime.tryParse(aDayStr);
+    final bDate = DateTime.tryParse(bDayStr);
+
+    if (aDate == null) return b;
+    if (bDate == null) return a;
+
+    return aDate.isAfter(bDate) ? a : b;
+  });
 }
 
 String? getLastFeedSummary(List<ActivityModel> activities) {
   final last = getLastActivity(activities);
   if (last == null) return '➕ Tap to start';
 
-  final timeText = formatSmartDate(last.createdAt);
-  if (timeText == null) return '➕ Tap to start';
+  final activityDayStr = last.data['activityDay'];
+  final activityDay = activityDayStr != null ? DateTime.tryParse(activityDayStr) : null;
+  final timeText = activityDay != null ? formatSmartDate(activityDay) : null;
+  if (timeText == null) return '➕\n Tap to start';
 
   final amount = last.data['totalAmount'] ?? '';
   final unit = last.data['totalUnit'] ?? '';
@@ -92,8 +110,10 @@ String? getLastSleepSummary(List<ActivityModel> activities) {
   final last = getLastActivity(activities);
   if (last == null) return '➕ Tap to start';
 
-  final timeText = formatSmartDate(last.createdAt);
-  if (timeText == null) return '➕ Tap to start';
+  final activityDayStr = last.data['activityDay'];
+  final activityDay = activityDayStr != null ? DateTime.tryParse(activityDayStr) : null;
+  final timeText = activityDay != null ? formatSmartDate(activityDay) : null;
+  if (timeText == null) return '➕\n Tap to start';
 
   final durationMs = last.data['totalTime'] ?? 0;
   final duration = Duration(milliseconds: durationMs);
@@ -106,23 +126,90 @@ String? getLastDiaperSummary(List<ActivityModel> activities) {
   final last = getLastActivity(activities);
   if (last == null) return '➕ Tap to start';
 
-  final timeText = formatSmartDate(last.createdAt);
-  if (timeText == null) return '➕ Tap to start';
+  final activityDayStr = last.data['activityDay'];
+  final activityDay = activityDayStr != null ? DateTime.tryParse(activityDayStr) : null;
+  final timeText = activityDay != null ? formatSmartDate(activityDay) : null;
+  if (timeText == null) return '➕\n Tap to start';
 
   final types = (last.data['mainSelection'] ?? []).join(' & ');
-  return '$types at \n$timeText';
+  return '$types \nat $timeText';
 }
 
 String? getLastPumpSummary(List<ActivityModel> activities) {
   final last = getLastActivity(activities);
   if (last == null) return '➕ Tap to start';
 
-  final timeText = formatSmartDate(last.createdAt);
-  if (timeText == null) return '➕ Tap to start';
+  final activityDayStr = last.data['activityDay'];
+  final activityDay = activityDayStr != null ? DateTime.tryParse(activityDayStr) : null;
+  final timeText = activityDay != null ? formatSmartDate(activityDay) : null;
+  if (timeText == null) return '➕\n Tap to start';
 
   final amount = last.data['totalAmount'] ?? '';
   final unit = last.data['totalUnit'] ?? '';
-  return '$amount $unit at \n$timeText';
+  return '$amount $unit \nat $timeText';
+}
+
+String? getLastWeight(List<ActivityModel> activities){
+
+  final weightActivities = activities.where((a) =>
+  a.data.containsKey('weight') &&
+      a.data['weight'] != null &&
+      a.data['weight'].toString().trim().isNotEmpty
+  ).toList();
+  final last = getLastActivity(weightActivities);
+  if (last == null) return '➕\n Tap to start';
+
+  final activityDayStr = last.data['activityDay'];
+  final activityDay = activityDayStr != null ? DateTime.tryParse(activityDayStr) : null;
+  final timeText = activityDay != null ? formatSmartDate(activityDay) : null;
+  if (timeText == null) return '➕\n Tap to start';
+
+  final weight = last.data['weight'] ?? '';
+  final weightUnit = last.data['weightUnit'] ?? '';
+  return '$weight $weightUnit \nat $timeText';
+
+}
+
+String? getLastHeight(List<ActivityModel> activities){
+
+  final heightActivities = activities.where((a) =>
+  a.data.containsKey('height') &&
+      a.data['height'] != null &&
+      a.data['height'].toString().trim().isNotEmpty
+  ).toList();
+  final last = getLastActivity(heightActivities);
+  if (last == null) return '➕\n Tap to start';
+
+  final activityDayStr = last.data['activityDay'];
+  final activityDay = activityDayStr != null ? DateTime.tryParse(activityDayStr) : null;
+  final timeText = activityDay != null ? formatSmartDate(activityDay) : null;
+  if (timeText == null) return '➕\n Tap to start';
+
+  final height = last.data['height'] ?? '';
+  final heightUnit = last.data['heightUnit'] ?? '';
+  return '$height $heightUnit \nat $timeText';
+
+}
+
+String? getLastHeadSize(List<ActivityModel> activities){
+
+  final headSizeActivities = activities.where((a) =>
+  a.data.containsKey('headSize') &&
+      a.data['headSize'] != null &&
+      a.data['headSize'].toString().trim().isNotEmpty
+  ).toList();
+  final last = getLastActivity(headSizeActivities);
+  if (last == null) return '➕\n Tap to start';
+
+  final activityDayStr = last.data['activityDay'];
+  final activityDay = activityDayStr != null ? DateTime.tryParse(activityDayStr) : null;
+  final timeText = activityDay != null ? formatSmartDate(activityDay) : null;
+  if (timeText == null) return '➕\n Tap to start';
+
+  final headSize = last.data['headSize'] ?? '';
+  final headSizeUnit = last.data['headSizeUnit'] ?? '';
+  return '$headSize $headSizeUnit \nat $timeText';
+
 }
 
 String? formatSmartDate(DateTime time) {
