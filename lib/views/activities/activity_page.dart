@@ -65,518 +65,531 @@ class _ActivityPageState extends State<ActivityPage> {
                   );
                 }
               }
-              return Scaffold(
-                resizeToAvoidBottomInset: true,
-                body: SafeArea(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 24.w,
-                      vertical: 16.h,
-                    ),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ///
-                          /// Avatar Image, Age, 3 dots.
-                          ///
-                          Row(
+              return state is BabyLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : Scaffold(
+                    resizeToAvoidBottomInset: true,
+                    body: SafeArea(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 24.w,
+                          vertical: 16.h,
+                        ),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              CustomAvatar(
-                                size: 60.sp,
-                                imageUrl:
-                                    state is BabyLoaded
-                                        ? state.selectedBaby?.imageUrl
-                                        : null,
-                              ),
-                              SizedBox(width: 2.h),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              ///
+                              /// Avatar Image, Age, 3 dots.
+                              ///
+                              Row(
                                 children: [
-                                  DropdownButton<BabyModel>(
-                                    value:
+                                  CustomAvatar(
+                                    size: 60.sp,
+                                    imageUrl:
                                         state is BabyLoaded
-                                            ? state.selectedBaby
+                                            ? state.selectedBaby?.imageUrl
                                             : null,
-                                    items:
-                                        babiesList.map((baby) {
-                                          return DropdownMenuItem(
-                                            value: baby,
-                                            child: Text(baby.firstName),
-                                          );
-                                        }).toList(),
-                                    onChanged: (newBaby) {
-                                      if (newBaby != null) {
-                                        context.read<BabyBloc>().add(
-                                          SelectBaby(selectBabyModel: newBaby),
-                                        );
-                                      }
-                                    },
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.titleSmall!.copyWith(
-                                      color: Colors.black,
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.bold,
-                                    ),
                                   ),
-
-                                  RichText(
-                                    text: TextSpan(
-                                      text: 'Age: ',
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.titleSmall!.copyWith(
-                                        color: Colors.black,
-                                        fontSize: 14.sp,
+                                  SizedBox(width: 2.h),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      DropdownButton<BabyModel>(
+                                        value:
+                                            state is BabyLoaded
+                                                ? state.selectedBaby
+                                                : null,
+                                        items:
+                                            babiesList.map((baby) {
+                                              return DropdownMenuItem(
+                                                value: baby,
+                                                child: Text(baby.firstName),
+                                              );
+                                            }).toList(),
+                                        onChanged: (newBaby) {
+                                          if (newBaby != null) {
+                                            context.read<BabyBloc>().add(
+                                              SelectBaby(
+                                                selectBabyModel: newBaby,
+                                              ),
+                                            );
+                                          }
+                                        },
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.titleSmall!.copyWith(
+                                          color: Colors.black,
+                                          fontSize: 16.sp,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                      children: [
-                                        TextSpan(
-                                          text:
-                                              state is BabyLoaded
-                                                  ? calculateBabyAge(
-                                                    state
-                                                        .selectedBaby!
-                                                        .dateTime,
-                                                  )
-                                                  : 'unknown',
+
+                                      RichText(
+                                        text: TextSpan(
+                                          text: 'Age: ',
                                           style: Theme.of(
                                             context,
                                           ).textTheme.titleSmall!.copyWith(
-                                            color:
-                                                Theme.of(context).primaryColor,
+                                            color: Colors.black,
                                             fontSize: 14.sp,
-                                            fontWeight: FontWeight.bold,
                                           ),
+                                          children: [
+                                            TextSpan(
+                                              text:
+                                                  state is BabyLoaded
+                                                      ? calculateBabyAge(
+                                                        state
+                                                            .selectedBaby!
+                                                            .dateTime,
+                                                      )
+                                                      : 'unknown',
+                                              style: Theme.of(
+                                                context,
+                                              ).textTheme.titleSmall!.copyWith(
+                                                color:
+                                                    Theme.of(
+                                                      context,
+                                                    ).primaryColor,
+                                                fontSize: 14.sp,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      ],
+                                      ),
+                                    ],
+                                  ),
+                                  Spacer(),
+                                  IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(
+                                      Icons.today_outlined,
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(
+                                      Icons.more_horiz_outlined,
+                                      color: Theme.of(context).primaryColor,
                                     ),
                                   ),
                                 ],
                               ),
-                              Spacer(),
-                              IconButton(
-                                onPressed: () {},
-                                icon: Icon(
-                                  Icons.today_outlined,
-                                  color: Theme.of(context).primaryColor,
+
+                              SizedBox(height: 10.h),
+
+                              ///
+                              /// Today Summary
+                              ///
+                              SizedBox(
+                                width: double.infinity,
+                                height: 120.h,
+                                child: CustomTodaySummaryCard(
+                                  colorSummaryTitle: AppColors.summaryHeader,
+                                  colorSummaryBody: AppColors.summaryBody,
+                                  title: 'title',
+                                  babyID: babyID ?? '',
+                                  firstName: firstName ?? '',
                                 ),
                               ),
-                              IconButton(
-                                onPressed: () {},
-                                icon: Icon(
-                                  Icons.more_horiz_outlined,
-                                  color: Theme.of(context).primaryColor,
+
+                              SizedBox(height: 10.h),
+
+                              Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  'Track New Activity',
+                                  style: Theme.of(context).textTheme.titleMedium
+                                      ?.copyWith(fontWeight: FontWeight.w900),
                                 ),
                               ),
-                            ],
-                          ),
 
-                          SizedBox(height: 10.h),
-
-                          ///
-                          /// Today Summary
-                          ///
-                          SizedBox(
-                            width: double.infinity,
-                            height: 120.h,
-                            child: CustomTodaySummaryCard(color: AppColors.summaryColor, title: 'title', babyID: babyID??'', firstName: firstName??''),
-                          ),
-
-                          SizedBox(height: 10.h),
-
-                          Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              'Track New Activity',
-                              style: Theme.of(context).textTheme.titleMedium
-                                  ?.copyWith(fontWeight: FontWeight.w900),
-                            ),
-                          ),
-
-                          SizedBox(height: 10.h),
-
-                          ///
-                          /// Track New Activity
-                          ///
-                          GridView.count(
-                            crossAxisCount: 2,
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            crossAxisSpacing: 6.w,
-                            mainAxisSpacing: 6.h,
-                            childAspectRatio: 1.6,
-                            children: [
-                              ///
-                              /// Feed Activity
-                              ///
-                              CustomCard(
-                                color: AppColors.feedColor,
-                                title: 'Feed',
-                                babyID: babyID ?? '',
-                                firstName: firstName ?? '',
-                                imgUrl: 'assets/images/feed_icon.png',
-                                voidCallback: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    isScrollControlled: true,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(20.r),
-                                      ),
-                                    ),
-                                    builder:
-                                        (context) =>
-                                            CustomFeedTrackerBottomSheet(
-                                              babyID: babyID ?? '',
-                                              firstName: firstName ?? '',
-                                            ),
-                                  );
-                                  // showSleepTrackerBottomSheet(context);
-                                },
-                              ),
+                              SizedBox(height: 10.h),
 
                               ///
-                              /// Pump Activity
+                              /// Track New Activity
                               ///
-                              CustomCard(
-                                color: AppColors.pumpColor,
-                                title: 'Pump',
-                                babyID: babyID ?? '',
-                                firstName: firstName ?? '',
-                                imgUrl: 'assets/images/pump_icon.png',
-                                voidCallback: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    isScrollControlled: true,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(20.r),
-                                      ),
-                                    ),
-                                    builder:
-                                        (context) =>
-                                            CustomPumpTrackerBottomSheet(
-                                              babyID: babyID ?? '',
-                                              firstName: firstName ?? '',
-                                            ),
-                                  );
-                                  // showSleepTrackerBottomSheet(context);
-                                },
-                              ),
-
-                              ///
-                              /// Diaper Activity
-                              ///
-                              CustomCard(
-                                color: AppColors.diaperColor,
-                                title: 'Diaper',
-                                babyID: babyID ?? '',
-                                firstName: firstName ?? '',
-                                imgUrl: 'assets/images/diaper_icon.png',
-                                voidCallback: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    isScrollControlled: true,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(20.r),
-                                      ),
-                                    ),
-                                    builder:
-                                        (context) =>
-                                            CustomDiaperTrackerBottomSheet(
-                                              babyID: babyID ?? '',
-                                              firstName: firstName ?? '',
-                                            ),
-                                  );
-                                  // showSleepTrackerBottomSheet(context);
-                                },
-                              ),
-
-                              ///
-                              /// Sleep Activity
-                              ///
-                              CustomCard(
-                                color: AppColors.sleepColor,
-                                title: 'Sleep',
-                                babyID: babyID ?? '',
-                                firstName: firstName ?? '',
-                                imgUrl: 'assets/images/sleep_icon.png',
-                                voidCallback: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    isScrollControlled: true,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(20.r),
-                                      ),
-                                    ),
-                                    builder:
-                                        (context) =>
-                                            CustomSleepTrackerBottomSheet(
-                                              babyID: babyID ?? '',
-                                              firstName: firstName ?? '',
-                                            ),
-                                  );
-                                  // showSleepTrackerBottomSheet(context);
-                                },
-                              ),
-                            ],
-                          ),
-
-                          SizedBox(height: 10.h),
-
-                          Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              'Growth & Development',
-                              style: Theme.of(context).textTheme.titleMedium
-                                  ?.copyWith(fontWeight: FontWeight.w900),
-                            ),
-                          ),
-
-                          SizedBox(height: 10.h),
-
-                          ///
-                          /// Growth and Development
-                          ///
-                          SizedBox(
-                            width: double.infinity,
-                            height: 80.h,
-                            child: CustomizeGrowthCard(
-                              color: AppColors.growthColor,
-                              title: 'Weight',
-                              babyID: babyID ?? '',
-                              firstName: firstName ?? '',
-                              imgUrl: 'assets/images/growth_icon.png',
-                              voidCallback: () {
-                                showModalBottomSheet(
-                                  context: context,
-                                  isScrollControlled: true,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.vertical(
-                                      top: Radius.circular(20.r),
-                                    ),
-                                  ),
-                                  builder:
-                                      (context) =>
-                                          CustomGrowthDevelopmentTrackerBottomSheet(
-                                            babyID: babyID ?? '',
-                                            firstName: firstName ?? '',
+                              GridView.count(
+                                crossAxisCount: 2,
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                crossAxisSpacing: 6.w,
+                                mainAxisSpacing: 6.h,
+                                childAspectRatio: 1.6,
+                                children: [
+                                  ///
+                                  /// Feed Activity
+                                  ///
+                                  CustomCard(
+                                    color: AppColors.feedColor,
+                                    title: 'Feed',
+                                    babyID: babyID ?? '',
+                                    firstName: firstName ?? '',
+                                    imgUrl: 'assets/images/feed_icon.png',
+                                    voidCallback: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        isScrollControlled: true,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(20.r),
                                           ),
-                                );
-                              },
-                            ),
-                          ),
-
-                          SizedBox(height: 5.h),
-
-                          GridView.count(
-                            crossAxisCount: 2,
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            crossAxisSpacing: 6.w,
-                            mainAxisSpacing: 6.h,
-                            childAspectRatio: 1.6,
-                            children: [
-                              ///
-                              /// Feed Activity
-                              ///
-                              CustomCard(
-                                color: AppColors.babyFirstsColor,
-                                title: 'Baby Firsts',
-                                babyID: babyID ?? '',
-                                firstName: firstName ?? '',
-                                imgUrl: 'assets/images/baby_firsts_icon.png',
-                                voidCallback: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    isScrollControlled: true,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(20.r),
-                                      ),
-                                    ),
-                                    builder:
-                                        (context) =>
-                                        CustomBabyFirstsTrackerBottomSheet(
-                                          babyID: babyID ?? '',
-                                          firstName: firstName ?? '',
                                         ),
-                                  );
-                                  // showSleepTrackerBottomSheet(context);
-                                },
+                                        builder:
+                                            (context) =>
+                                                CustomFeedTrackerBottomSheet(
+                                                  babyID: babyID ?? '',
+                                                  firstName: firstName ?? '',
+                                                ),
+                                      );
+                                      // showSleepTrackerBottomSheet(context);
+                                    },
+                                  ),
+
+                                  ///
+                                  /// Pump Activity
+                                  ///
+                                  CustomCard(
+                                    color: AppColors.pumpColor,
+                                    title: 'Pump',
+                                    babyID: babyID ?? '',
+                                    firstName: firstName ?? '',
+                                    imgUrl: 'assets/images/pump_icon.png',
+                                    voidCallback: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        isScrollControlled: true,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(20.r),
+                                          ),
+                                        ),
+                                        builder:
+                                            (context) =>
+                                                CustomPumpTrackerBottomSheet(
+                                                  babyID: babyID ?? '',
+                                                  firstName: firstName ?? '',
+                                                ),
+                                      );
+                                      // showSleepTrackerBottomSheet(context);
+                                    },
+                                  ),
+
+                                  ///
+                                  /// Diaper Activity
+                                  ///
+                                  CustomCard(
+                                    color: AppColors.diaperColor,
+                                    title: 'Diaper',
+                                    babyID: babyID ?? '',
+                                    firstName: firstName ?? '',
+                                    imgUrl: 'assets/images/diaper_icon.png',
+                                    voidCallback: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        isScrollControlled: true,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(20.r),
+                                          ),
+                                        ),
+                                        builder:
+                                            (context) =>
+                                                CustomDiaperTrackerBottomSheet(
+                                                  babyID: babyID ?? '',
+                                                  firstName: firstName ?? '',
+                                                ),
+                                      );
+                                      // showSleepTrackerBottomSheet(context);
+                                    },
+                                  ),
+
+                                  ///
+                                  /// Sleep Activity
+                                  ///
+                                  CustomCard(
+                                    color: AppColors.sleepColor,
+                                    title: 'Sleep',
+                                    babyID: babyID ?? '',
+                                    firstName: firstName ?? '',
+                                    imgUrl: 'assets/images/sleep_icon.png',
+                                    voidCallback: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        isScrollControlled: true,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(20.r),
+                                          ),
+                                        ),
+                                        builder:
+                                            (context) =>
+                                                CustomSleepTrackerBottomSheet(
+                                                  babyID: babyID ?? '',
+                                                  firstName: firstName ?? '',
+                                                ),
+                                      );
+                                      // showSleepTrackerBottomSheet(context);
+                                    },
+                                  ),
+                                ],
                               ),
 
-                              ///
-                              /// Pump Activity
-                              ///
-                              CustomCard(
-                                color: AppColors.teethingColor,
-                                title: 'Teething',
-                                babyID: babyID ?? '',
-                                firstName: firstName ?? '',
-                                imgUrl: 'assets/images/teething_icon.png',
-                                voidCallback: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    isScrollControlled: true,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(20.r),
-                                      ),
-                                    ),
-                                    builder:
-                                        (context) =>
-                                        CustomTeethingTrackerBottomSheet(
-                                          babyID: babyID ?? '',
-                                          firstName: firstName ?? '',
-                                        ),
-                                  );
-                                  // showSleepTrackerBottomSheet(context);
-                                },
+                              SizedBox(height: 10.h),
+
+                              Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  'Growth & Development',
+                                  style: Theme.of(context).textTheme.titleMedium
+                                      ?.copyWith(fontWeight: FontWeight.w900),
+                                ),
                               ),
 
+                              SizedBox(height: 10.h),
+
+                              ///
+                              /// Growth and Development
+                              ///
+                              SizedBox(
+                                width: double.infinity,
+                                height: 80.h,
+                                child: CustomizeGrowthCard(
+                                  color: AppColors.growthColor,
+                                  title: 'Weight',
+                                  babyID: babyID ?? '',
+                                  firstName: firstName ?? '',
+                                  imgUrl: 'assets/images/growth_icon.png',
+                                  voidCallback: () {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(20.r),
+                                        ),
+                                      ),
+                                      builder:
+                                          (context) =>
+                                              CustomGrowthDevelopmentTrackerBottomSheet(
+                                                babyID: babyID ?? '',
+                                                firstName: firstName ?? '',
+                                              ),
+                                    );
+                                  },
+                                ),
+                              ),
+
+                              SizedBox(height: 5.h),
+
+                              GridView.count(
+                                crossAxisCount: 2,
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                crossAxisSpacing: 6.w,
+                                mainAxisSpacing: 6.h,
+                                childAspectRatio: 1.6,
+                                children: [
+                                  ///
+                                  /// Feed Activity
+                                  ///
+                                  CustomCard(
+                                    color: AppColors.babyFirstsColor,
+                                    title: 'Baby Firsts',
+                                    babyID: babyID ?? '',
+                                    firstName: firstName ?? '',
+                                    imgUrl:
+                                        'assets/images/baby_firsts_icon.png',
+                                    voidCallback: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        isScrollControlled: true,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(20.r),
+                                          ),
+                                        ),
+                                        builder:
+                                            (context) =>
+                                                CustomBabyFirstsTrackerBottomSheet(
+                                                  babyID: babyID ?? '',
+                                                  firstName: firstName ?? '',
+                                                ),
+                                      );
+                                      // showSleepTrackerBottomSheet(context);
+                                    },
+                                  ),
+
+                                  ///
+                                  /// Pump Activity
+                                  ///
+                                  CustomCard(
+                                    color: AppColors.teethingColor,
+                                    title: 'Teething',
+                                    babyID: babyID ?? '',
+                                    firstName: firstName ?? '',
+                                    imgUrl: 'assets/images/teething_icon.png',
+                                    voidCallback: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        isScrollControlled: true,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(20.r),
+                                          ),
+                                        ),
+                                        builder:
+                                            (context) =>
+                                                CustomTeethingTrackerBottomSheet(
+                                                  babyID: babyID ?? '',
+                                                  firstName: firstName ?? '',
+                                                ),
+                                      );
+                                      // showSleepTrackerBottomSheet(context);
+                                    },
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 10.h),
+
+                              Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  'Health',
+                                  style: Theme.of(context).textTheme.titleMedium
+                                      ?.copyWith(fontWeight: FontWeight.w900),
+                                ),
+                              ),
+
+                              GridView.count(
+                                crossAxisCount: 2,
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                crossAxisSpacing: 6.w,
+                                mainAxisSpacing: 6.h,
+                                childAspectRatio: 1.6,
+                                children: [
+                                  ///
+                                  /// Feed Activity
+                                  ///
+                                  CustomCard(
+                                    color: AppColors.medicalColor,
+                                    title: 'Medication',
+                                    babyID: babyID ?? '',
+                                    firstName: firstName ?? '',
+                                    imgUrl: 'assets/images/medication_icon.png',
+                                    voidCallback: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        isScrollControlled: true,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(20.r),
+                                          ),
+                                        ),
+                                        builder:
+                                            (context) =>
+                                                CustomMedicalTrackerBottomSheet(
+                                                  babyID: babyID ?? '',
+                                                  firstName: firstName ?? '',
+                                                ),
+                                      );
+                                      // showSleepTrackerBottomSheet(context);
+                                    },
+                                  ),
+
+                                  ///
+                                  /// Pump Activity
+                                  ///
+                                  CustomCard(
+                                    color: AppColors.doctorVisitColor,
+                                    title: 'Doctor Visit',
+                                    babyID: babyID ?? '',
+                                    firstName: firstName ?? '',
+                                    imgUrl:
+                                        'assets/images/doctor_visit_icon.png',
+                                    voidCallback: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        isScrollControlled: true,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(20.r),
+                                          ),
+                                        ),
+                                        builder:
+                                            (context) =>
+                                                CustomDoctorVisitTrackerBottomSheet(
+                                                  babyID: babyID ?? '',
+                                                  firstName: firstName ?? '',
+                                                ),
+                                      );
+                                      // showSleepTrackerBottomSheet(context);
+                                    },
+                                  ),
+
+                                  CustomCard(
+                                    color: AppColors.vaccineColor,
+                                    title: 'Vaccination',
+                                    babyID: babyID ?? '',
+                                    firstName: firstName ?? '',
+                                    imgUrl: 'assets/images/vaccine_icon.png',
+                                    voidCallback: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        isScrollControlled: true,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(20.r),
+                                          ),
+                                        ),
+                                        builder:
+                                            (context) =>
+                                                CustomVaccinationTrackerBottomSheet(
+                                                  babyID: babyID ?? '',
+                                                  firstName: firstName ?? '',
+                                                ),
+                                      );
+                                      // showSleepTrackerBottomSheet(context);
+                                    },
+                                  ),
+
+                                  CustomCard(
+                                    color: AppColors.feverTrackerColor,
+                                    title: 'Fever',
+                                    babyID: babyID ?? '',
+                                    firstName: firstName ?? '',
+                                    imgUrl: 'assets/images/fever_icon.png',
+                                    voidCallback: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        isScrollControlled: true,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(20.r),
+                                          ),
+                                        ),
+                                        builder:
+                                            (context) =>
+                                                CustomFeverTrackerBottomSheet(
+                                                  babyID: babyID ?? '',
+                                                  firstName: firstName ?? '',
+                                                ),
+                                      );
+                                      // showSleepTrackerBottomSheet(context);
+                                    },
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
-                          SizedBox(height: 10.h),
-
-                          Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              'Health',
-                              style: Theme.of(context).textTheme.titleMedium
-                                  ?.copyWith(fontWeight: FontWeight.w900),
-                            ),
-                          ),
-
-                          GridView.count(
-                            crossAxisCount: 2,
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            crossAxisSpacing: 6.w,
-                            mainAxisSpacing: 6.h,
-                            childAspectRatio: 1.6,
-                            children: [
-                              ///
-                              /// Feed Activity
-                              ///
-                              CustomCard(
-                                color: AppColors.medicalColor,
-                                title: 'Medication',
-                                babyID: babyID ?? '',
-                                firstName: firstName ?? '',
-                                imgUrl: 'assets/images/medication_icon.png',
-                                voidCallback: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    isScrollControlled: true,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(20.r),
-                                      ),
-                                    ),
-                                    builder:
-                                        (context) =>
-                                        CustomMedicalTrackerBottomSheet(
-                                          babyID: babyID ?? '',
-                                          firstName: firstName ?? '',
-                                        ),
-                                  );
-                                  // showSleepTrackerBottomSheet(context);
-                                },
-                              ),
-
-                              ///
-                              /// Pump Activity
-                              ///
-                              CustomCard(
-                                color: AppColors.doctorVisitColor,
-                                title: 'Doctor Visit',
-                                babyID: babyID ?? '',
-                                firstName: firstName ?? '',
-                                imgUrl: 'assets/images/doctor_visit_icon.png',
-                                voidCallback: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    isScrollControlled: true,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(20.r),
-                                      ),
-                                    ),
-                                    builder:
-                                        (context) =>
-                                        CustomDoctorVisitTrackerBottomSheet(
-                                          babyID: babyID ?? '',
-                                          firstName: firstName ?? '',
-                                        ),
-                                  );
-                                  // showSleepTrackerBottomSheet(context);
-                                },
-                              ),
-
-                              CustomCard(
-                                color: AppColors.vaccineColor,
-                                title: 'Vaccination',
-                                babyID: babyID ?? '',
-                                firstName: firstName ?? '',
-                                imgUrl: 'assets/images/vaccine_icon.png',
-                                voidCallback: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    isScrollControlled: true,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(20.r),
-                                      ),
-                                    ),
-                                    builder:
-                                        (context) =>
-                                        CustomVaccinationTrackerBottomSheet(
-                                          babyID: babyID ?? '',
-                                          firstName: firstName ?? '',
-                                        ),
-                                  );
-                                  // showSleepTrackerBottomSheet(context);
-                                },
-                              ),
-
-                              CustomCard(
-                                color: AppColors.feverTrackerColor,
-                                title: 'Fever',
-                                babyID: babyID ?? '',
-                                firstName: firstName ?? '',
-                                imgUrl: 'assets/images/fever_icon.png',
-                                voidCallback: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    isScrollControlled: true,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(20.r),
-                                      ),
-                                    ),
-                                    builder:
-                                        (context) =>
-                                        CustomFeverTrackerBottomSheet(
-                                          babyID: babyID ?? '',
-                                          firstName: firstName ?? '',
-                                        ),
-                                  );
-                                  // showSleepTrackerBottomSheet(context);
-                                },
-                              ),
-
-                            ],
-                          ),
-                        ],
+                        ),
                       ),
                     ),
-                  ),
-                ),
-              );
+                  );
             },
           ),
         );
