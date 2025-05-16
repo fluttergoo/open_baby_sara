@@ -34,6 +34,8 @@ class _CustomSleepTrackerBottomSheetState
   TimeOfDay? start;
   TimeOfDay? endTime;
   String? totalSleepTime;
+  DateTime? selectedDatetime = DateTime.now();
+
 
   TextEditingController notesController = TextEditingController();
 
@@ -302,6 +304,7 @@ class _CustomSleepTrackerBottomSheetState
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
           data: {
+            'activityDay' : selectedDatetime?.toIso8601String(),
             'startTimeHour': start?.hour,
             'startTimeMin': start?.minute,
             'endTimeHour': endTime?.hour,

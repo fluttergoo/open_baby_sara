@@ -58,6 +58,8 @@ class _CustomPumpTrackerBottomSheetState
   Duration? totalTotalTime;
   double? totalAmout;
   String? totalUnit;
+  DateTime? selectedDatetime = DateTime.now();
+
 
   TextEditingController notesController = TextEditingController();
   TextEditingController notesTotalController = TextEditingController();
@@ -275,6 +277,7 @@ class _CustomPumpTrackerBottomSheetState
             createdAt: DateTime.now(),
             updatedAt: DateTime.now(),
             data: {
+              'activityDay' : selectedDatetime?.toIso8601String(),
               'leftSideStartTimeHour':leftSideStartTime?.hour??0,
               'leftSideStartTimeMin':leftSideStartTime?.minute??0,
               'leftSideEndTimeHour':leftSideEndTime?.hour??0,
@@ -340,6 +343,7 @@ class _CustomPumpTrackerBottomSheetState
             createdAt: DateTime.now(),
             updatedAt: DateTime.now(),
             data: {
+              'activityDay' : selectedDatetime?.toIso8601String(),
               'totalStartTimeHour':totalStartTime?.hour,
               'totalStartTimeMin':totalStartTime?.minute,
               'totalEndTimeHour':totalEndTime?.hour,

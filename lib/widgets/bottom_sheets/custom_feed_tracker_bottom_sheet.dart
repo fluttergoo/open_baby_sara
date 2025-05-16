@@ -188,6 +188,7 @@ class _CustomFeedTrackerBottomSheetState
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
           data: {
+            'activityDay' : selectedDatetime.toIso8601String(),
             'startTimeHour': selectedDatetime?.hour,
             'startTimeMin': selectedDatetime?.minute,
             'notes': notesBottleFeedController.text,
@@ -231,6 +232,7 @@ class _CustomFeedTrackerBottomSheetState
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
           data: {
+            'activityDay' : selectedDatetime.toIso8601String(),
             'leftSideStartTimeHour':leftSideStartTime?.hour??0,
             'leftSideStartTimeMin':leftSideStartTime?.minute??0,
             'leftSideEndTimeHour':leftSideEndTime?.hour??0,

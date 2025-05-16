@@ -303,6 +303,7 @@ class _CustomMedicalTrackerBottomSheetState
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
       data: {
+        'activityDay' : selectedDatetime?.toIso8601String(),
         'startTimeHour': selectedDatetime?.hour,
         'startTimeMin': selectedDatetime?.minute,
         'notes': notesController.text,
