@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/activity/activity_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/auth/auth_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/baby/baby_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/core/app_colors.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/core/utils/shared_prefs_helper.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/baby_model.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_baby_firsts_tracker_bottom_sheet.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_diaper_tracker_bottom_sheet.dart';
@@ -17,6 +17,7 @@ import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_teething_tracker_bottom_sheet.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_vaccination_tracker_bottom_sheet.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_avatar.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_baby_header_card.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_card.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_pump_tracker_bottom_sheet.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_today_summary_card.dart';
@@ -33,13 +34,31 @@ class ActivityPage extends StatefulWidget {
 
 class _ActivityPageState extends State<ActivityPage> {
   List<BabyModel> babiesList = [];
-  String? babyID;
   String? firstName;
 
   @override
   void initState() {
-    super.initState();
     context.read<BabyBloc>().add(LoadBabies());
+    super.initState();
+
+  }
+
+  void initSelectedBaby() async {
+    final bloc = context.read<BabyBloc>();
+    bloc.add(LoadBabies());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final savedID = await SharedPrefsHelper.getSelectedBabyID();
+      final currentState = bloc.state;
+
+      if (savedID != null && currentState is BabyLoaded && currentState.selectedBaby == null) {
+        final matched = currentState.babies.firstWhere(
+              (b) => b.babyID == savedID,
+          orElse: () => currentState.babies.first,
+        );
+        bloc.add(SelectBaby(selectBabyModel: matched));
+      }
+    });
   }
 
   @override
@@ -50,20 +69,27 @@ class _ActivityPageState extends State<ActivityPage> {
           firstName = state.userModel.firstName;
         }
         return BlocListener<BabyBloc, BabyState>(
-          listener: (context, state) {},
+          listenWhen: (previous, current) => current is BabyLoaded,
+          listener: (context, state) async{
+            if (state is BabyLoaded) {
+              final savedID = await SharedPrefsHelper.getSelectedBabyID();
+              if (savedID != null) {
+                final alreadySelected = state.selectedBaby?.babyID == savedID;
+                if (!alreadySelected) {
+                  final matched = state.babies.firstWhere(
+                        (b) => b.babyID == savedID,
+                    orElse: () => state.babies.first,
+                  );
+                  context.read<BabyBloc>().add(SelectBaby(selectBabyModel: matched));
+                }
+              }
+            }
+          },
           child: BlocBuilder<BabyBloc, BabyState>(
             builder: (context, state) {
               if (state is BabyLoaded) {
                 babiesList = state.babies;
-                babyID = state.selectedBaby!.babyID;
-                if (babyID != null) {
-                  context.read<ActivityBloc>().add(
-                    FetchActivitySleepLoad(babyID: babyID!),
-                  );
-                  context.read<ActivityBloc>().add(
-                    FetchActivityPumpLoad(babyID: babyID!),
-                  );
-                }
+
               }
               return state is BabyLoading
                   ? Center(child: CircularProgressIndicator())
@@ -73,7 +99,7 @@ class _ActivityPageState extends State<ActivityPage> {
                       child: Padding(
                         padding: EdgeInsets.symmetric(
                           horizontal: 24.w,
-                          vertical: 16.h,
+                          vertical: 8.h,
                         ),
                         child: SingleChildScrollView(
                           child: Column(
@@ -82,104 +108,9 @@ class _ActivityPageState extends State<ActivityPage> {
                               ///
                               /// Avatar Image, Age, 3 dots.
                               ///
-                              Row(
-                                children: [
-                                  CustomAvatar(
-                                    size: 60.sp,
-                                    imageUrl:
-                                        state is BabyLoaded
-                                            ? state.selectedBaby?.imageUrl
-                                            : null,
-                                  ),
-                                  SizedBox(width: 2.h),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      DropdownButton<BabyModel>(
-                                        value:
-                                            state is BabyLoaded
-                                                ? state.selectedBaby
-                                                : null,
-                                        items:
-                                            babiesList.map((baby) {
-                                              return DropdownMenuItem(
-                                                value: baby,
-                                                child: Text(baby.firstName),
-                                              );
-                                            }).toList(),
-                                        onChanged: (newBaby) {
-                                          if (newBaby != null) {
-                                            context.read<BabyBloc>().add(
-                                              SelectBaby(
-                                                selectBabyModel: newBaby,
-                                              ),
-                                            );
-                                          }
-                                        },
-                                        style: Theme.of(
-                                          context,
-                                        ).textTheme.titleSmall!.copyWith(
-                                          color: Colors.black,
-                                          fontSize: 16.sp,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-
-                                      RichText(
-                                        text: TextSpan(
-                                          text: 'Age: ',
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.titleSmall!.copyWith(
-                                            color: Colors.black,
-                                            fontSize: 14.sp,
-                                          ),
-                                          children: [
-                                            TextSpan(
-                                              text:
-                                                  state is BabyLoaded
-                                                      ? calculateBabyAge(
-                                                        state
-                                                            .selectedBaby!
-                                                            .dateTime,
-                                                      )
-                                                      : 'unknown',
-                                              style: Theme.of(
-                                                context,
-                                              ).textTheme.titleSmall!.copyWith(
-                                                color:
-                                                    Theme.of(
-                                                      context,
-                                                    ).primaryColor,
-                                                fontSize: 14.sp,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Spacer(),
-                                  IconButton(
-                                    onPressed: () {},
-                                    icon: Icon(
-                                      Icons.today_outlined,
-                                      color: Theme.of(context).primaryColor,
-                                    ),
-                                  ),
-                                  IconButton(
-                                    onPressed: () {},
-                                    icon: Icon(
-                                      Icons.more_horiz_outlined,
-                                      color: Theme.of(context).primaryColor,
-                                    ),
-                                  ),
-                                ],
+                              CustomBabyHeaderCard(
+                                babiesList: babiesList,
                               ),
-
-                              SizedBox(height: 10.h),
 
                               ///
                               /// Today Summary
@@ -191,7 +122,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                   colorSummaryTitle: AppColors.summaryHeader,
                                   colorSummaryBody: AppColors.summaryBody,
                                   title: 'title',
-                                  babyID: babyID ?? '',
+                                  babyID: state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                   firstName: firstName ?? '',
                                 ),
                               ),
@@ -226,7 +157,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                   CustomCard(
                                     color: AppColors.feedColor,
                                     title: 'Feed',
-                                    babyID: babyID ?? '',
+                                    babyID: state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                     firstName: firstName ?? '',
                                     imgUrl: 'assets/images/feed_icon.png',
                                     voidCallback: () {
@@ -241,7 +172,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                         builder:
                                             (context) =>
                                                 CustomFeedTrackerBottomSheet(
-                                                  babyID: babyID ?? '',
+                                                  babyID: state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                                   firstName: firstName ?? '',
                                                 ),
                                       );
@@ -255,7 +186,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                   CustomCard(
                                     color: AppColors.pumpColor,
                                     title: 'Pump',
-                                    babyID: babyID ?? '',
+                                    babyID: state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                     firstName: firstName ?? '',
                                     imgUrl: 'assets/images/pump_icon.png',
                                     voidCallback: () {
@@ -270,7 +201,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                         builder:
                                             (context) =>
                                                 CustomPumpTrackerBottomSheet(
-                                                  babyID: babyID ?? '',
+                                                  babyID: state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                                   firstName: firstName ?? '',
                                                 ),
                                       );
@@ -284,7 +215,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                   CustomCard(
                                     color: AppColors.diaperColor,
                                     title: 'Diaper',
-                                    babyID: babyID ?? '',
+                                    babyID: state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                     firstName: firstName ?? '',
                                     imgUrl: 'assets/images/diaper_icon.png',
                                     voidCallback: () {
@@ -299,7 +230,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                         builder:
                                             (context) =>
                                                 CustomDiaperTrackerBottomSheet(
-                                                  babyID: babyID ?? '',
+                                                  babyID: state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                                   firstName: firstName ?? '',
                                                 ),
                                       );
@@ -313,7 +244,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                   CustomCard(
                                     color: AppColors.sleepColor,
                                     title: 'Sleep',
-                                    babyID: babyID ?? '',
+                                    babyID: state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                     firstName: firstName ?? '',
                                     imgUrl: 'assets/images/sleep_icon.png',
                                     voidCallback: () {
@@ -328,7 +259,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                         builder:
                                             (context) =>
                                                 CustomSleepTrackerBottomSheet(
-                                                  babyID: babyID ?? '',
+                                                  babyID: state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                                   firstName: firstName ?? '',
                                                 ),
                                       );
@@ -360,7 +291,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                 child: CustomizeGrowthCard(
                                   color: AppColors.growthColor,
                                   title: 'Weight',
-                                  babyID: babyID ?? '',
+                                  babyID: state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                   firstName: firstName ?? '',
                                   imgUrl: 'assets/images/growth_icon.png',
                                   voidCallback: () {
@@ -375,7 +306,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                       builder:
                                           (context) =>
                                               CustomGrowthDevelopmentTrackerBottomSheet(
-                                                babyID: babyID ?? '',
+                                                babyID: state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                                 firstName: firstName ?? '',
                                               ),
                                     );
@@ -399,7 +330,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                   CustomCard(
                                     color: AppColors.babyFirstsColor,
                                     title: 'Baby Firsts',
-                                    babyID: babyID ?? '',
+                                    babyID: state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                     firstName: firstName ?? '',
                                     imgUrl:
                                         'assets/images/baby_firsts_icon.png',
@@ -415,7 +346,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                         builder:
                                             (context) =>
                                                 CustomBabyFirstsTrackerBottomSheet(
-                                                  babyID: babyID ?? '',
+                                                  babyID: state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                                   firstName: firstName ?? '',
                                                 ),
                                       );
@@ -429,7 +360,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                   CustomCard(
                                     color: AppColors.teethingColor,
                                     title: 'Teething',
-                                    babyID: babyID ?? '',
+                                    babyID: state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                     firstName: firstName ?? '',
                                     imgUrl: 'assets/images/teething_icon.png',
                                     voidCallback: () {
@@ -444,7 +375,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                         builder:
                                             (context) =>
                                                 CustomTeethingTrackerBottomSheet(
-                                                  babyID: babyID ?? '',
+                                                  babyID: state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                                   firstName: firstName ?? '',
                                                 ),
                                       );
@@ -478,7 +409,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                   CustomCard(
                                     color: AppColors.medicalColor,
                                     title: 'Medication',
-                                    babyID: babyID ?? '',
+                                    babyID: state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                     firstName: firstName ?? '',
                                     imgUrl: 'assets/images/medication_icon.png',
                                     voidCallback: () {
@@ -493,7 +424,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                         builder:
                                             (context) =>
                                                 CustomMedicalTrackerBottomSheet(
-                                                  babyID: babyID ?? '',
+                                                  babyID: state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                                   firstName: firstName ?? '',
                                                 ),
                                       );
@@ -507,7 +438,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                   CustomCard(
                                     color: AppColors.doctorVisitColor,
                                     title: 'Doctor Visit',
-                                    babyID: babyID ?? '',
+                                    babyID:state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                     firstName: firstName ?? '',
                                     imgUrl:
                                         'assets/images/doctor_visit_icon.png',
@@ -523,7 +454,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                         builder:
                                             (context) =>
                                                 CustomDoctorVisitTrackerBottomSheet(
-                                                  babyID: babyID ?? '',
+                                                  babyID: state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                                   firstName: firstName ?? '',
                                                 ),
                                       );
@@ -534,7 +465,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                   CustomCard(
                                     color: AppColors.vaccineColor,
                                     title: 'Vaccination',
-                                    babyID: babyID ?? '',
+                                    babyID: state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                     firstName: firstName ?? '',
                                     imgUrl: 'assets/images/vaccine_icon.png',
                                     voidCallback: () {
@@ -549,7 +480,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                         builder:
                                             (context) =>
                                                 CustomVaccinationTrackerBottomSheet(
-                                                  babyID: babyID ?? '',
+                                                  babyID: state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                                   firstName: firstName ?? '',
                                                 ),
                                       );
@@ -560,7 +491,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                   CustomCard(
                                     color: AppColors.feverTrackerColor,
                                     title: 'Fever',
-                                    babyID: babyID ?? '',
+                                    babyID: state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                     firstName: firstName ?? '',
                                     imgUrl: 'assets/images/fever_icon.png',
                                     voidCallback: () {
@@ -575,7 +506,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                         builder:
                                             (context) =>
                                                 CustomFeverTrackerBottomSheet(
-                                                  babyID: babyID ?? '',
+                                                  babyID: state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                                   firstName: firstName ?? '',
                                                 ),
                                       );
@@ -634,4 +565,5 @@ class _ActivityPageState extends State<ActivityPage> {
 
     return age.isEmpty ? '0 day' : age;
   }
+
 }
