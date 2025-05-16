@@ -15,4 +15,6 @@ abstract class ActivityRepository {
     String babyID,
     String activityType,
   );
+
+  Future<List<ActivityModel>?> fetchActivity(DateTime datetime,String babyID);
 }

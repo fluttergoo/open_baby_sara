@@ -87,4 +87,18 @@ class ActivityRepositoryImpl extends ActivityRepository {
 
     return result.map((e) => ActivityModel.fromSqlite(e)).toList();
   }
+
+  @override
+  Future<List<ActivityModel>?> fetchActivity(DateTime day, String babyID) async{
+    final startOfDay = DateTime(day.year, day.month, day.day);
+    final endOfDay = startOfDay.add(const Duration(days: 1));
+
+    final result = await database.query(
+      'activities',
+      where: 'updatedAt >= ? AND updatedAt <= ? AND babyID =?',
+      whereArgs: [startOfDay.toIso8601String(), endOfDay.toIso8601String(), babyID],
+    );
+    return result.map((e)=> ActivityModel.fromSqlite(e)).toList();
+    
+  }
 }
