@@ -43,8 +43,10 @@ class BabyBloc extends Bloc<BabyEvent, BabyState> {
       await _babyRepository.createBaby(baby);
       emit(BabySuccess());
     });
-    //TODO: Get Babies is performance issue!
+
+    // Fetch babies from user account...
     on<LoadBabies>((event, emit) async {
+      emit(BabyLoading());
       final babies = await _babyRepository.getBabies();
       emit(
         BabyLoaded(
