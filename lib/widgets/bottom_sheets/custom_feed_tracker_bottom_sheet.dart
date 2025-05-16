@@ -192,6 +192,8 @@ class _CustomFeedTrackerBottomSheetState
             'startTimeMin': selectedDatetime?.minute,
             'notes': notesBottleFeedController.text,
             'mainSelection': selectedMainActivity,
+            'totalAmount':feedAmout,
+            'totalUnit': feedUnit,
           },
           isSynced: false,
           createdBy: widget.firstName,
