@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/core/app_colors.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomAvatar extends StatefulWidget {
   String? imageUrl;
@@ -37,7 +39,7 @@ class _CustomAvatarState extends State<CustomAvatar> {
         height: widget.size,
         margin: const EdgeInsets.only(top: 16, right: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.vaccineColor,
           shape: BoxShape.circle,
           boxShadow: const [
             BoxShadow(
@@ -47,8 +49,8 @@ class _CustomAvatarState extends State<CustomAvatar> {
             ),
           ],
           border: Border.all(
-            color: Theme.of(context).primaryColor,
-            width: 2,
+            color: Colors.white,
+            width: 3.w,
           ),
         ),
         child: Stack(
