@@ -77,3 +77,8 @@ class ActivitiesWithDateLoaded extends ActivityState {
     required this.feedActivities,
   });
 }
+
+class ActivityByDateRangeLoaded extends ActivityState{
+final List<ActivityModel> activities;
+  ActivityByDateRangeLoaded({required this.activities});
+}

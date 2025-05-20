@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/core/constant/activity_constants.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/core/locator.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/activity_model.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/activity_reposityory.dart';
@@ -154,6 +155,26 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
       } catch (e) {
         emit(ActivityError('Error, ${e.toString()}'));
       }
+    });
+    on<LoadActivitiesByDateRange>((event,emit)async{
+      emit(ActivityLoading());
+
+      try{
+        final selectedDisplayType = event.activityType ?? 'All Activities';
+        final dbTypes = activityTypeMap[selectedDisplayType] ?? [];
+
+        final results = await _activityRepository.fetchActivityByDateRange(
+          start: event.startDay,
+          end: event.endDay,
+          babyID: event.babyID,
+          activityTypes: dbTypes.isEmpty ? null : dbTypes, // all activities
+        );
+        emit(ActivityByDateRangeLoaded(activities: results ?? []));
+
+      }catch (e){
+        emit(ActivityError('Error, ${e.toString()}'));
+      }
+
     });
   }
 }

@@ -44,6 +44,13 @@ class LoadActivitiesWithDate extends ActivityEvent{
   final DateTime day;
 
   LoadActivitiesWithDate({required this.babyID, required this.day});
+}
 
+class LoadActivitiesByDateRange extends ActivityEvent{
+  final String babyID;
+  final DateTime startDay;
+  final DateTime endDay;
+  final String? activityType;
 
+  LoadActivitiesByDateRange({required this.babyID, required this.startDay, required this.endDay,  this.activityType});
 }
