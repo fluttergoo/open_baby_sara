@@ -40,26 +40,9 @@ class _ActivityPageState extends State<ActivityPage> {
   void initState() {
     context.read<BabyBloc>().add(LoadBabies());
     super.initState();
-
   }
 
-  void initSelectedBaby() async {
-    final bloc = context.read<BabyBloc>();
-    bloc.add(LoadBabies());
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final savedID = await SharedPrefsHelper.getSelectedBabyID();
-      final currentState = bloc.state;
-
-      if (savedID != null && currentState is BabyLoaded && currentState.selectedBaby == null) {
-        final matched = currentState.babies.firstWhere(
-              (b) => b.babyID == savedID,
-          orElse: () => currentState.babies.first,
-        );
-        bloc.add(SelectBaby(selectBabyModel: matched));
-      }
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
