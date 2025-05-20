@@ -16,5 +16,8 @@ abstract class ActivityRepository {
     String activityType,
   );
 
-  Future<List<ActivityModel>?> fetchActivity(DateTime datetime,String babyID);
+  Future<List<ActivityModel>?> fetchActivity(DateTime datetime, String babyID);
+
+  Future<List<ActivityModel>?> fetchActivityByDateRange({required DateTime start, required DateTime end, required String babyID, List<String>? activityTypes,});
+
 }

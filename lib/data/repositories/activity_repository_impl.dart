@@ -101,4 +101,43 @@ class ActivityRepositoryImpl extends ActivityRepository {
     return result.map((e)=> ActivityModel.fromSqlite(e)).toList();
     
   }
+
+  @override
+  Future<List<ActivityModel>?> fetchActivityByDateRange({
+    required DateTime start,
+    required DateTime end,
+    required String babyID,
+    List<String>? activityTypes
+  }) async {
+    final startOfRange = DateTime(start.year, start.month, start.day);
+    final endOfRange = DateTime(end.year, end.month, end.day, 23, 59, 59);
+
+    final whereClauses = <String>[
+      'updatedAt >= ?',
+      'updatedAt <= ?',
+      'babyID = ?',
+    ];
+    final whereArgs = <dynamic>[
+      startOfRange.toIso8601String(),
+      endOfRange.toIso8601String(),
+      babyID,
+    ];
+
+    if (activityTypes != null && activityTypes.isNotEmpty) {
+      final placeholders = List.filled(activityTypes.length, '?').join(', ');
+      whereClauses.add('activityType IN ($placeholders)');
+      whereArgs.addAll(activityTypes);
+    }
+
+    final result = await database.query(
+      'activities',
+      where: whereClauses.join(' AND '),
+      whereArgs: whereArgs,
+      orderBy: 'updatedAt DESC',
+    );
+
+    return result.map((e) => ActivityModel.fromSqlite(e)).toList();
+  }
+
+
 }
