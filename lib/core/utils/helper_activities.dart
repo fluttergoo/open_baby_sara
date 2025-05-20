@@ -1,4 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/core/constant/iso_tooth_descriptions_constants.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/activity_model.dart';
 
 /// Calculates the total feed amount from a list of feed activities.
@@ -212,6 +214,69 @@ String? getLastHeadSize(List<ActivityModel> activities){
 
 }
 
+String? getLastBabyFirstsSummary(List<ActivityModel> activities,BuildContext context,) {
+  final last = getLastActivity(activities);
+  if (last == null) return '➕ Tap to start';
+
+  final activityDayStr = last.data['activityDay'];
+  final activityDay = activityDayStr != null ? DateTime.tryParse(activityDayStr) : null;
+  final timeText = activityDay != null ? formatSmartDate(activityDay) : null;
+  if (timeText == null) return '➕\n Tap to start';
+
+  final milestoneTitle = (last.data['milestoneTitle'] ?? []).join(' & ');
+  final milestoneDesc = (last.data['milestoneDesc'] ?? []).join(' & ');
+
+  return '${context.tr(milestoneTitle)}\n${context.tr(milestoneDesc)}';
+
+}
+
+
+String? getLastTeethingSummary(
+    List<ActivityModel> activities,
+    BuildContext context,
+    ) {
+  final last = getLastActivity(activities);
+  if (last == null) return '➕ Tap to start';
+
+  final activityDayStr = last.data['activityDay'];
+  final activityDay = activityDayStr != null ? DateTime.tryParse(activityDayStr) : null;
+  final timeText = activityDay != null ? formatSmartDate(activityDay) : null;
+  if (timeText == null) return '➕\nTap to start';
+
+  final rawTeethingData = last.data['teethingIsoNumber'];
+  List<String> teethingNumbers;
+
+  if (rawTeethingData is List) {
+    teethingNumbers = rawTeethingData.map((e) => e.toString()).toList();
+  } else if (rawTeethingData is String) {
+    teethingNumbers = rawTeethingData.split(',').map((e) => e.trim()).toList();
+  } else {
+    teethingNumbers = [];
+  }
+
+  final isErupted = last.data['isErupted'] == true;
+  final isShed = last.data['isShed'] == true;
+
+  String status = '';
+  if (isErupted) {
+    status = context.tr('Tooth erupted');
+  } else if (isShed) {
+    status = context.tr('Tooth shed');
+  } else {
+    status = context.tr('Teething activity');
+  }
+
+  final List<String> descriptions = teethingNumbers.map((num) {
+    return isoToothDescriptions[num] ?? 'Tooth $num';
+  }).toList();
+
+  final descriptionText = descriptions.join(', ');
+
+  return '$status\n$descriptionText';
+}
+
+
+
 String? formatSmartDate(DateTime time) {
   final now = DateTime.now();
   final today = DateTime(now.year, now.month, now.day);
@@ -230,4 +295,177 @@ String? formatSmartDate(DateTime time) {
   } else {
     return DateFormat('MMM d, h:mm a').format(time); // Örn: May 10, 2:30 PM
   }
+}
+
+String? getActivitySummary(ActivityModel activity, BuildContext context) {
+  switch (activity.activityType) {
+    case 'feed':
+    case 'breastFeed':
+    case 'bottleFeed':
+    case 'solids':
+      return getLastFeedSummary([activity]);
+
+    case 'pumpLeftRight':
+    case 'pumpTotal':
+      return getLastPumpSummary([activity]);
+
+    case 'sleep':
+      return getLastSleepSummary([activity]);
+
+    case 'diaper':
+      return getLastDiaperSummary([activity]);
+
+    case 'medication':
+      return getLastMedicationSummary([activity]);
+    case 'growth':
+      final weightSummary = getLastGrowthMetricSummary(
+        activities: [activity],
+        fieldKey: 'weight',
+        unitKey: 'weightUnit',
+      );
+
+      final heightSummary = getLastGrowthMetricSummary(
+        activities: [activity],
+        fieldKey: 'height',
+        unitKey: 'heightUnit',
+      );
+
+      final headSizeSummary = getLastGrowthMetricSummary(
+        activities: [activity],
+        fieldKey: 'headSize',
+        unitKey: 'headSizeUnit',
+      );
+
+      final parts = [
+        if (weightSummary != null && weightSummary.isNotEmpty) 'Weight: $weightSummary',
+        if (heightSummary != null && heightSummary.isNotEmpty) 'Height: $heightSummary',
+        if (headSizeSummary != null && headSizeSummary.isNotEmpty) 'Head Size: $headSizeSummary',
+      ];
+      return parts.join('\n');
+    case 'babyFirsts':
+      return getLastBabyFirstsSummary([activity], context);
+    case 'teething':
+      return getLastTeethingSummary([activity], context);
+    case 'vaccination':
+      return getLastVaccinationSummary([activity] );
+    case 'doctorVisit':
+      return getLastDoctorVisitSummary([activity]);
+    case 'fever':
+      return getLastFeverSummary([activity]);
+
+    default:
+      return 'Recorded';
+  }
+}
+
+String? getLastFeverSummary(List<ActivityModel> activities) {
+  final last = getLastActivity(activities);
+  if (last == null) return '➕ Tap to start';
+
+  final activityDayStr = last.data['activityDay'];
+  final activityDay = activityDayStr != null ? DateTime.tryParse(activityDayStr) : null;
+  final timeText = activityDay != null ? formatSmartDate(activityDay) : null;
+  if (timeText == null) return '➕ Tap to start';
+
+  final temperature = last.data['temperature']?.toString();
+  final unit = last.data['temperatureUnit']?.toString();
+
+  if (temperature == null || temperature.isEmpty) {
+    return '➕ Tap to start';
+  }
+
+  return '$temperature $unit';
+}
+
+String? getLastVaccinationSummary(List<ActivityModel> activities) {
+  final last = getLastActivity(activities);
+  if (last == null) return '➕ Tap to start';
+
+  final activityDayStr = last.data['activityDay'];
+  final activityDay = activityDayStr != null ? DateTime.tryParse(activityDayStr) : null;
+  final timeText = activityDay != null ? formatSmartDate(activityDay) : null;
+  if (timeText == null) return '➕ Tap to start';
+
+  final vaccinations = (last.data['medications'] as List<dynamic>?)
+      ?.map((e) => e['name'] as String?)
+      .where((name) => name != null && name.trim().isNotEmpty)
+      .toList();
+
+  if (vaccinations == null || vaccinations.isEmpty) {
+    return '➕ Tap to start';
+  }
+
+  final vaccinationNames = vaccinations.join(', ');
+  return vaccinationNames;
+}
+
+String? getLastDoctorVisitSummary(List<ActivityModel> activities) {
+  final last = getLastActivity(activities);
+  if (last == null) return '➕ Tap to start';
+
+  final activityDayStr = last.data['activityDay'];
+  final activityDay = activityDayStr != null ? DateTime.tryParse(activityDayStr) : null;
+  final timeText = activityDay != null ? formatSmartDate(activityDay) : null;
+  if (timeText == null) return '➕\n Tap to start';
+
+  final reason = last.data['reason'] ?? '';
+  final reaction = last.data['reaction'] ?? '';
+  final diagnosis = last.data['diagnosis'] ?? '';
+  final notes = last.data['notes'] ?? '';
+
+  final parts = <String>[];
+  if (reason.toString().isNotEmpty) parts.add('Reason: $reason');
+  if (reaction.toString().isNotEmpty) parts.add('Reaction: $reaction');
+  if (diagnosis.toString().isNotEmpty) parts.add('Diagnosis: $diagnosis');
+  if (notes.toString().isNotEmpty) parts.add('Notes: $notes');
+
+  final joined = parts.join(' • ');
+
+  return joined.isEmpty ? '➕ Tap to start' : joined;
+}
+
+String? getLastMedicationSummary(List<ActivityModel> list) {
+
+    final last = getLastActivity(list);
+    if (last == null) return '➕ Tap to start';
+
+    final activityDayStr = last.data['activityDay'];
+    final activityDay = activityDayStr != null ? DateTime.tryParse(activityDayStr) : null;
+    final timeText = activityDay != null ? formatSmartDate(activityDay) : null;
+    if (timeText == null) return '➕\n Tap to start';
+
+    final List<dynamic>? meds = last.data['medications'];
+    if (meds == null || meds.isEmpty) return 'No medication details';
+
+    final medsSummary = meds.map((med) {
+      final name = med['name'] ?? '';
+      final amount = med['amount'] ?? '';
+      final unit = med['unit'] ?? '';
+      return '$name: $amount $unit';
+    }).join(', ');
+
+    return '$medsSummary ';
+  }
+
+
+
+getLastGrowthMetricSummary({required List<ActivityModel> activities, required String fieldKey, required String unitKey}) {
+  final filtered = activities.where((a) =>
+  a.data.containsKey(fieldKey) &&
+      a.data[fieldKey] != null &&
+      a.data[fieldKey].toString().trim().isNotEmpty
+  ).toList();
+
+  final last = getLastActivity(filtered);
+  if (last == null) return null;
+
+  final dateStr = last.data['activityDay'];
+  final date = dateStr != null ? DateTime.tryParse(dateStr) : null;
+  final timeText = date != null ? formatSmartDate(date) : null;
+  if (timeText == null) return null;
+
+  final value = last.data[fieldKey]?.toString() ?? '';
+  final unit = last.data[unitKey]?.toString() ?? '';
+
+  return '$value $unit';
 }
