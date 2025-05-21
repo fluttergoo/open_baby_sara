@@ -26,6 +26,54 @@
       "languageVersion": "3.4"
     },
     {
+      "name": "audio_session",
+      "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/audio_session-0.2.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.6"
+    },
+    {
+      "name": "audioplayers",
+      "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/audioplayers-6.4.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "audioplayers_android",
+      "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/audioplayers_android-5.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "audioplayers_darwin",
+      "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/audioplayers_darwin-6.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "audioplayers_linux",
+      "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/audioplayers_linux-4.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "audioplayers_platform_interface",
+      "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/audioplayers_platform_interface-7.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "audioplayers_web",
+      "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/audioplayers_web-5.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "audioplayers_windows",
+      "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/audioplayers_windows-4.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "bloc",
       "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/bloc-9.0.0",
       "packageUri": "lib/",
@@ -428,6 +476,24 @@
       "languageVersion": "2.17"
     },
     {
+      "name": "just_audio",
+      "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/just_audio-0.10.3",
+      "packageUri": "lib/",
+      "languageVersion": "3.6"
+    },
+    {
+      "name": "just_audio_platform_interface",
+      "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/just_audio_platform_interface-4.5.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "just_audio_web",
+      "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/just_audio_web-0.4.16",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
       "name": "keyboard_actions",
       "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/keyboard_actions-4.2.0",
       "packageUri": "lib/",
@@ -568,6 +634,12 @@
     {
       "name": "provider",
       "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/provider-6.1.4",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "rxdart",
+      "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/rxdart-0.28.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -764,7 +836,7 @@
       "languageVersion": "3.7"
     }
   ],
-  "generated": "2025-05-19T22:26:27.031359Z",
+  "generated": "2025-05-21T00:47:07.409918Z",
   "generator": "pub",
   "generatorVersion": "3.7.2",
   "flutterRoot": "file:///Users/suleymansurucu/development/flutter",

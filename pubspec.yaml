@@ -59,6 +59,8 @@ dependencies:
   keyboard_actions: ^4.2.0
   teeth_selector: ^0.2.2
   table_calendar: ^3.1.3
+  just_audio: ^0.10.3
+  audioplayers: ^6.4.0
 
 
 
@@ -90,6 +92,8 @@ flutter:
    - assets/icons/
    - lib/l10n/
    - assets/data/
+   - assets/sounds/
+
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

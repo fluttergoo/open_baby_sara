@@ -49,5 +49,12 @@
     <string>We need access to your photo library to select baby images.</string>
     <key>NSCameraUsageDescription</key>
     <string>We need access to your camera to take baby pictures.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>This app uses the microphone for audio playback</string>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+      <key>NSAllowsArbitraryLoads</key>
+      <true/>
+    </dict>
 </dict>
 </plist>
