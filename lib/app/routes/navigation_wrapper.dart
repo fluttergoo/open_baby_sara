@@ -6,7 +6,7 @@ import 'package:flutter_sara_baby_tracker_and_sound/views/account/account_page.d
 import 'package:flutter_sara_baby_tracker_and_sound/views/activities/activity_page.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/views/history/history_page.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/views/food_recipes/recipes_page.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/views/background_sounds/sounds_page.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/views/background_sounds/baby_relaxing_sounds_page.dart';
 
 class NavigationWrapper extends StatelessWidget {
   const NavigationWrapper({super.key});
@@ -15,7 +15,7 @@ class NavigationWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<Widget> _pages = [
       HistoryPage(),
-      SoundsPage(),
+      BabyRelaxingSoundsPage(),
       ActivityPage(),
       RecipesPage(),
       AccountPage(),
