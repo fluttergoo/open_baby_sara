@@ -114,8 +114,8 @@ class _UnitInputFieldWithToggleState extends State<UnitInputFieldWithToggle> {
             isSelected: [isOzSelected, !isOzSelected],
             borderRadius: BorderRadius.circular(10),
             selectedColor: Colors.white,
-            fillColor: Theme.of(context).primaryColor,
-            color: Theme.of(context).primaryColor,
+            fillColor: Colors.deepPurple.shade300,
+            color: Colors.deepPurple.shade300,
             onPressed: handleToggleChange,
             children: const [
               Text('oz'),
