@@ -46,8 +46,8 @@ class _FormulaBreastmilkSelectorState extends State<FormulaBreastmilkSelector> {
           child: Text(
             label,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: isSelected ? Colors.white : Theme.of(context).primaryColor,
-              fontWeight: FontWeight.bold,
+              color: isSelected ? Colors.white : Theme.of(context).primaryColor, fontSize: 16.sp
+              // fontWeight: FontWeight.bold,
             ),
           ),
         ),
