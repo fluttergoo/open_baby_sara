@@ -2,7 +2,7 @@ class RelaxingSoundModel {
   final String title;
   final String assetPath;
   final String iconAssetPath;
-  bool isPlaying;
+  int isPlaying;
 
-  RelaxingSoundModel({required this.title,required this.iconAssetPath, required this.assetPath, this.isPlaying = false});
+  RelaxingSoundModel({required this.title,required this.iconAssetPath, required this.assetPath, this.isPlaying = 0});
 }
