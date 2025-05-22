@@ -48,6 +48,9 @@ class LocalDatabaseService {
         await db.execute(
           '''CREATE TABLE vaccinations(id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT)''',
         );
+        await db.execute(
+          '''CREATE TABLE relaxing_sound(id INTEGER PRIMARY KEY,sound_index INTEGER, isRunning INTEGER)''',
+        );
 
       },
     );
