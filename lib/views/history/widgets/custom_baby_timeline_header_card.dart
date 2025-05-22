@@ -31,7 +31,7 @@ class _CustomBabyTimelineHeaderCardState
   DateTime? _rangeStart;
   DateTime? _rangeEnd;
   String? _selectedActivityType = 'All Activities';
-  String _selectedRangeLabel = 'Last 1 Day';
+  String _selectedRangeLabel = 'Last 7 Days';
   String? _customRangeLabel;
 
   final activityTypes = activityTypeMap.keys.toList();
