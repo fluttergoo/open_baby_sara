@@ -187,8 +187,8 @@ class _CustomInputFieldWithToggleState
       onPressed: handleToggleChange,
       borderRadius: BorderRadius.circular(10),
       selectedColor: Colors.white,
-      fillColor: Theme.of(context).primaryColor,
-      color: Theme.of(context).primaryColor,
+      fillColor: Colors.deepPurpleAccent.shade100,
+      color: Colors.deepPurpleAccent.shade100,
       children: handleToggleUnit(),
     );
   }
