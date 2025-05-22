@@ -32,9 +32,9 @@ class _BreastfeedRightSideTimerState extends State<BreastfeedRightSideTimer> wit
     );
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 600),
+      duration: const Duration(milliseconds: 1200),
       lowerBound: 1.0,
-      upperBound: 1.15,
+      upperBound: 1.05,
     )..addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         _animationController.reverse();
@@ -80,14 +80,12 @@ class _BreastfeedRightSideTimerState extends State<BreastfeedRightSideTimer> wit
   Widget build(BuildContext context) {
     return BlocBuilder<BreastfeedRightSideTimerBloc, BreastfeedRightSideTimerState>(
       builder: (context, state) {
-        if (state is TimerRunning &&
-            state.activityType == widget.activityType) {
+        if (state is TimerRunning && state.activityType == widget.activityType) {
           _duration = state.duration;
           _isRunning = true;
           _animationController.forward();
         }
-        if (state is TimerStopped &&
-            state.activityType == widget.activityType) {
+        if (state is TimerStopped && state.activityType == widget.activityType) {
           _duration = state.duration;
           _isRunning = false;
           _animationController.stop();
@@ -101,59 +99,80 @@ class _BreastfeedRightSideTimerState extends State<BreastfeedRightSideTimer> wit
           _animationController.value = 1.0;
         }
 
-        return Column(
-          children: [
-            Center(
-              child: ScaleTransition(
-                scale: _animationController,
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _isRunning ? _stopTimer() : _startTimer();
-                    });
-                  },
+        final Color accentColor = const Color(0xFFFFD6E8);
+        final Color shadowColor = accentColor.withOpacity(0.3);
+        final Color textColor = const Color(0xFF703D57);
+
+        return GestureDetector(
+          onTap: () {
+            setState(() {
+              _isRunning ? _stopTimer() : _startTimer();
+            });
+          },
+          child: Column(
+            children: [
+              Center(
+                child: ScaleTransition(
+                  scale: _animationController,
                   child: Container(
                     width: widget.size,
-                    height: widget.size,
+                    height: widget.size * 0.5,
+                    padding: EdgeInsets.symmetric(horizontal: 12.w),
                     decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Theme.of(context).primaryColor,
+                      color: Colors.white,
+                      border: Border.all(color: accentColor, width: 2),
+                      borderRadius: BorderRadius.circular(16.r),
                       boxShadow: [
                         BoxShadow(
-                          color: Theme.of(
-                            context,
-                          ).primaryColor.withValues(alpha: 0.5),
-                          blurRadius: 10,
-                          spreadRadius: 2,
+                          color: shadowColor,
+                          blurRadius: 8,
+                          offset: Offset(0, 4),
                         ),
                       ],
                     ),
                     child: Center(
                       child: Text(
                         _formatDuration(_duration),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          fontFeatures: [FontFeature.tabularFigures()],
+                        style: TextStyle(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w600,
+                          color: textColor,
+                          fontFeatures: const [FontFeature.tabularFigures()],
                         ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
-            SizedBox(height: 10.h),
-            _isRunning
-                ? Text(
-              'Tab to end',
-              style: Theme.of(context).textTheme.bodyMedium,
-            )
-                : Text(
-              'Tab to start',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-          ],
+              SizedBox(height: 6.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(6.w),
+                    margin: EdgeInsets.only(right: 6.w),
+                    decoration: BoxDecoration(
+                      color: accentColor.withOpacity(0.15),
+                      border: Border.all(color: accentColor),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      _isRunning ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                      size: 20.sp,
+                      color: textColor,
+                    ),
+                  ),
+                  Text(
+                    _isRunning ? 'Tap to pause' : 'Tap to start',
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: textColor.withOpacity(0.8),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         );
       },
     );
