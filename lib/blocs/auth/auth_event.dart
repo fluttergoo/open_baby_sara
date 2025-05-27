@@ -34,3 +34,8 @@ class ChangePassword extends AuthEvent {
   ChangePassword({required this.password});
 }
 class DeleteUser extends AuthEvent{}
+class ForgotPasswordUser extends AuthEvent{
+  final String email;
+
+  ForgotPasswordUser({required this.email});
+}

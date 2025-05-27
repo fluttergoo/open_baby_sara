@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/core/constant/message_constants.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/core/locator.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/locator.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/invite_model.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/user_model.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/caregiver_repository.dart';
@@ -106,6 +106,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(UserDeleted());
       } catch (e) {
         emit(AuthFailure(e.toString()));
+      }
+    });
+
+    on<ForgotPasswordUser>((event, emit)async{
+      emit(AuthLoading());
+      try{
+        await _userRepository.forgotPassword(event.email);
+        emit(ForgotPasswordSuccess());
+      }catch (e){
+        emit(AuthFailure('Error $e'));
       }
     });
   }
