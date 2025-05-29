@@ -52,6 +52,11 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           borderRadius: BorderRadius.circular(12.r),
           borderSide: BorderSide(color: Colors.grey.shade400),
         ),
+        errorStyle: TextStyle(
+          fontSize: 12.sp,
+          color: Colors.redAccent,
+          fontWeight: FontWeight.w500,
+        ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.r),
           borderSide: BorderSide(
