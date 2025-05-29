@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/baby/baby_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/views/auth/request_notification_permission.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_show_flush_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_birthdate_picker.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_gender_selector.dart';
@@ -65,9 +66,10 @@ class _BabySignUpPageState extends State<BabySignUpPage> {
               'gender': baby['gender'],
             };
           }).toList();
-      final dateFormat = DateFormat('d/M/yyyy');
+      final dateFormat = DateFormat('M/d/yyyy');
       for (var baby in babiesData) {
         final parsedDate = dateFormat.parse(baby['birthDate']);
+
         context.read<BabyBloc>().add(
           RegisterBaby(
             firstName: baby['name'].toString(),
@@ -84,36 +86,12 @@ class _BabySignUpPageState extends State<BabySignUpPage> {
     return BlocConsumer<BabyBloc, BabyState>(
       listener: (context, state) {
         if (state is BabySuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Row(
-                children: [
-                  Icon(Icons.check_circle_outline, color: Colors.white),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      context.tr('successfully_you_created'),
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
-              backgroundColor: Colors.green.shade600,
-              behavior: SnackBarBehavior.floating,
-
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.r),
-              ),
-              margin: EdgeInsets.all(16.r),
-              duration: Duration(
-                seconds: 3,
-              ),
-            ),
+          showCustomFlushbar(
+            context,
+              context.tr('baby_profile_saved'),
+            context.tr('baby_profile_saved_body'),
+            Icons.check_circle_outline,
+            color: Colors.green.shade600
           );
           Navigator.of(context).push(
             MaterialPageRoute(
@@ -121,9 +99,12 @@ class _BabySignUpPageState extends State<BabySignUpPage> {
             ),
           );
         } else if (state is BabyFailure) {
-          ScaffoldMessenger.of(
+          showCustomFlushbar(
             context,
-          ).showSnackBar(SnackBar(content: Text(state.message)));
+            context.tr('error'),
+            state.message,
+            Icons.warning_outlined,
+          );
         }
       },
       builder: (context, state) {

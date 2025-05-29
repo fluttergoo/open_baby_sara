@@ -24,7 +24,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Change Password',
+          context.tr("Change Password"),
           style: Theme.of(
             context,
           ).textTheme.titleMedium!.copyWith(color: Colors.deepPurpleAccent),
@@ -39,7 +39,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               context,
             ).showSnackBar(buildCustomSnackBar(state.message));
           }
-          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_)=>NavigationWrapper()));
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => NavigationWrapper()),
+          );
         },
         child: BlocBuilder<AuthBloc, AuthState>(
           builder: (context, state) {
@@ -63,6 +65,19 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     key: _formKey,
                     child: Column(
                       children: [
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 16.h),
+                          child: Text(
+                            context.tr("change_password_description"),
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontSize: 14.sp,
+                              color: Colors.grey.shade700,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 20.h),
+
                         CustomTextFormField(
                           hintText: context.tr("password"),
                           controller: _passwordController,
@@ -93,7 +108,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                               _onPressedSave();
                             },
                             child: Text(
-                              'Save',
+                              context.tr("save"),
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18.sp,

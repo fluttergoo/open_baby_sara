@@ -53,6 +53,12 @@ class CustomBabyHeaderCard extends StatelessWidget {
     final primaryColor = theme.primaryColor;
     final lightPrimaryColor = Color(0xFFE9F6EF); // Light mint green color
 
+    return BlocBuilder<BabyBloc, BabyState>(
+  builder: (context, state) {
+    String? imagePath;
+    if (state is BabyImagePathLoaded) {
+      imagePath = state.imagePath;
+    }
     return Column(
       children: [
         // Top section with avatar and baby info
@@ -63,7 +69,7 @@ class CustomBabyHeaderCard extends StatelessWidget {
               // Avatar with decorative circle behind it
               CustomAvatar(
                 size: 60.sp,
-                imageUrl: selectedBaby?.imageUrl,
+                imagePath: imagePath,
               ),
 
               SizedBox(width: 5.w),
@@ -185,6 +191,8 @@ class CustomBabyHeaderCard extends StatelessWidget {
         ),*/
       ],
     );
+  },
+);
   }
 
   Widget _buildActionButton(
