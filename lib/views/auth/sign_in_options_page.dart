@@ -63,18 +63,18 @@ class SignInOptionsPage extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            "Let’s get started!",
+                            context.tr("Lets_get_started"),
                             style: Theme.of(context).textTheme.titleLarge
                                 ?.copyWith(fontWeight: FontWeight.w400),
                             textAlign: TextAlign.center,
                           ),
                           SizedBox(height: 10.h),
                           Text(
-                            "Are you new to Sara or joining a family?",
+                            context.tr("join_a_family_body"),
                             style: Theme.of(
                               context,
                             ).textTheme.titleSmall?.copyWith(
-                              fontSize: 18.sp,
+                              fontSize: 16.sp,
                               color: Colors.black87,
                             ),
                             textAlign: TextAlign.center,
@@ -98,7 +98,7 @@ class SignInOptionsPage extends StatelessWidget {
                                 ),
                               ),
                               child: Text(
-                                "Start a new journey with Sara",
+                                context.tr("start_a_new_journey_with_sara"),
                                 style: Theme.of(
                                   context,
                                 ).textTheme.titleMedium?.copyWith(
@@ -129,13 +129,12 @@ class SignInOptionsPage extends StatelessWidget {
                                 ),
                               ),
                               child: Text(
-                                "Join an existing family",
+                                context.tr("join_an_existing_family"),
                                 style: Theme.of(
                                   context,
                                 ).textTheme.titleMedium?.copyWith(
                                   fontSize: 16.sp,
-                                  color: Colors.black87,
-                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
                                 ),
                               ),
                             ),
@@ -157,7 +156,7 @@ class SignInOptionsPage extends StatelessWidget {
                               ).textTheme.titleMedium?.copyWith(
                                 fontSize: 16.sp,
                                 color: Theme.of(context).primaryColor,
-                                fontWeight: FontWeight.bold,
+                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
