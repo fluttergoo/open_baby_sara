@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_show_flush_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/auth/auth_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/views/auth/baby_sign_up_page.dart';
@@ -33,8 +34,12 @@ class _SignUpPageState extends State<SignUpPage> {
   void _onSignUpPressed(BuildContext context) {
     if (_formKey.currentState!.validate()) {
       if (_passwordController.text != _confirmPasswordController.text) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.tr('passwords_do_not_match'))),
+
+        showCustomFlushbar(
+          context,
+          context.tr('passwords_do_not_match'),
+          '',
+          Icons.warning_outlined,
         );
         return;
       }
@@ -57,32 +62,27 @@ class _SignUpPageState extends State<SignUpPage> {
       resizeToAvoidBottomInset: false,
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
-          if (state is AuthSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Row(
-                  children: [
-                    Icon(Icons.check_circle_outline, color: Colors.white),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        context.tr('successfully_you_created'),
-                        style: TextStyle(color: Colors.white, fontSize: 16.sp, fontWeight: FontWeight.bold),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-                backgroundColor: Colors.green.shade600,
-                behavior: SnackBarBehavior.floating,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
-                margin: EdgeInsets.all(16.r),
-                duration: const Duration(seconds: 3),
-              ),
+
+          /// if User registered successfully account
+          if (state is Authenticated) {
+            showCustomFlushbar(
+              context,
+                context.tr('successfully_you_created'),
+              context.tr('successfully_login'),
+              Icons.check_circle_outline,
             );
+
             Navigator.of(context).push(MaterialPageRoute(builder: (context) => BabySignUpPage()));
+
           } else if (state is AuthFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+
+            showCustomFlushbar(
+              context,
+              context.tr('error'),
+              state.message,
+              Icons.warning_outlined,
+            );
+
           }
         },
         builder: (context, state) {

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/app/routes/app_router.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/auth/auth_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/views/auth/sign_up_page.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_show_flush_bar.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_text_form_field.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -19,9 +20,14 @@ class _SignInPageState extends State<SignInPage> {
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  void _onSignInPressed(BuildContext context){
+  void _onSignInPressed(BuildContext context) {
     if (_formKey.currentState!.validate()) {
-      context.read<AuthBloc>().add(SignInWithEmailAndPassword(email: _emailController.text, password: _passwordController.text));
+      context.read<AuthBloc>().add(
+        SignInWithEmailAndPassword(
+          email: _emailController.text,
+          password: _passwordController.text,
+        ),
+      );
     }
   }
 
@@ -33,51 +39,24 @@ class _SignInPageState extends State<SignInPage> {
       resizeToAvoidBottomInset: false,
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
-          if (state is AuthSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Row(
-                  children: [
-                    Icon(
-                      Icons.check_circle_outline, // Success için uygun ikon
-                      color: Colors.white,
-                    ),
-                    SizedBox(width: 10), // İkon ile metin arasına boşluk ekle
-                    Expanded(
-                      child: Text(
-                        context.tr('successfully_you_created'),
-                        style: TextStyle(
-                          color: Colors.white, // Yazı rengi
-                          fontSize: 16.sp, // Yazı boyutu
-                          fontWeight: FontWeight.bold, // Yazı kalınlık
-                        ),
-                        overflow:
-                            TextOverflow.ellipsis, // Metin taşarsa '...' ekle
-                      ),
-                    ),
-                  ],
-                ),
-                backgroundColor: Colors.green.shade600,
-                // SnackBar arka plan rengi
-                behavior: SnackBarBehavior.floating,
-                // SnackBar'ı ekranın üstünde sabit bırak
-                shape: RoundedRectangleBorder(
-                  // Köşeleri yuvarla
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-                margin: EdgeInsets.all(16.r),
-                // Kenar boşluğu
-                duration: Duration(
-                  seconds: 3,
-                ), // SnackBar'ın ne kadar süre görüneceği
-              ),
+          if (state is Authenticated) {
+
+            showCustomFlushbar(
+              context,
+              context.tr('welcome_back'),
+              context.tr('welcome_back_body'),
+              Icons.check_circle_outline,
+              color: Colors.green.shade600,
             );
-            context.read<AuthBloc>().add(GetUserModel());
+
             Navigator.pushReplacementNamed(context, AppRoutes.home);
           } else if (state is AuthFailure) {
-            ScaffoldMessenger.of(
+            showCustomFlushbar(
               context,
-            ).showSnackBar(SnackBar(content: Text(state.message)));
+              context.tr('error'),
+              state.message,
+              Icons.warning_outlined,
+            );
           }
         },
         builder: (context, state) {
@@ -148,7 +127,9 @@ class _SignInPageState extends State<SignInPage> {
                                             ).textTheme.titleLarge,
                                       ),
                                       SizedBox(height: 20.h),
-                                      ElevatedButton(
+
+                                      // TODO: sign in with Google...
+                                      /*ElevatedButton(
                                         onPressed: () {},
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.white,
@@ -161,8 +142,8 @@ class _SignInPageState extends State<SignInPage> {
                                               12.r,
                                             ),
                                           ),
-                                        ),
-                                        child: Row(
+                                        ),*/
+                                      /*child: Row(
                                           children: [
                                             Image.asset(
                                               'assets/images/google.png',
@@ -180,8 +161,8 @@ class _SignInPageState extends State<SignInPage> {
                                             ),
                                           ],
                                         ),
-                                      ),
-                                      SizedBox(height: 10.h),
+                                      ),*/
+                                      /*  SizedBox(height: 10.h),
                                       Row(
                                         children: [
                                           Expanded(
@@ -210,8 +191,7 @@ class _SignInPageState extends State<SignInPage> {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(height: 10.h),
-
+                                      SizedBox(height: 10.h),*/
                                       Form(
                                         key: _formKey,
                                         child: Column(
@@ -252,18 +232,34 @@ class _SignInPageState extends State<SignInPage> {
                                       Align(
                                         alignment: Alignment.centerRight,
                                         child: TextButton(
-                                          onPressed: () {},
+                                          onPressed: () {
+                                            Navigator.pushNamed(
+                                              context,
+                                              AppRoutes.forgotPassword,
+                                            );
+                                          },
                                           child: Text(
                                             context.tr("forgot_password"),
-                                            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 12.sp,color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+                                            style: Theme.of(
+                                              context,
+                                            ).textTheme.titleMedium?.copyWith(
+                                              fontSize: 12.sp,
+                                              color:
+                                                  Theme.of(
+                                                    context,
+                                                  ).primaryColor,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ),
                                       ),
                                       SizedBox(height: 2.h),
                                       ElevatedButton(
-                                        onPressed: state is AuthLoading
-                                            ? null
-                                            : () => _onSignInPressed(context),
+                                        onPressed:
+                                            state is AuthLoading
+                                                ? null
+                                                : () =>
+                                                    _onSignInPressed(context),
                                         style: ElevatedButton.styleFrom(
                                           minimumSize: Size(
                                             double.infinity,
@@ -291,8 +287,15 @@ class _SignInPageState extends State<SignInPage> {
                                           );
                                         },
                                         child: Text(
-                                          context.tr("have_an_account",),
-                                          style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Theme.of(context).primaryColor, fontWeight: FontWeight.w900, fontSize: 14.sp),
+                                          context.tr("have_an_account"),
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.titleSmall?.copyWith(
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                            fontWeight: FontWeight.w900,
+                                            fontSize: 14.sp,
+                                          ),
                                         ),
                                       ),
                                     ],
