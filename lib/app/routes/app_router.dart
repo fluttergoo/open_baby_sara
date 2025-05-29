@@ -5,8 +5,11 @@ import 'package:flutter_sara_baby_tracker_and_sound/views/account/add_caregiver.
 import 'package:flutter_sara_baby_tracker_and_sound/views/account/change_password_page.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/views/account/edit_baby_page.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/views/account/edit_caregiver_page.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/views/account/faq_page.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/views/account/legal_page.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/views/account/my_account_page.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/views/auth/caregiver_sign_in_page.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/views/auth/forgot_password.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/views/auth/sign_in_options_page.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/views/auth/sign_in_page.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/views/auth/sign_up_page.dart';
@@ -26,6 +29,10 @@ class AppRoutes {
   static const String myAccount='/myAccount';
   static const String caregiverEdit = '/caregiverEdit';
   static const String changePassword='/changePassword';
+  static const String forgotPassword = '/forgotPassword';
+  static const String faq = '/faqPage';
+  static const String legalPage = '/legalPage';
+
 }
 
 Route<dynamic> generateRoute(RouteSettings settings) {
@@ -49,6 +56,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (_) => AddCaregiver());
     case AppRoutes.signup:
       return MaterialPageRoute(builder: (_) => SignUpPage());
+    case AppRoutes.forgotPassword:
+      return MaterialPageRoute(builder: (_) => ForgotPassword());
     case AppRoutes.caregiverEdit:
       final args = settings.arguments as Map<String, dynamic>;
       return MaterialPageRoute(
@@ -62,6 +71,10 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (_) => MyAccountPage());
     case AppRoutes.changePassword:
       return MaterialPageRoute(builder: (_)=>ChangePasswordPage());
+    case AppRoutes.faq:
+      return MaterialPageRoute(builder: (_)=>FaqPage());
+    case AppRoutes.legalPage:
+      return MaterialPageRoute(builder: (_)=>LegalPage());
     default:
       return MaterialPageRoute(
         builder:
