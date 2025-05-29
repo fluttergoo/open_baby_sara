@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/core/locator.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/locator.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/timer_repository.dart';
 import 'package:meta/meta.dart';
 
