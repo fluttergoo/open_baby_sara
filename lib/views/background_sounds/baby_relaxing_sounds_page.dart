@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/sound_relaxing/sound_relaxing_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/core/constant/sounds_constants.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/core/locator.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/locator.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:audioplayers/audioplayers.dart';
 

@@ -6,6 +6,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/baby_model.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/baby_repository.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as p;
+
 
 class BabyRepositoryImpl extends BabyRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -110,5 +113,29 @@ class BabyRepositoryImpl extends BabyRepository {
     await ref.putFile(file);
     final downloadUrl = await ref.getDownloadURL();
     return downloadUrl;
+  }
+
+  Future<String?> saveBabyImageLocally(String babyID) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile == null) return null;
+
+    final appDir = await getApplicationDocumentsDirectory();
+    final filePath = p.join(appDir.path, '$babyID.jpg');
+
+    final newImage = await File(pickedFile.path).copy(filePath);
+    return newImage.path;
+  }
+
+  Future<File?> getLocalBabyImage(String babyID) async {
+    final appDir = await getApplicationDocumentsDirectory();
+    final filePath = p.join(appDir.path, '$babyID.jpg');
+    final file = File(filePath);
+
+    if (await file.exists()) {
+      return file;
+    } else {
+      return null; // Resim bulunamazsa null döner.
+    }
   }
 }
