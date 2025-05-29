@@ -7,6 +7,8 @@ import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/caregiver_
 import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/caregiver_repository_impl.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/medication_repository.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/medication_repository_impl.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/recipe_repository.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/recipe_repository_impl.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/relaxing_sound_repository.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/relaxing_sound_repository_impl.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/timer_repository.dart';
@@ -22,7 +24,7 @@ import 'package:flutter_sara_baby_tracker_and_sound/data/services/local_database
 import 'package:flutter_sara_baby_tracker_and_sound/data/services/local_database/milestone_service_impl.dart';
 import 'package:get_it/get_it.dart';
 
-import '../data/services/local_database/local_database_service.dart';
+import '../services/local_database/local_database_service.dart';
 
 final getIt = GetIt.instance;
 
@@ -48,5 +50,6 @@ Future<void> setupLocator() async {
   getIt.registerLazySingleton<RelaxingSoundRepository>(()=>RelaxingSoundRepositoryImpl(database: database));
 
   getIt.registerLazySingleton<AudioPlayer>(() => AudioPlayer());
+  getIt.registerLazySingleton<RecipeRepository>(() => RecipeRepositoryImpl());
 
 }
