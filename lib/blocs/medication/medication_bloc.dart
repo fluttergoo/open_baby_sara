@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/core/locator.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/locator.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/medication_model.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/medication_repository.dart';
 import 'package:meta/meta.dart';
