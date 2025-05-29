@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/app/routes/navigation_wrapper.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/views/home.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class RequestNotificationPermission extends StatefulWidget {
