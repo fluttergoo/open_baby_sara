@@ -52,3 +52,9 @@ class AddedBaby extends BabyState {
 
   AddedBaby({this.message = "Baby profile created successfully."});
 }
+
+class BabyImagePathLoaded extends BabyState {
+  final String babyID;
+  final String imagePath;
+  BabyImagePathLoaded({required this.babyID, required this.imagePath});
+}

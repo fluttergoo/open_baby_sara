@@ -10,4 +10,5 @@ abstract class UserRepository{
   Future<void> addCaregiverInUser(InviteModel caregiver);
   Future<void> changePassword(String password);
   Future<void>deleteUser();
+  Future<void>forgotPassword(String email);
 }

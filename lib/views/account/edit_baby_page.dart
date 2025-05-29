@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,6 +15,7 @@ import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_show_dialog.d
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_text_form_field.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gender_picker/source/enums.dart';
+import 'package:image_picker/image_picker.dart';
 
 class EditBabyPage extends StatefulWidget {
   final String babyID;
@@ -28,6 +31,7 @@ class _EditBabyPageState extends State<EditBabyPage> {
   void initState() {
     super.initState();
     context.read<BabyBloc>().add(GetBabyInfo(babyID: widget.babyID));
+    context.read<BabyBloc>().add(LoadBabyImagePath(babyID: widget.babyID));
   }
 
   TextEditingController firstNameController = TextEditingController();
@@ -43,6 +47,8 @@ class _EditBabyPageState extends State<EditBabyPage> {
   String nightEndText = '07:00';
   String userID = '';
   BabyModel? previousBaby;
+  String? localImagePath;
+
 
   final _formKey = GlobalKey<FormState>();
 
@@ -107,6 +113,10 @@ class _EditBabyPageState extends State<EditBabyPage> {
                     setState(() {
                       imgUrl = state.babyModel.imageUrl;
                     });
+                  } else  if (state is BabyImagePathLoaded) {
+                    setState(() {
+                      localImagePath = state.imagePath;
+                    });
                   }
 
                   if (state is GotBabyInfo) {
@@ -153,6 +163,11 @@ class _EditBabyPageState extends State<EditBabyPage> {
                 },
                 child: BlocBuilder<BabyBloc, BabyState>(
                   builder: (context, state) {
+                    String? imagePath;
+                    if (state is BabyImagePathLoaded) {
+                      imagePath = state.imagePath;
+                    }
+
                     /// Edit Profile
                     return Column(
                       children: [
@@ -165,23 +180,17 @@ class _EditBabyPageState extends State<EditBabyPage> {
                               Align(
                                 alignment: Alignment.center,
                                 child: CustomAvatar(
-                                  onTap: () {
-                                    context.read<BabyBloc>().add(
-                                      UploadBabyImage(babyID: widget.babyID),
-                                    );
-
-                                    if (state is GotBabyInfo) {
-                                      imgUrl = state.babyModel.imageUrl;
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        buildCustomSnackBar(
-                                          MessageConstants.uploadSuccess,
-                                        ),
-                                      );
+                                  imagePath: imagePath,
+                                  onTap: () async {
+                                    final picker = ImagePicker();
+                                    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+                                    if (pickedFile != null) {
+                                      context.read<BabyBloc>().add(UpdateBabyImageLocal(
+                                        babyID: widget.babyID,
+                                        imagePath: pickedFile.path,
+                                      ));
                                     }
                                   },
-                                  imageUrl: imgUrl,
                                 ),
                               ),
                               SizedBox(height: 4.h),

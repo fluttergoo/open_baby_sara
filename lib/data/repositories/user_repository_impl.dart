@@ -70,4 +70,14 @@ class UserRepositoryImpl implements UserRepository {
     e.toString();
     }
   }
+
+  @override
+  Future<void> forgotPassword(String email) async{
+    try{
+      await _firebaseAuth
+          .sendPasswordResetEmail(email: email);
+    }catch (e){
+      throw Exception(e.toString());
+    }
+  }
 }

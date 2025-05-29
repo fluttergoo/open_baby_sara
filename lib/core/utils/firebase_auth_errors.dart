@@ -1,18 +1,19 @@
 String getFirebaseAuthErrorMessage(String code) {
   switch (code) {
     case 'invalid-email':
-      return 'Geçersiz e-posta adresi.';
+      return 'Invalid email address.';
     case 'user-disabled':
-      return 'Bu kullanıcı devre dışı.';
+      return 'This user has been disabled.';
     case 'user-not-found':
-      return 'Kullanıcı bulunamadı.';
+      return 'User not found.';
     case 'wrong-password':
-      return 'Şifre yanlış.';
+      return 'Incorrect password.';
     case 'email-already-in-use':
-      return 'Bu e-posta adresi zaten kullanılıyor.';
+      return 'This email address is already in use.';
     case 'weak-password':
-      return 'Şifre çok zayıf.';
+      return 'Password is too weak.';
     default:
-      return 'Bilinmeyen bir hata oluştu.';
+      return 'An unknown error has occurred.';
   }
+
 }

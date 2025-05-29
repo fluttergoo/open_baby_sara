@@ -74,4 +74,22 @@ class SelectBaby extends BabyEvent{
   SelectBaby({required this.selectBabyModel});
 
 }
+class LoadBabyImagePath extends BabyEvent {
+  final String babyID;
+  LoadBabyImagePath({required this.babyID});
+}
+
+class SaveBabyImage extends BabyEvent {
+  final String babyID;
+  final File imageFile;
+
+  SaveBabyImage({required this.babyID, required this.imageFile});
+
+}
+class UpdateBabyImageLocal extends BabyEvent {
+  final String babyID;
+  final String imagePath;
+
+  UpdateBabyImageLocal({required this.babyID, required this.imagePath});
+}
 

@@ -93,6 +93,10 @@ class _EditBabyPageState extends State<AddBabyPage> {
                 },
                 child: BlocBuilder<BabyBloc, BabyState>(
                   builder: (context, state) {
+                    String? imagePath;
+                    if (state is BabyImagePathLoaded) {
+                      imagePath = state.imagePath;
+                    }
                     /// Edit Profile
                     return Column(
                       children: [
@@ -104,10 +108,10 @@ class _EditBabyPageState extends State<AddBabyPage> {
                               Align(
                                 alignment: Alignment.center,
                                 child: CustomAvatar(
+                                  imagePath: imagePath,
                                   onTap: () {
                                     _getFileImage();
                                   },
-                                  localFile: newFile,
                                 ),
                               ),
                               SizedBox(height: 4.h),
