@@ -24,10 +24,11 @@ import 'package:flutter_sara_baby_tracker_and_sound/blocs/bottom_nav/bottom_nav_
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/caregiver/caregiver_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/medication/medication_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/milestone/milestone_bloc.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/blocs/recipe/recipe_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/sound_relaxing/sound_relaxing_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/theme/theme_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/vaccination/vaccination_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/core/locator.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/locator.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/views/onboarding/welcome_page.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -139,6 +140,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<MedicationBloc>(create: (context) => MedicationBloc()),
         BlocProvider<VaccinationBloc>(create: (context) => VaccinationBloc()),
         BlocProvider<SoundRelaxingBloc>(create: (context) => SoundRelaxingBloc()),
+        BlocProvider<RecipeBloc>(create: (context)=> RecipeBloc()),
       ],
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, state) {
