@@ -20,7 +20,6 @@ part 'auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthService _authService = getIt<AuthService>();
   final UserRepository _userRepository = getIt<UserRepository>();
-  final CaregiverRepository _caregiverRepository = getIt<CaregiverRepository>();
 
   AuthBloc() : super(AuthInitial()) {
     on<RegisterUser>((event, emit) async {
@@ -39,7 +38,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           createdAt: DateTime.now(),
         );
         await _userRepository.createUserInFireStore(userModel);
-        emit(AuthSuccess(user));
+        emit(Authenticated(userModel: userModel));
       } else {
         emit(AuthFailure('Registration Failed'));
       }
@@ -51,9 +50,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           event.email,
           event.password,
         );
+        await Future.delayed(Duration(milliseconds: 300));
         final user = FirebaseAuth.instance.currentUser;
         if (user != null) {
-          emit(AuthSuccess(user));
+          await Future.delayed(Duration(milliseconds: 300));
+          final userModel = await _userRepository.getCurrentUser();
+
+          emit(Authenticated(userModel: userModel!));
         } else {
           emit(AuthFailure('User not found'));
         }
@@ -61,7 +64,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         final errorMessage = getFirebaseAuthErrorMessage(e.code);
         emit(AuthFailure(errorMessage));
       } catch (e) {
-        emit(AuthFailure('Beklenmeyen bir hata oluştu.'));
+        emit(AuthFailure('Error ${e.toString()}'));
       }
     });
     on<AppStarted>((event, emit) async {
@@ -82,7 +85,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           emit(Authenticated(userModel: userModel));
         }
       } else {
-        emit(AuthFailure("Kullanıcı verisi alınamadı."));
+        emit(AuthFailure("Error"));
       }
     });
     on<SignOut>((event, emit) async {
