@@ -4,7 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/core/constant/activity_constants.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/core/locator.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/locator.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/activity_model.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/activity_reposityory.dart';
 import 'package:meta/meta.dart';
