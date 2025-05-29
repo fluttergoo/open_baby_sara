@@ -1,610 +1,608 @@
-{
-  "recipes": [
-    {
-      "id": 1,
-      "titleKey": "recipe_rice_porridge",
-      "age_groupKey": "age_6_8_months",
-      "image": "assets/images/recipes_images/rice_porridge.png",
-      "ingredientsKeys": [
-        "ingredient_rice_flour_2tbsp",
-        "ingredient_water_1cup",
-        "ingredient_breast_milk_1tsp_optional"
-      ],
-      "instructionsKeys": [
-        "instruction_rice_porridge_1",
-        "instruction_rice_porridge_2",
-        "instruction_rice_porridge_3",
-        "instruction_rice_porridge_4"
-      ],
-      "prep_timeKey": "time_2min",
-      "cook_timeKey": "time_7min",
-      "serving_sizeKey": "serving_1",
-      "notesKey": "note_rice_porridge_thin"
-    },
-    {
-      "id": 2,
-      "titleKey": "recipe_banana_puree",
-      "age_groupKey": "age_6_8_months",
-      "image": "assets/images/recipes_images/banana_puree.png",
-      "ingredientsKeys": [
-        "ingredient_banana_half"
-      ],
-      "instructionsKeys": [
-        "instruction_banana_puree_1",
-        "instruction_banana_puree_2"
-      ],
-      "prep_timeKey": "time_3min",
-      "cook_timeKey": "time_0min",
-      "serving_sizeKey": "serving_1",
-      "notesKey": "note_banana_fibers"
-    },
-    {
-      "id": 3,
-      "titleKey": "recipe_carrot_soup",
-      "age_groupKey": "age_6_8_months",
-      "image": "assets/images/recipes_images/carrot_soup.png",
-      "ingredientsKeys": [
-        "ingredient_carrot_small",
-        "ingredient_water_1cup"
-      ],
-      "instructionsKeys": [
-        "instruction_carrot_soup_1",
-        "instruction_carrot_soup_2",
-        "instruction_carrot_soup_3"
-      ],
-      "prep_timeKey": "time_5min",
-      "cook_timeKey": "time_12min",
-      "serving_sizeKey": "serving_1",
-      "notesKey": "note_carrot_olive_oil"
-    },
-    {
-      "id": 4,
-      "titleKey": "recipe_zucchini_puree",
-      "age_groupKey": "age_6_8_months",
-      "image": "assets/images/recipes_images/zucchini_puree.png",
-      "ingredientsKeys": [
-        "ingredient_zucchini_slice",
-        "ingredient_olive_oil_1tsp"
-      ],
-      "instructionsKeys": [
-        "instruction_zucchini_puree_1",
-        "instruction_zucchini_puree_2",
-        "instruction_zucchini_puree_3"
-      ],
-      "prep_timeKey": "time_5min",
-      "cook_timeKey": "time_10min",
-      "serving_sizeKey": "serving_1",
-      "notesKey": "note_zucchini_seeds"
-    },
-    {
-      "id": 5,
-      "titleKey": "recipe_apple_yogurt",
-      "age_groupKey": "age_6_8_months",
-      "image": "assets/images/recipes_images/apple_yogurt.png",
-      "ingredientsKeys": [
-        "ingredient_apple_small",
-        "ingredient_yogurt_2tbsp"
-      ],
-      "instructionsKeys": [
-        "instruction_apple_yogurt_1",
-        "instruction_apple_yogurt_2",
-        "instruction_apple_yogurt_3"
-      ],
-      "prep_timeKey": "time_5min",
-      "cook_timeKey": "time_5min",
-      "serving_sizeKey": "serving_1",
-      "notesKey": "note_apple_cinnamon"
-    },
-    {
-      "id": 6,
-      "titleKey": "recipe_mashed_potatoes",
-      "age_groupKey": "age_6_8_months",
-      "image": "assets/images/recipes_images/mashed_potatoes.png",
-      "ingredientsKeys": [
-        "ingredient_potato_small"
-      ],
-      "instructionsKeys": [
-        "instruction_mashed_potatoes_1",
-        "instruction_mashed_potatoes_2"
-      ],
-      "prep_timeKey": "time_5min",
-      "cook_timeKey": "time_15min",
-      "serving_sizeKey": "serving_1",
-      "notesKey": "note_potatoes_butter"
-    },
-    {
-      "id": 7,
-      "titleKey": "recipe_yogurt_banana_molasses",
-      "age_groupKey": "age_6_8_months",
-      "image": "assets/images/recipes_images/yogurt_banana_molasses.png",
-      "ingredientsKeys": [
-        "ingredient_banana_half",
-        "ingredient_yogurt_2tbsp",
-        "ingredient_carob_molasses_1tsp"
-      ],
-      "instructionsKeys": [
-        "instruction_yogurt_banana_molasses_1",
-        "instruction_yogurt_banana_molasses_2"
-      ],
-      "prep_timeKey": "time_3min",
-      "cook_timeKey": "time_0min",
-      "serving_sizeKey": "serving_1",
-      "notesKey": "note_molasses_limit"
-    },
-    {
-      "id": 8,
-      "titleKey": "recipe_pear_puree",
-      "age_groupKey": "age_6_8_months",
-      "image": "assets/images/recipes_images/pear_puree.png",
-      "ingredientsKeys": [
-        "ingredient_pear_small"
-      ],
-      "instructionsKeys": [
-        "instruction_pear_puree_1",
-        "instruction_pear_puree_2"
-      ],
-      "prep_timeKey": "time_3min",
-      "cook_timeKey": "time_5min",
-      "serving_sizeKey": "serving_1",
-      "notesKey": "note_pear_ripe"
-    },
-    {
-      "id": 9,
-      "titleKey": "recipe_vegetable_bulgur_pilaf",
-      "age_groupKey": "age_9_12_months",
-      "image": "assets/images/recipes_images/vegetable_bulgur_pilaf.png",
-      "ingredientsKeys": [
-        "ingredient_bulgur_1tbsp",
-        "ingredient_zucchini_slice",
-        "ingredient_carrot_slice",
-        "ingredient_olive_oil_1tsp"
-      ],
-      "instructionsKeys": [
-        "instruction_vegetable_bulgur_pilaf_1",
-        "instruction_vegetable_bulgur_pilaf_2",
-        "instruction_vegetable_bulgur_pilaf_3"
-      ],
-      "prep_timeKey": "time_5min",
-      "cook_timeKey": "time_10min",
-      "serving_sizeKey": "serving_1",
-      "notesKey": "note_bulgur_add_meat"
-    },
-    {
-      "id": 10,
-      "titleKey": "recipe_oatmeal_porridge",
-      "age_groupKey": "age_9_12_months",
-      "image": "assets/images/recipes_images/oatmeal_porridge.png",
-      "ingredientsKeys": [
-        "ingredient_oats_2tbsp",
-        "ingredient_milk_1cup",
-        "ingredient_banana_1"
-      ],
-      "instructionsKeys": [
-        "instruction_oatmeal_porridge_1",
-        "instruction_oatmeal_porridge_2",
-        "instruction_oatmeal_porridge_3"
-      ],
-      "prep_timeKey": "time_2min",
-      "cook_timeKey": "time_5min",
-      "serving_sizeKey": "serving_1",
-      "notesKey": "note_oatmeal_flavor"
-    },
-    {
-      "id": 11,
-      "titleKey": "recipe_vegetable_omelet",
-      "age_groupKey": "age_9_12_months",
-      "image": "assets/images/recipes_images/vegetable_omelet.png",
-      "ingredientsKeys": [
-        "ingredient_egg_yolk_1",
-        "ingredient_carrot_grated_1tbsp",
-        "ingredient_butter_1tsp"
-      ],
-      "instructionsKeys": [
-        "instruction_vegetable_omelet_1",
-        "instruction_vegetable_omelet_2",
-        "instruction_vegetable_omelet_3"
-      ],
-      "prep_timeKey": "time_5min",
-      "cook_timeKey": "time_5min",
-      "serving_sizeKey": "serving_1",
-      "notesKey": "note_egg_whites_after_1"
-    },
-    {
-      "id": 12,
-      "titleKey": "recipe_lentil_puree",
-      "age_groupKey": "age_9_12_months",
-      "image": "assets/images/recipes_images/lentil_puree.png",
-      "ingredientsKeys": [
-        "ingredient_red_lentils_1tbsp",
-        "ingredient_water_1cup"
-      ],
-      "instructionsKeys": [
-        "instruction_lentil_puree_1",
-        "instruction_lentil_puree_2"
-      ],
-      "prep_timeKey": "time_5min",
-      "cook_timeKey": "time_15min",
-      "serving_sizeKey": "serving_1",
-      "notesKey": "note_lentils_cumin"
-    },
-    {
-      "id": 13,
-      "titleKey": "recipe_avocado_banana_puree",
-      "age_groupKey": "age_9_12_months",
-      "image": "assets/images/recipes_images/avocado_banana_puree.png",
-      "ingredientsKeys": [
-        "ingredient_avocado_slice",
-        "ingredient_banana_half"
-      ],
-      "instructionsKeys": [
-        "instruction_avocado_banana_puree_1",
-        "instruction_avocado_banana_puree_2"
-      ],
-      "prep_timeKey": "time_3min",
-      "cook_timeKey": "time_0min",
-      "serving_sizeKey": "serving_1",
-      "notesKey": "note_avocado_lemon"
-    },
-    {
-      "id": 14,
-      "titleKey": "recipe_broccoli_puree",
-      "age_groupKey": "age_9_12_months",
-      "image": "assets/images/recipes_images/broccoli_puree.png",
-      "ingredientsKeys": [
-        "ingredient_broccoli_floret"
-      ],
-      "instructionsKeys": [
-        "instruction_broccoli_puree_1",
-        "instruction_broccoli_puree_2"
-      ],
-      "prep_timeKey": "time_3min",
-      "cook_timeKey": "time_8min",
-      "serving_sizeKey": "serving_1",
-      "notesKey": "note_broccoli_olive_oil"
-    },
-    {
-      "id": 15,
-      "titleKey": "recipe_pumpkin_soup",
-      "age_groupKey": "age_9_12_months",
-      "image": "assets/images/recipes_images/pumpkin_soup.png",
-      "ingredientsKeys": [
-        "ingredient_pumpkin_slice",
-        "ingredient_water_1cup"
-      ],
-      "instructionsKeys": [
-        "instruction_pumpkin_soup_1",
-        "instruction_pumpkin_soup_2"
-      ],
-      "prep_timeKey": "time_5min",
-      "cook_timeKey": "time_10min",
-      "serving_sizeKey": "serving_1",
-      "notesKey": "note_pumpkin_flavor"
-    },
-    {
-      "id": 16,
-      "titleKey": "recipe_cauliflower_puree",
-      "age_groupKey": "age_9_12_months",
-      "image": "assets/images/recipes_images/cauliflower_puree.png",
-      "ingredientsKeys": [
-        "ingredient_cauliflower_floret"
-      ],
-      "instructionsKeys": [
-        "instruction_cauliflower_puree_1",
-        "instruction_cauliflower_puree_2"
-      ],
-      "prep_timeKey": "time_5min",
-      "cook_timeKey": "time_10min",
-      "serving_sizeKey": "serving_1",
-      "notesKey": "note_cauliflower_yogurt"
-    },
-    {
-      "id": 17,
-      "titleKey": "recipe_chicken_vegetable_stew",
-      "age_groupKey": "age_12_18_months",
-      "image": "assets/images/recipes_images/chicken_vegetable_stew.png",
-      "ingredientsKeys": [
-        "ingredient_chicken_1tbsp",
-        "ingredient_carrot_slice",
-        "ingredient_potato_slice",
-        "ingredient_oil_1tsp"
-      ],
-      "instructionsKeys": [
-        "instruction_chicken_vegetable_stew_1",
-        "instruction_chicken_vegetable_stew_2",
-        "instruction_chicken_vegetable_stew_3"
-      ],
-      "prep_timeKey": "time_10min",
-      "cook_timeKey": "time_15min",
-      "serving_sizeKey": "serving_1_2",
-      "notesKey": "note_chicken_broth"
-    },
-    {
-      "id": 18,
-      "titleKey": "recipe_fruit_pancakes",
-      "age_groupKey": "age_12_18_months",
-      "image": "assets/images/recipes_images/fruit_pancakes.png",
-      "ingredientsKeys": [
-        "ingredient_egg_1",
-        "ingredient_whole_wheat_flour_2tbsp",
-        "ingredient_milk_1cup",
-        "ingredient_apple_small_grated"
-      ],
-      "instructionsKeys": [
-        "instruction_fruit_pancakes_1",
-        "instruction_fruit_pancakes_2"
-      ],
-      "prep_timeKey": "time_5min",
-      "cook_timeKey": "time_5min",
-      "serving_sizeKey": "serving_2",
-      "notesKey": "note_pancakes_cut"
-    },
-    {
-      "id": 19,
-      "titleKey": "recipe_yogurt_purslane",
-      "age_groupKey": "age_12_18_months",
-      "image": "assets/images/recipes_images/yogurt_purslane.png",
-      "ingredientsKeys": [
-        "ingredient_yogurt_half_cup",
-        "ingredient_purslane_1tbsp",
-        "ingredient_olive_oil_1tsp"
-      ],
-      "instructionsKeys": [
-        "instruction_yogurt_purslane_1",
-        "instruction_yogurt_purslane_2"
-      ],
-      "prep_timeKey": "time_5min",
-      "cook_timeKey": "time_0min",
-      "serving_sizeKey": "serving_1",
-      "notesKey": "note_purslane_garlic"
-    },
-    {
-      "id": 20,
-      "titleKey": "recipe_zucchini_ground_meat",
-      "age_groupKey": "age_12_18_months",
-      "image": "assets/images/recipes_images/zucchini_ground_meat.png",
-      "ingredientsKeys": [
-        "ingredient_ground_meat_1tbsp",
-        "ingredient_zucchini_small",
-        "ingredient_tomato_paste_1tsp"
-      ],
-      "instructionsKeys": [
-        "instruction_zucchini_ground_meat_1",
-        "instruction_zucchini_ground_meat_2"
-      ],
-      "prep_timeKey": "time_5min",
-      "cook_timeKey": "time_10min",
-      "serving_sizeKey": "serving_1",
-      "notesKey": "note_zucchini_chicken_option"
-    },
-    {
-      "id": 21,
-      "titleKey": "recipe_mini_meatballs",
-      "age_groupKey": "age_12_18_months",
-      "image": "assets/images/recipes_images/mini_meatballs.png",
-      "ingredientsKeys": [
-        "ingredient_ground_beef_100g",
-        "ingredient_carrot_grated_1tbsp",
-        "ingredient_egg_yolk_1"
-      ],
-      "instructionsKeys": [
-        "instruction_mini_meatballs_1",
-        "instruction_mini_meatballs_2"
-      ],
-      "prep_timeKey": "time_10min",
-      "cook_timeKey": "time_15min",
-      "serving_sizeKey": "serving_2",
-      "notesKey": "note_meatballs_bake"
-    },
-    {
-      "id": 22,
-      "titleKey": "recipe_cheese_omelet",
-      "age_groupKey": "age_12_18_months",
-      "image": "assets/images/recipes_images/cheese_omelet.png",
-      "ingredientsKeys": [
-        "ingredient_egg_1",
-        "ingredient_white_cheese_1tsp"
-      ],
-      "instructionsKeys": [
-        "instruction_cheese_omelet_1",
-        "instruction_cheese_omelet_2",
-        "instruction_cheese_omelet_3"
-      ],
-      "prep_timeKey": "time_3min",
-      "cook_timeKey": "time_5min",
-      "serving_sizeKey": "serving_1",
-      "notesKey": "note_omelet_parsley"
-    },
-    {
-      "id": 23,
-      "titleKey": "recipe_green_beans_olive_oil",
-      "age_groupKey": "age_12_18_months",
-      "image": "assets/images/recipes_images/green_beans_olive_oil.png",
-      "ingredientsKeys": [
-        "ingredient_green_beans",
-        "ingredient_olive_oil_1tsp"
-      ],
-      "instructionsKeys": [
-        "instruction_green_beans_olive_oil_1",
-        "instruction_green_beans_olive_oil_2"
-      ],
-      "prep_timeKey": "time_5min",
-      "cook_timeKey": "time_10min",
-      "serving_sizeKey": "serving_1",
-      "notesKey": "note_beans_tomato_paste"
-    },
-    {
-      "id": 24,
-      "titleKey": "recipe_vegetable_tarhana_soup",
-      "age_groupKey": "age_12_18_months",
-      "image": "assets/images/recipes_images/vegetable_tarhana_soup.png",
-      "ingredientsKeys": [
-        "ingredient_tarhana_1tbsp",
-        "ingredient_vegetable_broth"
-      ],
-      "instructionsKeys": [
-        "instruction_vegetable_tarhana_soup_1",
-        "instruction_vegetable_tarhana_soup_2"
-      ],
-      "prep_timeKey": "time_2min",
-      "cook_timeKey": "time_5min",
-      "serving_sizeKey": "serving_1",
-      "notesKey": "note_tarhana_homemade"
-    },
-    {
-      "id": 25,
-      "titleKey": "recipe_vegetable_pasta",
-      "age_groupKey": "age_18_24_months",
-      "image": "assets/images/recipes_images/vegetable_pasta.png",
-      "ingredientsKeys": [
-        "ingredient_small_pasta_1tbsp",
-        "ingredient_peas_1tsp",
-        "ingredient_corn_1tsp",
-        "ingredient_olive_oil_1tsp"
-      ],
-      "instructionsKeys": [
-        "instruction_vegetable_pasta_1",
-        "instruction_vegetable_pasta_2",
-        "instruction_vegetable_pasta_3"
-      ],
-      "prep_timeKey": "time_5min",
-      "cook_timeKey": "time_10min",
-      "serving_sizeKey": "serving_1",
-      "notesKey": "note_pasta_cheese"
-    },
-    {
-      "id": 26,
-      "titleKey": "recipe_mini_cheese_sandwich",
-      "age_groupKey": "age_18_24_months",
-      "image": "assets/images/recipes_images/mini_cheese_sandwich.png",
-      "ingredientsKeys": [
-        "ingredient_whole_wheat_bread_2slices",
-        "ingredient_white_cheese_slice",
-        "ingredient_cucumber_slice"
-      ],
-      "instructionsKeys": [
-        "instruction_mini_cheese_sandwich_1",
-        "instruction_mini_cheese_sandwich_2"
-      ],
-      "prep_timeKey": "time_5min",
-      "cook_timeKey": "time_0min",
-      "serving_sizeKey": "serving_1",
-      "notesKey": "note_sandwich_tomato"
-    },
-    {
-      "id": 27,
-      "titleKey": "recipe_pumpkin_cake",
-      "age_groupKey": "age_18_24_months",
-      "image": "assets/images/recipes_images/pumpkin_cake.png",
-      "ingredientsKeys": [
-        "ingredient_pumpkin_slice",
-        "ingredient_egg_1",
-        "ingredient_flour_2tbsp"
-      ],
-      "instructionsKeys": [
-        "instruction_pumpkin_cake_1",
-        "instruction_pumpkin_cake_2",
-        "instruction_pumpkin_cake_3"
-      ],
-      "prep_timeKey": "time_10min",
-      "cook_timeKey": "time_20min",
-      "serving_sizeKey": "serving_2",
-      "notesKey": "note_pumpkin_muffins"
-    },
-    {
-      "id": 28,
-      "titleKey": "recipe_noodles_yogurt",
-      "age_groupKey": "age_18_24_months",
-      "image": "assets/images/recipes_images/noodles_yogurt.png",
-      "ingredientsKeys": [
-        "ingredient_noodles_1tbsp",
-        "ingredient_yogurt_2tbsp"
-      ],
-      "instructionsKeys": [
-        "instruction_noodles_yogurt_1",
-        "instruction_noodles_yogurt_2"
-      ],
-      "prep_timeKey": "time_2min",
-      "cook_timeKey": "time_8min",
-      "serving_sizeKey": "serving_1",
-      "notesKey": "note_noodles_garlic"
-    },
-    {
-      "id": 29,
-      "titleKey": "recipe_vegetable_fritters",
-      "age_groupKey": "age_18_24_months",
-      "image": "assets/images/recipes_images/vegetable_fritters.png",
-      "ingredientsKeys": [
-        "ingredient_egg_1",
-        "ingredient_zucchini_1tbsp",
-        "ingredient_carrot_1tbsp",
-        "ingredient_flour_1tsp"
-      ],
-      "instructionsKeys": [
-        "instruction_vegetable_fritters_1",
-        "instruction_vegetable_fritters_2",
-        "instruction_vegetable_fritters_3"
-      ],
-      "prep_timeKey": "time_10min",
-      "cook_timeKey": "time_15min",
-      "serving_sizeKey": "serving_2",
-      "notesKey": "note_fritters_bake"
-    },
-    {
-      "id": 30,
-      "titleKey": "recipe_fruit_yogurt",
-      "age_groupKey": "age_18_24_months",
-      "image": "assets/images/recipes_images/fruit_yogurt.png",
-      "ingredientsKeys": [
-        "ingredient_banana_small",
-        "ingredient_yogurt_2tbsp"
-      ],
-      "instructionsKeys": [
-        "instruction_fruit_yogurt_1",
-        "instruction_fruit_yogurt_2"
-      ],
-      "prep_timeKey": "time_3min",
-      "cook_timeKey": "time_0min",
-      "serving_sizeKey": "serving_1",
-      "notesKey": "note_yogurt_fruits"
-    },
-    {
-      "id": 31,
-      "titleKey": "recipe_mini_pizza",
-      "age_groupKey": "age_18_24_months",
-      "image": "assets/images/recipes_images/mini_pizza.png",
-      "ingredientsKeys": [
-        "ingredient_whole_wheat_bread_slice",
-        "ingredient_cheese",
-        "ingredient_tomato",
-        "ingredient_olives"
-      ],
-      "instructionsKeys": [
-        "instruction_mini_pizza_1",
-        "instruction_mini_pizza_2"
-      ],
-      "prep_timeKey": "time_5min",
-      "cook_timeKey": "time_5min",
-      "serving_sizeKey": "serving_1",
-      "notesKey": "note_pizza_olives"
-    },
-    {
-      "id": 32,
-      "titleKey": "recipe_rice_meat_vegetables",
-      "age_groupKey": "age_18_24_months",
-      "image": "assets/images/recipes_images/rice_meat_vegetables.png",
-      "ingredientsKeys": [
-        "ingredient_rice_1tbsp",
-        "ingredient_vegetables_carrot_pea",
-        "ingredient_ground_meat_1tbsp"
-      ],
-      "instructionsKeys": [
-        "instruction_rice_meat_vegetables_1",
-        "instruction_rice_meat_vegetables_2"
-      ],
-      "prep_timeKey": "time_5min",
-      "cook_timeKey": "time_15min",
-      "serving_sizeKey": "serving_1",
-      "notesKey": "note_rice_chicken_broth"
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "titleKey": "recipe_rice_porridge",
+    "age_groupKey": "age_6_8_months",
+    "image": "assets/images/recipes_images/rice_porridge.png",
+    "ingredientsKeys": [
+      "ingredient_rice_flour_2tbsp",
+      "ingredient_water_1cup",
+      "ingredient_breast_milk_1tsp_optional"
+    ],
+    "instructionsKeys": [
+      "instruction_rice_porridge_1",
+      "instruction_rice_porridge_2",
+      "instruction_rice_porridge_3",
+      "instruction_rice_porridge_4"
+    ],
+    "prep_timeKey": "time_2min",
+    "cook_timeKey": "time_7min",
+    "serving_sizeKey": "serving_1",
+    "notesKey": "note_rice_porridge_thin"
+  },
+  {
+    "id": 2,
+    "titleKey": "recipe_banana_puree",
+    "age_groupKey": "age_6_8_months",
+    "image": "assets/images/recipes_images/banana_puree.png",
+    "ingredientsKeys": [
+      "ingredient_banana_half"
+    ],
+    "instructionsKeys": [
+      "instruction_banana_puree_1",
+      "instruction_banana_puree_2"
+    ],
+    "prep_timeKey": "time_3min",
+    "cook_timeKey": "time_0min",
+    "serving_sizeKey": "serving_1",
+    "notesKey": "note_banana_fibers"
+  },
+  {
+    "id": 3,
+    "titleKey": "recipe_carrot_soup",
+    "age_groupKey": "age_6_8_months",
+    "image": "assets/images/recipes_images/carrot_soup.png",
+    "ingredientsKeys": [
+      "ingredient_carrot_small",
+      "ingredient_water_1cup"
+    ],
+    "instructionsKeys": [
+      "instruction_carrot_soup_1",
+      "instruction_carrot_soup_2",
+      "instruction_carrot_soup_3"
+    ],
+    "prep_timeKey": "time_5min",
+    "cook_timeKey": "time_12min",
+    "serving_sizeKey": "serving_1",
+    "notesKey": "note_carrot_olive_oil"
+  },
+  {
+    "id": 4,
+    "titleKey": "recipe_zucchini_puree",
+    "age_groupKey": "age_6_8_months",
+    "image": "assets/images/recipes_images/zucchini_puree.png",
+    "ingredientsKeys": [
+      "ingredient_zucchini_slice",
+      "ingredient_olive_oil_1tsp"
+    ],
+    "instructionsKeys": [
+      "instruction_zucchini_puree_1",
+      "instruction_zucchini_puree_2",
+      "instruction_zucchini_puree_3"
+    ],
+    "prep_timeKey": "time_5min",
+    "cook_timeKey": "time_10min",
+    "serving_sizeKey": "serving_1",
+    "notesKey": "note_zucchini_seeds"
+  },
+  {
+    "id": 5,
+    "titleKey": "recipe_apple_yogurt",
+    "age_groupKey": "age_6_8_months",
+    "image": "assets/images/recipes_images/apple_yogurt.png",
+    "ingredientsKeys": [
+      "ingredient_apple_small",
+      "ingredient_yogurt_2tbsp"
+    ],
+    "instructionsKeys": [
+      "instruction_apple_yogurt_1",
+      "instruction_apple_yogurt_2",
+      "instruction_apple_yogurt_3"
+    ],
+    "prep_timeKey": "time_5min",
+    "cook_timeKey": "time_5min",
+    "serving_sizeKey": "serving_1",
+    "notesKey": "note_apple_cinnamon"
+  },
+  {
+    "id": 6,
+    "titleKey": "recipe_mashed_potatoes",
+    "age_groupKey": "age_6_8_months",
+    "image": "assets/images/recipes_images/mashed_potatoes.png",
+    "ingredientsKeys": [
+      "ingredient_potato_small"
+    ],
+    "instructionsKeys": [
+      "instruction_mashed_potatoes_1",
+      "instruction_mashed_potatoes_2"
+    ],
+    "prep_timeKey": "time_5min",
+    "cook_timeKey": "time_15min",
+    "serving_sizeKey": "serving_1",
+    "notesKey": "note_potatoes_butter"
+  },
+  {
+    "id": 7,
+    "titleKey": "recipe_yogurt_banana_molasses",
+    "age_groupKey": "age_6_8_months",
+    "image": "assets/images/recipes_images/yogurt_banana_molasses.png",
+    "ingredientsKeys": [
+      "ingredient_banana_half",
+      "ingredient_yogurt_2tbsp",
+      "ingredient_carob_molasses_1tsp"
+    ],
+    "instructionsKeys": [
+      "instruction_yogurt_banana_molasses_1",
+      "instruction_yogurt_banana_molasses_2"
+    ],
+    "prep_timeKey": "time_3min",
+    "cook_timeKey": "time_0min",
+    "serving_sizeKey": "serving_1",
+    "notesKey": "note_molasses_limit"
+  },
+  {
+    "id": 8,
+    "titleKey": "recipe_pear_puree",
+    "age_groupKey": "age_6_8_months",
+    "image": "assets/images/recipes_images/pear_puree.png",
+    "ingredientsKeys": [
+      "ingredient_pear_small"
+    ],
+    "instructionsKeys": [
+      "instruction_pear_puree_1",
+      "instruction_pear_puree_2"
+    ],
+    "prep_timeKey": "time_3min",
+    "cook_timeKey": "time_5min",
+    "serving_sizeKey": "serving_1",
+    "notesKey": "note_pear_ripe"
+  },
+  {
+    "id": 9,
+    "titleKey": "recipe_vegetable_bulgur_pilaf",
+    "age_groupKey": "age_9_12_months",
+    "image": "assets/images/recipes_images/vegetable_bulgur_pilaf.png",
+    "ingredientsKeys": [
+      "ingredient_bulgur_1tbsp",
+      "ingredient_zucchini_slice",
+      "ingredient_carrot_slice",
+      "ingredient_olive_oil_1tsp"
+    ],
+    "instructionsKeys": [
+      "instruction_vegetable_bulgur_pilaf_1",
+      "instruction_vegetable_bulgur_pilaf_2",
+      "instruction_vegetable_bulgur_pilaf_3"
+    ],
+    "prep_timeKey": "time_5min",
+    "cook_timeKey": "time_10min",
+    "serving_sizeKey": "serving_1",
+    "notesKey": "note_bulgur_add_meat"
+  },
+  {
+    "id": 10,
+    "titleKey": "recipe_oatmeal_porridge",
+    "age_groupKey": "age_9_12_months",
+    "image": "assets/images/recipes_images/oatmeal_porridge.png",
+    "ingredientsKeys": [
+      "ingredient_oats_2tbsp",
+      "ingredient_milk_1cup",
+      "ingredient_banana_1"
+    ],
+    "instructionsKeys": [
+      "instruction_oatmeal_porridge_1",
+      "instruction_oatmeal_porridge_2",
+      "instruction_oatmeal_porridge_3"
+    ],
+    "prep_timeKey": "time_2min",
+    "cook_timeKey": "time_5min",
+    "serving_sizeKey": "serving_1",
+    "notesKey": "note_oatmeal_flavor"
+  },
+  {
+    "id": 11,
+    "titleKey": "recipe_vegetable_omelet",
+    "age_groupKey": "age_9_12_months",
+    "image": "assets/images/recipes_images/vegetable_omelet.png",
+    "ingredientsKeys": [
+      "ingredient_egg_yolk_1",
+      "ingredient_carrot_grated_1tbsp",
+      "ingredient_butter_1tsp"
+    ],
+    "instructionsKeys": [
+      "instruction_vegetable_omelet_1",
+      "instruction_vegetable_omelet_2",
+      "instruction_vegetable_omelet_3"
+    ],
+    "prep_timeKey": "time_5min",
+    "cook_timeKey": "time_5min",
+    "serving_sizeKey": "serving_1",
+    "notesKey": "note_egg_whites_after_1"
+  },
+  {
+    "id": 12,
+    "titleKey": "recipe_lentil_puree",
+    "age_groupKey": "age_9_12_months",
+    "image": "assets/images/recipes_images/lentil_puree.png",
+    "ingredientsKeys": [
+      "ingredient_red_lentils_1tbsp",
+      "ingredient_water_1cup"
+    ],
+    "instructionsKeys": [
+      "instruction_lentil_puree_1",
+      "instruction_lentil_puree_2"
+    ],
+    "prep_timeKey": "time_5min",
+    "cook_timeKey": "time_15min",
+    "serving_sizeKey": "serving_1",
+    "notesKey": "note_lentils_cumin"
+  },
+  {
+    "id": 13,
+    "titleKey": "recipe_avocado_banana_puree",
+    "age_groupKey": "age_9_12_months",
+    "image": "assets/images/recipes_images/avocado_banana_puree.png",
+    "ingredientsKeys": [
+      "ingredient_avocado_slice",
+      "ingredient_banana_half"
+    ],
+    "instructionsKeys": [
+      "instruction_avocado_banana_puree_1",
+      "instruction_avocado_banana_puree_2"
+    ],
+    "prep_timeKey": "time_3min",
+    "cook_timeKey": "time_0min",
+    "serving_sizeKey": "serving_1",
+    "notesKey": "note_avocado_lemon"
+  },
+  {
+    "id": 14,
+    "titleKey": "recipe_broccoli_puree",
+    "age_groupKey": "age_9_12_months",
+    "image": "assets/images/recipes_images/broccoli_puree.png",
+    "ingredientsKeys": [
+      "ingredient_broccoli_floret"
+    ],
+    "instructionsKeys": [
+      "instruction_broccoli_puree_1",
+      "instruction_broccoli_puree_2"
+    ],
+    "prep_timeKey": "time_3min",
+    "cook_timeKey": "time_8min",
+    "serving_sizeKey": "serving_1",
+    "notesKey": "note_broccoli_olive_oil"
+  },
+  {
+    "id": 15,
+    "titleKey": "recipe_pumpkin_soup",
+    "age_groupKey": "age_9_12_months",
+    "image": "assets/images/recipes_images/pumpkin_soup.png",
+    "ingredientsKeys": [
+      "ingredient_pumpkin_slice",
+      "ingredient_water_1cup"
+    ],
+    "instructionsKeys": [
+      "instruction_pumpkin_soup_1",
+      "instruction_pumpkin_soup_2"
+    ],
+    "prep_timeKey": "time_5min",
+    "cook_timeKey": "time_10min",
+    "serving_sizeKey": "serving_1",
+    "notesKey": "note_pumpkin_flavor"
+  },
+  {
+    "id": 16,
+    "titleKey": "recipe_cauliflower_puree",
+    "age_groupKey": "age_9_12_months",
+    "image": "assets/images/recipes_images/cauliflower_puree.png",
+    "ingredientsKeys": [
+      "ingredient_cauliflower_floret"
+    ],
+    "instructionsKeys": [
+      "instruction_cauliflower_puree_1",
+      "instruction_cauliflower_puree_2"
+    ],
+    "prep_timeKey": "time_5min",
+    "cook_timeKey": "time_10min",
+    "serving_sizeKey": "serving_1",
+    "notesKey": "note_cauliflower_yogurt"
+  },
+  {
+    "id": 17,
+    "titleKey": "recipe_chicken_vegetable_stew",
+    "age_groupKey": "age_12_18_months",
+    "image": "assets/images/recipes_images/chicken_vegetable_stew.png",
+    "ingredientsKeys": [
+      "ingredient_chicken_1tbsp",
+      "ingredient_carrot_slice",
+      "ingredient_potato_slice",
+      "ingredient_oil_1tsp"
+    ],
+    "instructionsKeys": [
+      "instruction_chicken_vegetable_stew_1",
+      "instruction_chicken_vegetable_stew_2",
+      "instruction_chicken_vegetable_stew_3"
+    ],
+    "prep_timeKey": "time_10min",
+    "cook_timeKey": "time_15min",
+    "serving_sizeKey": "serving_1_2",
+    "notesKey": "note_chicken_broth"
+  },
+  {
+    "id": 18,
+    "titleKey": "recipe_fruit_pancakes",
+    "age_groupKey": "age_12_18_months",
+    "image": "assets/images/recipes_images/fruit_pancakes.png",
+    "ingredientsKeys": [
+      "ingredient_egg_1",
+      "ingredient_whole_wheat_flour_2tbsp",
+      "ingredient_milk_1cup",
+      "ingredient_apple_small_grated"
+    ],
+    "instructionsKeys": [
+      "instruction_fruit_pancakes_1",
+      "instruction_fruit_pancakes_2"
+    ],
+    "prep_timeKey": "time_5min",
+    "cook_timeKey": "time_5min",
+    "serving_sizeKey": "serving_2",
+    "notesKey": "note_pancakes_cut"
+  },
+  {
+    "id": 19,
+    "titleKey": "recipe_yogurt_purslane",
+    "age_groupKey": "age_12_18_months",
+    "image": "assets/images/recipes_images/yogurt_purslane.png",
+    "ingredientsKeys": [
+      "ingredient_yogurt_half_cup",
+      "ingredient_purslane_1tbsp",
+      "ingredient_olive_oil_1tsp"
+    ],
+    "instructionsKeys": [
+      "instruction_yogurt_purslane_1",
+      "instruction_yogurt_purslane_2"
+    ],
+    "prep_timeKey": "time_5min",
+    "cook_timeKey": "time_0min",
+    "serving_sizeKey": "serving_1",
+    "notesKey": "note_purslane_garlic"
+  },
+  {
+    "id": 20,
+    "titleKey": "recipe_zucchini_ground_meat",
+    "age_groupKey": "age_12_18_months",
+    "image": "assets/images/recipes_images/zucchini_ground_meat.png",
+    "ingredientsKeys": [
+      "ingredient_ground_meat_1tbsp",
+      "ingredient_zucchini_small",
+      "ingredient_tomato_paste_1tsp"
+    ],
+    "instructionsKeys": [
+      "instruction_zucchini_ground_meat_1",
+      "instruction_zucchini_ground_meat_2"
+    ],
+    "prep_timeKey": "time_5min",
+    "cook_timeKey": "time_10min",
+    "serving_sizeKey": "serving_1",
+    "notesKey": "note_zucchini_chicken_option"
+  },
+  {
+    "id": 21,
+    "titleKey": "recipe_mini_meatballs",
+    "age_groupKey": "age_12_18_months",
+    "image": "assets/images/recipes_images/mini_meatballs.png",
+    "ingredientsKeys": [
+      "ingredient_ground_beef_100g",
+      "ingredient_carrot_grated_1tbsp",
+      "ingredient_egg_yolk_1"
+    ],
+    "instructionsKeys": [
+      "instruction_mini_meatballs_1",
+      "instruction_mini_meatballs_2"
+    ],
+    "prep_timeKey": "time_10min",
+    "cook_timeKey": "time_15min",
+    "serving_sizeKey": "serving_2",
+    "notesKey": "note_meatballs_bake"
+  },
+  {
+    "id": 22,
+    "titleKey": "recipe_cheese_omelet",
+    "age_groupKey": "age_12_18_months",
+    "image": "assets/images/recipes_images/cheese_omelet.png",
+    "ingredientsKeys": [
+      "ingredient_egg_1",
+      "ingredient_white_cheese_1tsp"
+    ],
+    "instructionsKeys": [
+      "instruction_cheese_omelet_1",
+      "instruction_cheese_omelet_2",
+      "instruction_cheese_omelet_3"
+    ],
+    "prep_timeKey": "time_3min",
+    "cook_timeKey": "time_5min",
+    "serving_sizeKey": "serving_1",
+    "notesKey": "note_omelet_parsley"
+  },
+  {
+    "id": 23,
+    "titleKey": "recipe_green_beans_olive_oil",
+    "age_groupKey": "age_12_18_months",
+    "image": "assets/images/recipes_images/green_beans_olive_oil.png",
+    "ingredientsKeys": [
+      "ingredient_green_beans",
+      "ingredient_olive_oil_1tsp"
+    ],
+    "instructionsKeys": [
+      "instruction_green_beans_olive_oil_1",
+      "instruction_green_beans_olive_oil_2"
+    ],
+    "prep_timeKey": "time_5min",
+    "cook_timeKey": "time_10min",
+    "serving_sizeKey": "serving_1",
+    "notesKey": "note_beans_tomato_paste"
+  },
+  {
+    "id": 24,
+    "titleKey": "recipe_vegetable_tarhana_soup",
+    "age_groupKey": "age_12_18_months",
+    "image": "assets/images/recipes_images/vegetable_tarhana_soup.png",
+    "ingredientsKeys": [
+      "ingredient_tarhana_1tbsp",
+      "ingredient_vegetable_broth"
+    ],
+    "instructionsKeys": [
+      "instruction_vegetable_tarhana_soup_1",
+      "instruction_vegetable_tarhana_soup_2"
+    ],
+    "prep_timeKey": "time_2min",
+    "cook_timeKey": "time_5min",
+    "serving_sizeKey": "serving_1",
+    "notesKey": "note_tarhana_homemade"
+  },
+  {
+    "id": 25,
+    "titleKey": "recipe_vegetable_pasta",
+    "age_groupKey": "age_18_24_months",
+    "image": "assets/images/recipes_images/vegetable_pasta.png",
+    "ingredientsKeys": [
+      "ingredient_small_pasta_1tbsp",
+      "ingredient_peas_1tsp",
+      "ingredient_corn_1tsp",
+      "ingredient_olive_oil_1tsp"
+    ],
+    "instructionsKeys": [
+      "instruction_vegetable_pasta_1",
+      "instruction_vegetable_pasta_2",
+      "instruction_vegetable_pasta_3"
+    ],
+    "prep_timeKey": "time_5min",
+    "cook_timeKey": "time_10min",
+    "serving_sizeKey": "serving_1",
+    "notesKey": "note_pasta_cheese"
+  },
+  {
+    "id": 26,
+    "titleKey": "recipe_mini_cheese_sandwich",
+    "age_groupKey": "age_18_24_months",
+    "image": "assets/images/recipes_images/mini_cheese_sandwich.png",
+    "ingredientsKeys": [
+      "ingredient_whole_wheat_bread_2slices",
+      "ingredient_white_cheese_slice",
+      "ingredient_cucumber_slice"
+    ],
+    "instructionsKeys": [
+      "instruction_mini_cheese_sandwich_1",
+      "instruction_mini_cheese_sandwich_2"
+    ],
+    "prep_timeKey": "time_5min",
+    "cook_timeKey": "time_0min",
+    "serving_sizeKey": "serving_1",
+    "notesKey": "note_sandwich_tomato"
+  },
+  {
+    "id": 27,
+    "titleKey": "recipe_pumpkin_cake",
+    "age_groupKey": "age_18_24_months",
+    "image": "assets/images/recipes_images/pumpkin_cake.png",
+    "ingredientsKeys": [
+      "ingredient_pumpkin_slice",
+      "ingredient_egg_1",
+      "ingredient_flour_2tbsp"
+    ],
+    "instructionsKeys": [
+      "instruction_pumpkin_cake_1",
+      "instruction_pumpkin_cake_2",
+      "instruction_pumpkin_cake_3"
+    ],
+    "prep_timeKey": "time_10min",
+    "cook_timeKey": "time_20min",
+    "serving_sizeKey": "serving_2",
+    "notesKey": "note_pumpkin_muffins"
+  },
+  {
+    "id": 28,
+    "titleKey": "recipe_noodles_yogurt",
+    "age_groupKey": "age_18_24_months",
+    "image": "assets/images/recipes_images/noodles_yogurt.png",
+    "ingredientsKeys": [
+      "ingredient_noodles_1tbsp",
+      "ingredient_yogurt_2tbsp"
+    ],
+    "instructionsKeys": [
+      "instruction_noodles_yogurt_1",
+      "instruction_noodles_yogurt_2"
+    ],
+    "prep_timeKey": "time_2min",
+    "cook_timeKey": "time_8min",
+    "serving_sizeKey": "serving_1",
+    "notesKey": "note_noodles_garlic"
+  },
+  {
+    "id": 29,
+    "titleKey": "recipe_vegetable_fritters",
+    "age_groupKey": "age_18_24_months",
+    "image": "assets/images/recipes_images/vegetable_fritters.png",
+    "ingredientsKeys": [
+      "ingredient_egg_1",
+      "ingredient_zucchini_1tbsp",
+      "ingredient_carrot_1tbsp",
+      "ingredient_flour_1tsp"
+    ],
+    "instructionsKeys": [
+      "instruction_vegetable_fritters_1",
+      "instruction_vegetable_fritters_2",
+      "instruction_vegetable_fritters_3"
+    ],
+    "prep_timeKey": "time_10min",
+    "cook_timeKey": "time_15min",
+    "serving_sizeKey": "serving_2",
+    "notesKey": "note_fritters_bake"
+  },
+  {
+    "id": 30,
+    "titleKey": "recipe_fruit_yogurt",
+    "age_groupKey": "age_18_24_months",
+    "image": "assets/images/recipes_images/fruit_yogurt.png",
+    "ingredientsKeys": [
+      "ingredient_banana_small",
+      "ingredient_yogurt_2tbsp"
+    ],
+    "instructionsKeys": [
+      "instruction_fruit_yogurt_1",
+      "instruction_fruit_yogurt_2"
+    ],
+    "prep_timeKey": "time_3min",
+    "cook_timeKey": "time_0min",
+    "serving_sizeKey": "serving_1",
+    "notesKey": "note_yogurt_fruits"
+  },
+  {
+    "id": 31,
+    "titleKey": "recipe_mini_pizza",
+    "age_groupKey": "age_18_24_months",
+    "image": "assets/images/recipes_images/mini_pizza.png",
+    "ingredientsKeys": [
+      "ingredient_whole_wheat_bread_slice",
+      "ingredient_cheese",
+      "ingredient_tomato",
+      "ingredient_olives"
+    ],
+    "instructionsKeys": [
+      "instruction_mini_pizza_1",
+      "instruction_mini_pizza_2"
+    ],
+    "prep_timeKey": "time_5min",
+    "cook_timeKey": "time_5min",
+    "serving_sizeKey": "serving_1",
+    "notesKey": "note_pizza_olives"
+  },
+  {
+    "id": 32,
+    "titleKey": "recipe_rice_meat_vegetables",
+    "age_groupKey": "age_18_24_months",
+    "image": "assets/images/recipes_images/rice_meat_vegetables.png",
+    "ingredientsKeys": [
+      "ingredient_rice_1tbsp",
+      "ingredient_vegetables_carrot_pea",
+      "ingredient_ground_meat_1tbsp"
+    ],
+    "instructionsKeys": [
+      "instruction_rice_meat_vegetables_1",
+      "instruction_rice_meat_vegetables_2"
+    ],
+    "prep_timeKey": "time_5min",
+    "cook_timeKey": "time_15min",
+    "serving_sizeKey": "serving_1",
+    "notesKey": "note_rice_chicken_broth"
+  }
+]
