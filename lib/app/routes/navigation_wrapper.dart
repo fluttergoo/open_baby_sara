@@ -23,13 +23,13 @@ class NavigationWrapper extends StatelessWidget {
     return BlocBuilder<BottomNavBloc, BottomNavState>(
       builder: (context, state) {
         final int currentIndex =
-            state is BottomNavNext ? state.selectedIndex : 0;
+            state is BottomNavNext ? state.selectedIndex : 2;
 
         return Scaffold(
           backgroundColor: Colors.transparent,
           bottomNavigationBar: ConvexAppBar(
             initialActiveIndex:
-                state is BottomNavNext ? state.selectedIndex : 0,
+                state is BottomNavNext ? state.selectedIndex : 2,
             onTap: (int index) {
               context.read<BottomNavBloc>().add(NavItemSelected(index));
             },
