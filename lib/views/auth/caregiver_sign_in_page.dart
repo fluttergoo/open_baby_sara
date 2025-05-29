@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_show_flush_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/app/routes/navigation_wrapper.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/caregiver/caregiver_bloc.dart';
@@ -43,7 +44,12 @@ class _CaregiverSignInPageState extends State<CaregiverSignInPage> {
           ScaffoldMessenger.of(context).showSnackBar(buildCustomSnackBar(state.message));
           Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => NavigationWrapper()));
         }else if (state is CaregiverError) {
-          ScaffoldMessenger.of(context).showSnackBar(buildCustomSnackBar(state.message));
+          showCustomFlushbar(
+            context,
+            context.tr('error'),
+            state.message,
+            Icons.warning_outlined,
+          );
 
         }
       },
@@ -104,9 +110,10 @@ class _CaregiverSignInPageState extends State<CaregiverSignInPage> {
                               SizedBox(height: 10.h),
                               Text(
                                 'To join a family, use the email address you were invited with',
-                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                   fontSize: 14.sp,
-                                  color: Colors.black87,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w300
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -151,11 +158,9 @@ class _CaregiverSignInPageState extends State<CaregiverSignInPage> {
                                   ),
                                   child: Text(
                                     "Join Family",
-                                    style: TextStyle(
-                                      fontSize: 18.sp,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white,
-                                    ),
+                                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 18.sp,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,),
                                   ),
                                 ),
                               ),
@@ -169,11 +174,8 @@ class _CaregiverSignInPageState extends State<CaregiverSignInPage> {
                                 },
                                 child: Text(
                                   context.tr("already_have_an_account_sign_in"),
-                                  style: TextStyle(
-                                    fontSize: 15.sp,
-                                    decoration: TextDecoration.underline,
-                                    decorationColor: Theme.of(context).primaryColor,
-                                  ),
+                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 15.sp,
+                                    color: Theme.of(context).primaryColor),
                                 ),
                               ),
                             ],
