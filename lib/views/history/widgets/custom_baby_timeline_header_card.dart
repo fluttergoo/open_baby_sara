@@ -256,13 +256,19 @@ class _CustomBabyTimelineHeaderCardState
     final selectedBaby = state is BabyLoaded ? state.selectedBaby : null;
     final primaryColor = Theme.of(context).primaryColor;
 
+    return BlocBuilder<BabyBloc, BabyState>(
+  builder: (context, state) {
+    String? imagePath;
+    if (state is BabyImagePathLoaded) {
+      imagePath = state.imagePath;
+    }
     return Column(
       children: [
         Padding(
           padding: EdgeInsets.all(16.sp),
           child: Row(
             children: [
-              CustomAvatar(size: 50.sp, imageUrl: selectedBaby?.imageUrl),
+              CustomAvatar(size: 50.sp, imagePath: imagePath),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -456,5 +462,7 @@ class _CustomBabyTimelineHeaderCardState
         ),
       ],
     );
+  },
+);
   }
 }
