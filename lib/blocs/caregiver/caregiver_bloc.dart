@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/core/locator.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/locator.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/invite_model.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/caregiver_repository.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/user_repository.dart';
