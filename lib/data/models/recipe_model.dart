@@ -42,13 +42,13 @@ class RecipeModel {
     return RecipeModel(
       id: map['id'] as int,
       titleKey: map['titleKey'] as String,
-      ageGroupKey: map['ageGroupKey'] as String,
+      ageGroupKey: map['age_groupKey'] as String,
       image: map['image'] as String,
-      ingredientsKeys: map['ingredientsKeys'] as List<String>,
-      instructionsKeys: map['instructionsKeys'] as List<String>,
-      prepTimeKey: map['prepTimeKey'] as String,
-      cookTimeKey: map['cookTimeKey'] as String,
-      servingSizeKey: map['servingSizeKey'] as String,
+      ingredientsKeys: List<String>.from(map['ingredientsKeys']),
+      instructionsKeys: List<String>.from(map['instructionsKeys']),
+      prepTimeKey: map['prep_timeKey'] as String,
+      cookTimeKey: map['cook_timeKey'] as String,
+      servingSizeKey: map['serving_sizeKey'] as String,
       notesKey: map['notesKey'] as String,
     );
   }
