@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/app/routes/navigation_wrapper.dart';
@@ -83,7 +84,7 @@ class _CustomFeverTrackerBottomSheetState
                           ),
                         ),
                         Text(
-                          'Fever Tracker',
+                          context.tr('fever_tracker'),
                           style: Theme.of(
                             context,
                           ).textTheme.titleMedium?.copyWith(
@@ -95,7 +96,7 @@ class _CustomFeverTrackerBottomSheetState
                         TextButton(
                           onPressed: onPressedSave,
                           child: Text(
-                            'Save',
+                            context.tr('save'),
                             style: Theme.of(
                               context,
                             ).textTheme.titleMedium?.copyWith(
@@ -122,7 +123,7 @@ class _CustomFeverTrackerBottomSheetState
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('Time'),
+                            Text(context.tr('time')),
                             CustomDateTimePicker(
                               initialText: 'initialText',
                               onDateTimeSelected: (selected) {
@@ -133,7 +134,7 @@ class _CustomFeverTrackerBottomSheetState
                         ),
                         Divider(color: Colors.grey.shade300),
                         CustomInputFieldWithToggle(
-                          title: 'Enter Baby’s Temperature',
+                          title: context.tr('enter_baby_temperature'),
                           selectedMeasurementOfUnit:
                               MeasurementOfUnitNames.temperature,
                           onChanged: (val, unit) {
@@ -147,7 +148,7 @@ class _CustomFeverTrackerBottomSheetState
                         Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            'Notes:',
+                            context.tr("notes:"),
                             style: Theme.of(
                               context,
                             ).textTheme.titleSmall!.copyWith(fontSize: 16.sp),
@@ -163,7 +164,7 @@ class _CustomFeverTrackerBottomSheetState
                         SizedBox(height: 20.h),
                         Center(
                           child: Text(
-                            'Created by ${widget.firstName}',
+                            '${context.tr("created_by")} ${widget.firstName}',
                             style: Theme.of(
                               context,
                             ).textTheme.titleSmall!.copyWith(
@@ -176,7 +177,7 @@ class _CustomFeverTrackerBottomSheetState
                         TextButton(
                           onPressed: () => _onPressedDelete(context),
                           child: Text(
-                            'Reset',
+                            context.tr("reset"),
                             style: Theme.of(
                               context,
                             ).textTheme.titleMedium?.copyWith(
@@ -203,11 +204,11 @@ class _CustomFeverTrackerBottomSheetState
     if (temperature == null) {
       showCustomFlushbar(
         context,
-        'Warning',
-        'Please enter a temperature.',
+        context.tr('warning'),
+        context.tr('please_enter_a_temperature'),
         Icons.warning_outlined,
       );
-      return; // kayıt işlemi durdurulmalı
+      return; 
     }
 
     final activityModel = ActivityModel(
@@ -225,7 +226,7 @@ class _CustomFeverTrackerBottomSheetState
       },
       isSynced: false,
       createdBy: widget.firstName,
-      babyID: widget.babyID, // burada düzeltme yapıldı
+      babyID: widget.babyID, 
     );
 
     context.read<ActivityBloc>().add(AddActivity(activityModel: activityModel));
@@ -235,5 +236,19 @@ class _CustomFeverTrackerBottomSheetState
     );
   }
 
-  _onPressedDelete(BuildContext context) {}
+  _onPressedDelete(BuildContext context) {
+    setState(() {
+      selectedDatetime = DateTime.now();
+      notesController.clear();
+      temperature = null;
+      temperatureUnit = null;
+    });
+
+    showCustomFlushbar(
+      context,
+      context.tr("reset"),
+      context.tr("fields_reset"),
+      Icons.refresh,
+    );
+  }
 }

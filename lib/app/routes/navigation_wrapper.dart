@@ -1,4 +1,5 @@
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/bottom_nav/bottom_nav_bloc.dart';
@@ -38,11 +39,11 @@ class NavigationWrapper extends StatelessWidget {
             activeColor: Colors.white,
             color: Colors.white70,
             items: [
-              TabItem(icon: Icons.history_outlined, title: 'History',),
-              TabItem(icon: Icons.surround_sound_outlined, title: 'Sounds'),
-              TabItem(icon: Icons.local_activity_outlined, title: 'Activity'),
-              TabItem(icon: Icons.receipt_long_outlined, title: 'Recipes'),
-              TabItem(icon: Icons.account_circle_outlined, title: 'Profile'),
+              TabItem(icon: Icons.history_outlined, title: context.tr('history')),
+              TabItem(icon: Icons.surround_sound_outlined, title: context.tr('history')),
+              TabItem(icon: Icons.local_activity_outlined, title: context.tr('activity')),
+              TabItem(icon: Icons.receipt_long_outlined, title: context.tr('recipes')),
+              TabItem(icon: Icons.account_circle_outlined, title: context.tr('profile')),
             ],
           ),
           body: Container(

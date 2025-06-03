@@ -28,8 +28,6 @@ class CustomTodaySummaryCard extends StatefulWidget {
 }
 
 class _CustomTodaySummaryCardState extends State<CustomTodaySummaryCard> {
-
-
   @override
   void initState() {
     context.read<ActivityBloc>().add(
@@ -53,10 +51,14 @@ class _CustomTodaySummaryCardState extends State<CustomTodaySummaryCard> {
     return BlocBuilder<ActivityBloc, ActivityState>(
       builder: (context, state) {
         if (state is ActivitiesWithDateLoaded) {
-          final totalFeedAmount = calculateTotalFeedAmount(state.feedActivities);
+          final totalFeedAmount = calculateTotalFeedAmount(
+            state.feedActivities,
+          );
           final totalFeedUnit = getFeedUnit(state.feedActivities);
           final sleptFormatted = formatSleepDuration(state.sleepActivities);
-          final totalPumpAmount = calculateTotalPumpAmount(state.pumpActivities);
+          final totalPumpAmount = calculateTotalPumpAmount(
+            state.pumpActivities,
+          );
           final totalPumpUnit = getPumpUnit(state.pumpActivities);
           final totalDiaper = summarizeDiaperTypes(state.diaperActivities);
           return Card(
@@ -82,14 +84,10 @@ class _CustomTodaySummaryCardState extends State<CustomTodaySummaryCard> {
                   child: Row(
                     children: [
                       Text(
-                        'Today\'s Summary',
-                        style: Theme
-                            .of(
+                        context.tr('today_summary'),
+                        style: Theme.of(
                           context,
-                        )
-                            .textTheme
-                            .titleMedium
-                            ?.copyWith(
+                        ).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           fontSize: 18.sp,
                         ),
@@ -97,11 +95,7 @@ class _CustomTodaySummaryCardState extends State<CustomTodaySummaryCard> {
                       Spacer(),
                       Text(
                         DateFormat('MMM dd, yyyy').format(DateTime.now()),
-                        style: Theme
-                            .of(context)
-                            .textTheme
-                            .titleSmall
-                            ?.copyWith(
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -116,42 +110,30 @@ class _CustomTodaySummaryCardState extends State<CustomTodaySummaryCard> {
                   child: Row(
                     children: [
                       _buildFeedActivity(
-                        'Feed',
+                        context.tr('feed'),
                         'assets/images/feed_icon.png',
                         Column(
                           children: [
                             Row(
                               children: [
                                 Text(
-                                  'Total: ',
-                                  style: Theme
-                                      .of(context)
-                                      .textTheme
-                                      .titleSmall,
+                                  context.tr('total:'),
+                                  style: Theme.of(context).textTheme.titleSmall,
                                 ),
                                 Text(
                                   totalFeedAmount.toString(),
-                                  style: Theme
-                                      .of(context)
-                                      .textTheme
-                                      .titleSmall,
+                                  style: Theme.of(context).textTheme.titleSmall,
                                 ),
                                 SizedBox(width: 5.w),
                                 Text(
                                   totalFeedUnit.toString(),
-                                  style: Theme
-                                      .of(context)
-                                      .textTheme
-                                      .titleSmall,
+                                  style: Theme.of(context).textTheme.titleSmall,
                                 ),
                               ],
                             ),
                             Text(
-                              '${state.feedActivities.length} times',
-                              style: Theme
-                                  .of(context)
-                                  .textTheme
-                                  .titleSmall,
+                              '${state.feedActivities.length} ${context.tr('times')}',
+                              style: Theme.of(context).textTheme.titleSmall,
                             ),
                           ],
                         ),
@@ -159,24 +141,21 @@ class _CustomTodaySummaryCardState extends State<CustomTodaySummaryCard> {
                       ),
                       SizedBox(width: 20.w),
                       _buildFeedActivity(
-                        'Sleep',
+                        context.tr('sleep'),
                         'assets/images/sleep_icon.png',
                         Column(
                           children: [
                             Row(
                               children: [
-                                Text(sleptFormatted!, style: Theme
-                                    .of(context)
-                                    .textTheme
-                                    .titleSmall),
+                                Text(
+                                  sleptFormatted!,
+                                  style: Theme.of(context).textTheme.titleSmall,
+                                ),
                               ],
                             ),
                             Text(
-                              '${state.sleepActivities.length} times slept.',
-                              style: Theme
-                                  .of(context)
-                                  .textTheme
-                                  .titleSmall,
+                              '${state.sleepActivities.length} ${context.tr('times slept.')}',
+                              style: Theme.of(context).textTheme.titleSmall,
                             ),
                           ],
                         ),
@@ -184,67 +163,55 @@ class _CustomTodaySummaryCardState extends State<CustomTodaySummaryCard> {
                       ),
                       SizedBox(width: 20.w),
                       _buildFeedActivity(
-                        'Diaper',
+                        context.tr("diaper"),
                         'assets/images/diaper_icon.png',
-                        Column(children: [
-                          Row(children: [
-                            Text(totalDiaper!, style: Theme
-                                .of(context)
-                                .textTheme
-                                .titleSmall,),
+                        Column(
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  totalDiaper!,
+                                  style: Theme.of(context).textTheme.titleSmall,
+                                ),
+                              ],
+                            ),
+                            Text(
+                              '${state.diaperActivities.length} ${context.tr("times changed.")}',
+                              style: Theme.of(context).textTheme.titleSmall,
+                            ),
                           ],
-                          ),
-                          Text(
-                            '${state.diaperActivities.length} times changed.',
-                            style: Theme
-                                .of(context)
-                                .textTheme
-                                .titleSmall,
-                          ),
-
-                        ],
-
                         ),
                         state.diaperActivities,
                       ),
                       SizedBox(width: 20.w),
                       _buildFeedActivity(
-                        'Pump',
+                        context.tr('pump'),
                         'assets/images/pump_icon.png',
-                        Column(children: [Row(
+                        Column(
                           children: [
-                            Text(
-                              'Total: ',
-                              style: Theme
-                                  .of(context)
-                                  .textTheme
-                                  .titleSmall,
+                            Row(
+                              children: [
+                                Text(
+                                  context.tr("total:"),
+                                  style: Theme.of(context).textTheme.titleSmall,
+                                ),
+                                Text(
+                                  totalPumpAmount.toString(),
+                                  style: Theme.of(context).textTheme.titleSmall,
+                                ),
+                                SizedBox(width: 5.w),
+                                Text(
+                                  totalPumpUnit.toString(),
+                                  style: Theme.of(context).textTheme.titleSmall,
+                                ),
+                              ],
                             ),
                             Text(
-                              totalPumpAmount.toString(),
-                              style: Theme
-                                  .of(context)
-                                  .textTheme
-                                  .titleSmall,
-                            ),
-                            SizedBox(width: 5.w),
-                            Text(
-                              totalPumpUnit.toString(),
-                              style: Theme
-                                  .of(context)
-                                  .textTheme
-                                  .titleSmall,
+                              '${state.pumpActivities.length} ${context.tr("times")}',
+                              style: Theme.of(context).textTheme.titleSmall,
                             ),
                           ],
                         ),
-                          Text(
-                            '${state.pumpActivities.length} times.',
-                            style: Theme
-                                .of(context)
-                                .textTheme
-                                .titleSmall,
-                          ),
-                        ],),
                         state.pumpActivities,
                       ),
                     ],
@@ -262,12 +229,14 @@ class _CustomTodaySummaryCardState extends State<CustomTodaySummaryCard> {
     );
   }
 
-  Widget _buildFeedActivity(String title,
-      String imgUrl,
-      Widget bodyContext,
-      List<ActivityModel> activities,) {
-    return  Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4,horizontal: 8),
+  Widget _buildFeedActivity(
+    String title,
+    String imgUrl,
+    Widget bodyContext,
+    List<ActivityModel> activities,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -293,38 +262,29 @@ class _CustomTodaySummaryCardState extends State<CustomTodaySummaryCard> {
           ),
           Text(
             title,
-            style: Theme
-                .of(context)
-                .textTheme
-                .titleSmall
-                ?.copyWith(
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.bold,
               fontSize: 14.sp,
             ),
           ),
           activities.isEmpty
               ? Container(
-            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade200,
-              borderRadius: BorderRadius.circular(8.r),
-            ),
-            child: Text(
-              '😴 No data',
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.grey.shade600, fontWeight: FontWeight.bold)
-            ),
-          )
-              :bodyContext,
+                padding: EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: Text(
+                  '😴 ${context.tr('no_data')}',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: Colors.grey.shade600,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              )
+              : bodyContext,
         ],
       ),
     );
   }
-
-
-
-
-
-
-
-
 }

@@ -43,7 +43,19 @@ void main() async {
 
   runApp(
     EasyLocalization(
-      supportedLocales: [Locale('en', 'US')],
+      supportedLocales: [
+        Locale('en', 'US'),
+        Locale('tr', 'TR'),
+        Locale('de', 'DE'),
+        Locale('es', 'ES'),
+        Locale('fr', 'FR'),
+        Locale('ar', 'SA'),
+        Locale('zh', 'CN'),
+        Locale('nl', 'NL'),
+        Locale('ru', 'RU'),
+        Locale('ko', 'KR'),
+        Locale('zh', 'TW'),
+      ],
       path: 'lib/l10n',
       fallbackLocale: Locale('en', 'US'),
       child: ScreenUtilInit(
@@ -139,8 +151,10 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<MedicationBloc>(create: (context) => MedicationBloc()),
         BlocProvider<VaccinationBloc>(create: (context) => VaccinationBloc()),
-        BlocProvider<SoundRelaxingBloc>(create: (context) => SoundRelaxingBloc()),
-        BlocProvider<RecipeBloc>(create: (context)=> RecipeBloc()),
+        BlocProvider<SoundRelaxingBloc>(
+          create: (context) => SoundRelaxingBloc(),
+        ),
+        BlocProvider<RecipeBloc>(create: (context) => RecipeBloc()),
       ],
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, state) {

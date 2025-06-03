@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/activity_model.dart';
@@ -52,8 +53,16 @@ class _CustomDoctorVisitTrackerBottomSheetState
     'Other',
   ];
 
-  String selectedReason = 'Check-up';
-  String selectedReaction = 'Calm';
+  late String selectedReason;
+  late String selectedReaction;
+
+  @override
+  void initState() {
+
+    super.initState();
+    selectedReason = dropdownItemReason.first;
+    selectedReaction = dropdownItemReaction.first;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +106,7 @@ class _CustomDoctorVisitTrackerBottomSheetState
                         child: Icon(Icons.arrow_back, color: Colors.deepPurple),
                       ),
                       Text(
-                        'Doctor Visit',
+                        context.tr('doctor_visit'),
                         style: Theme.of(
                           context,
                         ).textTheme.titleMedium?.copyWith(
@@ -109,7 +118,7 @@ class _CustomDoctorVisitTrackerBottomSheetState
                       TextButton(
                         onPressed: onPressedSave,
                         child: Text(
-                          'Save',
+                          context.tr('save'),
                           style: Theme.of(
                             context,
                           ).textTheme.titleMedium?.copyWith(
@@ -136,10 +145,10 @@ class _CustomDoctorVisitTrackerBottomSheetState
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Visit Time'),
+                          Text(context.tr('visit_time')),
                           SizedBox(width: 20.w),
                           CustomDateTimePicker(
-                            initialText: 'Select Visit Time',
+                            initialText: context.tr('select_visit_time'),
                             onDateTimeSelected: (selected) {
                               selectedDatetime = selected;
                             },
@@ -152,7 +161,7 @@ class _CustomDoctorVisitTrackerBottomSheetState
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Expanded(flex: 3, child: Text('Baby Reaction')),
+                          Expanded(flex: 3, child: Text(context.tr('baby_reaction'))),
                           SizedBox(width: 20.w,),
                           Expanded(flex: 2,
                             child: DropdownButton<String>(
@@ -163,7 +172,7 @@ class _CustomDoctorVisitTrackerBottomSheetState
                                         (reaction) => DropdownMenuItem<String>(
                                           value: reaction,
                                           child: Text(
-                                            reaction,
+                                            context.tr('baby_reaction'),
                                             style:
                                                 Theme.of(
                                                   context,
@@ -192,7 +201,7 @@ class _CustomDoctorVisitTrackerBottomSheetState
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(flex:3,
-                              child: Text('Visit Reason')),
+                              child: Text(context.tr('visit_reason'))),
                           SizedBox(width: 20.w,),
                           Expanded(
                             flex: 2,
@@ -204,7 +213,7 @@ class _CustomDoctorVisitTrackerBottomSheetState
                                         (reason) => DropdownMenuItem<String>(
                                           value: reason,
                                           child: Text(
-                                            reason,
+                                            context.tr(reason),
                                             style:
                                                 Theme.of(
                                                   context,
@@ -233,7 +242,7 @@ class _CustomDoctorVisitTrackerBottomSheetState
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Diagnosis:',
+                          '${context.tr('diagnosis')}:',
                           style: Theme.of(
                             context,
                           ).textTheme.titleSmall!.copyWith(fontSize: 16.sp),
@@ -252,7 +261,7 @@ class _CustomDoctorVisitTrackerBottomSheetState
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Notes:',
+                          context.tr("notes:"),
                           style: Theme.of(
                             context,
                           ).textTheme.titleSmall!.copyWith(fontSize: 16.sp),
@@ -270,7 +279,7 @@ class _CustomDoctorVisitTrackerBottomSheetState
                       // Footer
                       Center(
                         child: Text(
-                          'Created by ${widget.firstName}',
+                          '${context.tr("created_by")} ${widget.firstName}',
                           style: Theme.of(
                             context,
                           ).textTheme.titleSmall!.copyWith(
@@ -283,7 +292,7 @@ class _CustomDoctorVisitTrackerBottomSheetState
                       TextButton(
                         onPressed: () => _onPressedDelete(context),
                         child: Text(
-                          'Reset',
+                          context.tr("reset"),
                           style: Theme.of(
                             context,
                           ).textTheme.titleMedium?.copyWith(
@@ -349,5 +358,12 @@ class _CustomDoctorVisitTrackerBottomSheetState
       diagnosisController.clear();
       notesController.clear();
     });
+
+    showCustomFlushbar(
+      context,
+      context.tr("reset"),
+      context.tr("fields_reset"),
+      Icons.refresh,
+    );
   }
 }

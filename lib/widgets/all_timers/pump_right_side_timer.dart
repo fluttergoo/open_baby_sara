@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/all_timer/pump_right_side_timer/pump_right_side_timer_bloc.dart';
@@ -154,7 +155,7 @@ class _PumpRightSideTimerState extends State<PumpRightSideTimer>with SingleTicke
                     ),
                   ),
                   Text(
-                    _isRunning ? 'Tap to pause' : 'Tap to start',
+                    _isRunning ? context.tr('tap_to_pause') : context.tr('tap_to_start_2'),
                     style: TextStyle(
                       fontSize: 12.sp,
                       color: textColor.withOpacity(0.8),

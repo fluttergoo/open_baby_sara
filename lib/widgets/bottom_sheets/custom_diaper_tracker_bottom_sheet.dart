@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/app/routes/navigation_wrapper.dart';
@@ -85,7 +86,7 @@ class _CustomDiaperTrackerBottomSheetState
                         child: Icon(Icons.arrow_back, color: Colors.deepPurple),
                       ),
                       Text(
-                        'Diaper Tracker',
+                        context.tr("diaper_tracker"),
                         style: Theme.of(
                           context,
                         ).textTheme.titleMedium?.copyWith(
@@ -97,7 +98,7 @@ class _CustomDiaperTrackerBottomSheetState
                       TextButton(
                         onPressed: onPressedSave,
                         child: Text(
-                          'Save',
+                          context.tr("save"),
                           style: Theme.of(
                             context,
                           ).textTheme.titleMedium?.copyWith(
@@ -124,7 +125,7 @@ class _CustomDiaperTrackerBottomSheetState
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Time'),
+                          Text(context.tr("time")),
                           CustomDateTimePicker(
                             initialText: 'initialText',
                             onDateTimeSelected: (selected) {
@@ -134,7 +135,7 @@ class _CustomDiaperTrackerBottomSheetState
                         ],
                       ),
                       Divider(color: Colors.grey.shade300),
-                      Text('Select diaper condition(s)'),
+                      Text(context.tr("select_diaper_condition")),
                       SizedBox(height: 10.h),
                       WetDirtyDrySelector(
                         onChanged: (selectedValue) {
@@ -159,19 +160,19 @@ class _CustomDiaperTrackerBottomSheetState
                         ),
 
                       Divider(color: Colors.grey.shade300),
-                      Text('Additional observations'),
+                      Text(context.tr("additional_observations")),
                       customCheckboxTile(
-                        label: "Blowout",
+                        label: context.tr("blowout"),
                         value: isBlowout,
                         onChanged: (val) => setState(() => isBlowout = val),
                       ),
                       customCheckboxTile(
-                        label: "Diaper Rush",
+                        label: context.tr("diaper_rush"),
                         value: isDiaperRush,
                         onChanged: (val) => setState(() => isDiaperRush = val),
                       ),
                       customCheckboxTile(
-                        label: "Blood in stool",
+                        label: context.tr("blood_in_stool"),
                         value: isBloodInStool,
                         onChanged:
                             (val) => setState(() => isBloodInStool = val),
@@ -183,7 +184,7 @@ class _CustomDiaperTrackerBottomSheetState
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Notes:',
+                          context.tr("notes:"),
                           style: Theme.of(
                             context,
                           ).textTheme.titleSmall!.copyWith(fontSize: 16.sp),
@@ -199,7 +200,7 @@ class _CustomDiaperTrackerBottomSheetState
                       SizedBox(height: 20.h),
                       Center(
                         child: Text(
-                          'Created by ${widget.firstName}',
+                          '${context.tr("created_by")} ${widget.firstName}',
                           style: Theme.of(
                             context,
                           ).textTheme.titleSmall!.copyWith(
@@ -212,7 +213,7 @@ class _CustomDiaperTrackerBottomSheetState
                       TextButton(
                         onPressed: () => _onPressedDelete(context),
                         child: Text(
-                          'Reset',
+                          context.tr("reset"),
                           style: Theme.of(
                             context,
                           ).textTheme.titleMedium?.copyWith(
@@ -237,8 +238,8 @@ class _CustomDiaperTrackerBottomSheetState
     if (selectedMain.isEmpty) {
       showCustomFlushbar(
         context,
-        'Warning',
-        'Please choose diaper condition',
+        context.tr("warning"),
+        context.tr("please_choose_diaper_condition"),
         Icons.warning_outlined,
       );
     } else {
@@ -271,7 +272,7 @@ class _CustomDiaperTrackerBottomSheetState
       }catch(e){
         showCustomFlushbar(
           context,
-          'Warning',
+          context.tr("warning"),
           'Error ${e.toString()}',
           Icons.warning_outlined,
         );
@@ -280,5 +281,23 @@ class _CustomDiaperTrackerBottomSheetState
     }
   }
 
-  void _onPressedDelete(BuildContext context) {}
+  void _onPressedDelete(BuildContext context) {
+    setState(() {
+      selectedDatetime = DateTime.now();
+      selectedMain.clear();
+      selectedTextures.clear();
+      selectedColors.clear();
+      isBlowout = false;
+      isDiaperRush = false;
+      isBloodInStool = false;
+      notesController.clear();
+    });
+
+    showCustomFlushbar(
+      context,
+      context.tr("reset"),
+      context.tr("fields_reset"),
+      Icons.refresh,
+    );
+  }
 }

@@ -25,7 +25,7 @@ class _AddCaregiverState extends State<AddCaregiver> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Add Caregiver',
+          context.tr('add_caregiver'),
           style: Theme.of(
             context,
           ).textTheme.titleMedium!.copyWith(color: Colors.deepPurpleAccent),
@@ -72,7 +72,7 @@ class _AddCaregiverState extends State<AddCaregiver> {
                             children: [
                               /// Information
                               Text(
-                                'Enter the caregiver’s name and email. They can join your baby’s profile by selecting Join Family on the login screen.',
+                                context.tr('add_caregiver_page_body_info'),
                                 style: Theme.of(
                                   context,
                                 ).textTheme.bodyMedium!.copyWith(
@@ -85,7 +85,7 @@ class _AddCaregiverState extends State<AddCaregiver> {
                               /// Caregiver First Name
                               RichText(
                                 text: TextSpan(
-                                  text: 'Caregiver First Name:',
+                                  text: context.tr('caregiver_first_name'),
                                   style: Theme.of(
                                     context,
                                   ).textTheme.titleSmall!.copyWith(
@@ -119,7 +119,7 @@ class _AddCaregiverState extends State<AddCaregiver> {
                               /// Caregiver Email
                               RichText(
                                 text: TextSpan(
-                                  text: 'Caregiver Email:',
+                                  text: context.tr('caregiver_email:'),
                                   style: Theme.of(
                                     context,
                                   ).textTheme.titleSmall!.copyWith(

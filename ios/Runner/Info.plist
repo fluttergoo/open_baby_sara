@@ -56,5 +56,8 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSLocalNetworkUsageDescription</key>
+    <string>This app requires access to the local network to support debugging and communication features.</string>
+
 </dict>
 </plist>

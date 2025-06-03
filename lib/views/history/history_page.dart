@@ -91,7 +91,7 @@ class _HistoryPageState extends State<HistoryPage> {
                       ),
                       SizedBox(height: 10.h),
                       Text(
-                        " Activity Timeline",
+                        context.tr('activity_timeline'),
                         style: TextStyle(
                           fontSize: 18.sp,
                           fontWeight: FontWeight.bold,
@@ -108,7 +108,7 @@ class _HistoryPageState extends State<HistoryPage> {
                             final activities = state.activities;
                             if (activities.isEmpty) {
                               return Center(
-                                child: Text("No activities found."),
+                                child: Text(context.tr('no_activities_found')),
                               );
                             }
 

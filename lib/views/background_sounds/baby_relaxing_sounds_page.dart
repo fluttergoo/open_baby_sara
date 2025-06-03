@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/sound_relaxing/sound_relaxing_bloc.dart';
@@ -84,7 +85,7 @@ class _BabyRelaxingSoundsPageState extends State<BabyRelaxingSoundsPage> {
         children: [
           Center(
             child: Text(
-              "Baby Relaxing Sounds",
+              context.tr('baby_relaxing_sounds'),
               style: TextStyle(
                 fontSize: 22.sp,
                 fontWeight: FontWeight.bold,

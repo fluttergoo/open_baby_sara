@@ -35,7 +35,7 @@ class _EditCaregiverPageState extends State<EditCaregiverPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Edit Caregiver Details',
+          context.tr('edit_caregiver_details'),
           style: Theme.of(
             context,
           ).textTheme.titleMedium!.copyWith(color: Colors.deepPurpleAccent),
@@ -77,7 +77,7 @@ class _EditCaregiverPageState extends State<EditCaregiverPage> {
                     /// Caregiver First Name
                     RichText(
                       text: TextSpan(
-                        text: 'Caregiver First Name:',
+                        text: context.tr('caregiver_first_name'),
                         style: Theme.of(context).textTheme.titleSmall!.copyWith(
                           color: Theme.of(context).primaryColor,
                           fontSize: 16.sp,
@@ -122,7 +122,7 @@ class _EditCaregiverPageState extends State<EditCaregiverPage> {
                           ),
                         ),
                         child: Text(
-                          'Delete',
+                          context.tr('delete'),
                           style: TextStyle(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.bold,
@@ -134,7 +134,7 @@ class _EditCaregiverPageState extends State<EditCaregiverPage> {
 
                     SizedBox(height: 10.h),
                     Text(
-                      'Removing this caregiver will revoke their access to your family. They will no longer be able to view baby-related data.',
+                      context.tr('edit_caregiver_page_info'),
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                         color: Colors.grey.shade700,
                         fontSize: 14.sp,

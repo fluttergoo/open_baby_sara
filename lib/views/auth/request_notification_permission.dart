@@ -50,7 +50,7 @@ class _RequestNotificationPermissionState
                     Text(
                       context.tr("get_gentle_reminders"),
                       textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.headlineMedium,
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
                     SizedBox(height: 40.h),
 

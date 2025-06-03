@@ -1,5 +1,6 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:duration_picker/duration_picker.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/app/routes/navigation_wrapper.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_sara_baby_tracker_and_sound/core/app_colors.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/activity_model.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/all_timers/sleep_timer_circle.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/build_custom_snack_bar.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_show_flush_bar.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_text_form_field.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:uuid/uuid.dart';
@@ -35,7 +37,6 @@ class _CustomSleepTrackerBottomSheetState
   TimeOfDay? endTime;
   String? totalSleepTime;
   DateTime? selectedDatetime = DateTime.now();
-
 
   TextEditingController notesController = TextEditingController();
 
@@ -83,15 +84,12 @@ class _CustomSleepTrackerBottomSheetState
                       // Back button
                       GestureDetector(
                         onTap: () => Navigator.of(context).pop(),
-                        child: Icon(
-                          Icons.arrow_back,
-                          color: Colors.deepPurple,
-                        ),
+                        child: Icon(Icons.arrow_back, color: Colors.deepPurple),
                       ),
 
                       // Title
                       Text(
-                        'Sleep Tracker',
+                        context.tr('sleep_tracker'),
                         style: Theme.of(
                           context,
                         ).textTheme.titleMedium?.copyWith(
@@ -107,7 +105,7 @@ class _CustomSleepTrackerBottomSheetState
                           onPressedSave();
                         },
                         child: Text(
-                          'Save',
+                          context.tr('save'),
                           style: Theme.of(
                             context,
                           ).textTheme.titleMedium?.copyWith(
@@ -131,14 +129,14 @@ class _CustomSleepTrackerBottomSheetState
                           endTime = state.endTime;
                           widget.duration = state.duration;
                           totalSleepTime = formatDuration(state.duration);
-                          if (state.startTime !=null) {
-                            start=state.startTime;
+                          if (state.startTime != null) {
+                            start = state.startTime;
                           }
                         }
                         if (state is TimerRunning) {
                           endTime = null;
                           start = state.startTime;
-                          widget.duration=state.duration;
+                          widget.duration = state.duration;
                         }
 
                         if (state is TimerReset) {
@@ -154,10 +152,9 @@ class _CustomSleepTrackerBottomSheetState
                             SizedBox(height: 32.h),
                             Divider(color: Colors.grey.shade300),
                             Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('Start Time'),
+                                Text(context.tr("start_time")),
                                 TextButton(
                                   onPressed: () {
                                     _onPressedShowTimePicker(context);
@@ -165,16 +162,15 @@ class _CustomSleepTrackerBottomSheetState
                                   child:
                                       start != null
                                           ? Text(start!.format(context))
-                                          : Text('Add'),
+                                          : Text(context.tr("add")),
                                 ),
                               ],
                             ),
                             Divider(color: Colors.grey.shade300),
                             Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('End Time'),
+                                Text(context.tr("end_time")),
                                 TextButton(
                                   onPressed: () {
                                     _onPressedEndTimeShowPicker(context);
@@ -182,16 +178,15 @@ class _CustomSleepTrackerBottomSheetState
                                   child:
                                       endTime != null
                                           ? Text(endTime!.format(context))
-                                          : Text('Add'),
+                                          : Text(context.tr("add")),
                                 ),
                               ],
                             ),
                             Divider(color: Colors.grey.shade300),
                             Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('Total Sleep Time'),
+                                Text(context.tr("total_sleep_time")),
                                 TextButton(
                                   onPressed: () {
                                     // _onPressedEndTimeShowPicker(context);
@@ -209,7 +204,7 @@ class _CustomSleepTrackerBottomSheetState
                             Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                'Notes:',
+                                context.tr("notes:"),
                                 style: Theme.of(context).textTheme.titleSmall!
                                     .copyWith(fontSize: 16.sp),
                               ),
@@ -228,7 +223,7 @@ class _CustomSleepTrackerBottomSheetState
                             SizedBox(height: 20.h),
 
                             Text(
-                              'Created by ${widget.firstName}',
+                              '${context.tr("created_by")} ${widget.firstName}',
                               style: Theme.of(
                                 context,
                               ).textTheme.titleSmall!.copyWith(
@@ -243,7 +238,7 @@ class _CustomSleepTrackerBottomSheetState
                                 _onPressedDelete(context);
                               },
                               child: Text(
-                                'Reset',
+                                context.tr("reset"),
                                 style: Theme.of(
                                   context,
                                 ).textTheme.titleMedium?.copyWith(
@@ -273,7 +268,7 @@ class _CustomSleepTrackerBottomSheetState
     );
     if (start != null) {
       context.read<SleepTimerBloc>().add(
-        SetStartTimeTimer( startTime:start, activityType: 'sleepTimer'),
+        SetStartTimeTimer(startTime: start, activityType: 'sleepTimer'),
       );
     }
   }
@@ -285,13 +280,29 @@ class _CustomSleepTrackerBottomSheetState
     );
     if (endTime != null) {
       context.read<SleepTimerBloc>().add(
-        SetEndTimeTimer( activityType: 'sleepTimer', endTime: endTime!),
+        SetEndTimeTimer(activityType: 'sleepTimer', endTime: endTime!),
       );
     }
   }
 
   void _onPressedDelete(BuildContext context) {
+    setState(() {
+      start = null;
+      endTime = null;
+      totalSleepTime = null;
+      notesController.clear();
+      widget.duration = null;
+      selectedDatetime = DateTime.now();
+    });
+
     context.read<SleepTimerBloc>().add(ResetTimer(activityType: 'sleepTimer'));
+
+    showCustomFlushbar(
+      context,
+      context.tr("reset"),
+      context.tr("fields_reset"),
+      Icons.refresh,
+    );
   }
 
   void onPressedSave() {
@@ -304,7 +315,7 @@ class _CustomSleepTrackerBottomSheetState
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
           data: {
-            'activityDay' : selectedDatetime?.toIso8601String(),
+            'activityDay': selectedDatetime?.toIso8601String(),
             'startTimeHour': start?.hour,
             'startTimeMin': start?.minute,
             'endTimeHour': endTime?.hour,
@@ -322,7 +333,9 @@ class _CustomSleepTrackerBottomSheetState
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => NavigationWrapper()),
         );
-        context.read<SleepTimerBloc>().add(ResetTimer(activityType: 'sleepTimer'));
+        context.read<SleepTimerBloc>().add(
+          ResetTimer(activityType: 'sleepTimer'),
+        );
       } catch (e, stack) {
         print('HATA YAKALANDI: $e');
         print(stack);

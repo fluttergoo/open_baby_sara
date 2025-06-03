@@ -1,4 +1,5 @@
 import 'package:duration_picker/duration_picker.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/app/routes/navigation_wrapper.dart';
@@ -109,7 +110,7 @@ class _CustomFeedTrackerBottomSheetState
                         child: Icon(Icons.arrow_back, color: Colors.deepPurple),
                       ),
                       Text(
-                        'Feed Tracker',
+                        context.tr("feed_tracker"),
                         style: Theme.of(
                           context,
                         ).textTheme.titleMedium?.copyWith(
@@ -121,7 +122,7 @@ class _CustomFeedTrackerBottomSheetState
                       TextButton(
                         onPressed: onPressedSave,
                         child: Text(
-                          'Save',
+                          context.tr("save"),
                           style: Theme.of(
                             context,
                           ).textTheme.titleMedium?.copyWith(
@@ -137,14 +138,14 @@ class _CustomFeedTrackerBottomSheetState
                 // Rounded Tab Bar
                 Container(
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF0F0F0), // Daha açık gri arka plan
+                    color: const Color(0xFFF0F0F0),
                     borderRadius: BorderRadius.circular(12.r),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.grey.shade50,
                         blurRadius: 4,
                         offset: Offset(0, 1),
-                      )
+                      ),
                     ],
                   ),
                   padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
@@ -159,14 +160,14 @@ class _CustomFeedTrackerBottomSheetState
                           color: Colors.black.withOpacity(0.01),
                           blurRadius: 2,
                           offset: Offset(0, 1),
-                        )
+                        ),
                       ],
                     ),
                     dividerColor: Colors.transparent,
                     indicatorSize: TabBarIndicatorSize.tab,
                     labelPadding: EdgeInsets.zero,
-                    labelColor: Colors.purple[700], // Koyu mor seçili durumda
-                    unselectedLabelColor: Colors.grey[600], // Orta gri seçili olmayan durumda
+                    labelColor: Colors.purple[700],
+                    unselectedLabelColor: Colors.grey[600],
                     labelStyle: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 12.sp,
@@ -184,7 +185,7 @@ class _CustomFeedTrackerBottomSheetState
                           children: [
                             Icon(Icons.accessibility_new_rounded, size: 16),
                             SizedBox(width: 4.w),
-                            Text('Breastfeed'),
+                            Text(context.tr("breastfeed")),
                           ],
                         ),
                       ),
@@ -196,7 +197,7 @@ class _CustomFeedTrackerBottomSheetState
                           children: [
                             Icon(Icons.local_drink_rounded, size: 16),
                             SizedBox(width: 4.w),
-                            Text('Bottle Feed'),
+                            Text(context.tr("bottle_feed")),
                           ],
                         ),
                       ),
@@ -228,8 +229,8 @@ class _CustomFeedTrackerBottomSheetState
       if (feedAmout == null || selectedMainActivity == null) {
         showCustomFlushbar(
           context,
-          'Warning',
-          'Please enter feed information',
+          context.tr('warning'),
+          context.tr("please_enter_feed_information"),
           Icons.warning_outlined,
         );
       } else {
@@ -239,12 +240,12 @@ class _CustomFeedTrackerBottomSheetState
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
           data: {
-            'activityDay' : selectedDatetime.toIso8601String(),
+            'activityDay': selectedDatetime.toIso8601String(),
             'startTimeHour': selectedDatetime?.hour,
             'startTimeMin': selectedDatetime?.minute,
             'notes': notesBottleFeedController.text,
             'mainSelection': selectedMainActivity,
-            'totalAmount':feedAmout,
+            'totalAmount': feedAmout,
             'totalUnit': feedUnit,
           },
           isSynced: false,
@@ -261,19 +262,21 @@ class _CustomFeedTrackerBottomSheetState
         } catch (e) {
           showCustomFlushbar(
             context,
-            'Warning',
+            context.tr("warning"),
             'Error ${e.toString()}',
             Icons.warning_outlined,
           );
         }
       }
-    } else if (_tabController.index==0) {
+    } else if (_tabController.index == 0) {
       final activityName = ActivityType.breastFeed.name;
-      if (leftSideStartTime ==null && leftSideAmout ==null && leftSideTotalTime ==null) {
+      if (leftSideStartTime == null &&
+          leftSideAmout == null &&
+          leftSideTotalTime == null) {
         showCustomFlushbar(
           context,
-          'Warning',
-          'Burasi Please enter feed information',
+          context.tr("warning"),
+          context.tr("please_enter_feed_information"),
           Icons.warning_outlined,
         );
       } else {
@@ -283,25 +286,26 @@ class _CustomFeedTrackerBottomSheetState
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
           data: {
-            'activityDay' : selectedDatetime.toIso8601String(),
-            'leftSideStartTimeHour':leftSideStartTime?.hour??0,
-            'leftSideStartTimeMin':leftSideStartTime?.minute??0,
-            'leftSideEndTimeHour':leftSideEndTime?.hour??0,
-            'leftSideEndTimeMin':leftSideEndTime?.minute??0,
-            'leftSideTotalTime':leftSideTotalTime?.inMilliseconds??0,
-            'leftSideAmount':leftSideAmout??0,
-            'leftSideUnit':leftSideUnit??'',
-            'rightSideStartTimeHour': rightSideStartTime?.hour??0,
-            'rightSideStartTimeMin': rightSideStartTime?.minute??0,
-            'rightSideEndTimeHour': rightSideEndTime?.hour??0,
-            'rightSideEndTimeMin': rightSideEndTime?.minute??0,
-            'rightSideTotalTime': rightSideTotalTime?.inMilliseconds??0,
-            'rightSideAmount':rightSideAmout??0,
-            'rightSideUnit':rightSideUnit??'',
-            'totalTime':(leftSideTotalTime ?? Duration.zero).inMilliseconds +
+            'activityDay': selectedDatetime.toIso8601String(),
+            'leftSideStartTimeHour': leftSideStartTime?.hour ?? 0,
+            'leftSideStartTimeMin': leftSideStartTime?.minute ?? 0,
+            'leftSideEndTimeHour': leftSideEndTime?.hour ?? 0,
+            'leftSideEndTimeMin': leftSideEndTime?.minute ?? 0,
+            'leftSideTotalTime': leftSideTotalTime?.inMilliseconds ?? 0,
+            'leftSideAmount': leftSideAmout ?? 0,
+            'leftSideUnit': leftSideUnit ?? '',
+            'rightSideStartTimeHour': rightSideStartTime?.hour ?? 0,
+            'rightSideStartTimeMin': rightSideStartTime?.minute ?? 0,
+            'rightSideEndTimeHour': rightSideEndTime?.hour ?? 0,
+            'rightSideEndTimeMin': rightSideEndTime?.minute ?? 0,
+            'rightSideTotalTime': rightSideTotalTime?.inMilliseconds ?? 0,
+            'rightSideAmount': rightSideAmout ?? 0,
+            'rightSideUnit': rightSideUnit ?? '',
+            'totalTime':
+                (leftSideTotalTime ?? Duration.zero).inMilliseconds +
                 (rightSideTotalTime ?? Duration.zero).inMilliseconds,
-            'totalAmount':(leftSideAmout ?? 0) + (rightSideAmout ?? 0),
-            'totalUnit':rightSideUnit ?? leftSideUnit,
+            'totalAmount': (leftSideAmout ?? 0) + (rightSideAmout ?? 0),
+            'totalUnit': rightSideUnit ?? leftSideUnit,
             'notes': notesController.text,
           },
           isSynced: false,
@@ -318,7 +322,7 @@ class _CustomFeedTrackerBottomSheetState
         } catch (e) {
           showCustomFlushbar(
             context,
-            'Warning',
+            context.tr("warning"),
             'Error ${e.toString()}',
             Icons.warning_outlined,
           );
@@ -327,7 +331,45 @@ class _CustomFeedTrackerBottomSheetState
     }
   }
 
-  _onPressedDelete(BuildContext context) async {}
+  _onPressedDelete(BuildContext context) async {
+    setState(() {
+      // Bottle Feed
+      selectedMainActivity = null;
+      feedAmout = null;
+      feedUnit = null;
+      notesBottleFeedController.clear();
+
+      // Breast Feed
+      leftSideStartTime = null;
+      leftSideEndTime = null;
+      leftSideTotalTime = null;
+      leftSideAmout = null;
+      leftSideUnit = null;
+
+      rightSideStartTime = null;
+      rightSideEndTime = null;
+      rightSideTotalTime = null;
+      rightSideAmout = null;
+      rightSideUnit = null;
+      notesController.clear();
+    });
+
+    context.read<leftBreastfeed.BreasfeedLeftSideTimerBloc>().add(
+      leftBreastfeed.ResetTimer(activityType: 'leftPumpTimer'),
+    );
+
+    context.read<rightBreastfeed.BreastfeedRightSideTimerBloc>().add(
+      rightBreastfeed.ResetTimer(activityType: 'rightPumpTimer'),
+    );
+
+    showCustomFlushbar(
+      context,
+      color: Colors.greenAccent,
+      context.tr("info"),
+      context.tr("fields_reset"),
+      Icons.refresh,
+    );
+  }
 
   Widget customBottlerFeedTracker() {
     return SingleChildScrollView(
@@ -343,7 +385,7 @@ class _CustomFeedTrackerBottomSheetState
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Time'),
+              Text(context.tr("time")),
               CustomDateTimePicker(
                 initialText: 'initialText',
                 onDateTimeSelected: (selected) {
@@ -354,7 +396,7 @@ class _CustomFeedTrackerBottomSheetState
           ),
           Divider(color: Colors.grey.shade300),
           SizedBox(height: 10.h),
-          Text('Feeding Type'),
+          Text(context.tr("feeding_type")),
           SizedBox(height: 5.h),
           FormulaBreastmilkSelector(
             onChanged: (selectedValue) {
@@ -373,7 +415,7 @@ class _CustomFeedTrackerBottomSheetState
           ),
           Divider(color: Colors.grey.shade300),
           Text(
-            'Notes:',
+            context.tr("notes:"),
             style: Theme.of(
               context,
             ).textTheme.titleSmall!.copyWith(fontSize: 16.sp),
@@ -388,7 +430,7 @@ class _CustomFeedTrackerBottomSheetState
           SizedBox(height: 20.h),
           Center(
             child: Text(
-              'Created by ${widget.firstName}',
+              '${context.tr("created_by")} ${widget.firstName}',
               style: Theme.of(context).textTheme.titleSmall!.copyWith(
                 fontSize: 12.sp,
                 fontStyle: FontStyle.italic,
@@ -400,7 +442,7 @@ class _CustomFeedTrackerBottomSheetState
             child: TextButton(
               onPressed: () => _onPressedDelete(context),
               child: Text(
-                'Reset',
+                context.tr("reset"),
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: Theme.of(context).primaryColor,
                   fontSize: 16.sp,
@@ -546,7 +588,7 @@ class _CustomFeedTrackerBottomSheetState
                 Column(
                   children: [
                     Text(
-                      'Left Side',
+                      context.tr("left_side"),
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: Theme.of(context).primaryColor,
                         // fontWeight: FontWeight.bold,
@@ -563,7 +605,7 @@ class _CustomFeedTrackerBottomSheetState
                 Column(
                   children: [
                     Text(
-                      'Right Side',
+                      context.tr("right_side"),
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: Theme.of(context).primaryColor,
                         //fontWeight: FontWeight.bold,
@@ -615,21 +657,23 @@ class _CustomFeedTrackerBottomSheetState
                         children: [
                           SizedBox(height: 16.h),
                           buildTimeInfo(
-                            'Start Time',
-                            leftSideStartTime?.format(context) ?? 'Add',
+                            context.tr("start_time"),
+                            leftSideStartTime?.format(context) ??
+                                context.tr("add"),
                             () {
                               _onPressedShowTimePicker(context, 'left');
                             },
                           ),
                           buildTimeInfo(
-                            'End Time',
-                            leftSideEndTime?.format(context) ?? 'Add',
+                            context.tr("end_time"),
+                            leftSideEndTime?.format(context) ??
+                                context.tr("add"),
                             () {
                               _onPressedEndTimeShowPicker(context, 'left');
                             },
                           ),
                           buildTimeInfo(
-                            'Total Time',
+                            context.tr("total_time"),
                             leftSideTotalTime != null
                                 ? formatDuration(leftSideTotalTime!)
                                 : '00:00',
@@ -650,8 +694,6 @@ class _CustomFeedTrackerBottomSheetState
                     );
                   },
                 ),
-
-                // Container(width: 1, height: 160.h, color: Colors.grey.shade300),
 
                 /// RIGHT SIDE
                 BlocBuilder<
@@ -687,17 +729,19 @@ class _CustomFeedTrackerBottomSheetState
                         children: [
                           SizedBox(height: 16.h),
                           buildTimeInfo(
-                            'Start Time',
-                            rightSideStartTime?.format(context) ?? 'Add',
+                            context.tr("start_time"),
+                            rightSideStartTime?.format(context) ??
+                                context.tr("add"),
                             () => _onPressedShowTimePicker(context, 'right'),
                           ),
                           buildTimeInfo(
-                            'End Time',
-                            rightSideEndTime?.format(context) ?? 'Add',
+                            context.tr("end_time"),
+                            rightSideEndTime?.format(context) ??
+                                context.tr("add"),
                             () => _onPressedEndTimeShowPicker(context, 'right'),
                           ),
                           buildTimeInfo(
-                            'Total Time',
+                            context.tr("total_time"),
                             rightSideTotalTime != null
                                 ? formatDuration(rightSideTotalTime!)
                                 : '00:00',
@@ -710,7 +754,6 @@ class _CustomFeedTrackerBottomSheetState
                                 rightSideAmout = value;
                                 rightSideUnit = unit;
                               });
-                              debugPrint('Right side value: $value $unit');
                             },
                           ),
                         ],
@@ -724,7 +767,7 @@ class _CustomFeedTrackerBottomSheetState
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'Notes:',
+                context.tr("notes:"),
                 style: Theme.of(
                   context,
                 ).textTheme.titleSmall!.copyWith(fontSize: 16.sp),
@@ -744,7 +787,7 @@ class _CustomFeedTrackerBottomSheetState
             SizedBox(height: 20.h),
 
             Text(
-              'Created by ${widget.firstName}',
+              '${context.tr("created_by")} ${widget.firstName}',
               style: Theme.of(context).textTheme.titleSmall!.copyWith(
                 fontSize: 12.sp,
                 fontStyle: FontStyle.italic,
@@ -757,7 +800,7 @@ class _CustomFeedTrackerBottomSheetState
                 _onPressedDelete(context);
               },
               child: Text(
-                'Reset',
+                context.tr("reset"),
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: Theme.of(context).primaryColor,
                   fontSize: 16.sp,

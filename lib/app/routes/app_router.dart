@@ -6,6 +6,7 @@ import 'package:flutter_sara_baby_tracker_and_sound/views/account/change_passwor
 import 'package:flutter_sara_baby_tracker_and_sound/views/account/edit_baby_page.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/views/account/edit_caregiver_page.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/views/account/faq_page.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/views/account/language_settings_page.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/views/account/legal_page.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/views/account/my_account_page.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/views/auth/caregiver_sign_in_page.dart';
@@ -32,6 +33,8 @@ class AppRoutes {
   static const String forgotPassword = '/forgotPassword';
   static const String faq = '/faqPage';
   static const String legalPage = '/legalPage';
+  static const String languageSettings = '/languageSettingsPage';
+
 
 }
 
@@ -75,6 +78,10 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (_)=>FaqPage());
     case AppRoutes.legalPage:
       return MaterialPageRoute(builder: (_)=>LegalPage());
+    case AppRoutes.languageSettings:
+      return MaterialPageRoute(builder: (_)=>LanguageSettingsPage());
+
+
     default:
       return MaterialPageRoute(
         builder:

@@ -104,12 +104,12 @@ class _CaregiverSignInPageState extends State<CaregiverSignInPage> {
                           child: Column(
                             children: [
                               Text(
-                                "Join a Family",
+                                context.tr('join_a_family'),
                                 style: Theme.of(context).textTheme.titleLarge,
                               ),
                               SizedBox(height: 10.h),
                               Text(
-                                'To join a family, use the email address you were invited with',
+                                context.tr('join_a_family_info'),
                                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                   fontSize: 14.sp,
                                   color: Colors.black,
@@ -157,7 +157,7 @@ class _CaregiverSignInPageState extends State<CaregiverSignInPage> {
                                     ),
                                   ),
                                   child: Text(
-                                    "Join Family",
+                                    context.tr('join_a_family'),
                                     style: Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 18.sp,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.white,),

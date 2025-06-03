@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -36,7 +37,7 @@ class _WetDirtyDrySelectorState extends State<WetDirtyDrySelector> {
         selected.remove('Dry');
         selected.add(value);
       }
-      widget.onChanged(selected); // Seçilen değerleri dışarıya aktar
+      widget.onChanged(selected);
     });
   }
 
@@ -55,7 +56,7 @@ class _WetDirtyDrySelectorState extends State<WetDirtyDrySelector> {
         ),
         child: Center(
           child: Text(
-            label,
+            context.tr(label),
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               color: isSelected ? Colors.white : Theme.of(context).primaryColor,
                 fontSize: 16.sp

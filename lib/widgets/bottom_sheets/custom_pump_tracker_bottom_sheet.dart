@@ -2,6 +2,7 @@ import 'dart:ffi';
 
 import 'package:another_flushbar/flushbar.dart';
 import 'package:duration_picker/duration_picker.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/app/routes/navigation_wrapper.dart';
@@ -9,12 +10,14 @@ import 'package:flutter_sara_baby_tracker_and_sound/blocs/all_timer/pump_left_si
     as pumpLeft;
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/all_timer/pump_right_side_timer/pump_right_side_timer_bloc.dart'
     as pumpRight;
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/all_timer/pump_total_timer/pump_total_timer_bloc.dart' as pumpTotal;
+import 'package:flutter_sara_baby_tracker_and_sound/blocs/all_timer/pump_total_timer/pump_total_timer_bloc.dart'
+    as pumpTotal;
 import 'package:flutter_sara_baby_tracker_and_sound/core/app_colors.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/activity_model.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/all_timers/pump_left_side_timer.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/all_timers/pump_right_side_timer.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/all_timers/pump_total_timer.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_show_flush_bar.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_text_form_field.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/unit_input_field_with_toggle.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -59,7 +62,6 @@ class _CustomPumpTrackerBottomSheetState
   double? totalAmout;
   String? totalUnit;
   DateTime? selectedDatetime = DateTime.now();
-
 
   TextEditingController notesController = TextEditingController();
   TextEditingController notesTotalController = TextEditingController();
@@ -113,7 +115,7 @@ class _CustomPumpTrackerBottomSheetState
 
                     // Title
                     Text(
-                      'Pump Tracker',
+                      context.tr("pump_tracker"),
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: Colors.deepPurple,
                         fontWeight: FontWeight.bold,
@@ -132,7 +134,7 @@ class _CustomPumpTrackerBottomSheetState
                         );
                       },
                       child: Text(
-                        'Save',
+                        context.tr("save"),
                         style: Theme.of(
                           context,
                         ).textTheme.titleMedium?.copyWith(
@@ -147,14 +149,14 @@ class _CustomPumpTrackerBottomSheetState
               ),
               Container(
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF0F0F0), // Daha açık gri arka plan
+                  color: const Color(0xFFF0F0F0),
                   borderRadius: BorderRadius.circular(12.r),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.grey.shade50,
                       blurRadius: 4,
                       offset: Offset(0, 1),
-                    )
+                    ),
                   ],
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
@@ -169,14 +171,14 @@ class _CustomPumpTrackerBottomSheetState
                         color: Colors.black.withOpacity(0.01),
                         blurRadius: 2,
                         offset: Offset(0, 1),
-                      )
+                      ),
                     ],
                   ),
                   dividerColor: Colors.transparent,
                   indicatorSize: TabBarIndicatorSize.tab,
                   labelPadding: EdgeInsets.zero,
-                  labelColor: Colors.purple[700], // Koyu mor seçili durumda
-                  unselectedLabelColor: Colors.grey[600], // Orta gri seçili olmayan durumda
+                  labelColor: Colors.purple[700],
+                  unselectedLabelColor: Colors.grey[600],
                   labelStyle: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 12.sp,
@@ -194,7 +196,7 @@ class _CustomPumpTrackerBottomSheetState
                         children: [
                           Icon(Icons.timelapse, size: 16),
                           SizedBox(width: 4.w),
-                          Text('Total'),
+                          Text(context.tr("total")),
                         ],
                       ),
                     ),
@@ -206,14 +208,13 @@ class _CustomPumpTrackerBottomSheetState
                         children: [
                           Icon(Icons.compare_arrows, size: 16),
                           SizedBox(width: 4.w),
-                          Text('Left/Right Side'),
+                          Text(context.tr("left_right_side")),
                         ],
                       ),
                     ),
                   ],
                 ),
               ),
-
 
               Expanded(
                 child: TabBarView(
@@ -258,7 +259,7 @@ class _CustomPumpTrackerBottomSheetState
           ),
         );
       }
-    } else if (side=='total') {
+    } else if (side == 'total') {
       totalStartTime = await showTimePicker(
         context: context,
         initialTime: TimeOfDay.now(),
@@ -301,8 +302,7 @@ class _CustomPumpTrackerBottomSheetState
           ),
         );
       }
-    }
-    else if (side == 'total') {
+    } else if (side == 'total') {
       totalEndTime = await showTimePicker(
         context: context,
         initialTime: TimeOfDay.now(),
@@ -316,13 +316,14 @@ class _CustomPumpTrackerBottomSheetState
         );
       }
     }
-
   }
 
   void onPressedSave() {
-    if (_tabController.index==1) {
+    if (_tabController.index == 1) {
       final activityName = ActivityType.pumpLeftRight.name;
-      if (leftSideStartTime !=null && leftSideAmout !=null && leftSideTotalTime !=null ) {
+      if (leftSideStartTime != null &&
+          leftSideAmout != null &&
+          leftSideTotalTime != null) {
         try {
           final activityModel = ActivityModel(
             activityID: Uuid().v4(),
@@ -330,25 +331,26 @@ class _CustomPumpTrackerBottomSheetState
             createdAt: DateTime.now(),
             updatedAt: DateTime.now(),
             data: {
-              'activityDay' : selectedDatetime?.toIso8601String(),
-              'leftSideStartTimeHour':leftSideStartTime?.hour??0,
-              'leftSideStartTimeMin':leftSideStartTime?.minute??0,
-              'leftSideEndTimeHour':leftSideEndTime?.hour??0,
-              'leftSideEndTimeMin':leftSideEndTime?.minute??0,
-              'leftSideTotalTime':leftSideTotalTime?.inMilliseconds??0,
-              'leftSideAmount':leftSideAmout??0,
-              'leftSideUnit':leftSideUnit??'',
-              'rightSideStartTimeHour': rightSideStartTime?.hour??0,
-              'rightSideStartTimeMin': rightSideStartTime?.minute??0,
-              'rightSideEndTimeHour': rightSideEndTime?.hour??0,
-              'rightSideEndTimeMin': rightSideEndTime?.minute??0,
-              'rightSideTotalTime': rightSideTotalTime?.inMilliseconds??0,
-              'rightSideAmount':rightSideAmout??0,
-              'rightSideUnit':rightSideUnit??'',
-              'totalTime':(leftSideTotalTime ?? Duration.zero).inMilliseconds +
+              'activityDay': selectedDatetime?.toIso8601String(),
+              'leftSideStartTimeHour': leftSideStartTime?.hour ?? 0,
+              'leftSideStartTimeMin': leftSideStartTime?.minute ?? 0,
+              'leftSideEndTimeHour': leftSideEndTime?.hour ?? 0,
+              'leftSideEndTimeMin': leftSideEndTime?.minute ?? 0,
+              'leftSideTotalTime': leftSideTotalTime?.inMilliseconds ?? 0,
+              'leftSideAmount': leftSideAmout ?? 0,
+              'leftSideUnit': leftSideUnit ?? '',
+              'rightSideStartTimeHour': rightSideStartTime?.hour ?? 0,
+              'rightSideStartTimeMin': rightSideStartTime?.minute ?? 0,
+              'rightSideEndTimeHour': rightSideEndTime?.hour ?? 0,
+              'rightSideEndTimeMin': rightSideEndTime?.minute ?? 0,
+              'rightSideTotalTime': rightSideTotalTime?.inMilliseconds ?? 0,
+              'rightSideAmount': rightSideAmout ?? 0,
+              'rightSideUnit': rightSideUnit ?? '',
+              'totalTime':
+                  (leftSideTotalTime ?? Duration.zero).inMilliseconds +
                   (rightSideTotalTime ?? Duration.zero).inMilliseconds,
-              'totalAmount':(leftSideAmout ?? 0) + (rightSideAmout ?? 0),
-              'totalUnit':rightSideUnit ?? leftSideUnit,
+              'totalAmount': (leftSideAmout ?? 0) + (rightSideAmout ?? 0),
+              'totalUnit': rightSideUnit ?? leftSideUnit,
               'notes': notesController.text,
             },
             isSynced: false,
@@ -359,13 +361,12 @@ class _CustomPumpTrackerBottomSheetState
             AddActivity(activityModel: activityModel),
           );
         } catch (e, stack) {
-          print('HATA YAKALANDI: $e');
           print(stack);
         }
-      }  else {
+      } else {
         Flushbar(
           titleText: Text(
-            'Warning',
+            context.tr("warning"),
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -374,7 +375,7 @@ class _CustomPumpTrackerBottomSheetState
           margin: EdgeInsets.all(16),
           borderRadius: BorderRadius.circular(16),
           messageText: Text(
-            'Please enter start, end time or amount',
+            context.tr("please_enter_start_end_time_or_amount"),
             style: Theme.of(
               context,
             ).textTheme.bodyMedium?.copyWith(color: Colors.white),
@@ -384,11 +385,12 @@ class _CustomPumpTrackerBottomSheetState
           duration: Duration(seconds: 3),
         ).show(context);
       }
-
-    }  else if (_tabController.index==0) {
+    } else if (_tabController.index == 0) {
       final activityName = ActivityType.pumpTotal.name;
 
-      if (totalAmout !=null && totalStartTime !=null && totalEndTime !=null) {
+      if (totalAmout != null &&
+          totalStartTime != null &&
+          totalEndTime != null) {
         try {
           final activityModel = ActivityModel(
             activityID: Uuid().v4(),
@@ -396,14 +398,14 @@ class _CustomPumpTrackerBottomSheetState
             createdAt: DateTime.now(),
             updatedAt: DateTime.now(),
             data: {
-              'activityDay' : selectedDatetime?.toIso8601String(),
-              'totalStartTimeHour':totalStartTime?.hour,
-              'totalStartTimeMin':totalStartTime?.minute,
-              'totalEndTimeHour':totalEndTime?.hour,
-              'totalEndTimeMin':totalEndTime?.minute,
-              'totalTime':totalTotalTime?.inMilliseconds,
-              'totalAmount':totalAmout,
-              'totalUnit':totalUnit,
+              'activityDay': selectedDatetime?.toIso8601String(),
+              'totalStartTimeHour': totalStartTime?.hour,
+              'totalStartTimeMin': totalStartTime?.minute,
+              'totalEndTimeHour': totalEndTime?.hour,
+              'totalEndTimeMin': totalEndTime?.minute,
+              'totalTime': totalTotalTime?.inMilliseconds,
+              'totalAmount': totalAmout,
+              'totalUnit': totalUnit,
               'notes': notesTotalController.text,
             },
             isSynced: false,
@@ -414,13 +416,13 @@ class _CustomPumpTrackerBottomSheetState
             AddActivity(activityModel: activityModel),
           );
         } catch (e, stack) {
-          print('HATA YAKALANDI: $e');
+          print('error: $e');
           print(stack);
         }
-      }  else {
+      } else {
         Flushbar(
           titleText: Text(
-            'Warning',
+            context.tr("warning"),
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -429,7 +431,7 @@ class _CustomPumpTrackerBottomSheetState
           margin: EdgeInsets.all(16),
           borderRadius: BorderRadius.circular(16),
           messageText: Text(
-            'Please enter start, end time or amount',
+            context.tr("please_enter_start_end_time_or_amount"),
             style: Theme.of(
               context,
             ).textTheme.bodyMedium?.copyWith(color: Colors.white),
@@ -439,12 +441,7 @@ class _CustomPumpTrackerBottomSheetState
           duration: Duration(seconds: 3),
         ).show(context);
       }
-
     }
-
-
-
-
   }
 
   String formatDuration(Duration duration) {
@@ -483,8 +480,7 @@ class _CustomPumpTrackerBottomSheetState
             activityType: 'rightPumpTimer',
           ),
         );
-      }
-      else if (side == 'total') {
+      } else if (side == 'total') {
         context.read<pumpTotal.PumpTotalTimerBloc>().add(
           pumpTotal.SetDurationTimer(
             duration: setDuration,
@@ -492,7 +488,6 @@ class _CustomPumpTrackerBottomSheetState
           ),
         );
       }
-
     }
   }
 
@@ -512,6 +507,28 @@ class _CustomPumpTrackerBottomSheetState
   }
 
   void _onPressedDelete(BuildContext context) {
+    setState(() {
+      totalStartTime = null;
+      totalEndTime = null;
+      totalTotalTime = null;
+      totalAmout = null;
+      totalUnit = null;
+      notesTotalController.clear();
+
+      leftSideStartTime = null;
+      leftSideEndTime = null;
+      leftSideTotalTime = null;
+      leftSideAmout = null;
+      leftSideUnit = null;
+
+      rightSideStartTime = null;
+      rightSideEndTime = null;
+      rightSideTotalTime = null;
+      rightSideAmout = null;
+      rightSideUnit = null;
+      notesController.clear();
+    });
+
     context.read<pumpLeft.PumpLeftSideTimerBloc>().add(
       pumpLeft.ResetTimer(activityType: 'leftPumpTimer'),
     );
@@ -519,7 +536,14 @@ class _CustomPumpTrackerBottomSheetState
       pumpRight.ResetTimer(activityType: 'rightPumpTimer'),
     );
     context.read<pumpTotal.PumpTotalTimerBloc>().add(
-      pumpTotal.ResetTimer(activityType: 'pumpTotalTimer',),
+      pumpTotal.ResetTimer(activityType: 'pumpTotalTimer'),
+    );
+    showCustomFlushbar(
+      context,
+      color: Colors.greenAccent,
+      context.tr("info"),
+      context.tr("fields_reset"),
+      Icons.refresh,
     );
   }
 
@@ -541,10 +565,9 @@ class _CustomPumpTrackerBottomSheetState
                 Column(
                   children: [
                     Text(
-                      'Left Side',
+                      context.tr("left_side"),
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: Theme.of(context).primaryColor,
-
                       ),
                     ),
                     SizedBox(height: 10.h),
@@ -555,10 +578,9 @@ class _CustomPumpTrackerBottomSheetState
                 Column(
                   children: [
                     Text(
-                      'Right Side',
+                      context.tr("right_side"),
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: Theme.of(context).primaryColor,
-
                       ),
                     ),
                     SizedBox(height: 10.h),
@@ -607,21 +629,23 @@ class _CustomPumpTrackerBottomSheetState
                         children: [
                           SizedBox(height: 16.h),
                           buildTimeInfo(
-                            'Start Time',
-                            leftSideStartTime?.format(context) ?? 'Add',
+                            context.tr("start_time"),
+                            leftSideStartTime?.format(context) ??
+                                context.tr("add"),
                             () {
                               _onPressedShowTimePicker(context, 'left');
                             },
                           ),
                           buildTimeInfo(
-                            'End Time',
-                            leftSideEndTime?.format(context) ?? 'Add',
+                            context.tr("end_time"),
+                            leftSideEndTime?.format(context) ??
+                                context.tr("add"),
                             () {
                               _onPressedEndTimeShowPicker(context, 'left');
                             },
                           ),
                           buildTimeInfo(
-                            'Total Time',
+                            context.tr("total_time"),
                             leftSideTotalTime != null
                                 ? formatDuration(leftSideTotalTime!)
                                 : '00:00',
@@ -635,7 +659,6 @@ class _CustomPumpTrackerBottomSheetState
                             onChanged: (value, unit) {
                               leftSideAmout = value;
                               leftSideUnit = unit;
-                              debugPrint('Buradayim $value $unit');
                             },
                           ),
                         ],
@@ -643,8 +666,6 @@ class _CustomPumpTrackerBottomSheetState
                     );
                   },
                 ),
-
-                // Container(width: 1, height: 160.h, color: Colors.grey.shade300),
 
                 /// RIGHT SIDE
                 BlocBuilder<
@@ -680,17 +701,21 @@ class _CustomPumpTrackerBottomSheetState
                         children: [
                           SizedBox(height: 16.h),
                           buildTimeInfo(
-                            'Start Time',
-                            rightSideStartTime?.format(context) ?? 'Add',
+                            context.tr("start_time"),
+                            rightSideStartTime?.format(context) ??
+                                context.tr("add"),
+
                             () => _onPressedShowTimePicker(context, 'right'),
                           ),
                           buildTimeInfo(
-                            'End Time',
-                            rightSideEndTime?.format(context) ?? 'Add',
+                            context.tr("end_time"),
+                            rightSideEndTime?.format(context) ??
+                                context.tr("add"),
+
                             () => _onPressedEndTimeShowPicker(context, 'right'),
                           ),
                           buildTimeInfo(
-                            'Total Time',
+                            context.tr("total_time"),
                             rightSideTotalTime != null
                                 ? formatDuration(rightSideTotalTime!)
                                 : '00:00',
@@ -703,7 +728,6 @@ class _CustomPumpTrackerBottomSheetState
                                 rightSideAmout = value;
                                 rightSideUnit = unit;
                               });
-                              debugPrint('Right side value: $value $unit');
                             },
                           ),
                         ],
@@ -717,7 +741,7 @@ class _CustomPumpTrackerBottomSheetState
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'Notes:',
+                context.tr("notes:"),
                 style: Theme.of(
                   context,
                 ).textTheme.titleSmall!.copyWith(fontSize: 16.sp),
@@ -737,7 +761,7 @@ class _CustomPumpTrackerBottomSheetState
             SizedBox(height: 20.h),
 
             Text(
-              'Created by ${widget.firstName}',
+              '${context.tr("created_by")} ${widget.firstName}',
               style: Theme.of(context).textTheme.titleSmall!.copyWith(
                 fontSize: 12.sp,
                 fontStyle: FontStyle.italic,
@@ -750,7 +774,7 @@ class _CustomPumpTrackerBottomSheetState
                 _onPressedDelete(context);
               },
               child: Text(
-                'Reset',
+                context.tr("reset"),
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: Theme.of(context).primaryColor,
                   fontSize: 16.sp,
@@ -774,14 +798,17 @@ class _CustomPumpTrackerBottomSheetState
         child: Column(
           children: [
             PumpTotalTimer(size: 140, activityType: 'pumpTotalTimer'),
-            BlocBuilder<pumpTotal.PumpTotalTimerBloc, pumpTotal.PumpTotalTimerState>(
+            BlocBuilder<
+              pumpTotal.PumpTotalTimerBloc,
+              pumpTotal.PumpTotalTimerState
+            >(
               builder: (context, state) {
                 if (state is pumpTotal.TimerStopped &&
                     state.activityType == 'pumpTotalTimer') {
                   totalEndTime = state.endTime;
                   totalTotalTime = state.duration;
                   if (state.startTime != null) {
-                   totalStartTime = state.startTime;
+                    totalStartTime = state.startTime;
                   }
                 }
                 if (state is pumpTotal.TimerRunning &&
@@ -792,25 +819,29 @@ class _CustomPumpTrackerBottomSheetState
                 }
 
                 if (state is pumpTotal.TimerReset) {
-                  totalEndTime=null;
-                  totalStartTime=null;
-                  totalTotalTime=null;
+                  totalEndTime = null;
+                  totalStartTime = null;
+                  totalTotalTime = null;
                 }
                 return Column(
                   children: [
                     SizedBox(height: 16.h),
-                    buildTimeInfo('Start Time', totalStartTime?.format(context) ?? 'Add',
-                          () {_onPressedShowTimePicker(context, 'total');},
+                    buildTimeInfo(
+                      context.tr("start_time"),
+                      totalStartTime?.format(context) ?? context.tr("add"),
+                      () {
+                        _onPressedShowTimePicker(context, 'total');
+                      },
                     ),
                     buildTimeInfo(
-                      'End Time',
-                      totalEndTime?.format(context) ?? 'Add',
+                      context.tr("end_time"),
+                      totalEndTime?.format(context) ?? context.tr("add"),
                       () {
                         _onPressedEndTimeShowPicker(context, 'total');
                       },
                     ),
                     buildTimeInfo(
-                      'Total Time',
+                      context.tr("total_time"),
                       totalTotalTime != null
                           ? formatDuration(totalTotalTime!)
                           : '00:00',
@@ -824,14 +855,13 @@ class _CustomPumpTrackerBottomSheetState
                       onChanged: (value, unit) {
                         totalAmout = value;
                         totalUnit = unit;
-                        debugPrint('Buradayim $value $unit');
                       },
                     ),
                     Divider(color: Colors.grey.shade300),
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        'Notes:',
+                        context.tr("notes:"),
                         style: Theme.of(
                           context,
                         ).textTheme.titleSmall!.copyWith(fontSize: 16.sp),
@@ -851,7 +881,7 @@ class _CustomPumpTrackerBottomSheetState
                     SizedBox(height: 20.h),
 
                     Text(
-                      'Created by ${widget.firstName}',
+                      '${context.tr("created_by")} ${widget.firstName}',
                       style: Theme.of(context).textTheme.titleSmall!.copyWith(
                         fontSize: 12.sp,
                         fontStyle: FontStyle.italic,
@@ -864,7 +894,7 @@ class _CustomPumpTrackerBottomSheetState
                         _onPressedDelete(context);
                       },
                       child: Text(
-                        'Reset',
+                        context.tr("reset"),
                         style: Theme.of(
                           context,
                         ).textTheme.titleMedium?.copyWith(

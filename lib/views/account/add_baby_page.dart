@@ -49,7 +49,7 @@ class _EditBabyPageState extends State<AddBabyPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Add Baby',
+          context.tr('add_baby'),
           style: Theme.of(
             context,
           ).textTheme.titleMedium!.copyWith(color: Colors.deepPurpleAccent),
@@ -118,7 +118,7 @@ class _EditBabyPageState extends State<AddBabyPage> {
                               Align(
                                 alignment: Alignment.center,
                                 child: Text(
-                                  'Tap to Upload Your Baby’s Photo',
+                                  context.tr('tap_to_upload_your_baby_photo'),
                                   style: Theme.of(
                                     context,
                                   ).textTheme.titleSmall!.copyWith(
@@ -132,7 +132,7 @@ class _EditBabyPageState extends State<AddBabyPage> {
                               // Baby First Name
                               RichText(
                                 text: TextSpan(
-                                  text: 'First Name:',
+                                  text: context.tr('first_name:'),
                                   style: Theme.of(
                                     context,
                                   ).textTheme.titleSmall!.copyWith(
@@ -166,7 +166,7 @@ class _EditBabyPageState extends State<AddBabyPage> {
                               // Baby DOB
                               RichText(
                                 text: TextSpan(
-                                  text: 'Birthday:',
+                                  text: context.tr('birthday:'),
                                   style: Theme.of(
                                     context,
                                   ).textTheme.titleSmall!.copyWith(
@@ -195,7 +195,7 @@ class _EditBabyPageState extends State<AddBabyPage> {
                                   color: Theme.of(context).primaryColor,
                                 ),
                                 title: Text(
-                                  'Nighttime Hours',
+                                  context.tr('nighttime_hours'),
                                   style: Theme.of(
                                     context,
                                   ).textTheme.titleSmall!.copyWith(
@@ -214,7 +214,7 @@ class _EditBabyPageState extends State<AddBabyPage> {
                               // Baby Gender
                               RichText(
                                 text: TextSpan(
-                                  text: 'Gender:',
+                                  text: context.tr('gender'),
                                   style: Theme.of(
                                     context,
                                   ).textTheme.titleSmall!.copyWith(

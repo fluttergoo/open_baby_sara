@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class DirtyDetailOptions extends StatefulWidget {
@@ -22,11 +23,11 @@ class _DirtyDetailOptionsState extends State<DirtyDetailOptions> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Texture:", style: TextStyle(fontWeight: FontWeight.bold)),
+         Text(context.tr('Texture:'), style: TextStyle(fontWeight: FontWeight.bold)),
         const SizedBox(height: 5),
         buildChips(textures, selectedTextures, true),
         const SizedBox(height: 15),
-        const Text("Color:", style: TextStyle(fontWeight: FontWeight.bold)),
+         Text(context.tr('Color:'), style: TextStyle(fontWeight: FontWeight.bold)),
         const SizedBox(height: 5),
         buildChips(colors, selectedColors, false),
       ],
@@ -54,7 +55,7 @@ class _DirtyDetailOptionsState extends State<DirtyDetailOptions> {
       children: items.map((item) {
         final isSelected = selectedList.contains(item);
         return ChoiceChip(
-          label: Text(item),
+          label: Text(context.tr(item)),
           selected: isSelected,
           onSelected: (_) => toggleSelection(item, isTexture),
           selectedColor: Colors.orange,

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/app/routes/navigation_wrapper.dart';
@@ -82,7 +83,7 @@ class _CustomVaccinationTrackerBottomSheetState
                         child: Icon(Icons.arrow_back, color: Colors.deepPurple),
                       ),
                       Text(
-                        'Vaccination Tracker',
+                        context.tr('vaccination_tracker'),
                         style: Theme.of(
                           context,
                         ).textTheme.titleMedium?.copyWith(
@@ -94,7 +95,7 @@ class _CustomVaccinationTrackerBottomSheetState
                       TextButton(
                         onPressed: onPressedSave,
                         child: Text(
-                          'Save',
+                          context.tr('save'),
                           style: Theme.of(
                             context,
                           ).textTheme.titleMedium?.copyWith(
@@ -121,7 +122,7 @@ class _CustomVaccinationTrackerBottomSheetState
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Time'),
+                          Text(context.tr('time')),
                           CustomDateTimePicker(
                             initialText: 'initialText',
                             onDateTimeSelected: (selected) {
@@ -134,7 +135,7 @@ class _CustomVaccinationTrackerBottomSheetState
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Vaccinations'),
+                          Text(context.tr('vaccinations')),
                           TextButton(
                             onPressed: () {
                               showDialogAddAndVaccination(
@@ -145,7 +146,7 @@ class _CustomVaccinationTrackerBottomSheetState
                                 },
                               );
                             },
-                            child: Text('Add'),
+                            child: Text(context.tr('add')),
                           ),
                         ],
                       ),
@@ -153,7 +154,7 @@ class _CustomVaccinationTrackerBottomSheetState
 
                       if (selectedVaccinations.isNotEmpty) ...[
                         SizedBox(height: 10.h),
-                        Text('Your Vaccination(s)'),
+                        Text(context.tr('your_vaccination')),
                         Divider(color: Colors.grey.shade300),
 
                         ...selectedVaccinations.map((med) {
@@ -198,7 +199,7 @@ class _CustomVaccinationTrackerBottomSheetState
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Notes:',
+                          context.tr("notes:"),
                           style: Theme.of(
                             context,
                           ).textTheme.titleSmall!.copyWith(fontSize: 16.sp),
@@ -214,7 +215,7 @@ class _CustomVaccinationTrackerBottomSheetState
                       SizedBox(height: 20.h),
                       Center(
                         child: Text(
-                          'Created by ${widget.firstName}',
+                          '${context.tr("created_by")} ${widget.firstName}',
                           style: Theme.of(
                             context,
                           ).textTheme.titleSmall!.copyWith(
@@ -227,7 +228,7 @@ class _CustomVaccinationTrackerBottomSheetState
                       TextButton(
                         onPressed: () => _onPressedDelete(context),
                         child: Text(
-                          'Reset',
+                          context.tr("reset"),
                           style: Theme.of(
                             context,
                           ).textTheme.titleMedium?.copyWith(
@@ -255,8 +256,8 @@ class _CustomVaccinationTrackerBottomSheetState
     if (!hasValidMedications) {
       showCustomFlushbar(
         context,
-        'Warning',
-        'Please enter a vaccination.',
+        context.tr('warning'),
+        context.tr('please_enter_a_vaccination'),
         Icons.warning_outlined,
       );
       return;
@@ -292,5 +293,18 @@ class _CustomVaccinationTrackerBottomSheetState
     ).pushReplacement(MaterialPageRoute(builder: (_) => NavigationWrapper()));
   }
 
-  _onPressedDelete(BuildContext context) {}
+  _onPressedDelete(BuildContext context) {
+    setState(() {
+      selectedDatetime = DateTime.now();
+      notesController.clear();
+      selectedVaccinations.clear();
+    });
+
+    showCustomFlushbar(
+      context,
+      context.tr("reset"),
+      context.tr("fields_reset"),
+      Icons.refresh,
+    );
+  }
 }

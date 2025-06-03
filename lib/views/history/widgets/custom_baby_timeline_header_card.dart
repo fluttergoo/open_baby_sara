@@ -40,7 +40,7 @@ class _CustomBabyTimelineHeaderCardState
   final List<String> staticRanges = [
     'Last 1 Day',
     'Last 7 Days',
-    'Last 14 Days',
+    'Last 14 Day',
     'Last 30 Days',
   ];
 
@@ -51,8 +51,7 @@ class _CustomBabyTimelineHeaderCardState
       items.add(_customRangeLabel!);
     }
 
-    // "Custom Range" seçeneğini her zaman ekle (isteğe bağlı)
-    items.add("Custom Range");
+    items.add('Custom Range');
 
     return items.toList();
   }
@@ -74,13 +73,14 @@ class _CustomBabyTimelineHeaderCardState
     }
     int totalMonths = years * 12 + months;
     String age = '';
-    if (totalMonths > 0)
-      age += '$totalMonths month${totalMonths > 1 ? 's' : ''}';
+    if (totalMonths > 0) {
+      age += '$totalMonths ${context.tr('month')}${totalMonths > 1 ? 's' : ''}';
+    }
     if (days > 0) {
       if (age.isNotEmpty) age += ' ';
-      age += '$days day${days > 1 ? 's' : ''}';
+      age += '$days ${context.tr('day')}${days > 1 ? 's' : ''}';
     }
-    return age.isEmpty ? '0 day' : age;
+    return age.isEmpty ? context.tr('0_day') : age;
   }
 
   void _onPredefinedRangeSelected(String? value) {
@@ -278,7 +278,7 @@ class _CustomBabyTimelineHeaderCardState
                         key: ValueKey(selectedBaby?.babyID),
                         value: selectedBaby,
                         icon: const SizedBox.shrink(),
-                        // Dropdown içindeki ikonu gizliyoruz
+
                         isExpanded: false,
                         selectedItemBuilder: (context) {
                           return widget.babiesList.map((baby) {

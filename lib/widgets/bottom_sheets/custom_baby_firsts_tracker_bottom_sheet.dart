@@ -46,179 +46,182 @@ class _CustomBabyFirstsTrackerBottomSheetState
   @override
   Widget build(BuildContext context) {
     return BlocListener<ActivityBloc, ActivityState>(
-  listener: (context, state) {
-    if (state is ActivityAdded) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(buildCustomSnackBar(state.message));
-    }  },
-  child: BlocBuilder<MilestoneBloc, MilestoneState>(
-      builder: (context, state) {
-        if (state is MilestoneLoaded) {
-          monthlyMilestone = state.milestones;
-          context.read<MilestoneBloc>().add(
-            LoadMilestonesTitleFromDB(babyID: widget.babyID),
-          );
+      listener: (context, state) {
+        if (state is ActivityAdded) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(buildCustomSnackBar(state.message));
         }
-        if (state is MilestoneError) {
-          debugPrint(state.message);
-        }
-        return GestureDetector(
-          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-          child: SingleChildScrollView(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-            ),
-            child: Container(
-              height: 600.h,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      },
+      child: BlocBuilder<MilestoneBloc, MilestoneState>(
+        builder: (context, state) {
+          if (state is MilestoneLoaded) {
+            monthlyMilestone = state.milestones;
+            context.read<MilestoneBloc>().add(
+              LoadMilestonesTitleFromDB(babyID: widget.babyID),
+            );
+          }
+          if (state is MilestoneError) {
+            debugPrint(state.message);
+          }
+          return GestureDetector(
+            onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+            child: SingleChildScrollView(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
               ),
-              child: SafeArea(
-                child: Column(
-                  children: [
-                    // Header
-                    Container(
-                      height: 50.h,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16.r,
-                        vertical: 12.r,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.babyFirstsColor,
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(20),
+              child: Container(
+                height: 600.h,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(20.r),
+                  ),
+                ),
+                child: SafeArea(
+                  child: Column(
+                    children: [
+                      // Header
+                      Container(
+                        height: 50.h,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16.r,
+                          vertical: 12.r,
                         ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          GestureDetector(
-                            onTap: () => Navigator.of(context).pop(),
-                            child: Icon(
-                              Icons.arrow_back,
-                              color: Colors.deepPurple,
-                            ),
+                        decoration: BoxDecoration(
+                          color: AppColors.babyFirstsColor,
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(20),
                           ),
-                          Text(
-                            'Baby Firsts',
-                            style: Theme.of(
-                              context,
-                            ).textTheme.titleMedium?.copyWith(
-                              color: Colors.deepPurple,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16.sp,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                              onTap: () => Navigator.of(context).pop(),
+                              child: Icon(
+                                Icons.arrow_back,
+                                color: Colors.deepPurple,
+                              ),
                             ),
-                          ),
-                          TextButton(
-                            onPressed: onPressedSave,
-                            child: Text(
-                              'Save',
+                            Text(
+                              context.tr('baby_firsts'),
                               style: Theme.of(
                                 context,
                               ).textTheme.titleMedium?.copyWith(
-                                color: Theme.of(context).primaryColor,
-                                fontWeight: FontWeight.w900,
+                                color: Colors.deepPurple,
+                                fontWeight: FontWeight.bold,
                                 fontSize: 16.sp,
                               ),
                             ),
-                          ),
-                        ],
+                            TextButton(
+                              onPressed: onPressedSave,
+                              child: Text(
+                                context.tr('save'),
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.titleMedium?.copyWith(
+                                  color: Theme.of(context).primaryColor,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 16.sp,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
 
-                    /// Body
-                    Expanded(
-                      child: ListView(
-                        padding: EdgeInsets.only(
-                          left: 16.r,
-                          right: 16.r,
-                          bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-                          top: 16,
+                      /// Body
+                      Expanded(
+                        child: ListView(
+                          padding: EdgeInsets.only(
+                            left: 16.r,
+                            right: 16.r,
+                            bottom:
+                                MediaQuery.of(context).viewInsets.bottom + 20,
+                            top: 16,
+                          ),
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(context.tr('time')),
+                                CustomDateTimePicker(
+                                  initialText: 'initialText',
+                                  onDateTimeSelected: (selected) {
+                                    selectedDatetime = selected;
+                                  },
+                                ),
+                              ],
+                            ),
+                            Divider(color: Colors.grey.shade300),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(context.tr('baby_firsts')),
+                                TextButton(
+                                  onPressed: () {
+                                    _onPressedAdd();
+                                  },
+                                  child: Text(context.tr("add")),
+                                ),
+                              ],
+                            ),
+                            Divider(color: Colors.grey.shade300),
+                            selectedMilestoneToggleWidget(),
+                            SizedBox(height: 5.h),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                context.tr("notes:"),
+                                style: Theme.of(context).textTheme.titleSmall!
+                                    .copyWith(fontSize: 16.sp),
+                              ),
+                            ),
+                            SizedBox(height: 5.h),
+                            CustomTextFormField(
+                              hintText: '',
+                              isNotes: true,
+                              controller: notesController,
+                            ),
+                            Divider(color: Colors.grey.shade300),
+                            SizedBox(height: 20.h),
+                            Center(
+                              child: Text(
+                                '${context.tr("created_by")} ${widget.firstName}',
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.titleSmall!.copyWith(
+                                  fontSize: 12.sp,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 10.h),
+                            TextButton(
+                              onPressed: () => _onPressedDelete(context),
+                              child: Text(
+                                context.tr("reset"),
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.titleMedium?.copyWith(
+                                  color: Theme.of(context).primaryColor,
+                                  fontSize: 16.sp,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('Time'),
-                              CustomDateTimePicker(
-                                initialText: 'initialText',
-                                onDateTimeSelected: (selected) {
-                                  selectedDatetime = selected;
-                                },
-                              ),
-                            ],
-                          ),
-                          Divider(color: Colors.grey.shade300),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('Baby firsts'),
-                              TextButton(
-                                onPressed: () {
-                                  _onPressedAdd();
-                                },
-                                child: Text('Add'),
-                              ),
-                            ],
-                          ),
-                          Divider(color: Colors.grey.shade300),
-                          selectedMilestoneToggleWidget(),
-                          SizedBox(height: 5.h),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              'Notes:',
-                              style: Theme.of(
-                                context,
-                              ).textTheme.titleSmall!.copyWith(fontSize: 16.sp),
-                            ),
-                          ),
-                          SizedBox(height: 5.h),
-                          CustomTextFormField(
-                            hintText: '',
-                            isNotes: true,
-                            controller: notesController,
-                          ),
-                          Divider(color: Colors.grey.shade300),
-                          SizedBox(height: 20.h),
-                          Center(
-                            child: Text(
-                              'Created by ${widget.firstName}',
-                              style: Theme.of(
-                                context,
-                              ).textTheme.titleSmall!.copyWith(
-                                fontSize: 12.sp,
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 10.h),
-                          TextButton(
-                            onPressed: () => _onPressedDelete(context),
-                            child: Text(
-                              'Reset',
-                              style: Theme.of(
-                                context,
-                              ).textTheme.titleMedium?.copyWith(
-                                color: Theme.of(context).primaryColor,
-                                fontSize: 16.sp,
-                              ),
-                            ),
-                          ),
-                        ],
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        );
-      },
-    ),
-);
+          );
+        },
+      ),
+    );
   }
 
   void onPressedSave() {
@@ -238,7 +241,7 @@ class _CustomBabyFirstsTrackerBottomSheetState
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
         data: {
-          'activityDay' : selectedDatetime?.toIso8601String(),
+          'activityDay': selectedDatetime?.toIso8601String(),
           'startTimeHour': selectedDatetime?.hour,
           'startTimeMin': selectedDatetime?.minute,
           'notes': notesController.text,
@@ -267,7 +270,21 @@ class _CustomBabyFirstsTrackerBottomSheetState
     }
   }
 
-  _onPressedDelete(BuildContext context) {}
+  _onPressedDelete(BuildContext context) {
+    setState(() {
+      selectedDatetime = DateTime.now();
+      notesController.clear();
+      selectedMilestoneTitle = [];
+      selectedMilestoneDesc = [];
+    });
+
+    showCustomFlushbar(
+      context,
+      context.tr("reset"),
+      context.tr("fields_reset"),
+      Icons.refresh,
+    );
+  }
 
   void _onPressedAdd() {
     if (monthlyMilestone == null) return;
@@ -284,7 +301,7 @@ class _CustomBabyFirstsTrackerBottomSheetState
           builder: (context, state) {
             if (state is MilestoneTitleLoadedFromDB) {
               selectedMilestones = state.milestoneTitle;
-              savedTitleSet=selectedMilestones.toSet();
+              savedTitleSet = selectedMilestones.toSet();
               debugPrint(selectedMilestones.length.toString());
             }
             return Dialog(
@@ -302,7 +319,7 @@ class _CustomBabyFirstsTrackerBottomSheetState
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Select Baby Firsts',
+                          context.tr('select_baby_firsts'),
                           style: Theme.of(
                             context,
                           ).textTheme.titleMedium?.copyWith(
@@ -343,7 +360,7 @@ class _CustomBabyFirstsTrackerBottomSheetState
                                     ),
                                     child: ExpansionTile(
                                       title: Text(
-                                        'Month ${monthData.month}',
+                                        '${context.tr('month')} ${monthData.month}',
                                         style: Theme.of(
                                           context,
                                         ).textTheme.titleMedium?.copyWith(
@@ -354,14 +371,18 @@ class _CustomBabyFirstsTrackerBottomSheetState
                                       children:
                                           monthData.milestones.map((milestone) {
                                             final bool isPreviouslySelected;
-                                            if (savedTitleSet== null ) {
-                                               isPreviouslySelected = false;
-
-                                            }  else{
-                                               isPreviouslySelected = savedTitleSet!.contains(milestone.titleKey);
-
+                                            if (savedTitleSet == null) {
+                                              isPreviouslySelected = false;
+                                            } else {
+                                              isPreviouslySelected =
+                                                  savedTitleSet!.contains(
+                                                    milestone.titleKey,
+                                                  );
                                             }
-                                            final isSelected = selectedMilestones.contains(milestone.titleKey);
+                                            final isSelected =
+                                                selectedMilestones.contains(
+                                                  milestone.titleKey,
+                                                );
                                             return CheckboxListTile(
                                               controlAffinity:
                                                   ListTileControlAffinity
@@ -385,34 +406,46 @@ class _CustomBabyFirstsTrackerBottomSheetState
                                                     ).textTheme.bodyMedium,
                                               ),
                                               value: isSelected,
-                                              onChanged:isPreviouslySelected ? null : (val) {
-                                                setState(() {
-                                                  if (val == true) {
-                                                    selectedMilestones.add(
-                                                      milestone.titleKey,
-                                                    );
-                                                    selectedMilestonesTitle.add(
-                                                      milestone.titleKey,
-                                                    );
-                                                    selectedMilestonesDesc.add(
-                                                      milestone.descriptionKey,
-                                                    );
-                                                  } else {
-                                                    selectedMilestones.remove(
-                                                      milestone.titleKey,
-                                                    );
-                                                    selectedMilestonesTitle
-                                                        .remove(
-                                                          milestone.titleKey,
-                                                        );
-                                                    selectedMilestonesDesc
-                                                        .remove(
-                                                          milestone
-                                                              .descriptionKey,
-                                                        );
-                                                  }
-                                                });
-                                              },
+                                              onChanged:
+                                                  isPreviouslySelected
+                                                      ? null
+                                                      : (val) {
+                                                        setState(() {
+                                                          if (val == true) {
+                                                            selectedMilestones
+                                                                .add(
+                                                                  milestone
+                                                                      .titleKey,
+                                                                );
+                                                            selectedMilestonesTitle
+                                                                .add(
+                                                                  milestone
+                                                                      .titleKey,
+                                                                );
+                                                            selectedMilestonesDesc
+                                                                .add(
+                                                                  milestone
+                                                                      .descriptionKey,
+                                                                );
+                                                          } else {
+                                                            selectedMilestones
+                                                                .remove(
+                                                                  milestone
+                                                                      .titleKey,
+                                                                );
+                                                            selectedMilestonesTitle
+                                                                .remove(
+                                                                  milestone
+                                                                      .titleKey,
+                                                                );
+                                                            selectedMilestonesDesc
+                                                                .remove(
+                                                                  milestone
+                                                                      .descriptionKey,
+                                                                );
+                                                          }
+                                                        });
+                                                      },
                                             );
                                           }).toList(),
                                     ),
@@ -433,20 +466,20 @@ class _CustomBabyFirstsTrackerBottomSheetState
                       children: [
                         TextButton(
                           onPressed: () => Navigator.pop(context),
-                          child: Text('Cancel'),
+                          child: Text(context.tr('cancel')),
                         ),
                         SizedBox(width: 10.w),
                         ElevatedButton.icon(
                           icon: Icon(Icons.check, color: Colors.white),
                           onPressed: () {
-                            print('Selected Milestones: $selectedMilestones');
+                            print('${context.tr('selected_milestones')} $selectedMilestones');
                             selectedMilestoneTitle = selectedMilestonesTitle;
                             selectedMilestoneDesc = selectedMilestonesDesc;
                             setState(() {});
                             Navigator.of(context).pop();
                           },
                           label: Text(
-                            'Add',
+            context.tr("add"),
                             style: Theme.of(
                               context,
                             ).textTheme.titleSmall?.copyWith(
@@ -487,7 +520,7 @@ class _CustomBabyFirstsTrackerBottomSheetState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Selected Baby Firsts:'),
+          Text(context.tr('select_baby_firsts')),
           SizedBox(height: 4.h),
           Wrap(
             spacing: 6,

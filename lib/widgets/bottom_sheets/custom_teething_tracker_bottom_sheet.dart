@@ -12,7 +12,6 @@ import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_show_flush_ba
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_teeth_selector.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_text_form_field.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:teeth_selector/teeth_selector.dart';
 import 'package:uuid/uuid.dart';
 
 class CustomTeethingTrackerBottomSheet extends StatefulWidget {
@@ -114,7 +113,7 @@ class _CustomTeethingTrackerBottomSheetState
                                   ),
                                 ),
                                 Text(
-                                  'Teething',
+                                  context.tr('teething'),
                                   style: Theme.of(
                                     context,
                                   ).textTheme.titleMedium?.copyWith(
@@ -152,12 +151,12 @@ class _CustomTeethingTrackerBottomSheetState
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text('Baby firsts'),
+                                    Text(context.tr('baby_teething')),
                                     TextButton(
                                       onPressed: () {
                                         _onPressedAdd();
                                       },
-                                      child: Text('Add'),
+                                      child: Text(context.tr("add")),
                                     ),
                                   ],
                                 ),
@@ -192,15 +191,15 @@ class _CustomTeethingTrackerBottomSheetState
     if (teethingIsoNumber == null || isErupted == false && isShed == false) {
       showCustomFlushbar(
         context,
-        'Warning',
-        'Please enter teething information',
+        context.tr('warning'),
+        context.tr('please_enter_teething_information'),
         Icons.warning_outlined,
       );
     } else if (initilizeTeeth!.contains(teethingIsoNumber)) {
       showCustomFlushbar(
         context,
-        'Already Added',
-        'This tooth has already been tracked. Please review the teething timeline.',
+        context.tr('already_added'),
+        context.tr('already_added_body'),
         Icons.warning_outlined,
       );
     }
@@ -233,7 +232,7 @@ class _CustomTeethingTrackerBottomSheetState
       } catch (e) {
         showCustomFlushbar(
           context,
-          'Warning',
+          context.tr('warning'),
           'Error ${e.toString()}',
           Icons.warning_outlined,
         );
@@ -276,7 +275,7 @@ class _CustomTeethingTrackerBottomSheetState
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Add Teething',
+                            context.tr('add_teething'),
                             style: Theme.of(
                               context,
                             ).textTheme.titleMedium?.copyWith(
@@ -287,7 +286,7 @@ class _CustomTeethingTrackerBottomSheetState
                           TextButton(
                             onPressed: onPressedSave,
                             child: Text(
-                              'Save',
+                              context.tr('save'),
                               style: Theme.of(
                                 context,
                               ).textTheme.titleMedium?.copyWith(
@@ -312,7 +311,7 @@ class _CustomTeethingTrackerBottomSheetState
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Time'),
+                              Text(context.tr('time')),
                               CustomDateTimePicker(
                                 initialText: 'initialText',
                                 onDateTimeSelected: (selected) {
@@ -332,7 +331,7 @@ class _CustomTeethingTrackerBottomSheetState
                           ),
                           Divider(color: Colors.grey.shade300),
                           customCheckboxTile(
-                            label: "Erupted",
+                            label: context.tr('erupted'),
                             value: isErupted,
                             onChanged: (val) {
                               setState(() {
@@ -343,7 +342,7 @@ class _CustomTeethingTrackerBottomSheetState
                           ),
                           Divider(color: Colors.grey.shade300),
                           customCheckboxTile(
-                            label: "Shed",
+                            label: context.tr('shed'),
                             value: isShed,
                             onChanged: (val) {
                               setState(() {
@@ -358,7 +357,7 @@ class _CustomTeethingTrackerBottomSheetState
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
-                              'Notes:',
+                              context.tr("notes:"),
                               style: Theme.of(
                                 context,
                               ).textTheme.titleSmall!.copyWith(fontSize: 16.sp),
@@ -375,7 +374,7 @@ class _CustomTeethingTrackerBottomSheetState
                           SizedBox(height: 20.h),
                           Center(
                             child: Text(
-                              'Created by ${widget.firstName}',
+                              '${context.tr("created_by")} ${widget.firstName}',
                               style: Theme.of(
                                 context,
                               ).textTheme.titleSmall!.copyWith(
@@ -399,7 +398,7 @@ class _CustomTeethingTrackerBottomSheetState
 
   Widget getTeethingTimeLine() {
     if (fetchTeethingActivity == null || fetchTeethingActivity!.isEmpty) {
-      return const Center(child: Text('There is no teething activity'));
+      return  Center(child: Text(context.tr('there_is_no_teething_activity')));
     }
 
     final reversedList = fetchTeethingActivity!.reversed.toList();
@@ -411,7 +410,7 @@ class _CustomTeethingTrackerBottomSheetState
           padding: const EdgeInsets.only(bottom: 8.0),
           child: Center(
             child: Text(
-              '🦷 Teething Timeline',
+              '🦷 ${context.tr('teething_timeline')}',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Colors.deepPurple,
@@ -441,7 +440,7 @@ class _CustomTeethingTrackerBottomSheetState
               padding: const EdgeInsets.all(12.0),
               child: Row(
                 children: [
-                  // Sol: Diş gösterimi
+
                   Column(
                     children: [
                       SizedBox(
@@ -459,7 +458,7 @@ class _CustomTeethingTrackerBottomSheetState
                     ],
                   ),
                   const SizedBox(width: 12),
-                  // Sağ: Bilgi metni
+
                   Expanded(
                     child: Row(
                       children: [
@@ -479,11 +478,11 @@ class _CustomTeethingTrackerBottomSheetState
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                             Text(
-                              'Time: ${activity.createdAt!.hour.toString().padLeft(2, '0')}:${activity.createdAt!.minute.toString().padLeft(2, '0')}',
+                              '${context.tr('time')}: ${activity.createdAt!.hour.toString().padLeft(2, '0')}:${activity.createdAt!.minute.toString().padLeft(2, '0')}',
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                             Text(
-                              'Created by ${activity.createdBy ?? 'Unknown'}',
+                              '${context.tr("created_by")} ${widget.firstName}',
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                           ],
@@ -501,46 +500,3 @@ class _CustomTeethingTrackerBottomSheetState
   }
 
 }
-
-/*
-  ListTile(
-                      leading: SizedBox(
-                        width: 100,
-                        height: 100,
-                        child: TeethSelector(
-                          showPrimary: true,
-                          showPermanent: false,
-                          multiSelect: false,
-                          initiallySelected: ['61'],
-                          selectedColor: Colors.transparent,
-                          unselectedColor: Colors.transparent, // diğerleri görünmesin
-                          colorized: {'61': Colors.purple},
-                          StrokedColorized: {'61': Colors.purple}, // ✅ doğru yazım
-                          defaultStrokeColor: Colors.grey,
-                          defaultStrokeWidth: 1.5,
-                          onChange: (_) {},
-                          notation: (_) => '',
-                        ),
-                      ),
-                      title: SizedBox(
-                        width: 150,
-                        height: 150,
-                        child: TeethSelector(
-                          showPrimary: true,
-                          showPermanent: false,
-                          multiSelect: false,
-                          initiallySelected: ['61'],
-                          selectedColor: Colors.transparent,
-                          unselectedColor: Colors.transparent, // diğerleri görünmesin
-                          colorized: {'61': Colors.purple},
-                          StrokedColorized: {'61': Colors.purple}, // ✅ doğru yazım
-                          defaultStrokeColor: Colors.grey,
-                          defaultStrokeWidth: 1.5,
-                          onChange: (_) {},
-                          notation: (_) => '',
-                        ),
-                      ),
-                      subtitle: const Text("Typically erupts between 8–12 months"),
-                    ),
-
- */

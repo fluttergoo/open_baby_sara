@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/app/routes/navigation_wrapper.dart';
@@ -79,7 +80,7 @@ class _CustomGrowthDevelopmentState
                         child: Icon(Icons.arrow_back, color: Colors.deepPurple),
                       ),
                       Text(
-                        'Growth Tracker',
+                        context.tr('growth_tracker'),
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           color: Colors.deepPurple,
                           fontWeight: FontWeight.bold,
@@ -89,7 +90,7 @@ class _CustomGrowthDevelopmentState
                       TextButton(
                         onPressed: onPressedSave,
                         child: Text(
-                          'Save',
+                          context.tr('save'),
                           style: Theme.of(
                             context,
                           ).textTheme.titleMedium?.copyWith(
@@ -116,7 +117,7 @@ class _CustomGrowthDevelopmentState
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Time'),
+                          Text(context.tr('time')),
                           CustomDateTimePicker(
                             initialText: 'initialText',
                             onDateTimeSelected: (selected) {
@@ -127,7 +128,7 @@ class _CustomGrowthDevelopmentState
                       ),
                       Divider(color: Colors.grey.shade300),
                       CustomInputFieldWithToggle(
-                        title: 'Add Weight',
+                        title: context.tr('add_weight'),
                         selectedMeasurementOfUnit: MeasurementOfUnitNames.weight,
                         onChanged: (val, unit) {
                           weight = val;
@@ -136,7 +137,7 @@ class _CustomGrowthDevelopmentState
                       ),
                       Divider(color: Colors.grey.shade300),
                       CustomInputFieldWithToggle(
-                        title: 'Add Height',
+                        title: context.tr('add_height'),
                         selectedMeasurementOfUnit: MeasurementOfUnitNames.height,
                         onChanged: (val, unit) {
                           height = val;
@@ -145,7 +146,7 @@ class _CustomGrowthDevelopmentState
                       ),
                       Divider(color: Colors.grey.shade300),
                       CustomInputFieldWithToggle(
-                        title: 'Add Head Size',
+                        title: context.tr('add_head_size'),
                         selectedMeasurementOfUnit: MeasurementOfUnitNames.height,
                         onChanged: (val, unit) {
                           headSize = val;
@@ -157,7 +158,7 @@ class _CustomGrowthDevelopmentState
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Notes:',
+                          context.tr("notes:"),
                           style: Theme.of(
                             context,
                           ).textTheme.titleSmall!.copyWith(fontSize: 16.sp),
@@ -173,7 +174,7 @@ class _CustomGrowthDevelopmentState
                       SizedBox(height: 20.h),
                       Center(
                         child: Text(
-                          'Created by ${widget.firstName}',
+                          '${context.tr("created_by")} ${widget.firstName}',
                           style: Theme.of(context).textTheme.titleSmall!.copyWith(
                             fontSize: 12.sp,
                             fontStyle: FontStyle.italic,
@@ -184,7 +185,7 @@ class _CustomGrowthDevelopmentState
                       TextButton(
                         onPressed: () => _onPressedDelete(context),
                         child: Text(
-                          'Reset',
+                          context.tr("reset"),
                           style: Theme.of(
                             context,
                           ).textTheme.titleMedium?.copyWith(
@@ -258,5 +259,23 @@ class _CustomGrowthDevelopmentState
 
   }
 
-  _onPressedDelete(BuildContext context) {}
+  _onPressedDelete(BuildContext context) {
+    setState(() {
+      weight = null;
+      weightUnit = null;
+      height = null;
+      heightUnit = null;
+      headSize = null;
+      headSizeUnit = null;
+      notesController.clear();
+      selectedDatetime = DateTime.now();
+    });
+
+    showCustomFlushbar(
+      context,
+      context.tr("reset"),
+      context.tr("fields_reset"),
+      Icons.refresh,
+    );
+  }
 }

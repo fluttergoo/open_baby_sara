@@ -1,7 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/activity/activity_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/baby/baby_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/core/utils/helper_activities.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/activity_model.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -60,7 +60,7 @@ class _CustomizeGrowthCardState extends State<CustomizeGrowthCard> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                'Weight',
+                                context.tr('weight'),
                                 style: Theme.of(
                                   context,
                                 ).textTheme.bodyMedium?.copyWith(
@@ -72,7 +72,7 @@ class _CustomizeGrowthCardState extends State<CustomizeGrowthCard> {
                                 alignment: Alignment.center,
                                 child: Text(
                                   getLastWeight(growthActivities!) ??
-                                      '➕\n Tap to start',textAlign: TextAlign.center,
+                                      context.tr('tap_to_start'),textAlign: TextAlign.center,
                                   style: Theme.of(context).textTheme.titleSmall,
                                 ),
                               ),
@@ -84,7 +84,7 @@ class _CustomizeGrowthCardState extends State<CustomizeGrowthCard> {
 
                             children: [
                               Text(
-                                'Height',
+                                context.tr('height'),
                                 style: Theme.of(
                                   context,
                                 ).textTheme.bodyMedium?.copyWith(
@@ -95,7 +95,7 @@ class _CustomizeGrowthCardState extends State<CustomizeGrowthCard> {
                               Center(
                                 child: Text(
                                   getLastHeight(growthActivities!) ??
-                                      '➕\n Tap to start', textAlign: TextAlign.center,
+                                      context.tr('tap_to_start'), textAlign: TextAlign.center,
                                   style: Theme.of(context).textTheme.titleSmall,
                                 ),
                               ),
@@ -107,7 +107,7 @@ class _CustomizeGrowthCardState extends State<CustomizeGrowthCard> {
 
                             children: [
                               Text(
-                                'Head Size',
+                                context.tr('head_size'),
                                 style: Theme.of(
                                   context,
                                 ).textTheme.bodyMedium?.copyWith(
@@ -118,7 +118,7 @@ class _CustomizeGrowthCardState extends State<CustomizeGrowthCard> {
                               Center(
                                 child: Text(
                                   getLastHeadSize(growthActivities!) ??
-                                      '➕\n Tap to start', textAlign: TextAlign.center,
+                                      context.tr('tap_to_start'), textAlign: TextAlign.center,
                                   style: Theme.of(context).textTheme.titleSmall,
                                 ),
                               ),

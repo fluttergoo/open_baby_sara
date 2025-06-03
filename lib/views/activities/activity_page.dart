@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,14 +17,12 @@ import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_sleep_tracker_bottom_sheet.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_teething_tracker_bottom_sheet.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_vaccination_tracker_bottom_sheet.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_avatar.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_baby_header_card.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_card.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_pump_tracker_bottom_sheet.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_today_summary_card.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/customize_growth_card.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
 
 class ActivityPage extends StatefulWidget {
   const ActivityPage({super.key});
@@ -115,7 +114,7 @@ class _ActivityPageState extends State<ActivityPage> {
                               Align(
                                 alignment: Alignment.center,
                                 child: Text(
-                                  'Track New Activity',
+                                  context.tr("track_new_activity"),
                                   style: Theme.of(context).textTheme.titleMedium
                                       ?.copyWith(fontWeight: FontWeight.w900),
                                 ),
@@ -139,7 +138,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                   ///
                                   CustomCard(
                                     color: AppColors.feedColor,
-                                    title: 'Feed',
+                                    title: context.tr("feed"),
                                     babyID: state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                     firstName: firstName ?? '',
                                     imgUrl: 'assets/images/feed_icon.png',
@@ -168,7 +167,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                   ///
                                   CustomCard(
                                     color: AppColors.pumpColor,
-                                    title: 'Pump',
+                                    title: context.tr("pump"),
                                     babyID: state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                     firstName: firstName ?? '',
                                     imgUrl: 'assets/images/pump_icon.png',
@@ -197,7 +196,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                   ///
                                   CustomCard(
                                     color: AppColors.diaperColor,
-                                    title: 'Diaper',
+                                    title: context.tr("diaper"),
                                     babyID: state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                     firstName: firstName ?? '',
                                     imgUrl: 'assets/images/diaper_icon.png',
@@ -226,7 +225,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                   ///
                                   CustomCard(
                                     color: AppColors.sleepColor,
-                                    title: 'Sleep',
+                                    title: context.tr('sleep'),
                                     babyID: state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                     firstName: firstName ?? '',
                                     imgUrl: 'assets/images/sleep_icon.png',
@@ -257,7 +256,7 @@ class _ActivityPageState extends State<ActivityPage> {
                               Align(
                                 alignment: Alignment.center,
                                 child: Text(
-                                  'Growth & Development',
+                                  context.tr('growth_development'),
                                   style: Theme.of(context).textTheme.titleMedium
                                       ?.copyWith(fontWeight: FontWeight.w900),
                                 ),
@@ -312,7 +311,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                   ///
                                   CustomCard(
                                     color: AppColors.babyFirstsColor,
-                                    title: 'Baby Firsts',
+                                    title: context.tr('baby_firsts'),
                                     babyID: state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                     firstName: firstName ?? '',
                                     imgUrl:
@@ -342,7 +341,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                   ///
                                   CustomCard(
                                     color: AppColors.teethingColor,
-                                    title: 'Teething',
+                                    title: context.tr('teething'),
                                     babyID: state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                     firstName: firstName ?? '',
                                     imgUrl: 'assets/images/teething_icon.png',
@@ -372,7 +371,7 @@ class _ActivityPageState extends State<ActivityPage> {
                               Align(
                                 alignment: Alignment.center,
                                 child: Text(
-                                  'Health',
+                                  context.tr('health'),
                                   style: Theme.of(context).textTheme.titleMedium
                                       ?.copyWith(fontWeight: FontWeight.w900),
                                 ),
@@ -391,7 +390,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                   ///
                                   CustomCard(
                                     color: AppColors.medicalColor,
-                                    title: 'Medication',
+                                    title: context.tr('medication'),
                                     babyID: state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                     firstName: firstName ?? '',
                                     imgUrl: 'assets/images/medication_icon.png',
@@ -420,7 +419,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                   ///
                                   CustomCard(
                                     color: AppColors.doctorVisitColor,
-                                    title: 'Doctor Visit',
+                                    title: context.tr('doctor_visit'),
                                     babyID:state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                     firstName: firstName ?? '',
                                     imgUrl:
@@ -447,7 +446,7 @@ class _ActivityPageState extends State<ActivityPage> {
 
                                   CustomCard(
                                     color: AppColors.vaccineColor,
-                                    title: 'Vaccination',
+                                    title: context.tr('vaccination'),
                                     babyID: state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                     firstName: firstName ?? '',
                                     imgUrl: 'assets/images/vaccine_icon.png',
@@ -473,7 +472,7 @@ class _ActivityPageState extends State<ActivityPage> {
 
                                   CustomCard(
                                     color: AppColors.feverTrackerColor,
-                                    title: 'Fever',
+                                    title: context.tr('fever'),
                                     babyID: state is BabyLoaded ? state.selectedBaby!.babyID :  '',
                                     firstName: firstName ?? '',
                                     imgUrl: 'assets/images/fever_icon.png',

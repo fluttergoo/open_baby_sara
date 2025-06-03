@@ -14,7 +14,7 @@ class MyAccountPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'My Account',
+          context.tr('my_account'),
           style: Theme.of(
             context,
           ).textTheme.titleMedium!.copyWith(color: Colors.deepPurpleAccent),
@@ -75,6 +75,27 @@ class MyAccountPage extends StatelessWidget {
 
                       onTap: () {
                         Navigator.of(context).pushNamed(AppRoutes.faq);
+                      },
+                    ),
+                    Divider(
+                      color: Colors.grey.shade400,
+                      thickness: 0.8,
+                      height: 10,
+                    ),
+                    ListTile(
+                      title: Text(
+                        context.tr('language_settings'),
+                        style: Theme.of(
+                          context,
+                        ).textTheme.titleMedium?.copyWith(fontSize: 16.sp),
+                      ),
+                      trailing: Icon(
+                        Icons.language_outlined,
+                        size: 16.sp,
+                      ),
+
+                      onTap: () {
+                        Navigator.of(context).pushNamed(AppRoutes.languageSettings);
                       },
                     ),
                     Divider(

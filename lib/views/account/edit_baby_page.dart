@@ -57,7 +57,7 @@ class _EditBabyPageState extends State<EditBabyPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Edit Baby Details',
+          context.tr('edit_baby_details'),
           style: Theme.of(
             context,
           ).textTheme.titleMedium!.copyWith(color: Colors.deepPurpleAccent),
@@ -72,7 +72,7 @@ class _EditBabyPageState extends State<EditBabyPage> {
               },
               style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
               child: Text(
-                'Save',
+                context.tr('save'),
                 style: Theme.of(context).textTheme.titleMedium!.copyWith(
                   color: Theme.of(context).primaryColor,
                   fontWeight: FontWeight.bold,
@@ -197,7 +197,7 @@ class _EditBabyPageState extends State<EditBabyPage> {
                               Align(
                                 alignment: Alignment.center,
                                 child: Text(
-                                  'Tap to Upload Your Baby’s Photo',
+                                  context.tr('tap_to_upload_your_baby_photo'),
                                   style: Theme.of(
                                     context,
                                   ).textTheme.titleSmall!.copyWith(
@@ -211,7 +211,7 @@ class _EditBabyPageState extends State<EditBabyPage> {
                               // Baby First Name
                               RichText(
                                 text: TextSpan(
-                                  text: 'First Name:',
+                                  text: context.tr('first_name:'),
                                   style: Theme.of(
                                     context,
                                   ).textTheme.titleSmall!.copyWith(
@@ -245,7 +245,7 @@ class _EditBabyPageState extends State<EditBabyPage> {
                               // Baby DOB
                               RichText(
                                 text: TextSpan(
-                                  text: 'Birthday:',
+                                  text: context.tr('birthday:'),
                                   style: Theme.of(
                                     context,
                                   ).textTheme.titleSmall!.copyWith(
@@ -274,7 +274,7 @@ class _EditBabyPageState extends State<EditBabyPage> {
                                   color: Theme.of(context).primaryColor,
                                 ),
                                 title: Text(
-                                  'Nighttime Hours',
+                                  context.tr('nighttime_hours'),
                                   style: Theme.of(
                                     context,
                                   ).textTheme.titleSmall!.copyWith(
@@ -293,7 +293,7 @@ class _EditBabyPageState extends State<EditBabyPage> {
                               // Baby Gender
                               RichText(
                                 text: TextSpan(
-                                  text: 'Gender:',
+                                  text: context.tr('gender'),
                                   style: Theme.of(
                                     context,
                                   ).textTheme.titleSmall!.copyWith(
@@ -333,7 +333,7 @@ class _EditBabyPageState extends State<EditBabyPage> {
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                'Or',
+                                context.tr('or'),
                                 style: Theme.of(context).textTheme.titleMedium,
                               ),
                             ),
@@ -344,27 +344,14 @@ class _EditBabyPageState extends State<EditBabyPage> {
                             ),
                           ],
                         ),
-
-                        ListTile(
-                          leading: Icon(
-                            Icons.dashboard_customize_outlined,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                          title: Text(
-                            'Customize Baby Activity',
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          onTap: () {},
-                        ),
-                        SizedBox(height: 4.h),
-
+                        
                         ListTile(
                           leading: Icon(
                             Icons.delete_outline,
                             color: Colors.red,
                           ),
                           title: Text(
-                            'Delete Baby',
+                            context.tr('delete_baby'),
                             style: Theme.of(context).textTheme.titleMedium!
                                 .copyWith(color: Colors.red),
                           ),

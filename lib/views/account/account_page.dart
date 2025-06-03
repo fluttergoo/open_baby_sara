@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/app/routes/app_router.dart';
@@ -5,7 +6,6 @@ import 'package:flutter_sara_baby_tracker_and_sound/app/theme/app_themes.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/auth/auth_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/baby/baby_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/caregiver/caregiver_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/core/app_colors.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/baby_model.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/invite_model.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/views/onboarding/welcome_page.dart';
@@ -84,7 +84,7 @@ class _AccountPageState extends State<AccountPage> {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text(
-                                        'Welcome, ',
+                                        context.tr('welcome'),
                                         style:
                                             Theme.of(
                                               context,
@@ -112,7 +112,7 @@ class _AccountPageState extends State<AccountPage> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      'Baby Info',
+                                      context.tr('baby_info'),
                                       style:
                                           Theme.of(
                                             context,
@@ -151,7 +151,7 @@ class _AccountPageState extends State<AccountPage> {
                                           ),
                                           SizedBox(width: 6.w),
                                           Text(
-                                            'Add Baby',
+                                            context.tr('add_baby'),
                                             style: Theme.of(
                                               context,
                                             ).textTheme.titleSmall!.copyWith(
@@ -181,7 +181,7 @@ class _AccountPageState extends State<AccountPage> {
                                           icon:
                                               Icons
                                                   .baby_changing_station_outlined,
-                                          trailingText: 'Settings',
+                                          trailingText: context.tr('settings'),
                                           onTap: () {
                                             String babyID = baby.babyID;
                                             Navigator.pushNamed(
@@ -203,7 +203,7 @@ class _AccountPageState extends State<AccountPage> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      'Caregivers',
+                                      context.tr('caregivers'),
                                       style:
                                           Theme.of(
                                             context,
@@ -242,7 +242,7 @@ class _AccountPageState extends State<AccountPage> {
                                           ),
                                           SizedBox(width: 6.w),
                                           Text(
-                                            'Add Caregiver',
+                                            context.tr('add_caregiver'),
                                             style: Theme.of(
                                               context,
                                             ).textTheme.titleSmall!.copyWith(
@@ -267,7 +267,7 @@ class _AccountPageState extends State<AccountPage> {
                                         return _buildInfoCard(
                                           title: caregiver.firstName,
                                           icon: Icons.person_outline,
-                                          trailingText: 'caregiver',
+                                          trailingText: context.tr('caregiver'),
                                           onTap: () {
                                             Navigator.of(context).pushNamed(
                                               AppRoutes.caregiverEdit,
@@ -288,7 +288,7 @@ class _AccountPageState extends State<AccountPage> {
                                         color: Theme.of(context).primaryColor,
                                       ),
                                       title: Text(
-                                        'You haven\'t added any caregivers yet.',
+                                        context.tr('you_have_not_added_any_caregivers_yet'),
                                         style: Theme.of(context)
                                             .textTheme
                                             .titleMedium
@@ -306,14 +306,14 @@ class _AccountPageState extends State<AccountPage> {
                                 /// Settings
                                 SizedBox(height: 20.h),
                                 Text(
-                                  'Settings',
+                                  context.tr('settings'),
                                   style:
                                       Theme.of(context).textTheme.titleMedium,
                                 ),
                                 ListTile(
                                   leading: Icon(Icons.settings_outlined),
                                   title: Text(
-                                    'My Account',
+                                    context.tr('my_account'),
                                     style:
                                         Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 16.sp),
                                   ),
@@ -328,14 +328,14 @@ class _AccountPageState extends State<AccountPage> {
                                 /// Share & More
                                 SizedBox(height: 20.h),
                                 Text(
-                                  'Share and More',
+                                  context.tr('share_and_more'),
                                   style:
                                       Theme.of(context).textTheme.titleMedium,
                                 ),
                                 ListTile(
                                   leading: Icon(Icons.share_outlined),
                                   title: Text(
-                                    'Share Sara Baby with Your Friends',
+                                    context.tr('share_sara_baby_with_your_friends'),
                                     style:
                                         Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 16.sp),
                                   ),
@@ -344,7 +344,7 @@ class _AccountPageState extends State<AccountPage> {
                                 ListTile(
                                   leading: Icon(Icons.star_border_outlined),
                                   title: Text(
-                                    'Rate Sara Baby on the App Store',style: Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 16.sp),
+                                    context.tr('rate_sara_baby_on_the_app_store'),style: Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 16.sp),
                                   ),
                                   onTap: () {},
                                 ),
@@ -354,7 +354,7 @@ class _AccountPageState extends State<AccountPage> {
                                     color: Colors.redAccent,
                                   ),
                                   title: Text(
-                                    'LogOut!',
+                                    context.tr('log_out'),
                                     style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.red),
                                   ),
                                   onTap: () {

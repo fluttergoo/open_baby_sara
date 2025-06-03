@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/app/routes/navigation_wrapper.dart';
@@ -88,7 +89,7 @@ class _CustomMedicalTrackerBottomSheetState
                         child: Icon(Icons.arrow_back, color: Colors.deepPurple),
                       ),
                       Text(
-                        'Medical Tracker',
+                        context.tr('medical_tracker'),
                         style: Theme.of(
                           context,
                         ).textTheme.titleMedium?.copyWith(
@@ -100,7 +101,7 @@ class _CustomMedicalTrackerBottomSheetState
                       TextButton(
                         onPressed: onPressedSave,
                         child: Text(
-                          'Save',
+                          context.tr('save'),
                           style: Theme.of(
                             context,
                           ).textTheme.titleMedium?.copyWith(
@@ -127,7 +128,7 @@ class _CustomMedicalTrackerBottomSheetState
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Time'),
+                          Text(context.tr('time')),
                           CustomDateTimePicker(
                             initialText: 'initialText',
                             onDateTimeSelected: (selected) {
@@ -140,7 +141,7 @@ class _CustomMedicalTrackerBottomSheetState
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Medications'),
+                          Text(context.tr('medications')),
                           TextButton(
                             onPressed: () {
                               showMedicationDialog(
@@ -153,7 +154,7 @@ class _CustomMedicalTrackerBottomSheetState
                                 },
                               );
                             },
-                            child: Text('Add'),
+                            child: Text(context.tr('add')),
                           ),
                         ],
                       ),
@@ -161,7 +162,7 @@ class _CustomMedicalTrackerBottomSheetState
 
                       if (selectedMedications.isNotEmpty) ...[
                         SizedBox(height: 10.h),
-                        Text('Your Medication(s)'),
+                        Text(context.tr('your_medication')),
                         Divider(color: Colors.grey.shade300),
 
 
@@ -189,7 +190,7 @@ class _CustomMedicalTrackerBottomSheetState
                                     Expanded(
                                       flex: 3,
                                       child: CustomTextFormField(
-                                        hintText: 'Amount',
+                                        hintText: context.tr('amount'),
                                         controller: med.controller,
                                         keyboardType: TextInputType.number,
                                         onChanged: (val) => med.amount = val,
@@ -204,7 +205,7 @@ class _CustomMedicalTrackerBottomSheetState
                                     DropdownButton<String>(
                                       value: med.unit,
                                       items: ['drops', 'mg', 'mL','tabs','tsp','none']
-                                          .map((unit) => DropdownMenuItem(value: unit, child: Text(unit, style: Theme.of(context).textTheme.bodyMedium,)))
+                                          .map((unit) => DropdownMenuItem(value: context.tr(unit), child: Text(context.tr(unit), style: Theme.of(context).textTheme.bodyMedium,)))
                                           .toList(),
                                       onChanged: (val) {
                                         setState(() {
@@ -228,7 +229,7 @@ class _CustomMedicalTrackerBottomSheetState
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Notes:',
+                          context.tr("notes:"),
                           style: Theme.of(
                             context,
                           ).textTheme.titleSmall!.copyWith(fontSize: 16.sp),
@@ -244,7 +245,7 @@ class _CustomMedicalTrackerBottomSheetState
                       SizedBox(height: 20.h),
                       Center(
                         child: Text(
-                          'Created by ${widget.firstName}',
+                          '${context.tr("created_by")} ${widget.firstName}',
                           style: Theme.of(
                             context,
                           ).textTheme.titleSmall!.copyWith(
@@ -257,7 +258,7 @@ class _CustomMedicalTrackerBottomSheetState
                       TextButton(
                         onPressed: () => _onPressedDelete(context),
                         child: Text(
-                          'Reset',
+                          context.tr("reset"),
                           style: Theme.of(
                             context,
                           ).textTheme.titleMedium?.copyWith(
@@ -331,5 +332,18 @@ class _CustomMedicalTrackerBottomSheetState
 
   }
 
-  _onPressedDelete(BuildContext context) {}
+  _onPressedDelete(BuildContext context) {
+    setState(() {
+      selectedDatetime = DateTime.now();
+      notesController.clear();
+      selectedMedications.clear();
+    });
+
+    showCustomFlushbar(
+      context,
+      context.tr("reset"),
+      context.tr("fields_reset"),
+      Icons.refresh,
+    );
+  }
 }
