@@ -62,13 +62,14 @@ dependencies:
   just_audio: ^0.10.3
   audioplayers: ^6.4.0
   path_provider: ^2.1.5
-  flutter_launcher_icons: ^0.14.3
+
 
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.3
 
 
   flutter_lints: ^5.0.0
@@ -92,6 +93,11 @@ flutter:
    - assets/sounds/
    - assets/data/recipes.json
    - assets/images/recipes_images/
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/app_icon.png"
 
   #   - images/a_dot_ham.jpeg
 
