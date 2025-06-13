@@ -53,7 +53,7 @@ class ActivityRepositoryImpl extends ActivityRepository {
 
   Future<ActivityModel?> fetchLastSleepActivity(String babyID) async {
     final result = await database.rawQuery(
-      'SELECT * FROM activities WHERE activityType = ? AND babyID = ? ORDER BY createdAt DESC LIMIT 1',
+      'SELECT * FROM activities WHERE activityType = ? AND babyID = ? ORDER BY activityDateTime DESC LIMIT 1',
       ['sleep', babyID],
     );
 
@@ -67,7 +67,7 @@ class ActivityRepositoryImpl extends ActivityRepository {
   @override
   Future<ActivityModel?> fetchLastPumpActivity(String babyID) async{
     final result = await database.rawQuery(
-      'SELECT * FROM activities WHERE activityType IN(?,?) AND babyID = ? ORDER BY createdAt DESC LIMIT 1',
+      'SELECT * FROM activities WHERE activityType IN(?,?) AND babyID = ? ORDER BY activityDateTime DESC LIMIT 1',
       ['pumpTotal','pumpLeftRight', babyID],
     );
 
@@ -95,7 +95,7 @@ class ActivityRepositoryImpl extends ActivityRepository {
 
     final result = await database.query(
       'activities',
-      where: 'updatedAt >= ? AND updatedAt <= ? AND babyID =?',
+      where: 'activityDateTime >= ? AND activityDateTime <= ? AND babyID =?',
       whereArgs: [startOfDay.toIso8601String(), endOfDay.toIso8601String(), babyID],
     );
     return result.map((e)=> ActivityModel.fromSqlite(e)).toList();
@@ -113,8 +113,8 @@ class ActivityRepositoryImpl extends ActivityRepository {
     final endOfRange = DateTime(end.year, end.month, end.day, 23, 59, 59);
 
     final whereClauses = <String>[
-      'updatedAt >= ?',
-      'updatedAt <= ?',
+      'activityDateTime >= ?',
+      'activityDateTime <= ?',
       'babyID = ?',
     ];
     final whereArgs = <dynamic>[
@@ -133,11 +133,53 @@ class ActivityRepositoryImpl extends ActivityRepository {
       'activities',
       where: whereClauses.join(' AND '),
       whereArgs: whereArgs,
-      orderBy: 'updatedAt DESC',
+      orderBy: 'activityDateTime DESC',
     );
 
     return result.map((e) => ActivityModel.fromSqlite(e)).toList();
   }
+
+  @override
+  Future<void> deleteActivity(String babyID, String activityID) async{
+    try {
+      await database.delete(
+        'activities',
+        where: 'activityID = ? AND babyID = ?',
+        whereArgs: [activityID, babyID],
+      );
+
+      await _activityService.deleteActivityFromFirebase(babyID, activityID);
+    } catch (e) {
+      debugPrint('Delete error: $e');
+    }
+  }
+
+  @override
+  Future<void> updateActivity(ActivityModel activityModel) async
+  {
+    await database.update(
+      'activities',
+      activityModel.toSqlite(),
+      where: 'activityID = ?',
+      whereArgs: [activityModel.activityID],
+    );
+
+
+    try {
+      await _activityService.uploadActivity(activityModel);
+      await database.update(
+        'activities',
+        {'isSynced': 1},
+        where: 'activityID = ?',
+        whereArgs: [activityModel.activityID],
+      );
+    } catch (e) {
+      debugPrint('Firebase update failed: $e');
+    }
+  }
+
+
+
 
 
 }

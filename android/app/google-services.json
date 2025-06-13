@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "880549897239",
+    "project_id": "baby-sara",
+    "storage_bucket": "baby-sara.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:880549897239:android:6dcc8905541d7f05452852",
+        "android_client_info": {
+          "package_name": "com.example.flutter_sara_baby_tracker_and_sound"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAl7frXlsgKknlL-65TcHhKV0WaWqg8gI0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:880549897239:android:c4c6149092d3e311452852",
+        "android_client_info": {
+          "package_name": "com.suleymansurucu.flutter_sara_baby_tracker_and_sound"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAl7frXlsgKknlL-65TcHhKV0WaWqg8gI0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -9,7 +9,6 @@ import 'package:flutter_sara_baby_tracker_and_sound/blocs/all_timer/sleep_timer/
 import 'package:flutter_sara_baby_tracker_and_sound/core/app_colors.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/activity_model.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/all_timers/sleep_timer_circle.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/build_custom_snack_bar.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_show_flush_bar.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_text_form_field.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -19,11 +18,16 @@ class CustomSleepTrackerBottomSheet extends StatefulWidget {
   final String babyID;
   final String firstName;
   Duration? duration;
+  final ActivityModel? existingActivity;
+  final bool isEdit;
+
 
   CustomSleepTrackerBottomSheet({
     super.key,
     required this.babyID,
     required this.firstName,
+    this.existingActivity,
+    this.isEdit = false,
   });
 
   @override
@@ -33,21 +37,69 @@ class CustomSleepTrackerBottomSheet extends StatefulWidget {
 
 class _CustomSleepTrackerBottomSheetState
     extends State<CustomSleepTrackerBottomSheet> {
-  TimeOfDay? start;
-  TimeOfDay? endTime;
+  DateTime? start;
+  DateTime? endTime;
   String? totalSleepTime;
   DateTime? selectedDatetime = DateTime.now();
 
   TextEditingController notesController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+
+    if (widget.isEdit && widget.existingActivity != null) {
+      final data = widget.existingActivity!.data;
+
+      selectedDatetime = widget.existingActivity!.activityDateTime;
+      notesController.text = data['notes'] ?? '';
+
+      start = DateTime(
+        selectedDatetime!.year,
+        selectedDatetime!.month,
+        selectedDatetime!.day,
+        data['startTimeHour'] ?? 0,
+        data['startTimeMin'] ?? 0,
+      );
+
+      endTime = DateTime(
+        selectedDatetime!.year,
+        selectedDatetime!.month,
+        selectedDatetime!.day,
+        data['endTimeHour'] ?? 0,
+        data['endTimeMin'] ?? 0,
+      );
+
+      final totalMs = data['totalTime'];
+      if (totalMs != null) {
+        widget.duration = Duration(milliseconds: totalMs);
+        totalSleepTime = formatDuration(widget.duration!);
+      }
+
+
+      context.read<SleepTimerBloc>().add(
+        SetDurationTimer(duration: widget.duration ?? Duration.zero, activityType: 'sleepTimer'),
+      );
+      
+      context.read<SleepTimerBloc>().add(StopTimer(activityType: 'sleepTimer'));
+      context.read<SleepTimerBloc>().add(
+        SetDurationTimer(duration: widget.duration ?? Duration.zero, activityType: 'sleepTimer'),
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocListener<ActivityBloc, ActivityState>(
       listener: (context, state) {
         if (state is ActivityAdded) {
-          ScaffoldMessenger.of(
+          showCustomFlushbar(
             context,
-          ).showSnackBar(buildCustomSnackBar(state.message));
+            context.tr('success'),
+            context.tr('activity_was_added'),
+            Icons.add_task_outlined,
+            color: Colors.green,
+          );
         }
       },
       child: GestureDetector(
@@ -105,7 +157,9 @@ class _CustomSleepTrackerBottomSheetState
                           onPressedSave();
                         },
                         child: Text(
-                          context.tr('save'),
+                          widget.isEdit
+                              ? context.tr('update')
+                              : context.tr('save'),
                           style: Theme.of(
                             context,
                           ).textTheme.titleMedium?.copyWith(
@@ -161,7 +215,11 @@ class _CustomSleepTrackerBottomSheetState
                                   },
                                   child:
                                       start != null
-                                          ? Text(start!.format(context))
+                                          ? Text(
+                                            DateFormat(
+                                              'HH:mm:ss',
+                                            ).format(start!),
+                                          )
                                           : Text(context.tr("add")),
                                 ),
                               ],
@@ -177,7 +235,11 @@ class _CustomSleepTrackerBottomSheetState
                                   },
                                   child:
                                       endTime != null
-                                          ? Text(endTime!.format(context))
+                                          ? Text(
+                                            DateFormat(
+                                              'HH:mm:ss',
+                                            ).format(endTime!),
+                                          )
                                           : Text(context.tr("add")),
                                 ),
                               ],
@@ -262,11 +324,22 @@ class _CustomSleepTrackerBottomSheetState
   }
 
   void _onPressedShowTimePicker(BuildContext context) async {
-    start = await showTimePicker(
+    final pickedTime = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay.now(),
+      initialTime: TimeOfDay.fromDateTime(DateTime.now()),
     );
-    if (start != null) {
+
+    if (pickedTime != null) {
+      final now = DateTime.now();
+      start = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        pickedTime.hour,
+        pickedTime.minute,
+        0,
+      );
+
       context.read<SleepTimerBloc>().add(
         SetStartTimeTimer(startTime: start, activityType: 'sleepTimer'),
       );
@@ -274,15 +347,43 @@ class _CustomSleepTrackerBottomSheetState
   }
 
   void _onPressedEndTimeShowPicker(BuildContext context) async {
-    endTime = await showTimePicker(
+    final pickedTime = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay.now(),
+      initialTime: TimeOfDay.fromDateTime(DateTime.now()),
     );
-    if (endTime != null) {
+
+    if (pickedTime != null) {
+      final now = DateTime.now();
+      final selected = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        pickedTime.hour,
+        pickedTime.minute,
+      );
+
+      if (start != null) {
+        if (selected.isBefore(start!)) {
+          _showError(context.tr("end_time_before_start"));
+          return;
+        }
+      }
+
+      if (selected.isAfter(now)) {
+        _showError(context.tr("end_time_in_future"));
+        return;
+      }
+
+      endTime = selected;
+
       context.read<SleepTimerBloc>().add(
         SetEndTimeTimer(activityType: 'sleepTimer', endTime: endTime!),
       );
     }
+  }
+
+  void _showError(String message) {
+    showCustomFlushbar(context, context.tr("warning"), message, Icons.warning);
   }
 
   void _onPressedDelete(BuildContext context) {
@@ -307,60 +408,56 @@ class _CustomSleepTrackerBottomSheetState
 
   void onPressedSave() {
     final activityName = ActivityType.sleep.name;
-    if (start != null || endTime != null) {
-      try {
-        final activityModel = ActivityModel(
-          activityID: Uuid().v4(),
-          activityType: activityName ?? '',
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now(),
-          data: {
-            'activityDay': selectedDatetime?.toIso8601String(),
-            'startTimeHour': start?.hour,
-            'startTimeMin': start?.minute,
-            'endTimeHour': endTime?.hour,
-            'endTimeMin': endTime?.minute,
-            'totalTime': widget.duration?.inMilliseconds,
-            'notes': notesController.text,
-          },
-          isSynced: false,
-          createdBy: widget.firstName,
-          babyID: widget.babyID,
-        );
-        context.read<ActivityBloc>().add(
-          AddActivity(activityModel: activityModel),
-        );
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => NavigationWrapper()),
-        );
-        context.read<SleepTimerBloc>().add(
-          ResetTimer(activityType: 'sleepTimer'),
-        );
-      } catch (e, stack) {
-        print('HATA YAKALANDI: $e');
-        print(stack);
+
+    if (endTime == null) {
+      Navigator.of(context).pop();
+      return;
+    }
+
+    if (start == null || widget.duration == null) {
+      _showError(context.tr("please_complete_all_fields"));
+      return;
+    }
+
+    try {
+      final activityModel = ActivityModel(
+        activityID: widget.isEdit
+            ? widget.existingActivity!.activityID
+            : const Uuid().v4(),
+        activityType: activityName,
+        createdAt: widget.isEdit
+            ? widget.existingActivity!.createdAt
+            : DateTime.now(),
+        updatedAt: DateTime.now(),
+        activityDateTime: selectedDatetime!,
+        data: {
+          'startTimeHour': start?.hour,
+          'startTimeMin': start?.minute,
+          'endTimeHour': endTime?.hour,
+          'endTimeMin': endTime?.minute,
+          'totalTime': widget.duration?.inMilliseconds,
+          'notes': notesController.text,
+        },
+        isSynced: false,
+        createdBy: widget.firstName,
+        babyID: widget.babyID,
+      );
+
+      if (widget.isEdit) {
+        context.read<ActivityBloc>().add(UpdateActivity(activityModel: activityModel));
+      } else {
+        context.read<ActivityBloc>().add(AddActivity(activityModel: activityModel));
       }
-    } else {
-      Flushbar(
-        titleText: Text(
-          'Warning',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        margin: EdgeInsets.all(16),
-        borderRadius: BorderRadius.circular(16),
-        messageText: Text(
-          'Please enter start or end time',
-          style: Theme.of(
-            context,
-          ).textTheme.bodyMedium?.copyWith(color: Colors.white),
-        ),
-        backgroundColor: Colors.redAccent,
-        icon: Icon(Icons.warning_outlined, color: Colors.white),
-        duration: Duration(seconds: 3),
-      ).show(context);
+
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => NavigationWrapper()),
+      );
+
+      context.read<SleepTimerBloc>().add(
+        ResetTimer(activityType: 'sleepTimer'),
+      );
+    } catch (e, stack) {
+      print(stack);
     }
   }
 

@@ -4,7 +4,7 @@ part of 'sleep_timer_bloc.dart';
 sealed class SleepTimerEvent {}
 
 class StartTimer extends SleepTimerEvent{
-  final TimeOfDay? timerStart;
+  final DateTime? timerStart;
   final String activityType;
 
   StartTimer({required this.activityType,this.timerStart});
@@ -17,14 +17,14 @@ class StopTimer extends SleepTimerEvent{
 
 }
 class SetStartTimeTimer extends SleepTimerEvent{
-  final TimeOfDay? startTime;
+  final DateTime? startTime;
   final String activityType;
 
 
   SetStartTimeTimer({required this.startTime,required this.activityType});
 }
 class SetEndTimeTimer extends SleepTimerEvent{
-  final TimeOfDay endTime;
+  final DateTime endTime;
 
   final String activityType;
 

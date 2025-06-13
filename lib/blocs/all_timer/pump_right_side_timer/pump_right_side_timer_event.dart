@@ -3,7 +3,7 @@ part of 'pump_right_side_timer_bloc.dart';
 @immutable
 sealed class PumpRightSideTimerEvent {}
 class StartTimer extends PumpRightSideTimerEvent{
-  final TimeOfDay? timerStart;
+  final DateTime? timerStart;
   final String activityType;
 
   StartTimer({required this.activityType, this.timerStart});
@@ -16,14 +16,14 @@ class StopTimer extends PumpRightSideTimerEvent{
 
 }
 class SetStartTimeTimer extends PumpRightSideTimerEvent{
-  final TimeOfDay? startTime;
+  final DateTime? startTime;
   final String activityType;
 
 
   SetStartTimeTimer({required this.startTime,required this.activityType});
 }
 class SetEndTimeTimer extends PumpRightSideTimerEvent{
-  final TimeOfDay endTime;
+  final DateTime endTime;
 
   final String activityType;
 

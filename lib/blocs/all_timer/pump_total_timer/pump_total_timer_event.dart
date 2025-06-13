@@ -3,7 +3,7 @@ part of 'pump_total_timer_bloc.dart';
 @immutable
 sealed class PumpTotalTimerEvent {}
 class StartTimer extends PumpTotalTimerEvent{
-  final TimeOfDay? timerStart;
+  final DateTime? timerStart;
   final String activityType;
 
   StartTimer({required this.activityType, this.timerStart});
@@ -16,14 +16,14 @@ class StopTimer extends PumpTotalTimerEvent{
 
 }
 class SetStartTimeTimer extends PumpTotalTimerEvent{
-  final TimeOfDay? startTime;
+  final DateTime? startTime;
   final String activityType;
 
 
   SetStartTimeTimer({required this.startTime,required this.activityType});
 }
 class SetEndTimeTimer extends PumpTotalTimerEvent{
-  final TimeOfDay endTime;
+  final DateTime endTime;
 
   final String activityType;
 

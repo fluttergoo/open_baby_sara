@@ -4,7 +4,7 @@ part of 'breastfeed_right_side_timer_bloc.dart';
 sealed class BreastfeedRightSideTimerEvent {}
 
 class StartTimer extends BreastfeedRightSideTimerEvent{
-  final TimeOfDay? timerStart;
+  final DateTime? timerStart;
   final String activityType;
 
   StartTimer({required this.activityType, this.timerStart});
@@ -17,14 +17,14 @@ class StopTimer extends BreastfeedRightSideTimerEvent{
 
 }
 class SetStartTimeTimer extends BreastfeedRightSideTimerEvent{
-  final TimeOfDay? startTime;
+  final DateTime? startTime;
   final String activityType;
 
 
   SetStartTimeTimer({required this.startTime,required this.activityType});
 }
 class SetEndTimeTimer extends BreastfeedRightSideTimerEvent{
-  final TimeOfDay endTime;
+  final DateTime endTime;
 
   final String activityType;
 

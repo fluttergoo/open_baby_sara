@@ -5,7 +5,7 @@ sealed class PumpRightSideTimerState {}
 
 final class PumpRightSideTimerInitial extends PumpRightSideTimerState {}
 final class TimerRunning extends PumpRightSideTimerState {
-  final TimeOfDay? startTime;
+  final DateTime? startTime;
   final Duration duration;
   final String activityType;
 
@@ -18,8 +18,8 @@ final class TimerRunning extends PumpRightSideTimerState {
 
 class TimerStopped extends PumpRightSideTimerState {
   final Duration duration;
-  final TimeOfDay? endTime;
-  final TimeOfDay? startTime;
+  final DateTime? endTime;
+  final DateTime? startTime;
 
   final String activityType;
 

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/activity/activity_bloc.dart';
@@ -14,6 +15,7 @@ class CustomCard extends StatefulWidget {
   final String imgUrl;
   final VoidCallback voidCallback;
   final ActivityModel? activityModel;
+  final bool? isActivityRunning;
 
   const CustomCard({
     super.key,
@@ -24,6 +26,7 @@ class CustomCard extends StatefulWidget {
     required this.imgUrl,
     required this.voidCallback,
     this.activityModel,
+    this.isActivityRunning,
   });
 
   @override
@@ -116,9 +119,9 @@ class _CustomCardState extends State<CustomCard> {
 
                     // Icon'un yanındaki metin
                     Positioned(
-                      bottom: 4.h,
+                      bottom: 8.h,
                       left: 45.w,
-                      right: 10.w,
+                      right: 5.w,
                       child: getLastActivityText(widget.title),
                     ),
                   ],
@@ -264,30 +267,40 @@ class _CustomCardState extends State<CustomCard> {
       case 'Sleep':
         displayText =
             sleepActivities != null
-                ? getLastSleepSummary(sleepActivities!)
-                : '➕ Tap to start';
+                ? getLastSleepSummary(
+                  sleepActivities!,
+                  widget.isActivityRunning!,
+                  context,
+                )
+                : '➕ ${context.tr('tap_to_start_only')}';
       case 'Feed':
         displayText =
             feedActivities != null
-                ? getLastFeedSummary(feedActivities!)
-                : '➕ Tap to start';
+                ? getLastFeedSummary(feedActivities!, context)
+                : '➕ ${context.tr('tap_to_start_only')}';
       case 'Pump':
         displayText =
             pumpActivities != null
-                ? getLastPumpSummary(pumpActivities!)
-                : '➕ Tap to start';
+                ? getLastPumpSummary(pumpActivities!, context)
+                : '➕ ${context.tr('tap_to_start_only')}';
       case 'Diaper':
         displayText =
             pumpActivities != null
-                ? getLastDiaperSummary(diaperActivities!)
-                : '➕ Tap to start';
+                ? getLastDiaperSummary(diaperActivities!, context)
+                : '➕ ${context.tr('tap_to_start_only')}';
       default:
-        displayText= '➕ Tap to start';
+        displayText = '➕ ${context.tr('tap_to_start_only')}';
     }
 
     return Column(
       children: [
-        Text(displayText!, style: Theme.of(context).textTheme.titleSmall),
+        Text(
+          displayText!,
+          textAlign: TextAlign.center,
+          style: Theme.of(
+            context,
+          ).textTheme.titleSmall?.copyWith(fontSize: 10.sp),
+        ),
       ],
     );
   }

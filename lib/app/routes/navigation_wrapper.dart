@@ -2,6 +2,8 @@ import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/blocs/activity/activity_bloc.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/blocs/baby/baby_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/bottom_nav/bottom_nav_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/views/account/account_page.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/views/activities/activity_page.dart';
@@ -9,8 +11,23 @@ import 'package:flutter_sara_baby_tracker_and_sound/views/history/history_page.d
 import 'package:flutter_sara_baby_tracker_and_sound/views/food_recipes/recipes_page.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/views/background_sounds/baby_relaxing_sounds_page.dart';
 
-class NavigationWrapper extends StatelessWidget {
+class NavigationWrapper extends StatefulWidget {
+
   const NavigationWrapper({super.key});
+
+  @override
+  State<NavigationWrapper> createState() => _NavigationWrapperState();
+}
+
+class _NavigationWrapperState extends State<NavigationWrapper> {
+  bool _syncStarted = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +57,7 @@ class NavigationWrapper extends StatelessWidget {
             color: Colors.white70,
             items: [
               TabItem(icon: Icons.history_outlined, title: context.tr('history')),
-              TabItem(icon: Icons.surround_sound_outlined, title: context.tr('history')),
+              TabItem(icon: Icons.surround_sound_outlined, title: context.tr('sounds')),
               TabItem(icon: Icons.local_activity_outlined, title: context.tr('activity')),
               TabItem(icon: Icons.receipt_long_outlined, title: context.tr('recipes')),
               TabItem(icon: Icons.account_circle_outlined, title: context.tr('profile')),

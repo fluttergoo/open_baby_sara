@@ -26,8 +26,15 @@ class UserRepositoryImpl implements UserRepository {
     final user = _firebaseAuth.currentUser;
     if (user != null) {
       final doc = await _firestore.collection('users').doc(user.uid).get();
-      return UserModel.fromMap(doc.data()!);
+
+      if (doc.exists && doc.data() != null) {
+        return UserModel.fromMap(doc.data()!);
+      } else {
+        print('Firestore document does not exist or has no data for user: ${user.uid}');
+        return null;
+      }
     }
+
     return null;
   }
 
@@ -50,33 +57,32 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<void> changePassword(String password) async {
     final user = _firebaseAuth.currentUser;
-    try{
+    try {
       await user!.updatePassword(password);
-    }on FirebaseAuthException catch (e){
+    } on FirebaseAuthException catch (e) {
       throw e.toString();
-    }catch (e){
-     e.toString();
+    } catch (e) {
+      e.toString();
     }
   }
 
   @override
-  Future<void> deleteUser() async{
+  Future<void> deleteUser() async {
     final user = _firebaseAuth.currentUser;
-    try{
+    try {
       await user!.delete();
-    }on FirebaseAuthException catch (e){
-    throw e.toString();
-    }catch (e){
-    e.toString();
+    } on FirebaseAuthException catch (e) {
+      throw e.toString();
+    } catch (e) {
+      e.toString();
     }
   }
 
   @override
-  Future<void> forgotPassword(String email) async{
-    try{
-      await _firebaseAuth
-          .sendPasswordResetEmail(email: email);
-    }catch (e){
+  Future<void> forgotPassword(String email) async {
+    try {
+      await _firebaseAuth.sendPasswordResetEmail(email: email);
+    } catch (e) {
       throw Exception(e.toString());
     }
   }

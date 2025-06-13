@@ -17,11 +17,15 @@ import 'package:uuid/uuid.dart';
 class CustomTeethingTrackerBottomSheet extends StatefulWidget {
   final String babyID;
   final String firstName;
+  final ActivityModel? existingActivity;
+  final bool isEdit;
 
   const CustomTeethingTrackerBottomSheet({
     super.key,
     required this.babyID,
     required this.firstName,
+    this.existingActivity,
+    this.isEdit = false,
   });
 
   @override
@@ -36,11 +40,19 @@ class _CustomTeethingTrackerBottomSheetState
   bool isErupted = false;
   bool isShed = false;
   String? teethingIsoNumber;
-  List<String>? initilizeTeeth=[];
+  List<String>? initilizeTeeth = [];
   List<ActivityModel>? fetchTeethingActivity;
 
   @override
   void initState() {
+    if (widget.existingActivity != null) {
+      selectedDatetime = widget.existingActivity!.activityDateTime;
+      notesController.text = widget.existingActivity!.data['notes'] ?? '';
+      isErupted = widget.existingActivity!.data['isErupted'] ?? false;
+      isShed = widget.existingActivity!.data['isShed'] ?? false;
+      teethingIsoNumber = widget.existingActivity!.data['teethingIsoNumber'];
+    }
+
     context.read<ActivityBloc>().add(
       FetchToothIsoNumber(
         babyID: widget.babyID,
@@ -55,9 +67,13 @@ class _CustomTeethingTrackerBottomSheetState
     return BlocListener<ActivityBloc, ActivityState>(
       listener: (context, state) {
         if (state is ActivityAdded) {
-          ScaffoldMessenger.of(
+          showCustomFlushbar(
             context,
-          ).showSnackBar(buildCustomSnackBar(state.message));
+            context.tr('success'),
+            context.tr('activity_was_added'),
+            Icons.add_task_outlined,
+            color: Colors.green,
+          );
         }
       },
 
@@ -66,8 +82,6 @@ class _CustomTeethingTrackerBottomSheetState
           if (state is FetchToothIsoNumberLoaded) {
             initilizeTeeth = state.toothIsoNumber;
             fetchTeethingActivity = state.toothActivities;
-
-            debugPrint(initilizeTeeth!.length.toString());
           }
 
           return state is ActivityLoading
@@ -106,7 +120,14 @@ class _CustomTeethingTrackerBottomSheetState
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 GestureDetector(
-                                  onTap: () => Navigator.of(context).pop(),
+                                  onTap:
+                                      () => Navigator.of(
+                                        context,
+                                      ).pushReplacement(
+                                        MaterialPageRoute(
+                                          builder: (_) => NavigationWrapper(),
+                                        ),
+                                      ),
                                   child: Icon(
                                     Icons.arrow_back,
                                     color: Colors.deepPurple,
@@ -169,7 +190,7 @@ class _CustomTeethingTrackerBottomSheetState
                                   isColor: true,
                                   isMultiSelect: false,
                                 ),
-                                SizedBox(height: 20.h,),
+                                SizedBox(height: 20.h),
                                 getTeethingTimeLine(),
                               ],
                             ),
@@ -202,15 +223,18 @@ class _CustomTeethingTrackerBottomSheetState
         context.tr('already_added_body'),
         Icons.warning_outlined,
       );
-    }
-    else {
+    } else {
       final activityModel = ActivityModel(
-        activityID: Uuid().v4(),
+        activityID:
+            widget.isEdit
+                ? widget.existingActivity!.activityID
+                : const Uuid().v4(),
         activityType: activityName,
-        createdAt: DateTime.now(),
+        createdAt:
+            widget.isEdit ? widget.existingActivity!.createdAt : DateTime.now(),
         updatedAt: DateTime.now(),
+        activityDateTime: selectedDatetime!,
         data: {
-          'activityDay' : selectedDatetime?.toIso8601String(),
           'startTimeHour': selectedDatetime?.hour,
           'startTimeMin': selectedDatetime?.minute,
           'notes': notesController.text,
@@ -221,13 +245,20 @@ class _CustomTeethingTrackerBottomSheetState
         createdBy: widget.firstName,
         babyID: widget.babyID,
       );
+
       try {
-        context.read<ActivityBloc>().add(
-          AddActivity(activityModel: activityModel),
-        );
+        if (widget.isEdit) {
+          context.read<ActivityBloc>().add(
+            UpdateActivity(activityModel: activityModel),
+          );
+        } else {
+          context.read<ActivityBloc>().add(
+            AddActivity(activityModel: activityModel),
+          );
+        }
 
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => NavigationWrapper()),
+          MaterialPageRoute(builder: (_) => const NavigationWrapper()),
         );
       } catch (e) {
         showCustomFlushbar(
@@ -239,8 +270,6 @@ class _CustomTeethingTrackerBottomSheetState
       }
     }
   }
-
-  _onPressedDelete(BuildContext context) {}
 
   void _onPressedAdd() {
     showDialog(
@@ -398,7 +427,7 @@ class _CustomTeethingTrackerBottomSheetState
 
   Widget getTeethingTimeLine() {
     if (fetchTeethingActivity == null || fetchTeethingActivity!.isEmpty) {
-      return  Center(child: Text(context.tr('there_is_no_teething_activity')));
+      return Center(child: Text(context.tr('there_is_no_teething_activity')));
     }
 
     final reversedList = fetchTeethingActivity!.reversed.toList();
@@ -426,9 +455,10 @@ class _CustomTeethingTrackerBottomSheetState
           final activity = entry.value;
 
           final toothData = activity.data['teethingIsoNumber'];
-          final isoList = toothData is List
-              ? toothData.map((e) => e.toString()).toList()
-              : [toothData.toString()];
+          final isoList =
+              toothData is List
+                  ? toothData.map((e) => e.toString()).toList()
+                  : [toothData.toString()];
 
           return Card(
             elevation: 3,
@@ -440,7 +470,6 @@ class _CustomTeethingTrackerBottomSheetState
               padding: const EdgeInsets.all(12.0),
               child: Row(
                 children: [
-
                   Column(
                     children: [
                       SizedBox(
@@ -474,7 +503,9 @@ class _CustomTeethingTrackerBottomSheetState
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              DateFormat('MMM dd, yyyy').format(activity.createdAt!),
+                              DateFormat(
+                                'MMM dd, yyyy',
+                              ).format(activity.createdAt!),
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                             Text(
@@ -498,5 +529,4 @@ class _CustomTeethingTrackerBottomSheetState
       ],
     );
   }
-
 }

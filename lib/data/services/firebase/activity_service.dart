@@ -1,6 +1,12 @@
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/activity_model.dart';
 
-abstract class ActivityService{
+abstract class ActivityService {
   Future<void> uploadActivity(ActivityModel activityModel);
-  Future<ActivityModel?> getActivity(String babyID,String activityID);
+
+  Future<ActivityModel?> getActivity(String babyID, String activityID);
+  Future<void> deleteActivityFromFirebase(String babyID,String activityID);
+  Future<void> updateActivity(ActivityModel activityModel);
+
+
+
 }

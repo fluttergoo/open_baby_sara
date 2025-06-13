@@ -63,8 +63,9 @@ class _CustomInputFieldWithToggleState
     final newUnit = getSelectedUnitLabel();
     if (currentValue != null) {
       final converted = convertValue(currentValue, from: oldUnit, to: newUnit);
-      _controller.text = converted.toStringAsFixed(1);
-      widget.onChanged?.call(converted, newUnit);
+      final rounded = double.parse(converted.toStringAsFixed(1));
+      _controller.text = rounded.toStringAsFixed(1);
+      widget.onChanged?.call(rounded, newUnit);
     }
   }
 

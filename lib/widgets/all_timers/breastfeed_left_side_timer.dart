@@ -150,7 +150,7 @@ class _BreastfeedLeftSideTimerState extends State<BreastfeedLeftSideTimer> with 
               ),
               SizedBox(height: 6.h),
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
                     padding: EdgeInsets.all(6.w),

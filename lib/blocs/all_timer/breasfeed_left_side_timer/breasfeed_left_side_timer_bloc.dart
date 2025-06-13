@@ -14,8 +14,8 @@ class BreasfeedLeftSideTimerBloc extends Bloc<BreasfeedLeftSideTimerEvent, Breas
 
   Timer? _timer;
   Duration _duration = Duration.zero;
-  TimeOfDay? _startTime;
-  TimeOfDay? _endTime;
+  DateTime? _startTime;
+  DateTime? _endTime;
 
   BreasfeedLeftSideTimerBloc() : super(BreasfeedLeftSideTimerInitial()) {
     on<BreasfeedLeftSideTimerEvent>((event, emit) {
@@ -24,7 +24,7 @@ class BreasfeedLeftSideTimerBloc extends Bloc<BreasfeedLeftSideTimerEvent, Breas
 
     on<StartTimer>((event, emit) {
       _timer?.cancel();
-      _startTime ??= TimeOfDay.now();
+      _startTime ??= DateTime.now();
       final now = DateTime.now();
       final dateTime = DateTime(
         now.year,
@@ -32,7 +32,7 @@ class BreasfeedLeftSideTimerBloc extends Bloc<BreasfeedLeftSideTimerEvent, Breas
         now.day,
         _startTime!.hour,
         _startTime!.minute,
-        now.second,
+        _startTime!.second,
       );
       _timerRepository.saveTimerStart(dateTime, event.activityType);
 
@@ -76,7 +76,7 @@ class BreasfeedLeftSideTimerBloc extends Bloc<BreasfeedLeftSideTimerEvent, Breas
           now.day,
           _startTime!.hour,
           _startTime!.minute,
-          now.second,
+          _startTime!.second,
         );
         final current = DateTime.now();
 
@@ -89,14 +89,23 @@ class BreasfeedLeftSideTimerBloc extends Bloc<BreasfeedLeftSideTimerEvent, Breas
       } else {
         _duration = Duration.zero;
       }
-      emit(TimerRunning(duration: _duration, startTime: _startTime,activityType: event.activityType));
+      _endTime ??= DateTime.now();
+
+      emit(
+        TimerStopped(
+            duration: _duration,
+            startTime: _startTime,
+            activityType: event.activityType,
+            endTime: _endTime
+        ),
+      );
     });
 
     on<StopTimer>((event, emit) async {
 
       _timer!.cancel();
 
-      _endTime = TimeOfDay.now();
+      _endTime = DateTime.now();
 
       if (_startTime != null && _endTime != null) {
         _duration = _calculateDuration(_startTime!, _endTime!);
@@ -117,7 +126,7 @@ class BreasfeedLeftSideTimerBloc extends Bloc<BreasfeedLeftSideTimerEvent, Breas
     on<SetDurationTimer>((event,emit){
 
 
-      _endTime=TimeOfDay.now();
+      _endTime=DateTime.now();
 
       _startTime=_calculateStartTime(_endTime!, event.duration);
 
@@ -143,7 +152,7 @@ class BreasfeedLeftSideTimerBloc extends Bloc<BreasfeedLeftSideTimerEvent, Breas
       if (data != null && data['isRunning'] == 1) {
         final getTime = DateTime.parse(data['startTime']);
 
-        _startTime = TimeOfDay(hour: getTime.hour, minute: getTime.minute);
+        _startTime = DateTime(getTime.year, getTime.month, getTime.day, getTime.hour,getTime.minute, getTime.second);
         _endTime = null;
         _duration = DateTime.now().difference(getTime);
 
@@ -158,7 +167,7 @@ class BreasfeedLeftSideTimerBloc extends Bloc<BreasfeedLeftSideTimerEvent, Breas
 
   }
 
-  Duration _calculateDuration(TimeOfDay start, TimeOfDay end) {
+  Duration _calculateDuration(DateTime start, DateTime end) {
     final now = DateTime.now();
     final startDateTime = DateTime(
       now.year,
@@ -166,6 +175,7 @@ class BreasfeedLeftSideTimerBloc extends Bloc<BreasfeedLeftSideTimerEvent, Breas
       now.day,
       start.hour,
       start.minute,
+      start.second
     );
     var endDateTime = DateTime(
       now.year,
@@ -173,6 +183,7 @@ class BreasfeedLeftSideTimerBloc extends Bloc<BreasfeedLeftSideTimerEvent, Breas
       now.day,
       end.hour,
       end.minute,
+      end.second
     );
 
     if (endDateTime.isBefore(startDateTime)) {
@@ -187,7 +198,7 @@ class BreasfeedLeftSideTimerBloc extends Bloc<BreasfeedLeftSideTimerEvent, Breas
     return super.close();
   }
 
-  TimeOfDay? _calculateStartTime(TimeOfDay endTime, Duration duration) {
+  DateTime? _calculateStartTime(DateTime endTime, Duration duration) {
     final now = DateTime.now();
 
     final endDateTime = DateTime(
@@ -196,13 +207,18 @@ class BreasfeedLeftSideTimerBloc extends Bloc<BreasfeedLeftSideTimerEvent, Breas
       now.day,
       endTime.hour,
       endTime.minute,
+      endTime.second,
     );
 
     final startDateTime = endDateTime.subtract(duration);
 
-    return TimeOfDay(
-      hour: startDateTime.hour,
-      minute: startDateTime.minute,
+    return DateTime(
+      startDateTime.year,
+      startDateTime.month,
+      startDateTime.day,
+      startDateTime.hour,
+      startDateTime.minute,
+      startDateTime.second,
     );
   }
 }

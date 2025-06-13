@@ -5,7 +5,6 @@ import 'package:flutter_sara_baby_tracker_and_sound/app/routes/navigation_wrappe
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/activity/activity_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/core/app_colors.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/activity_model.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/build_custom_snack_bar.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_date_time_picker.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_input_field_with_toggle.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_show_flush_bar.dart';
@@ -16,11 +15,15 @@ import 'package:uuid/uuid.dart';
 class CustomGrowthDevelopmentTrackerBottomSheet extends StatefulWidget {
   final String babyID;
   final String firstName;
+  final bool isEdit;
+  final ActivityModel? existingActivity;
 
   const CustomGrowthDevelopmentTrackerBottomSheet({
     super.key,
     required this.babyID,
     required this.firstName,
+    this.isEdit = false,
+    this.existingActivity,
   });
 
   @override
@@ -40,225 +43,268 @@ class _CustomGrowthDevelopmentState
   String? headSizeUnit;
 
   @override
+  void initState() {
+    if (widget.isEdit && widget.existingActivity != null) {
+      final data = widget.existingActivity!.data;
+      selectedDatetime = widget.existingActivity!.activityDateTime;
+      notesController.text = data['notes'] ?? '';
+      weight = (data['weight'] as num?)?.toDouble();
+      weightUnit = data['weightUnit'];
+      height = (data['height'] as num?)?.toDouble();
+      heightUnit = data['heightUnit'];
+      headSize = (data['headSize'] as num?)?.toDouble();
+      headSizeUnit = data['headSizeUnit'];
+    } else {
+      selectedDatetime = DateTime.now();
+    }    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocListener<ActivityBloc, ActivityState>(
-  listener: (context, state) {
-    if (state is ActivityAdded) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(buildCustomSnackBar(state.message));
-    }
-  },
-  child: GestureDetector(
-      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: SingleChildScrollView(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: Container(
-          height: 600.h,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      listener: (context, state) {
+        if (state is ActivityAdded) {
+          showCustomFlushbar(
+            context,
+            context.tr('success'),
+            context.tr('activity_was_added'),
+            Icons.add_task_outlined,
+            color: Colors.green,
+          );
+        }
+      },
+      child: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
           ),
-          child: SafeArea(
-            child: Column(
-              children: [
-                // Header
-                Container(
-                  height: 50.h,
-                  padding: EdgeInsets.symmetric(horizontal: 16.r, vertical: 12.r),
-                  decoration: BoxDecoration(
-                    color: AppColors.growthColor,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () => Navigator.of(context).pop(),
-                        child: Icon(Icons.arrow_back, color: Colors.deepPurple),
-                      ),
-                      Text(
-                        context.tr('growth_tracker'),
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: Colors.deepPurple,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16.sp,
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: onPressedSave,
-                        child: Text(
-                          context.tr('save'),
-                          style: Theme.of(
-                            context,
-                          ).textTheme.titleMedium?.copyWith(
-                            color: Theme.of(context).primaryColor,
-                            fontWeight: FontWeight.w900,
-                            fontSize: 16.sp,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                //Body
-                Expanded(
-                  child: ListView(
-                    padding: EdgeInsets.only(
-                      left: 16.r,
-                      right: 16.r,
-                      bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-                      top: 16,
+          child: Container(
+            height: 600.h,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+            ),
+            child: SafeArea(
+              child: Column(
+                children: [
+                  // Header
+                  Container(
+                    height: 50.h,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.r,
+                      vertical: 12.r,
                     ),
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(context.tr('time')),
-                          CustomDateTimePicker(
-                            initialText: 'initialText',
-                            onDateTimeSelected: (selected) {
-                              selectedDatetime = selected;
-                            },
-                          ),
-                        ],
+                    decoration: BoxDecoration(
+                      color: AppColors.growthColor,
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(20),
                       ),
-                      Divider(color: Colors.grey.shade300),
-                      CustomInputFieldWithToggle(
-                        title: context.tr('add_weight'),
-                        selectedMeasurementOfUnit: MeasurementOfUnitNames.weight,
-                        onChanged: (val, unit) {
-                          weight = val;
-                          weightUnit = unit;
-                        },
-                      ),
-                      Divider(color: Colors.grey.shade300),
-                      CustomInputFieldWithToggle(
-                        title: context.tr('add_height'),
-                        selectedMeasurementOfUnit: MeasurementOfUnitNames.height,
-                        onChanged: (val, unit) {
-                          height = val;
-                          heightUnit = unit;
-                        },
-                      ),
-                      Divider(color: Colors.grey.shade300),
-                      CustomInputFieldWithToggle(
-                        title: context.tr('add_head_size'),
-                        selectedMeasurementOfUnit: MeasurementOfUnitNames.height,
-                        onChanged: (val, unit) {
-                          headSize = val;
-                          headSizeUnit = unit;
-                        },
-                      ),
-                      Divider(color: Colors.grey.shade300),
-                      SizedBox(height: 5.h),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          context.tr("notes:"),
-                          style: Theme.of(
-                            context,
-                          ).textTheme.titleSmall!.copyWith(fontSize: 16.sp),
-                        ),
-                      ),
-                      SizedBox(height: 5.h),
-                      CustomTextFormField(
-                        hintText: '',
-                        isNotes: true,
-                        controller: notesController,
-                      ),
-                      Divider(color: Colors.grey.shade300),
-                      SizedBox(height: 20.h),
-                      Center(
-                        child: Text(
-                          '${context.tr("created_by")} ${widget.firstName}',
-                          style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                            fontSize: 12.sp,
-                            fontStyle: FontStyle.italic,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        GestureDetector(
+                          onTap: () => Navigator.of(context).pop(),
+                          child: Icon(
+                            Icons.arrow_back,
+                            color: Colors.deepPurple,
                           ),
                         ),
-                      ),
-                      SizedBox(height: 10.h),
-                      TextButton(
-                        onPressed: () => _onPressedDelete(context),
-                        child: Text(
-                          context.tr("reset"),
+                        Text(
+                          context.tr('growth_tracker'),
                           style: Theme.of(
                             context,
                           ).textTheme.titleMedium?.copyWith(
-                            color: Theme.of(context).primaryColor,
+                            color: Colors.deepPurple,
+                            fontWeight: FontWeight.bold,
                             fontSize: 16.sp,
                           ),
                         ),
-                      ),
-                    ],
+                        TextButton(
+                          onPressed: onPressedSave,
+                          child: Text(
+                            widget.isEdit
+                                ? context.tr('update')
+                                : context.tr('save'),
+                            style: Theme.of(
+                              context,
+                            ).textTheme.titleMedium?.copyWith(
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.w900,
+                              fontSize: 16.sp,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
 
-              ],
+                  //Body
+                  Expanded(
+                    child: ListView(
+                      padding: EdgeInsets.only(
+                        left: 16.r,
+                        right: 16.r,
+                        bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+                        top: 16,
+                      ),
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(context.tr('time')),
+                            CustomDateTimePicker(
+                              initialText: 'initialText',
+                              onDateTimeSelected: (selected) {
+                                selectedDatetime = selected;
+                              },
+                            ),
+                          ],
+                        ),
+                        Divider(color: Colors.grey.shade300),
+                        CustomInputFieldWithToggle(
+                          title: context.tr('add_weight'),
+                          selectedMeasurementOfUnit:
+                              MeasurementOfUnitNames.weight,
+                          onChanged: (val, unit) {
+                            weight = val;
+                            weightUnit = unit;
+                          },
+                        ),
+                        Divider(color: Colors.grey.shade300),
+                        CustomInputFieldWithToggle(
+                          title: context.tr('add_height'),
+                          selectedMeasurementOfUnit:
+                              MeasurementOfUnitNames.height,
+                          onChanged: (val, unit) {
+                            height = val;
+                            heightUnit = unit;
+                          },
+                        ),
+                        Divider(color: Colors.grey.shade300),
+                        CustomInputFieldWithToggle(
+                          title: context.tr('add_head_size'),
+                          selectedMeasurementOfUnit:
+                              MeasurementOfUnitNames.height,
+                          onChanged: (val, unit) {
+                            headSize = val;
+                            headSizeUnit = unit;
+                          },
+                        ),
+                        Divider(color: Colors.grey.shade300),
+                        SizedBox(height: 5.h),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            context.tr("notes:"),
+                            style: Theme.of(
+                              context,
+                            ).textTheme.titleSmall!.copyWith(fontSize: 16.sp),
+                          ),
+                        ),
+                        SizedBox(height: 5.h),
+                        CustomTextFormField(
+                          hintText: '',
+                          isNotes: true,
+                          controller: notesController,
+                        ),
+                        Divider(color: Colors.grey.shade300),
+                        SizedBox(height: 20.h),
+                        Center(
+                          child: Text(
+                            '${context.tr("created_by")} ${widget.firstName}',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.titleSmall!.copyWith(
+                              fontSize: 12.sp,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 10.h),
+                        TextButton(
+                          onPressed: () => _onPressedDelete(context),
+                          child: Text(
+                            context.tr("reset"),
+                            style: Theme.of(
+                              context,
+                            ).textTheme.titleMedium?.copyWith(
+                              color: Theme.of(context).primaryColor,
+                              fontSize: 16.sp,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
-    ),
-);
+    );
   }
 
   void onPressedSave() {
     final activityName = ActivityType.growth.name;
 
-    if (weight == null && height == null && headSize==null) {
+    if (weight == null && height == null && headSize == null) {
       showCustomFlushbar(
         context,
         'Warning',
         'Please enter growth information',
         Icons.warning_outlined,
       );
-    }else{
-      final activityModel = ActivityModel(
-        activityID: Uuid().v4(),
-        activityType: activityName,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-        data: {
-          'activityDay' : selectedDatetime?.toIso8601String(),
-          'startTimeHour': selectedDatetime?.hour,
-          'startTimeMin': selectedDatetime?.minute,
-          'notes': notesController.text,
-          'height': height,
-          'heightUnit': heightUnit,
-          'weight': weight,
-          'weightUnit': weightUnit,
-          'headSize': headSize,
-          'headSizeUnit': headSizeUnit,
-        },
-        isSynced: false,
-        createdBy: widget.firstName,
-        babyID: widget.babyID,
-      );
-      try{
-        context.read<ActivityBloc>().add(AddActivity(activityModel: activityModel));
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => NavigationWrapper()),
-        );
-      }catch(e){
-        showCustomFlushbar(
-          context,
-          'Warning',
-          'Error ${e.toString()}',
-          Icons.warning_outlined,
-        );
-      }
-
+      return;
     }
 
+    final activityModel = ActivityModel(
+      activityID: widget.isEdit
+          ? widget.existingActivity!.activityID
+          : const Uuid().v4(),
+      activityType: activityName,
+      createdAt: widget.isEdit
+          ? widget.existingActivity!.createdAt
+          : DateTime.now(),
+      updatedAt: DateTime.now(),
+      activityDateTime: selectedDatetime!,
+      data: {
+        'startTimeHour': selectedDatetime?.hour,
+        'startTimeMin': selectedDatetime?.minute,
+        'notes': notesController.text,
+        'height': height,
+        'heightUnit': heightUnit,
+        'weight': weight,
+        'weightUnit': weightUnit,
+        'headSize': headSize,
+        'headSizeUnit': headSizeUnit,
+      },
+      isSynced: false,
+      createdBy: widget.firstName,
+      babyID: widget.babyID,
+    );
 
+    try {
+      if (widget.isEdit) {
+        context.read<ActivityBloc>().add(UpdateActivity(activityModel: activityModel));
+      } else {
+        context.read<ActivityBloc>().add(AddActivity(activityModel: activityModel));
+      }
 
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => NavigationWrapper()),
+      );
+    } catch (e) {
+      showCustomFlushbar(
+        context,
+        'Warning',
+        'Error ${e.toString()}',
+        Icons.warning_outlined,
+      );
+    }
   }
-
   _onPressedDelete(BuildContext context) {
     setState(() {
       weight = null;

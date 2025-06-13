@@ -5,7 +5,6 @@ import 'package:flutter_sara_baby_tracker_and_sound/app/routes/navigation_wrappe
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/activity/activity_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/core/app_colors.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/activity_model.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/build_custom_snack_bar.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_check_box_tile.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_date_time_picker.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_show_flush_bar.dart';
@@ -18,11 +17,15 @@ import 'package:uuid/uuid.dart';
 class CustomDiaperTrackerBottomSheet extends StatefulWidget {
   final String babyID;
   final String firstName;
+  final bool isEdit;
+  final ActivityModel? existingActivity;
 
   const CustomDiaperTrackerBottomSheet({
     super.key,
     required this.babyID,
     required this.firstName,
+    this.isEdit = false,
+    this.existingActivity,
   });
 
   @override
@@ -34,7 +37,7 @@ class _CustomDiaperTrackerBottomSheetState
     extends State<CustomDiaperTrackerBottomSheet> {
   TextEditingController notesController = TextEditingController();
   String textTimeAndDate = '';
-  DateTime? selectedDatetime =DateTime.now();
+  DateTime? selectedDatetime = DateTime.now();
   List<String> selectedMain = [];
   List<String> selectedTextures = [];
   List<String> selectedColors = [];
@@ -42,15 +45,35 @@ class _CustomDiaperTrackerBottomSheetState
   bool isDiaperRush = false;
   bool isBloodInStool = false;
 
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.isEdit && widget.existingActivity != null) {
+      final data = widget.existingActivity!.data;
+      selectedDatetime = widget.existingActivity!.activityDateTime;
+      notesController.text = data['notes'] ?? '';
+      selectedMain = List<String>.from(data['mainSelection'] ?? []);
+      selectedTextures = List<String>.from(data['textures'] ?? []);
+      selectedColors = List<String>.from(data['colors'] ?? []);
+      isBlowout = data['isBlowout'] ?? false;
+      isDiaperRush = data['isDiaperRush'] ?? false;
+      isBloodInStool = data['isBloodInStool'] ?? false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<ActivityBloc, ActivityState>(
       listener: (context, state) {
         if (state is ActivityAdded) {
-          ScaffoldMessenger.of(
+          showCustomFlushbar(
             context,
-          ).showSnackBar(buildCustomSnackBar(state.message));
+            context.tr('success'),
+            context.tr('activity_was_added'),
+            Icons.add_task_outlined,
+            color: Colors.green,
+          );
         }
       },
       child: GestureDetector(
@@ -98,7 +121,9 @@ class _CustomDiaperTrackerBottomSheetState
                       TextButton(
                         onPressed: onPressedSave,
                         child: Text(
-                          context.tr("save"),
+                          widget.isEdit
+                              ? context.tr('update')
+                              : context.tr('save'),
                           style: Theme.of(
                             context,
                           ).textTheme.titleMedium?.copyWith(
@@ -129,7 +154,7 @@ class _CustomDiaperTrackerBottomSheetState
                           CustomDateTimePicker(
                             initialText: 'initialText',
                             onDateTimeSelected: (selected) {
-                              selectedDatetime=selected;
+                              selectedDatetime = selected;
                             },
                           ),
                         ],
@@ -235,6 +260,7 @@ class _CustomDiaperTrackerBottomSheetState
 
   void onPressedSave() {
     final activityName = ActivityType.diaper.name;
+
     if (selectedMain.isEmpty) {
       showCustomFlushbar(
         context,
@@ -242,42 +268,56 @@ class _CustomDiaperTrackerBottomSheetState
         context.tr("please_choose_diaper_condition"),
         Icons.warning_outlined,
       );
-    } else {
-      final activityModel = ActivityModel(
-        activityID: Uuid().v4(),
-        activityType: activityName,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-        data: {
-          'activityDay' : selectedDatetime?.toIso8601String(),
-          'startTimeHour': selectedDatetime?.hour,
-          'startTimeMin': selectedDatetime?.minute,
-          'notes': notesController.text,
-          'mainSelection': selectedMain,
-          'textures': selectedTextures,
-          'colors': selectedColors,
-          'isBlowout': isBlowout,
-          'isDiaperRush': isDiaperRush,
-          'isBloodInStool': isBloodInStool,
-        },
-        isSynced: false,
-        createdBy: widget.firstName,
-        babyID: widget.babyID,
-      );
-      try{
-        context.read<ActivityBloc>().add(AddActivity(activityModel: activityModel));
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => NavigationWrapper()),
+      return;
+    }
+
+    final activityModel = ActivityModel(
+      activityID:
+          widget.isEdit
+              ? widget.existingActivity!.activityID
+              : const Uuid().v4(),
+      activityType: activityName,
+      createdAt:
+          widget.isEdit ? widget.existingActivity!.createdAt : DateTime.now(),
+      updatedAt: DateTime.now(),
+      activityDateTime: selectedDatetime!,
+      data: {
+        'startTimeHour': selectedDatetime?.hour,
+        'startTimeMin': selectedDatetime?.minute,
+        'notes': notesController.text,
+        'mainSelection': selectedMain,
+        'textures': selectedTextures,
+        'colors': selectedColors,
+        'isBlowout': isBlowout,
+        'isDiaperRush': isDiaperRush,
+        'isBloodInStool': isBloodInStool,
+      },
+      isSynced: false,
+      createdBy: widget.firstName,
+      babyID: widget.babyID,
+    );
+
+    try {
+      if (widget.isEdit) {
+        context.read<ActivityBloc>().add(
+          UpdateActivity(activityModel: activityModel),
         );
-      }catch(e){
-        showCustomFlushbar(
-          context,
-          context.tr("warning"),
-          'Error ${e.toString()}',
-          Icons.warning_outlined,
+      } else {
+        context.read<ActivityBloc>().add(
+          AddActivity(activityModel: activityModel),
         );
       }
 
+      Navigator.of(
+        context,
+      ).pushReplacement(MaterialPageRoute(builder: (_) => NavigationWrapper()));
+    } catch (e) {
+      showCustomFlushbar(
+        context,
+        context.tr("warning"),
+        'Error ${e.toString()}',
+        Icons.warning_outlined,
+      );
     }
   }
 

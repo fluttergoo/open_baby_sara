@@ -67,7 +67,7 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
             if (teeth is List) {
               toothIsoNumberList.addAll(teeth.map((e) => e.toString()));
             } else if (teeth is String) {
-              toothIsoNumberList.add(teeth); // tekli kayıt varsa
+              toothIsoNumberList.add(teeth);
             }
           }
         }
@@ -176,5 +176,25 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
       }
 
     });
+
+    on<DeleteActivity>((event, emit)async{
+      emit(ActivityLoading());
+      try{
+        await _activityRepository.deleteActivity(event.babyID, event.activityID);
+        emit(ActivityDeleted());
+      }catch(e){
+        emit(ActivityError('Error ${e.toString()}'));
+      }
+    });
+
+    on<UpdateActivity>((event, emit) async {
+      try {
+        await _activityRepository.updateActivity(event.activityModel);
+        emit(ActivityUpdated());
+      } catch (e) {
+        emit(ActivityUpdateError(e.toString()));
+      }
+    });
+
   }
 }
