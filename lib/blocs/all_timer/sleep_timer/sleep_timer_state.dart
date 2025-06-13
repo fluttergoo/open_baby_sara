@@ -5,7 +5,7 @@ sealed class SleepTimerState {}
 
 final class SleepTimerInitial extends SleepTimerState {}
 final class TimerRunning extends SleepTimerState {
-  final TimeOfDay? startTime;
+  final DateTime? startTime;
   final Duration duration;
   final String activityType;
 
@@ -18,8 +18,8 @@ final class TimerRunning extends SleepTimerState {
 
 class TimerStopped extends SleepTimerState {
   final Duration duration;
-  final TimeOfDay? endTime;
-  final TimeOfDay? startTime;
+  final DateTime? endTime;
+  final DateTime? startTime;
 
   final String activityType;
 

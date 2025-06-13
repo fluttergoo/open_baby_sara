@@ -5,7 +5,6 @@ import 'package:flutter_sara_baby_tracker_and_sound/app/routes/navigation_wrappe
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/activity/activity_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/core/app_colors.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/activity_model.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/build_custom_snack_bar.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_date_time_picker.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_input_field_with_toggle.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_show_flush_bar.dart';
@@ -16,11 +15,15 @@ import 'package:uuid/uuid.dart';
 class CustomFeverTrackerBottomSheet extends StatefulWidget {
   final String babyID;
   final String firstName;
+  final bool isEdit;
+  final ActivityModel? existingActivity;
 
   const CustomFeverTrackerBottomSheet({
     super.key,
     required this.babyID,
     required this.firstName,
+    this.isEdit = false,
+    this.existingActivity,
   });
 
   @override
@@ -36,13 +39,31 @@ class _CustomFeverTrackerBottomSheetState
   String? temperatureUnit;
 
   @override
+  void initState() {
+    if (widget.isEdit && widget.existingActivity != null) {
+      final activity = widget.existingActivity!;
+      selectedDatetime = activity.activityDateTime;
+      notesController.text = activity.data['notes'] ?? '';
+      temperature = (activity.data['temperature'] as num?)?.toDouble();
+      temperatureUnit = activity.data['temperatureUnit'];
+    } else {
+      selectedDatetime = DateTime.now();
+    }
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocListener<ActivityBloc, ActivityState>(
       listener: (context, state) {
         if (state is ActivityAdded) {
-          ScaffoldMessenger.of(
+          showCustomFlushbar(
             context,
-          ).showSnackBar(buildCustomSnackBar(state.message));
+            context.tr('success'),
+            context.tr('activity_was_added'),
+            Icons.add_task_outlined,
+            color: Colors.green,
+          );
         }
       },
       child: GestureDetector(
@@ -208,16 +229,20 @@ class _CustomFeverTrackerBottomSheetState
         context.tr('please_enter_a_temperature'),
         Icons.warning_outlined,
       );
-      return; 
+      return;
     }
 
     final activityModel = ActivityModel(
-      activityID: Uuid().v4(),
+      activityID: widget.isEdit
+          ? widget.existingActivity!.activityID
+          : const Uuid().v4(),
       activityType: activityName,
-      createdAt: selectedDatetime ?? DateTime.now(),
+      createdAt: widget.isEdit
+          ? widget.existingActivity!.createdAt
+          : DateTime.now(),
       updatedAt: DateTime.now(),
+      activityDateTime: selectedDatetime!,
       data: {
-        'activityDay' : selectedDatetime?.toIso8601String(),
         'startTimeHour': selectedDatetime?.hour,
         'startTimeMin': selectedDatetime?.minute,
         'notes': notesController.text,
@@ -226,16 +251,19 @@ class _CustomFeverTrackerBottomSheetState
       },
       isSynced: false,
       createdBy: widget.firstName,
-      babyID: widget.babyID, 
+      babyID: widget.babyID,
     );
 
-    context.read<ActivityBloc>().add(AddActivity(activityModel: activityModel));
+    if (widget.isEdit) {
+      context.read<ActivityBloc>().add(UpdateActivity(activityModel: activityModel));
+    } else {
+      context.read<ActivityBloc>().add(AddActivity(activityModel: activityModel));
+    }
 
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (_) => NavigationWrapper()),
     );
   }
-
   _onPressedDelete(BuildContext context) {
     setState(() {
       selectedDatetime = DateTime.now();

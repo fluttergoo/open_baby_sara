@@ -54,3 +54,17 @@ class LoadActivitiesByDateRange extends ActivityEvent{
 
   LoadActivitiesByDateRange({required this.babyID, required this.startDay, required this.endDay,  this.activityType});
 }
+
+class DeleteActivity extends ActivityEvent{
+  final String babyID;
+  final String activityID;
+
+  DeleteActivity({required this.babyID, required this.activityID});
+
+}
+
+class UpdateActivity extends ActivityEvent {
+  final ActivityModel activityModel;
+
+  UpdateActivity({required this.activityModel});
+}

@@ -7,7 +7,7 @@ final class BreastfeedRightSideTimerInitial extends BreastfeedRightSideTimerStat
 
 final class BreasfeedLeftSideTimerInitial extends BreastfeedRightSideTimerState {}
 final class TimerRunning extends BreastfeedRightSideTimerState {
-  final TimeOfDay? startTime;
+  final DateTime? startTime;
   final Duration duration;
   final String activityType;
 
@@ -20,8 +20,8 @@ final class TimerRunning extends BreastfeedRightSideTimerState {
 
 class TimerStopped extends BreastfeedRightSideTimerState {
   final Duration duration;
-  final TimeOfDay? endTime;
-  final TimeOfDay? startTime;
+  final DateTime? endTime;
+  final DateTime? startTime;
 
   final String activityType;
 

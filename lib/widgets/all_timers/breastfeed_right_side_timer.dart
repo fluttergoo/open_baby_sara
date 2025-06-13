@@ -147,7 +147,7 @@ class _BreastfeedRightSideTimerState extends State<BreastfeedRightSideTimer> wit
               ),
               SizedBox(height: 6.h),
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
                     padding: EdgeInsets.all(6.w),

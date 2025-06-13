@@ -24,11 +24,15 @@ import 'package:uuid/uuid.dart';
 class CustomFeedTrackerBottomSheet extends StatefulWidget {
   final String babyID;
   final String firstName;
+  final ActivityModel? existingActivity;
+  final bool isEdit;
 
   const CustomFeedTrackerBottomSheet({
     super.key,
     required this.babyID,
     required this.firstName,
+    this.existingActivity,
+    this.isEdit = false,
   });
 
   @override
@@ -46,11 +50,11 @@ class _CustomFeedTrackerBottomSheetState
 
   double? feedAmout;
   String? feedUnit;
-  TimeOfDay? leftSideStartTime;
-  TimeOfDay? leftSideEndTime;
+  DateTime? leftSideStartTime;
+  DateTime? leftSideEndTime;
   Duration? leftSideTotalTime;
-  TimeOfDay? rightSideStartTime;
-  TimeOfDay? rightSideEndTime;
+  DateTime? rightSideStartTime;
+  DateTime? rightSideEndTime;
   Duration? rightSideTotalTime;
 
   double? leftSideAmout;
@@ -62,17 +66,56 @@ class _CustomFeedTrackerBottomSheetState
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
+
+    if (widget.isEdit && widget.existingActivity != null) {
+      selectedDatetime = widget.existingActivity!.activityDateTime;
+      final data = widget.existingActivity!.data;
+      if (widget.existingActivity!.activityType == ActivityType.bottleFeed.name) {
+        selectedMainActivity = data['mainSelection'];
+        feedAmout = (data['totalAmount'] ?? 0).toDouble();
+        feedUnit = data['totalUnit'];
+        notesBottleFeedController.text = data['notes'] ?? '';
+        _tabController.index = 1;
+      } else if (widget.existingActivity!.activityType == ActivityType.breastFeed.name) {
+        leftSideStartTime = _buildTime(data, 'leftSideStartTimeHour', 'leftSideStartTimeMin');
+        leftSideEndTime = _buildTime(data, 'leftSideEndTimeHour', 'leftSideEndTimeMin');
+        leftSideTotalTime = Duration(milliseconds: data['leftSideTotalTime'] ?? 0);
+        leftSideAmout = (data['leftSideAmount'] ?? 0).toDouble();
+        leftSideUnit = data['leftSideUnit'];
+
+        rightSideStartTime = _buildTime(data, 'rightSideStartTimeHour', 'rightSideStartTimeMin');
+        rightSideEndTime = _buildTime(data, 'rightSideEndTimeHour', 'rightSideEndTimeMin');
+        rightSideTotalTime = Duration(milliseconds: data['rightSideTotalTime'] ?? 0);
+        rightSideAmout = (data['rightSideAmount'] ?? 0).toDouble();
+        rightSideUnit = data['rightSideUnit'];
+
+        notesController.text = data['notes'] ?? '';
+      }
+    }
     super.initState();
   }
-
+  DateTime _buildTime(Map<String, dynamic> data, String hourKey, String minKey) {
+    final now = DateTime.now();
+    return DateTime(
+      now.year,
+      now.month,
+      now.day,
+      data[hourKey] ?? 0,
+      data[minKey] ?? 0,
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return BlocListener<ActivityBloc, ActivityState>(
       listener: (context, state) {
         if (state is ActivityAdded) {
-          ScaffoldMessenger.of(
+          showCustomFlushbar(
             context,
-          ).showSnackBar(buildCustomSnackBar(state.message));
+            context.tr('success'),
+            context.tr('activity_was_added'),
+            Icons.add_task_outlined,
+            color: Colors.green,
+          );
         }
       },
       child: GestureDetector(
@@ -122,7 +165,8 @@ class _CustomFeedTrackerBottomSheetState
                       TextButton(
                         onPressed: onPressedSave,
                         child: Text(
-                          context.tr("save"),
+                          widget.isEdit ? context.tr('update'):
+                          context.tr('save'),
                           style: Theme.of(
                             context,
                           ).textTheme.titleMedium?.copyWith(
@@ -224,113 +268,75 @@ class _CustomFeedTrackerBottomSheetState
   }
 
   void onPressedSave() {
-    if (_tabController.index == 1) {
-      final activityName = ActivityType.bottleFeed.name;
-      if (feedAmout == null || selectedMainActivity == null) {
-        showCustomFlushbar(
-          context,
-          context.tr('warning'),
-          context.tr("please_enter_feed_information"),
-          Icons.warning_outlined,
-        );
+    final String activityID = widget.isEdit
+        ? widget.existingActivity!.activityID
+        : const Uuid().v4();
+
+    final String activityType = _tabController.index == 1
+        ? ActivityType.bottleFeed.name
+        : ActivityType.breastFeed.name;
+
+    final data = _tabController.index == 1
+        ? {
+      'startTimeHour': selectedDatetime.hour,
+      'startTimeMin': selectedDatetime.minute,
+      'notes': notesBottleFeedController.text,
+      'mainSelection': selectedMainActivity,
+      'totalAmount': feedAmout,
+      'totalUnit': feedUnit,
+    }
+        : {
+      'leftSideStartTimeHour': leftSideStartTime?.hour ?? 0,
+      'leftSideStartTimeMin': leftSideStartTime?.minute ?? 0,
+      'leftSideEndTimeHour': leftSideEndTime?.hour ?? 0,
+      'leftSideEndTimeMin': leftSideEndTime?.minute ?? 0,
+      'leftSideTotalTime': leftSideTotalTime?.inMilliseconds ?? 0,
+      'leftSideAmount': leftSideAmout ?? 0,
+      'leftSideUnit': leftSideUnit ?? '',
+      'rightSideStartTimeHour': rightSideStartTime?.hour ?? 0,
+      'rightSideStartTimeMin': rightSideStartTime?.minute ?? 0,
+      'rightSideEndTimeHour': rightSideEndTime?.hour ?? 0,
+      'rightSideEndTimeMin': rightSideEndTime?.minute ?? 0,
+      'rightSideTotalTime': rightSideTotalTime?.inMilliseconds ?? 0,
+      'rightSideAmount': rightSideAmout ?? 0,
+      'rightSideUnit': rightSideUnit ?? '',
+      'totalTime': (leftSideTotalTime ?? Duration.zero).inMilliseconds +
+          (rightSideTotalTime ?? Duration.zero).inMilliseconds,
+      'totalAmount': (leftSideAmout ?? 0) + (rightSideAmout ?? 0),
+      'totalUnit': rightSideUnit ?? leftSideUnit,
+      'notes': notesController.text,
+    };
+
+    final activityModel = ActivityModel(
+      activityID: activityID,
+      activityType: activityType,
+      createdAt: widget.isEdit ? widget.existingActivity!.createdAt : DateTime.now(),
+      updatedAt: DateTime.now(),
+      activityDateTime: selectedDatetime,
+      data: data,
+      isSynced: false,
+      createdBy: widget.firstName,
+      babyID: widget.babyID,
+    );
+
+    try {
+      if (widget.isEdit) {
+        context.read<ActivityBloc>().add(UpdateActivity(activityModel: activityModel));
       } else {
-        final activityModel = ActivityModel(
-          activityID: Uuid().v4(),
-          activityType: activityName,
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now(),
-          data: {
-            'activityDay': selectedDatetime.toIso8601String(),
-            'startTimeHour': selectedDatetime?.hour,
-            'startTimeMin': selectedDatetime?.minute,
-            'notes': notesBottleFeedController.text,
-            'mainSelection': selectedMainActivity,
-            'totalAmount': feedAmout,
-            'totalUnit': feedUnit,
-          },
-          isSynced: false,
-          createdBy: widget.firstName,
-          babyID: widget.babyID,
-        );
-        try {
-          context.read<ActivityBloc>().add(
-            AddActivity(activityModel: activityModel),
-          );
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => NavigationWrapper()),
-          );
-        } catch (e) {
-          showCustomFlushbar(
-            context,
-            context.tr("warning"),
-            'Error ${e.toString()}',
-            Icons.warning_outlined,
-          );
-        }
+        context.read<ActivityBloc>().add(AddActivity(activityModel: activityModel));
       }
-    } else if (_tabController.index == 0) {
-      final activityName = ActivityType.breastFeed.name;
-      if (leftSideStartTime == null &&
-          leftSideAmout == null &&
-          leftSideTotalTime == null) {
-        showCustomFlushbar(
-          context,
-          context.tr("warning"),
-          context.tr("please_enter_feed_information"),
-          Icons.warning_outlined,
-        );
-      } else {
-        final activityModel = ActivityModel(
-          activityID: Uuid().v4(),
-          activityType: activityName,
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now(),
-          data: {
-            'activityDay': selectedDatetime.toIso8601String(),
-            'leftSideStartTimeHour': leftSideStartTime?.hour ?? 0,
-            'leftSideStartTimeMin': leftSideStartTime?.minute ?? 0,
-            'leftSideEndTimeHour': leftSideEndTime?.hour ?? 0,
-            'leftSideEndTimeMin': leftSideEndTime?.minute ?? 0,
-            'leftSideTotalTime': leftSideTotalTime?.inMilliseconds ?? 0,
-            'leftSideAmount': leftSideAmout ?? 0,
-            'leftSideUnit': leftSideUnit ?? '',
-            'rightSideStartTimeHour': rightSideStartTime?.hour ?? 0,
-            'rightSideStartTimeMin': rightSideStartTime?.minute ?? 0,
-            'rightSideEndTimeHour': rightSideEndTime?.hour ?? 0,
-            'rightSideEndTimeMin': rightSideEndTime?.minute ?? 0,
-            'rightSideTotalTime': rightSideTotalTime?.inMilliseconds ?? 0,
-            'rightSideAmount': rightSideAmout ?? 0,
-            'rightSideUnit': rightSideUnit ?? '',
-            'totalTime':
-                (leftSideTotalTime ?? Duration.zero).inMilliseconds +
-                (rightSideTotalTime ?? Duration.zero).inMilliseconds,
-            'totalAmount': (leftSideAmout ?? 0) + (rightSideAmout ?? 0),
-            'totalUnit': rightSideUnit ?? leftSideUnit,
-            'notes': notesController.text,
-          },
-          isSynced: false,
-          createdBy: widget.firstName,
-          babyID: widget.babyID,
-        );
-        try {
-          context.read<ActivityBloc>().add(
-            AddActivity(activityModel: activityModel),
-          );
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => NavigationWrapper()),
-          );
-        } catch (e) {
-          showCustomFlushbar(
-            context,
-            context.tr("warning"),
-            'Error ${e.toString()}',
-            Icons.warning_outlined,
-          );
-        }
-      }
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => NavigationWrapper()),
+      );
+    } catch (e) {
+      showCustomFlushbar(
+        context,
+        'Warning',
+        'Error ${e.toString()}',
+        Icons.warning_outlined,
+      );
     }
   }
-
   _onPressedDelete(BuildContext context) async {
     setState(() {
       // Bottle Feed
@@ -463,7 +469,7 @@ class _CustomFeedTrackerBottomSheetState
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(label),
-            TextButton(onPressed: onPressed, child: Text(value)),
+            TextButton(onPressed: onPressed, child: Text(value,)),
           ],
         ),
       ],
@@ -483,40 +489,75 @@ class _CustomFeedTrackerBottomSheetState
 
   void _onPressedShowTimePicker(BuildContext context, String side) async {
     if (side == 'left') {
-      leftSideStartTime = await showTimePicker(
+      final pickedTime = await showTimePicker(
         context: context,
-        initialTime: TimeOfDay.now(),
+        initialTime: TimeOfDay.fromDateTime(DateTime.now()),
       );
-      if (leftSideStartTime != null) {
-        context.read<leftBreastfeed.BreasfeedLeftSideTimerBloc>().add(
-          leftBreastfeed.SetStartTimeTimer(
-            startTime: leftSideStartTime,
-            activityType: 'leftPumpTimer',
-          ),
+      if (pickedTime != null) {
+        final now = DateTime.now();
+        leftSideStartTime = DateTime(
+          now.year,
+          now.month,
+          now.day,
+          pickedTime.hour,
+          pickedTime.minute,
+          0,
         );
+        if (leftSideStartTime != null) {
+          context.read<leftBreastfeed.BreasfeedLeftSideTimerBloc>().add(
+            leftBreastfeed.SetStartTimeTimer(
+              startTime: leftSideStartTime,
+              activityType: 'leftPumpTimer',
+            ),
+          );
+        }
       }
     } else if (side == 'right') {
-      rightSideStartTime = await showTimePicker(
+      final pickedTime = await showTimePicker(
         context: context,
-        initialTime: TimeOfDay.now(),
+        initialTime: TimeOfDay.fromDateTime(DateTime.now()),
       );
-      if (rightSideStartTime != null) {
-        context.read<rightBreastfeed.BreastfeedRightSideTimerBloc>().add(
-          rightBreastfeed.SetStartTimeTimer(
-            startTime: rightSideStartTime,
-            activityType: 'rightPumpTimer',
-          ),
+      if (pickedTime != null) {
+        final now = DateTime.now();
+        rightSideStartTime = DateTime(
+          now.year,
+          now.month,
+          now.day,
+          pickedTime.hour,
+          pickedTime.minute,
+          0,
         );
+
+        if (rightSideStartTime != null) {
+          context.read<rightBreastfeed.BreastfeedRightSideTimerBloc>().add(
+            rightBreastfeed.SetStartTimeTimer(
+              startTime: rightSideStartTime,
+              activityType: 'rightPumpTimer',
+            ),
+          );
+        }
       }
     }
   }
 
   void _onPressedEndTimeShowPicker(BuildContext context, String side) async {
     if (side == 'left') {
-      leftSideEndTime = await showTimePicker(
+      final pickedTime = await showTimePicker(
         context: context,
-        initialTime: TimeOfDay.now(),
+        initialTime: TimeOfDay.fromDateTime(DateTime.now()),
       );
+
+      if (pickedTime != null) {
+        final now = DateTime.now();
+        leftSideEndTime = DateTime(
+          now.year,
+          now.month,
+          now.day,
+          pickedTime.hour,
+          pickedTime.minute,
+          0,
+        );
+      }
       if (leftSideEndTime != null) {
         context.read<leftBreastfeed.BreasfeedLeftSideTimerBloc>().add(
           leftBreastfeed.SetEndTimeTimer(
@@ -526,10 +567,22 @@ class _CustomFeedTrackerBottomSheetState
         );
       }
     } else if (side == 'right') {
-      rightSideEndTime = await showTimePicker(
+      final pickedTime = await showTimePicker(
         context: context,
-        initialTime: TimeOfDay.now(),
+        initialTime: TimeOfDay.fromDateTime(DateTime.now()),
       );
+
+      if (pickedTime != null) {
+        final now = DateTime.now();
+        rightSideEndTime = DateTime(
+          now.year,
+          now.month,
+          now.day,
+          pickedTime.hour,
+          pickedTime.minute,
+          0,
+        );
+      }
       if (rightSideEndTime != null) {
         context.read<rightBreastfeed.BreastfeedRightSideTimerBloc>().add(
           rightBreastfeed.SetEndTimeTimer(
@@ -585,43 +638,51 @@ class _CustomFeedTrackerBottomSheetState
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Column(
-                  children: [
-                    Text(
-                      context.tr("left_side"),
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Theme.of(context).primaryColor,
-                        // fontWeight: FontWeight.bold,
+                Flexible(
+                  flex: 1,
+                  child: Column(
+                    children: [
+                      Text(
+                        context.tr("left_side"),
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: Theme.of(context).primaryColor,
+                          // fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 10.h),
-                    BreastfeedLeftSideTimer(
-                      size: 140,
-                      activityType: 'leftPumpTimer',
-                    ),
-                  ],
+                      SizedBox(height: 10.h),
+                      BreastfeedLeftSideTimer(
+                        size: 140,
+                        activityType: 'leftPumpTimer',
+                      ),
+                    ],
+                  ),
                 ),
                 Container(height: 120.h, width: 1, color: Colors.grey.shade300),
-                Column(
-                  children: [
-                    Text(
-                      context.tr("right_side"),
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Theme.of(context).primaryColor,
-                        //fontWeight: FontWeight.bold,
+                Flexible(
+                  flex: 1,
+                  child: Column(
+                    children: [
+                      Text(
+                        context.tr("right_side"),
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: Theme.of(context).primaryColor,
+                          //fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 10.h),
-                    BreastfeedRightSideTimer(
-                      size: 140,
-                      activityType: 'rightPumpTimer',
-                    ),
-                  ],
+                      SizedBox(height: 10.h),
+                      BreastfeedRightSideTimer(
+                        size: 140,
+                        activityType: 'rightPumpTimer',
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.start,
+
               children: [
                 /// LEFT SIDE
                 BlocBuilder<
@@ -658,15 +719,20 @@ class _CustomFeedTrackerBottomSheetState
                           SizedBox(height: 16.h),
                           buildTimeInfo(
                             context.tr("start_time"),
-                            leftSideStartTime?.format(context) ??
-                                context.tr("add"),
+                            leftSideStartTime != null
+                                ? DateFormat(
+                                  'HH:mm:ss',
+                                ).format(leftSideStartTime!)
+                                : context.tr("add"),
                             () {
                               _onPressedShowTimePicker(context, 'left');
                             },
                           ),
                           buildTimeInfo(
                             context.tr("end_time"),
-                            leftSideEndTime?.format(context) ??
+
+                            leftSideEndTime != null ?DateFormat('HH:mm:ss',
+                            ).format(leftSideEndTime!) :
                                 context.tr("add"),
                             () {
                               _onPressedEndTimeShowPicker(context, 'left');
@@ -730,14 +796,16 @@ class _CustomFeedTrackerBottomSheetState
                           SizedBox(height: 16.h),
                           buildTimeInfo(
                             context.tr("start_time"),
-                            rightSideStartTime?.format(context) ??
-                                context.tr("add"),
+                            rightSideStartTime != null ?DateFormat('HH:mm:ss',
+                            ).format(rightSideStartTime!) :
+                            context.tr("add"),
                             () => _onPressedShowTimePicker(context, 'right'),
                           ),
                           buildTimeInfo(
                             context.tr("end_time"),
-                            rightSideEndTime?.format(context) ??
-                                context.tr("add"),
+                            rightSideEndTime != null ?DateFormat('HH:mm:ss',
+                            ).format(rightSideEndTime!) :
+                            context.tr("add"),
                             () => _onPressedEndTimeShowPicker(context, 'right'),
                           ),
                           buildTimeInfo(

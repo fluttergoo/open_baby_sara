@@ -22,7 +22,7 @@ class LocalDatabaseService {
           '''CREATE TABLE timer(id INTEGER PRIMARY KEY,startTime TEXT, isRunning INTEGER)''',
         );
         await db.execute(
-          '''CREATE TABLE activities(activityID TEXT PRIMARY KEY, activityType TEXT, createdAt TEXT,updatedAt TEXT,data TEXT,createdBy TEXT,babyID TEXT,isSynced INTEGER)''',
+          '''CREATE TABLE activities(activityID TEXT PRIMARY KEY, activityType TEXT, createdAt TEXT,updatedAt TEXT,activityDateTime TEXT,data TEXT,createdBy TEXT,babyID TEXT,isSynced INTEGER)''',
         );
         await db.execute(
           '''CREATE TABLE leftPumpTimer(id INTEGER PRIMARY KEY,startTime TEXT, isRunning INTEGER)''',

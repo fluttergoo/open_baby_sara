@@ -6,7 +6,7 @@ sealed class PumpTotalTimerState {}
 final class PumpTotalTimerInitial extends PumpTotalTimerState {}
 
 final class TimerRunning extends PumpTotalTimerState {
-  final TimeOfDay? startTime;
+  final DateTime? startTime;
   final Duration duration;
   final String activityType;
 
@@ -19,8 +19,8 @@ final class TimerRunning extends PumpTotalTimerState {
 
 class TimerStopped extends PumpTotalTimerState {
   final Duration duration;
-  final TimeOfDay? endTime;
-  final TimeOfDay? startTime;
+  final DateTime? endTime;
+  final DateTime? startTime;
 
   final String activityType;
 

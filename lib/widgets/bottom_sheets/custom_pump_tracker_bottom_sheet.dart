@@ -29,11 +29,15 @@ import '../build_custom_snack_bar.dart';
 class CustomPumpTrackerBottomSheet extends StatefulWidget {
   final String babyID;
   final String firstName;
+  final bool isEdit;
+  final ActivityModel? existingActivity;
 
   const CustomPumpTrackerBottomSheet({
     super.key,
     required this.babyID,
     required this.firstName,
+    this.isEdit = false,
+    this.existingActivity,
   });
 
   @override
@@ -44,11 +48,11 @@ class CustomPumpTrackerBottomSheet extends StatefulWidget {
 class _CustomPumpTrackerBottomSheetState
     extends State<CustomPumpTrackerBottomSheet>
     with SingleTickerProviderStateMixin {
-  TimeOfDay? leftSideStartTime;
-  TimeOfDay? leftSideEndTime;
+  DateTime? leftSideStartTime;
+  DateTime? leftSideEndTime;
   Duration? leftSideTotalTime;
-  TimeOfDay? rightSideStartTime;
-  TimeOfDay? rightSideEndTime;
+  DateTime? rightSideStartTime;
+  DateTime? rightSideEndTime;
   Duration? rightSideTotalTime;
 
   double? leftSideAmout;
@@ -56,8 +60,8 @@ class _CustomPumpTrackerBottomSheetState
   double? rightSideAmout;
   String? rightSideUnit;
 
-  TimeOfDay? totalStartTime;
-  TimeOfDay? totalEndTime;
+  DateTime? totalStartTime;
+  DateTime? totalEndTime;
   Duration? totalTotalTime;
   double? totalAmout;
   String? totalUnit;
@@ -70,19 +74,55 @@ class _CustomPumpTrackerBottomSheetState
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    if (widget.isEdit && widget.existingActivity != null) {
+      selectedDatetime = widget.existingActivity!.activityDateTime;
+      final data = widget.existingActivity!.data;
+
+      if (widget.existingActivity!.activityType == ActivityType.pumpTotal.name) {
+        totalStartTime = _fromHourMinute(data['totalStartTimeHour'], data['totalStartTimeMin']);
+        totalEndTime = _fromHourMinute(data['totalEndTimeHour'], data['totalEndTimeMin']);
+        totalTotalTime = Duration(milliseconds: data['totalTime'] ?? 0);
+        totalAmout = data['totalAmount']?.toDouble();
+        totalUnit = data['totalUnit'];
+        notesTotalController.text = data['notes'] ?? '';
+        _tabController.index = 0;
+      } else {
+        leftSideStartTime = _fromHourMinute(data['leftSideStartTimeHour'], data['leftSideStartTimeMin']);
+        leftSideEndTime = _fromHourMinute(data['leftSideEndTimeHour'], data['leftSideEndTimeMin']);
+        leftSideTotalTime = Duration(milliseconds: data['leftSideTotalTime'] ?? 0);
+        leftSideAmout = data['leftSideAmount']?.toDouble();
+        leftSideUnit = data['leftSideUnit'];
+
+        rightSideStartTime = _fromHourMinute(data['rightSideStartTimeHour'], data['rightSideStartTimeMin']);
+        rightSideEndTime = _fromHourMinute(data['rightSideEndTimeHour'], data['rightSideEndTimeMin']);
+        rightSideTotalTime = Duration(milliseconds: data['rightSideTotalTime'] ?? 0);
+        rightSideAmout = data['rightSideAmount']?.toDouble();
+        rightSideUnit = data['rightSideUnit'];
+        notesController.text = data['notes'] ?? '';
+        _tabController.index = 1;
+      }
+    }
   }
 
+  DateTime? _fromHourMinute(int? hour, int? min) {
+    if (hour == null || min == null) return null;
+    final now = DateTime.now();
+    return DateTime(now.year, now.month, now.day, hour, min);
+  }
   @override
   Widget build(BuildContext context) {
     return BlocListener<ActivityBloc, ActivityState>(
       listener: (context, state) {
         if (state is ActivityAdded) {
-          ScaffoldMessenger.of(
+          showCustomFlushbar(
             context,
-          ).showSnackBar(buildCustomSnackBar(state.message));
+            context.tr('success'),
+            context.tr('activity_was_added'),
+            Icons.add_task_outlined,
+            color: Colors.green,
+          );
         }
       },
       child: GestureDetector(
@@ -127,15 +167,10 @@ class _CustomPumpTrackerBottomSheetState
                     TextButton(
                       onPressed: () {
                         onPressedSave();
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (_) => NavigationWrapper(),
-                          ),
-                        );
                       },
                       child: Text(
-                        context.tr("save"),
-                        style: Theme.of(
+                        widget.isEdit ? context.tr('update'):
+                        context.tr('save'),                        style: Theme.of(
                           context,
                         ).textTheme.titleMedium?.copyWith(
                           color: Theme.of(context).primaryColor,
@@ -234,10 +269,22 @@ class _CustomPumpTrackerBottomSheetState
 
   void _onPressedShowTimePicker(BuildContext context, String side) async {
     if (side == 'left') {
-      leftSideStartTime = await showTimePicker(
+      final pickedTime = await showTimePicker(
         context: context,
-        initialTime: TimeOfDay.now(),
+        initialTime: TimeOfDay.fromDateTime(DateTime.now()),
       );
+
+      if (pickedTime != null) {
+        final now = DateTime.now();
+        leftSideStartTime = DateTime(
+          now.year,
+          now.month,
+          now.day,
+          pickedTime.hour,
+          pickedTime.minute,
+          0,
+        );
+      }
       if (leftSideStartTime != null) {
         context.read<pumpLeft.PumpLeftSideTimerBloc>().add(
           pumpLeft.SetStartTimeTimer(
@@ -247,10 +294,22 @@ class _CustomPumpTrackerBottomSheetState
         );
       }
     } else if (side == 'right') {
-      rightSideStartTime = await showTimePicker(
+      final pickedTime = await showTimePicker(
         context: context,
-        initialTime: TimeOfDay.now(),
+        initialTime: TimeOfDay.fromDateTime(DateTime.now()),
       );
+
+      if (pickedTime != null) {
+        final now = DateTime.now();
+        rightSideStartTime = DateTime(
+          now.year,
+          now.month,
+          now.day,
+          pickedTime.hour,
+          pickedTime.minute,
+          0,
+        );
+      }
       if (rightSideStartTime != null) {
         context.read<pumpRight.PumpRightSideTimerBloc>().add(
           pumpRight.SetStartTimeTimer(
@@ -260,10 +319,23 @@ class _CustomPumpTrackerBottomSheetState
         );
       }
     } else if (side == 'total') {
-      totalStartTime = await showTimePicker(
+      final pickedTime = await showTimePicker(
         context: context,
-        initialTime: TimeOfDay.now(),
+        initialTime: TimeOfDay.fromDateTime(DateTime.now()),
       );
+
+      if (pickedTime != null) {
+        final now = DateTime.now();
+        totalStartTime = DateTime(
+          now.year,
+          now.month,
+          now.day,
+          pickedTime.hour,
+          pickedTime.minute,
+          0,
+        );
+      }
+
       if (totalStartTime != null) {
         context.read<pumpTotal.PumpTotalTimerBloc>().add(
           pumpTotal.SetStartTimeTimer(
@@ -277,10 +349,23 @@ class _CustomPumpTrackerBottomSheetState
 
   void _onPressedEndTimeShowPicker(BuildContext context, String side) async {
     if (side == 'left') {
-      leftSideEndTime = await showTimePicker(
+      final pickedTime = await showTimePicker(
         context: context,
-        initialTime: TimeOfDay.now(),
+        initialTime: TimeOfDay.fromDateTime(DateTime.now()),
       );
+
+      if (pickedTime != null) {
+        final now = DateTime.now();
+        leftSideEndTime = DateTime(
+          now.year,
+          now.month,
+          now.day,
+          pickedTime.hour,
+          pickedTime.minute,
+          0,
+        );
+      }
+
       if (leftSideEndTime != null) {
         context.read<pumpLeft.PumpLeftSideTimerBloc>().add(
           pumpLeft.SetEndTimeTimer(
@@ -290,157 +375,169 @@ class _CustomPumpTrackerBottomSheetState
         );
       }
     } else if (side == 'right') {
-      rightSideEndTime = await showTimePicker(
+      final pickedTime = await showTimePicker(
         context: context,
-        initialTime: TimeOfDay.now(),
+        initialTime: TimeOfDay.fromDateTime(DateTime.now()),
       );
-      if (rightSideEndTime != null) {
-        context.read<pumpRight.PumpRightSideTimerBloc>().add(
-          pumpRight.SetEndTimeTimer(
-            endTime: rightSideEndTime!,
-            activityType: 'rightPumpTimer',
-          ),
+
+      if (pickedTime != null) {
+        final now = DateTime.now();
+        rightSideEndTime = DateTime(
+          now.year,
+          now.month,
+          now.day,
+          pickedTime.hour,
+          pickedTime.minute,
+          0,
         );
-      }
-    } else if (side == 'total') {
-      totalEndTime = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.now(),
-      );
-      if (totalEndTime != null) {
-        context.read<pumpTotal.PumpTotalTimerBloc>().add(
-          pumpTotal.SetEndTimeTimer(
-            endTime: rightSideEndTime!,
-            activityType: 'pumpTotalTimer',
-          ),
+        if (rightSideEndTime != null) {
+          context.read<pumpRight.PumpRightSideTimerBloc>().add(
+            pumpRight.SetEndTimeTimer(
+              endTime: rightSideEndTime!,
+              activityType: 'rightPumpTimer',
+            ),
+          );
+        }
+      } else if (side == 'total') {
+        final pickedTime = await showTimePicker(
+          context: context,
+          initialTime: TimeOfDay.fromDateTime(DateTime.now()),
         );
+
+        if (pickedTime != null) {
+          final now = DateTime.now();
+          totalEndTime = DateTime(
+            now.year,
+            now.month,
+            now.day,
+            pickedTime.hour,
+            pickedTime.minute,
+            0,
+          );
+
+          if (totalEndTime != null) {
+            context.read<pumpTotal.PumpTotalTimerBloc>().add(
+              pumpTotal.SetEndTimeTimer(
+                endTime: rightSideEndTime!,
+                activityType: 'pumpTotalTimer',
+              ),
+            );
+          }
+        }
       }
     }
   }
 
-  void onPressedSave() {
-    if (_tabController.index == 1) {
-      final activityName = ActivityType.pumpLeftRight.name;
-      if (leftSideStartTime != null &&
-          leftSideAmout != null &&
-          leftSideTotalTime != null) {
-        try {
-          final activityModel = ActivityModel(
-            activityID: Uuid().v4(),
-            activityType: activityName ?? '',
-            createdAt: DateTime.now(),
-            updatedAt: DateTime.now(),
-            data: {
-              'activityDay': selectedDatetime?.toIso8601String(),
-              'leftSideStartTimeHour': leftSideStartTime?.hour ?? 0,
-              'leftSideStartTimeMin': leftSideStartTime?.minute ?? 0,
-              'leftSideEndTimeHour': leftSideEndTime?.hour ?? 0,
-              'leftSideEndTimeMin': leftSideEndTime?.minute ?? 0,
-              'leftSideTotalTime': leftSideTotalTime?.inMilliseconds ?? 0,
-              'leftSideAmount': leftSideAmout ?? 0,
-              'leftSideUnit': leftSideUnit ?? '',
-              'rightSideStartTimeHour': rightSideStartTime?.hour ?? 0,
-              'rightSideStartTimeMin': rightSideStartTime?.minute ?? 0,
-              'rightSideEndTimeHour': rightSideEndTime?.hour ?? 0,
-              'rightSideEndTimeMin': rightSideEndTime?.minute ?? 0,
-              'rightSideTotalTime': rightSideTotalTime?.inMilliseconds ?? 0,
-              'rightSideAmount': rightSideAmout ?? 0,
-              'rightSideUnit': rightSideUnit ?? '',
-              'totalTime':
-                  (leftSideTotalTime ?? Duration.zero).inMilliseconds +
-                  (rightSideTotalTime ?? Duration.zero).inMilliseconds,
-              'totalAmount': (leftSideAmout ?? 0) + (rightSideAmout ?? 0),
-              'totalUnit': rightSideUnit ?? leftSideUnit,
-              'notes': notesController.text,
-            },
-            isSynced: false,
-            createdBy: widget.firstName,
-            babyID: widget.babyID,
-          );
-          context.read<ActivityBloc>().add(
-            AddActivity(activityModel: activityModel),
-          );
-        } catch (e, stack) {
-          print(stack);
-        }
-      } else {
-        Flushbar(
-          titleText: Text(
-            context.tr("warning"),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          margin: EdgeInsets.all(16),
-          borderRadius: BorderRadius.circular(16),
-          messageText: Text(
-            context.tr("please_enter_start_end_time_or_amount"),
-            style: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.copyWith(color: Colors.white),
-          ),
-          backgroundColor: Colors.redAccent,
-          icon: Icon(Icons.warning_outlined, color: Colors.white),
-          duration: Duration(seconds: 3),
-        ).show(context);
-      }
-    } else if (_tabController.index == 0) {
-      final activityName = ActivityType.pumpTotal.name;
+  ActivityModel? _buildTotalPumpActivity() {
+    if (totalAmout == null || totalStartTime == null || totalEndTime == null) {
+      return null;
+    }
 
-      if (totalAmout != null &&
-          totalStartTime != null &&
-          totalEndTime != null) {
-        try {
-          final activityModel = ActivityModel(
-            activityID: Uuid().v4(),
-            activityType: activityName ?? '',
-            createdAt: DateTime.now(),
-            updatedAt: DateTime.now(),
-            data: {
-              'activityDay': selectedDatetime?.toIso8601String(),
-              'totalStartTimeHour': totalStartTime?.hour,
-              'totalStartTimeMin': totalStartTime?.minute,
-              'totalEndTimeHour': totalEndTime?.hour,
-              'totalEndTimeMin': totalEndTime?.minute,
-              'totalTime': totalTotalTime?.inMilliseconds,
-              'totalAmount': totalAmout,
-              'totalUnit': totalUnit,
-              'notes': notesTotalController.text,
-            },
-            isSynced: false,
-            createdBy: widget.firstName,
-            babyID: widget.babyID,
-          );
-          context.read<ActivityBloc>().add(
-            AddActivity(activityModel: activityModel),
-          );
-        } catch (e, stack) {
-          print('error: $e');
-          print(stack);
-        }
+    return ActivityModel(
+      activityID: Uuid().v4(),
+      activityType: ActivityType.pumpTotal.name,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+      activityDateTime: selectedDatetime!,
+      data: {
+        'activityDay': selectedDatetime?.toIso8601String(),
+        'totalStartTimeHour': totalStartTime?.hour,
+        'totalStartTimeMin': totalStartTime?.minute,
+        'totalEndTimeHour': totalEndTime?.hour,
+        'totalEndTimeMin': totalEndTime?.minute,
+        'totalTime': totalTotalTime?.inMilliseconds,
+        'totalAmount': totalAmout,
+        'totalUnit': totalUnit,
+        'notes': notesTotalController.text,
+      },
+      isSynced: false,
+      createdBy: widget.firstName,
+      babyID: widget.babyID,
+    );
+  }
+
+  ActivityModel? _buildLeftRightPumpActivity() {
+    final bool hasLeftSideData =
+        leftSideStartTime != null &&
+        leftSideEndTime != null &&
+        leftSideTotalTime != null;
+    final bool hasRightSideData =
+        rightSideStartTime != null &&
+        rightSideTotalTime != null &&
+        rightSideEndTime != null;
+
+    if (!hasLeftSideData && !hasRightSideData) {
+      return null;
+    }
+    return ActivityModel(
+      activityID: Uuid().v4(),
+      activityType: ActivityType.pumpLeftRight.name,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+      activityDateTime: selectedDatetime!,
+      data: {
+        'leftSideStartTimeHour': leftSideStartTime?.hour ?? 0,
+        'leftSideStartTimeMin': leftSideStartTime?.minute ?? 0,
+        'leftSideEndTimeHour': leftSideEndTime?.hour ?? 0,
+        'leftSideEndTimeMin': leftSideEndTime?.minute ?? 0,
+        'leftSideTotalTime': leftSideTotalTime?.inMilliseconds ?? 0,
+        'leftSideAmount': leftSideAmout ?? 0,
+        'leftSideUnit': leftSideUnit ?? '',
+        'rightSideStartTimeHour': rightSideStartTime?.hour ?? 0,
+        'rightSideStartTimeMin': rightSideStartTime?.minute ?? 0,
+        'rightSideEndTimeHour': rightSideEndTime?.hour ?? 0,
+        'rightSideEndTimeMin': rightSideEndTime?.minute ?? 0,
+        'rightSideTotalTime': rightSideTotalTime?.inMilliseconds ?? 0,
+        'rightSideAmount': rightSideAmout ?? 0,
+        'rightSideUnit': rightSideUnit ?? '',
+        'totalTime':
+            (leftSideTotalTime ?? Duration.zero).inMilliseconds +
+            (rightSideTotalTime ?? Duration.zero).inMilliseconds,
+        'totalAmount': (leftSideAmout ?? 0) + (rightSideAmout ?? 0),
+        'totalUnit': rightSideUnit ?? leftSideUnit,
+        'notes': notesController.text,
+      },
+      isSynced: false,
+      createdBy: widget.firstName,
+      babyID: widget.babyID,
+    );
+  }
+
+  void onPressedSave() {
+    ActivityModel? activity;
+
+    if (_tabController.index == 0) {
+      activity = _buildTotalPumpActivity();
+    } else if (_tabController.index == 1) {
+      activity = _buildLeftRightPumpActivity();
+    }
+
+    if (activity != null) {
+      final activityToSave = activity.copyWith(
+        activityID: widget.isEdit ? widget.existingActivity!.activityID : activity.activityID,
+        createdAt: widget.isEdit ? widget.existingActivity!.createdAt : activity.createdAt,
+        updatedAt: DateTime.now(),
+      );
+
+      if (widget.isEdit) {
+        context.read<ActivityBloc>().add(UpdateActivity(activityModel: activityToSave));
       } else {
-        Flushbar(
-          titleText: Text(
-            context.tr("warning"),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          margin: EdgeInsets.all(16),
-          borderRadius: BorderRadius.circular(16),
-          messageText: Text(
-            context.tr("please_enter_start_end_time_or_amount"),
-            style: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.copyWith(color: Colors.white),
-          ),
-          backgroundColor: Colors.redAccent,
-          icon: Icon(Icons.warning_outlined, color: Colors.white),
-          duration: Duration(seconds: 3),
-        ).show(context);
+        context.read<ActivityBloc>().add(AddActivity(activityModel: activityToSave));
       }
+
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => NavigationWrapper()));
+
+      context.read<pumpLeft.PumpLeftSideTimerBloc>().add(pumpLeft.ResetTimer(activityType: 'leftPumpTimer'));
+      context.read<pumpRight.PumpRightSideTimerBloc>().add(pumpRight.ResetTimer(activityType: 'rightPumpTimer'));
+      context.read<pumpTotal.PumpTotalTimerBloc>().add(pumpTotal.ResetTimer(activityType: 'pumpTotalTimer'));
+    } else {
+      showCustomFlushbar(
+        context,
+        context.tr("warning"),
+        context.tr("please_enter_start_end_time_or_amount"),
+        Icons.warning_outlined,
+        color: Colors.redAccent,
+      );
     }
   }
 
@@ -630,16 +727,22 @@ class _CustomPumpTrackerBottomSheetState
                           SizedBox(height: 16.h),
                           buildTimeInfo(
                             context.tr("start_time"),
-                            leftSideStartTime?.format(context) ??
-                                context.tr("add"),
+                            leftSideStartTime != null
+                                ? DateFormat(
+                                  'HH:mm:ss',
+                                ).format(leftSideStartTime!)
+                                : context.tr("add"),
                             () {
                               _onPressedShowTimePicker(context, 'left');
                             },
                           ),
                           buildTimeInfo(
                             context.tr("end_time"),
-                            leftSideEndTime?.format(context) ??
-                                context.tr("add"),
+                            leftSideEndTime != null
+                                ? DateFormat(
+                                  'HH:mm:ss',
+                                ).format(leftSideEndTime!)
+                                : context.tr("add"),
                             () {
                               _onPressedEndTimeShowPicker(context, 'left');
                             },
@@ -702,15 +805,22 @@ class _CustomPumpTrackerBottomSheetState
                           SizedBox(height: 16.h),
                           buildTimeInfo(
                             context.tr("start_time"),
-                            rightSideStartTime?.format(context) ??
-                                context.tr("add"),
+                            rightSideStartTime != null
+                                ? DateFormat(
+                                  'HH:mm:ss',
+                                ).format(rightSideStartTime!)
+                                : context.tr("add"),
 
                             () => _onPressedShowTimePicker(context, 'right'),
                           ),
                           buildTimeInfo(
                             context.tr("end_time"),
-                            rightSideEndTime?.format(context) ??
-                                context.tr("add"),
+
+                            rightSideEndTime != null
+                                ? DateFormat(
+                                  'HH:mm:ss',
+                                ).format(rightSideEndTime!)
+                                : context.tr("add"),
 
                             () => _onPressedEndTimeShowPicker(context, 'right'),
                           ),
@@ -828,14 +938,18 @@ class _CustomPumpTrackerBottomSheetState
                     SizedBox(height: 16.h),
                     buildTimeInfo(
                       context.tr("start_time"),
-                      totalStartTime?.format(context) ?? context.tr("add"),
+                      totalStartTime != null
+                          ? DateFormat('HH:mm:ss').format(totalStartTime!)
+                          : context.tr("add"),
                       () {
                         _onPressedShowTimePicker(context, 'total');
                       },
                     ),
                     buildTimeInfo(
                       context.tr("end_time"),
-                      totalEndTime?.format(context) ?? context.tr("add"),
+                      totalEndTime != null
+                          ? DateFormat('HH:mm:ss').format(totalEndTime!)
+                          : context.tr("add"),
                       () {
                         _onPressedEndTimeShowPicker(context, 'total');
                       },

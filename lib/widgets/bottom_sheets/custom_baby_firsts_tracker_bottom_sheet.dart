@@ -7,7 +7,6 @@ import 'package:flutter_sara_baby_tracker_and_sound/blocs/milestone/milestone_bl
 import 'package:flutter_sara_baby_tracker_and_sound/core/app_colors.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/activity_model.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/milestones_model.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/build_custom_snack_bar.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_date_time_picker.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_show_flush_bar.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_text_form_field.dart';
@@ -17,11 +16,15 @@ import 'package:uuid/uuid.dart';
 class CustomBabyFirstsTrackerBottomSheet extends StatefulWidget {
   final String babyID;
   final String firstName;
+  final ActivityModel? existingActivity;
+  final bool isEdit;
 
   const CustomBabyFirstsTrackerBottomSheet({
     super.key,
     required this.babyID,
     required this.firstName,
+    this.existingActivity,
+    this.isEdit = false,
   });
 
   @override
@@ -33,6 +36,13 @@ class _CustomBabyFirstsTrackerBottomSheetState
     extends State<CustomBabyFirstsTrackerBottomSheet> {
   @override
   void initState() {
+    if (widget.existingActivity != null) {
+      selectedDatetime = widget.existingActivity!.activityDateTime;
+      notesController.text = widget.existingActivity!.data['notes'] ?? '';
+      selectedMilestoneTitle = List<String>.from(widget.existingActivity!.data['milestoneTitle'] ?? []);
+      selectedMilestoneDesc = List<String>.from(widget.existingActivity!.data['milestoneDesc'] ?? []);
+    }
+
     context.read<MilestoneBloc>().add(LoadMilestones());
     super.initState();
   }
@@ -48,9 +58,13 @@ class _CustomBabyFirstsTrackerBottomSheetState
     return BlocListener<ActivityBloc, ActivityState>(
       listener: (context, state) {
         if (state is ActivityAdded) {
-          ScaffoldMessenger.of(
+          showCustomFlushbar(
             context,
-          ).showSnackBar(buildCustomSnackBar(state.message));
+            context.tr('success'),
+            context.tr('activity_was_added'),
+            Icons.add_task_outlined,
+            color: Colors.green,
+          );
         }
       },
       child: BlocBuilder<MilestoneBloc, MilestoneState>(
@@ -117,6 +131,7 @@ class _CustomBabyFirstsTrackerBottomSheetState
                             TextButton(
                               onPressed: onPressedSave,
                               child: Text(
+                                widget.isEdit ? context.tr('update'):
                                 context.tr('save'),
                                 style: Theme.of(
                                   context,
@@ -234,41 +249,47 @@ class _CustomBabyFirstsTrackerBottomSheetState
         'Please enter baby first activity',
         Icons.warning_outlined,
       );
-    } else {
-      final activityModel = ActivityModel(
-        activityID: Uuid().v4(),
-        activityType: activityName,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-        data: {
-          'activityDay': selectedDatetime?.toIso8601String(),
-          'startTimeHour': selectedDatetime?.hour,
-          'startTimeMin': selectedDatetime?.minute,
-          'notes': notesController.text,
-          'milestoneTitle': selectedMilestoneTitle,
-          'milestoneDesc': selectedMilestoneDesc,
-        },
-        isSynced: false,
-        createdBy: widget.firstName,
-        babyID: widget.babyID,
-      );
-      try {
-        context.read<ActivityBloc>().add(
-          AddActivity(activityModel: activityModel),
-        );
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => NavigationWrapper()),
-        );
-      } catch (e) {
-        showCustomFlushbar(
-          context,
-          'Warning',
-          'Error ${e.toString()}',
-          Icons.warning_outlined,
-        );
+      return;
+    }
+
+    final activityModel = ActivityModel(
+      activityID: widget.isEdit ? widget.existingActivity!.activityID : Uuid().v4(),
+      activityType: activityName,
+      createdAt: widget.isEdit ? widget.existingActivity!.createdAt : DateTime.now(),
+      updatedAt: DateTime.now(),
+      activityDateTime: selectedDatetime!,
+      data: {
+        'startTimeHour': selectedDatetime?.hour,
+        'startTimeMin': selectedDatetime?.minute,
+        'notes': notesController.text,
+        'milestoneTitle': selectedMilestoneTitle,
+        'milestoneDesc': selectedMilestoneDesc,
+      },
+      isSynced: false,
+      createdBy: widget.firstName,
+      babyID: widget.babyID,
+    );
+
+    try {
+      if (widget.isEdit) {
+        context.read<ActivityBloc>().add(UpdateActivity(activityModel: activityModel));
+      } else {
+        context.read<ActivityBloc>().add(AddActivity(activityModel: activityModel));
       }
+
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => NavigationWrapper()),
+      );
+    } catch (e) {
+      showCustomFlushbar(
+        context,
+        'Warning',
+        'Error ${e.toString()}',
+        Icons.warning_outlined,
+      );
     }
   }
+
 
   _onPressedDelete(BuildContext context) {
     setState(() {
@@ -472,14 +493,16 @@ class _CustomBabyFirstsTrackerBottomSheetState
                         ElevatedButton.icon(
                           icon: Icon(Icons.check, color: Colors.white),
                           onPressed: () {
-                            print('${context.tr('selected_milestones')} $selectedMilestones');
+                            print(
+                              '${context.tr('selected_milestones')} $selectedMilestones',
+                            );
                             selectedMilestoneTitle = selectedMilestonesTitle;
                             selectedMilestoneDesc = selectedMilestonesDesc;
                             setState(() {});
                             Navigator.of(context).pop();
                           },
                           label: Text(
-            context.tr("add"),
+                            context.tr("add"),
                             style: Theme.of(
                               context,
                             ).textTheme.titleSmall?.copyWith(

@@ -52,9 +52,10 @@ class _CustomizeGrowthCardState extends State<CustomizeGrowthCard> {
                     /// Title
                     Positioned(
                       top: 10.h,
-                      left: 35.w,
+                      left: 15.w,
                       right: 15.w,
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -65,15 +66,17 @@ class _CustomizeGrowthCardState extends State<CustomizeGrowthCard> {
                                   context,
                                 ).textTheme.bodyMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 18.sp,
+                                  fontSize: 16.sp,
                                 ),
                               ),
-                              Align(
-                                alignment: Alignment.center,
+                              Center(
                                 child: Text(
-                                  getLastWeight(growthActivities!) ??
-                                      context.tr('tap_to_start'),textAlign: TextAlign.center,
-                                  style: Theme.of(context).textTheme.titleSmall,
+                                  getLastWeight(growthActivities!, context) ??
+                                      "➕\n${context.tr('tap_to_start_only')}",
+                                  textAlign: TextAlign.center,
+
+                                  style: Theme.of(context).textTheme.titleSmall
+                                      ?.copyWith(fontSize: 10.sp),
                                 ),
                               ),
                             ],
@@ -89,14 +92,16 @@ class _CustomizeGrowthCardState extends State<CustomizeGrowthCard> {
                                   context,
                                 ).textTheme.bodyMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 18.sp,
+                                  fontSize: 16.sp,
                                 ),
                               ),
                               Center(
                                 child: Text(
-                                  getLastHeight(growthActivities!) ??
-                                      context.tr('tap_to_start'), textAlign: TextAlign.center,
-                                  style: Theme.of(context).textTheme.titleSmall,
+                                  getLastHeight(growthActivities!, context) ??
+                                      context.tr('tap_to_start'),
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context).textTheme.titleSmall
+                                      ?.copyWith(fontSize: 10.sp),
                                 ),
                               ),
                             ],
@@ -112,14 +117,16 @@ class _CustomizeGrowthCardState extends State<CustomizeGrowthCard> {
                                   context,
                                 ).textTheme.bodyMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 18.sp,
+                                  fontSize: 16.sp,
                                 ),
                               ),
                               Center(
                                 child: Text(
-                                  getLastHeadSize(growthActivities!) ??
-                                      context.tr('tap_to_start'), textAlign: TextAlign.center,
-                                  style: Theme.of(context).textTheme.titleSmall,
+                                  getLastHeadSize(growthActivities!, context) ??
+                                      context.tr('tap_to_start'),
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context).textTheme.titleSmall
+                                      ?.copyWith(fontSize: 10.sp),
                                 ),
                               ),
                             ],
@@ -148,7 +155,6 @@ class _CustomizeGrowthCardState extends State<CustomizeGrowthCard> {
 
                     // Sol alt icon (asset image)
                     Positioned(
-
                       top: 10.h,
                       bottom: 10.h,
 

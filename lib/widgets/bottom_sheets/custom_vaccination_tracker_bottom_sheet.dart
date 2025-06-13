@@ -17,11 +17,15 @@ import 'package:uuid/uuid.dart';
 class CustomVaccinationTrackerBottomSheet extends StatefulWidget {
   final String babyID;
   final String firstName;
+  final bool isEdit;
+  final ActivityModel? existingActivity;
 
   const CustomVaccinationTrackerBottomSheet({
     super.key,
     required this.babyID,
     required this.firstName,
+    this.isEdit = false,
+    this.existingActivity,
   });
 
   @override
@@ -38,6 +42,15 @@ class _CustomVaccinationTrackerBottomSheetState
   @override
   void initState() {
     context.read<VaccinationBloc>().add(FetchVaccination());
+    if (widget.isEdit && widget.existingActivity != null) {
+      final activity = widget.existingActivity!;
+      selectedDatetime = activity.activityDateTime;
+      notesController.text = activity.data['notes'] ?? '';
+      selectedVaccinations =
+          (activity.data['medications'] as List<dynamic>)
+              .map((e) => e['name'].toString())
+              .toList();
+    }
     super.initState();
   }
 
@@ -46,9 +59,13 @@ class _CustomVaccinationTrackerBottomSheetState
     return BlocListener<ActivityBloc, ActivityState>(
       listener: (context, state) {
         if (state is ActivityAdded) {
-          ScaffoldMessenger.of(
+          showCustomFlushbar(
             context,
-          ).showSnackBar(buildCustomSnackBar(state.message));
+            context.tr('success'),
+            context.tr('activity_was_added'),
+            Icons.add_task_outlined,
+            color: Colors.green,
+          );
         }
       },
       child: GestureDetector(
@@ -95,7 +112,9 @@ class _CustomVaccinationTrackerBottomSheetState
                       TextButton(
                         onPressed: onPressedSave,
                         child: Text(
-                          context.tr('save'),
+                          widget.isEdit
+                              ? context.tr('update')
+                              : context.tr('save'),
                           style: Theme.of(
                             context,
                           ).textTheme.titleMedium?.copyWith(
@@ -249,10 +268,7 @@ class _CustomVaccinationTrackerBottomSheetState
   }
 
   void onPressedSave() {
-    final bool hasValidMedications = selectedVaccinations.any(
-      (med) => (med != null && med.isNotEmpty),
-    );
-
+    final bool hasValidMedications = selectedVaccinations.isNotEmpty;
     if (!hasValidMedications) {
       showCustomFlushbar(
         context,
@@ -263,36 +279,35 @@ class _CustomVaccinationTrackerBottomSheetState
       return;
     }
 
-    final activityName = ActivityType.vaccination.name;
-
     final activityModel = ActivityModel(
-      activityID: Uuid().v4(),
-      activityType: activityName,
-      createdAt: DateTime.now(),
+      activityID: widget.isEdit
+          ? widget.existingActivity!.activityID
+          : const Uuid().v4(),
+      activityType: ActivityType.vaccination.name,
+      createdAt: widget.isEdit
+          ? widget.existingActivity!.createdAt
+          : DateTime.now(),
       updatedAt: DateTime.now(),
+      activityDateTime: selectedDatetime!,
       data: {
-        'activityDay': selectedDatetime?.toIso8601String(),
         'startTimeHour': selectedDatetime?.hour,
         'startTimeMin': selectedDatetime?.minute,
         'notes': notesController.text,
-        if (hasValidMedications)
-          'medications':
-              selectedVaccinations
-                  .where((med) => (med != null && med.isNotEmpty))
-                  .map((med) => {'name': med})
-                  .toList(),
+        'medications': selectedVaccinations.map((e) => {'name': e}).toList(),
       },
       isSynced: false,
       createdBy: widget.firstName,
       babyID: widget.babyID,
     );
 
-    context.read<ActivityBloc>().add(AddActivity(activityModel: activityModel));
-    Navigator.of(
-      context,
-    ).pushReplacement(MaterialPageRoute(builder: (_) => NavigationWrapper()));
-  }
+    if (widget.isEdit) {
+      context.read<ActivityBloc>().add(UpdateActivity(activityModel: activityModel));
+    } else {
+      context.read<ActivityBloc>().add(AddActivity(activityModel: activityModel));
+    }
 
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const NavigationWrapper()));
+  }
   _onPressedDelete(BuildContext context) {
     setState(() {
       selectedDatetime = DateTime.now();

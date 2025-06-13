@@ -15,11 +15,15 @@ import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_text_form_fie
 class CustomDoctorVisitTrackerBottomSheet extends StatefulWidget {
   final String babyID;
   final String firstName;
+  final bool isEdit;
+  final ActivityModel? existingActivity;
 
   const CustomDoctorVisitTrackerBottomSheet({
     super.key,
     required this.babyID,
     required this.firstName,
+    this.isEdit = false,
+    this.existingActivity,
   });
 
   @override
@@ -58,10 +62,17 @@ class _CustomDoctorVisitTrackerBottomSheetState
 
   @override
   void initState() {
-
     super.initState();
     selectedReason = dropdownItemReason.first;
     selectedReaction = dropdownItemReaction.first;
+    if (widget.isEdit && widget.existingActivity != null) {
+      final data = widget.existingActivity!.data;
+      selectedDatetime = widget.existingActivity!.activityDateTime;
+      selectedReason = data['reason'] ?? dropdownItemReason.first;
+      selectedReaction = data['reaction'] ?? dropdownItemReaction.first;
+      diagnosisController.text = data['diagnosis'] ?? '';
+      notesController.text = data['notes'] ?? '';
+    }
   }
 
   @override
@@ -69,9 +80,13 @@ class _CustomDoctorVisitTrackerBottomSheetState
     return BlocListener<ActivityBloc, ActivityState>(
       listener: (context, state) {
         if (state is ActivityAdded) {
-          ScaffoldMessenger.of(
+          showCustomFlushbar(
             context,
-          ).showSnackBar(buildCustomSnackBar(state.message));
+            context.tr('success'),
+            context.tr('activity_was_added'),
+            Icons.add_task_outlined,
+            color: Colors.green,
+          );
         }
       },
       child: GestureDetector(
@@ -118,7 +133,9 @@ class _CustomDoctorVisitTrackerBottomSheetState
                       TextButton(
                         onPressed: onPressedSave,
                         child: Text(
-                          context.tr('save'),
+                          widget.isEdit
+                              ? context.tr('update')
+                              : context.tr('save'),
                           style: Theme.of(
                             context,
                           ).textTheme.titleMedium?.copyWith(
@@ -161,9 +178,13 @@ class _CustomDoctorVisitTrackerBottomSheetState
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Expanded(flex: 3, child: Text(context.tr('baby_reaction'))),
-                          SizedBox(width: 20.w,),
-                          Expanded(flex: 2,
+                          Expanded(
+                            flex: 3,
+                            child: Text(context.tr('baby_reaction')),
+                          ),
+                          SizedBox(width: 20.w),
+                          Expanded(
+                            flex: 2,
                             child: DropdownButton<String>(
                               value: selectedReaction,
                               items:
@@ -172,7 +193,7 @@ class _CustomDoctorVisitTrackerBottomSheetState
                                         (reaction) => DropdownMenuItem<String>(
                                           value: reaction,
                                           child: Text(
-                                            context.tr('baby_reaction'),
+                                            context.tr(reaction),
                                             style:
                                                 Theme.of(
                                                   context,
@@ -200,9 +221,11 @@ class _CustomDoctorVisitTrackerBottomSheetState
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Expanded(flex:3,
-                              child: Text(context.tr('visit_reason'))),
-                          SizedBox(width: 20.w,),
+                          Expanded(
+                            flex: 3,
+                            child: Text(context.tr('visit_reason')),
+                          ),
+                          SizedBox(width: 20.w),
                           Expanded(
                             flex: 2,
                             child: DropdownButton<String>(
@@ -313,13 +336,11 @@ class _CustomDoctorVisitTrackerBottomSheetState
   }
 
   void onPressedSave() {
-    if (selectedReason.isEmpty ||
-        selectedReaction.isEmpty ||
-        diagnosisController.text.trim().isEmpty) {
+    if (selectedReason.isEmpty || selectedReaction.isEmpty) {
       showCustomFlushbar(
         context,
-        'Warning',
-        'Please fill Reason, Diagnosis, and Reaction.',
+        context.tr('warning'),
+        context.tr('please_fill_reason'),
         Icons.warning_outlined,
       );
       return;
@@ -328,12 +349,16 @@ class _CustomDoctorVisitTrackerBottomSheetState
     final activityName = ActivityType.doctorVisit.name;
 
     final activity = ActivityModel(
-      activityID: const Uuid().v4(),
+      activityID:
+          widget.isEdit
+              ? widget.existingActivity!.activityID
+              : const Uuid().v4(),
       activityType: activityName,
-      createdAt: DateTime.now(),
+      createdAt:
+          widget.isEdit ? widget.existingActivity!.createdAt : DateTime.now(),
       updatedAt: DateTime.now(),
+      activityDateTime: selectedDatetime,
       data: {
-        'activityDay' : selectedDatetime.toIso8601String(),
         'startTimeHour': selectedDatetime.hour,
         'startTimeMin': selectedDatetime.minute,
         'reason': selectedReason,
@@ -346,7 +371,12 @@ class _CustomDoctorVisitTrackerBottomSheetState
       createdBy: widget.firstName,
     );
 
-    context.read<ActivityBloc>().add(AddActivity(activityModel: activity));
+    if (widget.isEdit) {
+      context.read<ActivityBloc>().add(UpdateActivity(activityModel: activity));
+    } else {
+      context.read<ActivityBloc>().add(AddActivity(activityModel: activity));
+    }
+
     Navigator.of(context).pop();
   }
 
