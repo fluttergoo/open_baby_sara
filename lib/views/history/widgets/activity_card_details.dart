@@ -85,7 +85,7 @@ class _ActivityCardDetailsState extends State<ActivityCardDetails>
       backgroundColor: Colors.green.shade100,
       foregroundColor: Colors.green,
       icon: Icons.edit_rounded,
-      label: 'Edit',
+      label: context.tr('edit'),
       borderRadius: BorderRadius.circular(16.r),
     );
   }
@@ -96,7 +96,7 @@ class _ActivityCardDetailsState extends State<ActivityCardDetails>
       backgroundColor: Colors.red.shade100,
       foregroundColor: Colors.red,
       icon: Icons.delete_rounded,
-      label: 'Delete',
+      label: context.tr('delete'),
       borderRadius: BorderRadius.circular(16.r),
     );
   }
@@ -260,7 +260,7 @@ class _ActivityCardDetailsState extends State<ActivityCardDetails>
                 ],
               ),
               child: Padding(
-                padding: EdgeInsets.all(16.w),
+                padding: EdgeInsets.all(8.w),
                 child: IntrinsicHeight(
                   child: Row(
                     children: [
@@ -284,7 +284,7 @@ class _ActivityCardDetailsState extends State<ActivityCardDetails>
                               formattedDate,
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 14.sp,
+                                fontSize: 12.sp,
                                 color: Theme.of(context).primaryColor,
                               ),
                             ),
@@ -293,7 +293,7 @@ class _ActivityCardDetailsState extends State<ActivityCardDetails>
                               formattedTime,
                               style: TextStyle(
                                 fontWeight: FontWeight.w500,
-                                fontSize: 11.sp,
+                                fontSize: 10.sp,
                                 color: Theme.of(context).primaryColor.withOpacity(0.7),
                               ),
                             ),
@@ -301,7 +301,7 @@ class _ActivityCardDetailsState extends State<ActivityCardDetails>
                         ),
                       ),
 
-                      SizedBox(width: 16.w),
+                      SizedBox(width: 10.w),
 
                       // Icon with enhanced styling
                       Container(
@@ -324,7 +324,7 @@ class _ActivityCardDetailsState extends State<ActivityCardDetails>
                         ),
                       ),
 
-                      SizedBox(width: 16.w),
+                      SizedBox(width: 10.w),
 
                       // Content
                       Expanded(
@@ -333,11 +333,11 @@ class _ActivityCardDetailsState extends State<ActivityCardDetails>
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              toBeginningOfSentenceCase(widget.activity.activityType) ??
+                              toBeginningOfSentenceCase(context.tr(widget.activity.activityType)) ??
                                   widget.activity.activityType,
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 16.sp,
+                                fontSize: 14.sp,
                                 color: Colors.grey[800],
                               ),
                             ),
@@ -355,7 +355,7 @@ class _ActivityCardDetailsState extends State<ActivityCardDetails>
                                 child: Text(
                                   widget.summary!,
                                   style: TextStyle(
-                                    fontSize: 13.sp,
+                                    fontSize: 12.sp,
                                     color: Colors.grey[600],
                                     height: 1.3,
                                   ),

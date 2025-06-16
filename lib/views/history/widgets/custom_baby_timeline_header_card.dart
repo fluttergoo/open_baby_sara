@@ -31,11 +31,10 @@ class _CustomBabyTimelineHeaderCardState
   DateTime? _rangeStart;
   DateTime? _rangeEnd;
   String? _selectedActivityType = 'All Activities';
-  String _selectedRangeLabel = 'Last 7 Days';
+  String _selectedRangeLabel = 'Last 1 Day';
   String? _customRangeLabel;
 
   final activityTypes = activityTypeMap.keys.toList();
-
 
   final List<String> staticRanges = [
     'Last 1 Day',
@@ -47,7 +46,8 @@ class _CustomBabyTimelineHeaderCardState
   List<String> get totalDropdownItems {
     final items = {...staticRanges};
 
-    if (_customRangeLabel != null && !staticRanges.contains(_customRangeLabel)) {
+    if (_customRangeLabel != null &&
+        !staticRanges.contains(_customRangeLabel)) {
       items.add(_customRangeLabel!);
     }
 
@@ -213,7 +213,6 @@ class _CustomBabyTimelineHeaderCardState
                           _customRangeLabel = label;
                           _selectedRangeLabel = '';
                         });
-
                       }
                       Navigator.pop(context);
                     },
@@ -234,9 +233,12 @@ class _CustomBabyTimelineHeaderCardState
     _focusedDay = now;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final babyID = context.read<BabyBloc>().state is BabyLoaded
-          ? (context.read<BabyBloc>().state as BabyLoaded).selectedBaby?.babyID
-          : null;
+      final babyID =
+          context.read<BabyBloc>().state is BabyLoaded
+              ? (context.read<BabyBloc>().state as BabyLoaded)
+                  .selectedBaby
+                  ?.babyID
+              : null;
 
       widget.onFilterChanged(
         _rangeStart,
@@ -245,7 +247,6 @@ class _CustomBabyTimelineHeaderCardState
         babyID,
       );
     });
-
 
     super.initState();
   }
@@ -257,42 +258,136 @@ class _CustomBabyTimelineHeaderCardState
     final primaryColor = Theme.of(context).primaryColor;
 
     return BlocBuilder<BabyBloc, BabyState>(
-  builder: (context, state) {
-    String? imagePath;
-    if (state is BabyImagePathLoaded) {
-      imagePath = state.imagePath;
-    }
-    return Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.all(16.sp),
-          child: Row(
-            children: [
-              CustomAvatar(size: 50.sp, imagePath: imagePath),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    DropdownButtonHideUnderline(
-                      child: DropdownButton<BabyModel>(
-                        key: ValueKey(selectedBaby?.babyID),
-                        value: selectedBaby,
-                        icon: const SizedBox.shrink(),
+      builder: (context, state) {
+        String? imagePath;
+        if (state is BabyImagePathLoaded) {
+          imagePath = state.imagePath;
+        }
+        return Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.all(16.sp),
+              child: Row(
+                children: [
+                  CustomAvatar(
+                    size: 50.sp,
+                    imagePath: imagePath,
+                    babyID: selectedBaby?.babyID,
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        DropdownButtonHideUnderline(
+                          child: DropdownButton<BabyModel>(
+                            key: ValueKey(selectedBaby?.babyID),
+                            value: selectedBaby,
+                            icon: const SizedBox.shrink(),
 
-                        isExpanded: false,
+                            isExpanded: false,
+                            selectedItemBuilder: (context) {
+                              return widget.babiesList.map((baby) {
+                                return Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      baby.firstName,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.sp,
+                                        color: primaryColor,
+                                      ),
+                                    ),
+                                    Icon(
+                                      Icons.arrow_drop_down,
+                                      color: primaryColor,
+                                    ),
+                                  ],
+                                );
+                              }).toList();
+                            },
+                            items:
+                                widget.babiesList.map((baby) {
+                                  return DropdownMenuItem<BabyModel>(
+                                    value: baby,
+                                    child: Text(
+                                      baby.firstName,
+                                      style: TextStyle(
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                            onChanged: (newBaby) async {
+                              if (newBaby != null) {
+                                context.read<BabyBloc>().add(
+                                  SelectBaby(selectBabyModel: newBaby),
+                                );
+                                await SharedPrefsHelper.saveSelectedBabyID(
+                                  newBaby.babyID,
+                                );
+                              }
+                            },
+                          ),
+                        ),
+
+                        Row(
+                          children: [
+                            Text(
+                              'Age:',
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                            SizedBox(width: 4.w),
+                            Text(
+                              state is BabyLoaded
+                                  ? calculateBabyAge(
+                                    state.selectedBaby!.dateTime,
+                                  )
+                                  : 'unknown',
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.bold,
+                                color: primaryColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            /// Date Filter
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+              decoration: BoxDecoration(
+                color: AppColors.summaryHeader,
+                borderRadius: BorderRadius.circular(16.r),
+              ),
+              child: Row(
+                children: [
+                  /// Activity dropdown (esnek)
+                  Expanded(
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: _selectedActivityType ?? 'All Activities',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontSize: 12.sp,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        isExpanded: true,
+                        icon: const SizedBox.shrink(),
                         selectedItemBuilder: (context) {
-                          return widget.babiesList.map((baby) {
+                          return activityTypes.map((type) {
                             return Row(
-                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text(
-                                  baby.firstName,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16.sp,
-                                    color: primaryColor,
-                                  ),
-                                ),
+                                Text(type),
                                 Icon(
                                   Icons.arrow_drop_down,
                                   color: primaryColor,
@@ -302,167 +397,94 @@ class _CustomBabyTimelineHeaderCardState
                           }).toList();
                         },
                         items:
-                            widget.babiesList.map((baby) {
-                              return DropdownMenuItem<BabyModel>(
-                                value: baby,
-                                child: Text(
-                                  baby.firstName,
-                                  style: TextStyle(
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                            activityTypes.map((activity) {
+                              return DropdownMenuItem<String>(
+                                value: activity,
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      activity,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
                                 ),
                               );
                             }).toList(),
-                        onChanged: (newBaby) async {
-                          if (newBaby != null) {
-                            context.read<BabyBloc>().add(
-                              SelectBaby(selectBabyModel: newBaby),
-                            );
-                            await SharedPrefsHelper.saveSelectedBabyID(
-                              newBaby.babyID,
-                            );
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedActivityType =
+                                value == 'All Activities'
+                                    ? 'All Activities'
+                                    : value;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
+
+                  /// Date range dropdown (esnek)
+                  Expanded(
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: _customRangeLabel ?? _selectedRangeLabel,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontSize: 12.sp,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        isExpanded: true,
+                        items:
+                            totalDropdownItems.map((range) {
+                              return DropdownMenuItem<String>(
+                                value: range,
+                                child: Text(range),
+                              );
+                            }).toList(),
+                        onChanged: (val) {
+                          if (val == 'Custom Range') {
+                            _showDateRangeDialog(context);
+                          } else {
+                            _onPredefinedRangeSelected(val);
                           }
                         },
                       ),
                     ),
-
-                    Row(
-                      children: [
-                        Text(
-                          'Age:',
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            color: Colors.grey[700],
-                          ),
-                        ),
-                        SizedBox(width: 4.w),
-                        Text(
-                          state is BabyLoaded
-                              ? calculateBabyAge(state.selectedBaby!.dateTime)
-                              : 'unknown',
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.bold,
-                            color: primaryColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-
-        /// Date Filter
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-          decoration: BoxDecoration(
-            color: AppColors.summaryHeader,
-            borderRadius: BorderRadius.circular(16.r),
-          ),
-          child: Row(
-            children: [
-              /// Activity dropdown (esnek)
-              Expanded(
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: _selectedActivityType ?? 'All Activities',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontSize: 12.sp,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    isExpanded: true,
-                    icon: const SizedBox.shrink(),
-                    selectedItemBuilder: (context) {
-                      return activityTypes.map((type) {
-                        return Row(
-                          children: [
-                            Text(type),
-                            Icon(Icons.arrow_drop_down, color: primaryColor),
-                          ],
-                        );
-                      }).toList();
-                    },
-                    items: activityTypes.map((activity) {
-                      return DropdownMenuItem<String>(
-                        value: activity,
-                        child: Row(
-                          children: [
-                            Text(
-                              activity,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedActivityType =
-                            value == 'All Activities' ? 'All Activities' : value;
-                      });
-                    },
                   ),
-                ),
-              ),
-              SizedBox(width: 8.w),
 
-              /// Date range dropdown (esnek)
-              Expanded(
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: _customRangeLabel ?? _selectedRangeLabel,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontSize: 12.sp,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    isExpanded: true,
-                    items: totalDropdownItems.map((range) {
-                      return DropdownMenuItem<String>(
-                        value: range,
-                        child: Text(range),
-                      );
-                    }).toList(),
-                    onChanged: (val) {
-                      if (val == 'Custom Range') {
-                        _showDateRangeDialog(context);
-                      } else {
-                        _onPredefinedRangeSelected(val);
+                  SizedBox(width: 10.w),
+
+                  /// Set DateTime button (sabitle)
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      if (_rangeStart != null && _rangeEnd != null) {
+                        widget.onFilterChanged(
+                          _rangeStart,
+                          _rangeEnd,
+                          _selectedActivityType,
+                          selectedBaby?.babyID,
+                        );
                       }
                     },
+                    icon: Icon(Icons.filter_alt_outlined, size: 16.sp),
+                    label: Text('Filter', style: TextStyle(fontSize: 12.sp)),
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 8.h,
+                      ),
+                      backgroundColor: Theme.of(context).primaryColor,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
-
-              SizedBox(width: 10.w),
-
-              /// Set DateTime button (sabitle)
-              ElevatedButton.icon(
-                onPressed: () {
-                  if (_rangeStart != null && _rangeEnd != null) {
-                    widget.onFilterChanged(_rangeStart, _rangeEnd, _selectedActivityType,selectedBaby?.babyID);
-                  }
-                },
-                icon: Icon(Icons.filter_alt_outlined, size: 16.sp),
-                label: Text('Filter', style: TextStyle(fontSize: 12.sp)),
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-                  backgroundColor: Theme.of(context).primaryColor,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.r),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
+            ),
+          ],
+        );
+      },
     );
-  },
-);
   }
 }

@@ -14,6 +14,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "ansicolor",
+      "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/ansicolor-2.0.3",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "archive",
       "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/archive-4.0.7",
       "packageUri": "lib/",
@@ -174,6 +180,12 @@
       "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/crypto-3.0.6",
       "packageUri": "lib/",
       "languageVersion": "3.4"
+    },
+    {
+      "name": "csslib",
+      "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/csslib-1.0.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.1"
     },
     {
       "name": "cupertino_icons",
@@ -386,6 +398,12 @@
       "languageVersion": "3.7"
     },
     {
+      "name": "flutter_native_splash",
+      "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/flutter_native_splash-2.4.6",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "flutter_plugin_android_lifecycle",
       "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/flutter_plugin_android_lifecycle-2.0.27",
       "packageUri": "lib/",
@@ -432,6 +450,12 @@
       "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/google_fonts-6.2.1",
       "packageUri": "lib/",
       "languageVersion": "2.14"
+    },
+    {
+      "name": "html",
+      "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/html-0.15.6",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
     },
     {
       "name": "http",
@@ -842,6 +866,12 @@
       "languageVersion": "3.5"
     },
     {
+      "name": "universal_io",
+      "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/universal_io-2.2.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
       "name": "uuid",
       "rootUri": "file:///Users/suleymansurucu/.pub-cache/hosted/pub.dev/uuid-4.5.1",
       "packageUri": "lib/",
@@ -890,7 +920,7 @@
       "languageVersion": "3.7"
     }
   ],
-  "generated": "2025-06-12T17:02:17.145301Z",
+  "generated": "2025-06-13T20:53:37.488206Z",
   "generator": "pub",
   "generatorVersion": "3.7.2",
   "flutterRoot": "file:///Users/suleymansurucu/development/flutter",

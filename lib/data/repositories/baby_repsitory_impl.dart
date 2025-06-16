@@ -115,16 +115,22 @@ class BabyRepositoryImpl extends BabyRepository {
     return downloadUrl;
   }
 
-  Future<String?> saveBabyImageLocally(String babyID) async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile == null) return null;
+  Future<String?> saveBabyImageLocally(String babyID, String originalImagePath) async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final savePath = '${directory.path}/baby_images';
+      final folder = Directory(savePath);
+      if (!await folder.exists()) {
+        await folder.create(recursive: true);
+      }
 
-    final appDir = await getApplicationDocumentsDirectory();
-    final filePath = p.join(appDir.path, '$babyID.jpg');
+      final newPath = '$savePath/$babyID.jpg';
+      final newFile = await File(originalImagePath).copy(newPath);
+      return newFile.path;
+    } catch (e) {
 
-    final newImage = await File(pickedFile.path).copy(filePath);
-    return newImage.path;
+      return null;
+    }
   }
 
   Future<File?> getLocalBabyImage(String babyID) async {
@@ -135,7 +141,8 @@ class BabyRepositoryImpl extends BabyRepository {
     if (await file.exists()) {
       return file;
     } else {
-      return null; // Resim bulunamazsa null döner.
+      return null;
     }
   }
+
 }

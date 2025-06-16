@@ -64,6 +64,14 @@ class _CustomFeedTrackerBottomSheetState
   TextEditingController notesController = TextEditingController();
 
   @override
+  void dispose() {
+    notesBottleFeedController.dispose();
+    notesController.dispose();
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
 
@@ -89,9 +97,11 @@ class _CustomFeedTrackerBottomSheetState
         rightSideAmout = (data['rightSideAmount'] ?? 0).toDouble();
         rightSideUnit = data['rightSideUnit'];
 
-        notesController.text = data['notes'] ?? '';
       }
+
+
     }
+
     super.initState();
   }
   DateTime _buildTime(Map<String, dynamic> data, String hourKey, String minKey) {

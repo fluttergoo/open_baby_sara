@@ -180,7 +180,7 @@ class _EditBabyPageState extends State<EditBabyPage> {
                               Align(
                                 alignment: Alignment.center,
                                 child: CustomAvatar(
-                                  imagePath: imagePath,
+                                  imagePath: localImagePath,
                                   onTap: () async {
                                     final picker = ImagePicker();
                                     final pickedFile = await picker.pickImage(source: ImageSource.gallery);

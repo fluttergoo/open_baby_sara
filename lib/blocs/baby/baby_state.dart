@@ -21,7 +21,8 @@ final class BabyFailure extends BabyState {
 class BabyLoaded extends BabyState {
   final List<BabyModel> babies;
   BabyModel? selectedBaby;
-  BabyLoaded({required this.babies,this.selectedBaby});
+  final String? imagePath;
+  BabyLoaded({required this.babies,this.selectedBaby,this.imagePath,});
 }
 class GotBabyInfo extends BabyState{
   final BabyModel babyModel;
@@ -54,7 +55,10 @@ class AddedBaby extends BabyState {
 }
 
 class BabyImagePathLoaded extends BabyState {
-  final String babyID;
   final String imagePath;
-  BabyImagePathLoaded({required this.babyID, required this.imagePath});
+  BabyImagePathLoaded({ required this.imagePath});
+}
+class BabyImageUpdatedLocal extends BabyState {
+  final String message;
+  BabyImageUpdatedLocal(this.message);
 }

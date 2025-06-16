@@ -151,27 +151,20 @@ class BabyBloc extends Bloc<BabyEvent, BabyState> {
         emit(AddedBaby());
       }
     });
-    on<SelectBaby>((event, emit){
+    on<SelectBaby>((event, emit) async {
       if (state is BabyLoaded) {
-        final currentState=state as BabyLoaded;
-        emit(BabyLoaded(babies: currentState.babies,selectedBaby: event.selectBabyModel));
-      }
-    });
-    on<LoadBabyImagePath>((event, emit) async {
-      try {
-        final directory = await getApplicationDocumentsDirectory();
-        final imagePath = '${directory.path}/baby_images/${event.babyID}.jpg';
-        final file = File(imagePath);
+        final currentState = state as BabyLoaded;
 
-        if (await file.exists()) {
-          emit(BabyImagePathLoaded(babyID: event.babyID, imagePath: imagePath));
-        } else {
-          emit(BabyFailure('Image not found for baby.'));
-        }
-      } catch (e) {
-        emit(BabyFailure('Error loading baby image: ${e.toString()}'));
+        final file = await _babyRepository.getLocalBabyImage(event.selectBabyModel.babyID);
+
+        emit(BabyLoaded(
+          babies: currentState.babies,
+          selectedBaby: event.selectBabyModel,
+          imagePath: file?.path,
+        ));
       }
     });
+
     on<SaveBabyImage>((event, emit) async {
       try {
         final directory = await getApplicationDocumentsDirectory();
@@ -185,19 +178,25 @@ class BabyBloc extends Bloc<BabyEvent, BabyState> {
         final filePath = '$savePath/${event.babyID}.jpg';
         await event.imageFile.copy(filePath);
 
-        emit(BabyImagePathLoaded(babyID: event.babyID, imagePath: filePath));
       } catch (e) {
         emit(BabyFailure('Failed to save image: ${e.toString()}'));
       }
     });
+
+
     on<UpdateBabyImageLocal>((event, emit) async {
-      emit(BabyLoading());
-      try {
-        await _babyRepository.updateBaby(event.babyID, {'localImagePath': event.imagePath});
-        emit(BabyUpdated());
-        add(LoadBabyImagePath(babyID: event.babyID));
-      } catch (e) {
-        emit(BabyFailure('Local image update failed: $e'));
+      final newPath = await _babyRepository.saveBabyImageLocally(event.babyID, event.imagePath);
+      if (newPath != null) {
+        emit(BabyImagePathLoaded(imagePath: newPath));
+      } else {
+        emit(BabyFailure('Failed to save image.'));
+      }
+    });
+
+    on<LoadBabyImagePath>((event, emit) async {
+      final file = await _babyRepository.getLocalBabyImage(event.babyID);
+      if (file != null) {
+        emit(BabyImagePathLoaded(imagePath: file.path));
       }
     });
   }

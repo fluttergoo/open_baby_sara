@@ -6,14 +6,10 @@ import 'package:flutter_sara_baby_tracker_and_sound/data/models/baby_model.dart'
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_avatar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-
 class CustomBabyHeaderCard extends StatelessWidget {
   final List<BabyModel> babiesList;
 
-  const CustomBabyHeaderCard({
-    super.key,
-    required this.babiesList,
-  });
+  const CustomBabyHeaderCard({super.key, required this.babiesList});
 
   String calculateBabyAge(DateTime birthDate) {
     final now = DateTime.now();
@@ -36,7 +32,8 @@ class CustomBabyHeaderCard extends StatelessWidget {
 
     int totalMonths = years * 12 + months;
     String age = '';
-    if (totalMonths > 0) age += '$totalMonths month${totalMonths > 1 ? 's' : ''}';
+    if (totalMonths > 0)
+      age += '$totalMonths month${totalMonths > 1 ? 's' : ''}';
     if (days > 0) {
       if (age.isNotEmpty) age += ' ';
       age += '$days day${days > 1 ? 's' : ''}';
@@ -54,100 +51,121 @@ class CustomBabyHeaderCard extends StatelessWidget {
     final lightPrimaryColor = Color(0xFFE9F6EF); // Light mint green color
 
     return BlocBuilder<BabyBloc, BabyState>(
-  builder: (context, state) {
-    String? imagePath;
-    if (state is BabyImagePathLoaded) {
-      imagePath = state.imagePath;
-    }
-    return Column(
-      children: [
-        // Top section with avatar and baby info
-        Padding(
-          padding: EdgeInsets.all(16.sp),
-          child: Row(
-            children: [
-              // Avatar with decorative circle behind it
-              CustomAvatar(
-                size: 60.sp,
-                imagePath: imagePath,
-              ),
+      builder: (context, state) {
+        String? imagePath;
+        if (state is BabyLoaded) {
+          imagePath = state.imagePath;
+        }
+        return Column(
+          children: [
+            // Top section with avatar and baby info
+            Padding(
+              padding: EdgeInsets.all(16.sp),
+              child: Row(
+                children: [
+                  // Avatar with decorative circle behind it
+                  CustomAvatar(
+                    size: 60.sp,
+                    imagePath: imagePath,
+                    babyID: selectedBaby?.babyID,
+                  ),
 
-              SizedBox(width: 5.w),
+                  SizedBox(width: 5.w),
 
-              // Baby info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Baby name with dropdown
-                    DropdownButtonHideUnderline(
-                      child: DropdownButton<BabyModel>(
-                        key: ValueKey(selectedBaby?.babyID),
-                        value: selectedBaby,
-                        isExpanded: true,
-                        icon: Icon(Icons.arrow_drop_down, color: primaryColor),
-                        items: babiesList.map((baby) {
-                          return DropdownMenuItem(
-                            value: baby,
-                            child: Text(
-                              baby.firstName,
+                  // Baby info
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Baby name with dropdown
+                        DropdownButtonHideUnderline(
+                          child: DropdownButton<BabyModel>(
+                            key: ValueKey(selectedBaby?.babyID),
+                            value: selectedBaby,
+                            isExpanded: true,
+                            icon: const SizedBox.shrink(),
+                            selectedItemBuilder: (BuildContext context) {
+                              return babiesList.map((baby) {
+                                return Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      baby.firstName,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.sp,
+                                        color: primaryColor,
+                                      ),
+                                    ),
+                                    Icon(
+                                      Icons.arrow_drop_down,
+                                      color: primaryColor,
+                                    ), // isimle yapışık
+                                  ],
+                                );
+                              }).toList();
+                            },
+                            items:
+                                babiesList.map((baby) {
+                                  return DropdownMenuItem(
+                                    value: baby,
+                                    child: Text(
+                                      baby.firstName,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.sp,
+                                        color: primaryColor,
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                            onChanged: (newBaby) async {
+                              if (newBaby != null) {
+                                context.read<BabyBloc>().add(
+                                  SelectBaby(selectBabyModel: newBaby),
+                                );
+                                await SharedPrefsHelper.saveSelectedBabyID(
+                                  newBaby.babyID,
+                                );
+                              }
+                            },
+                          ),
+                        ),
+
+                        // Age info with cute baby icon
+                        Row(
+                          children: [
+                            Text(
+                              'Age:',
                               style: TextStyle(
+                                fontSize: 14.sp,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                            SizedBox(width: 4.w),
+                            Text(
+                              state is BabyLoaded
+                                  ? calculateBabyAge(
+                                    state.selectedBaby!.dateTime,
+                                  )
+                                  : 'unknown',
+                              style: TextStyle(
+                                fontSize: 14.sp,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 16.sp,
                                 color: primaryColor,
                               ),
                             ),
-                          );
-                        }).toList(),
-                        onChanged: (newBaby) async {
-                          if (newBaby != null) {
-                            context.read<BabyBloc>().add(SelectBaby(selectBabyModel: newBaby));
-                            await SharedPrefsHelper.saveSelectedBabyID(newBaby.babyID);
-                          }
-                        },
-                      ),
-                    ),
-
-                    // Age info with cute baby icon
-                    Row(
-                      children: [
-                        Text(
-                          'Age:',
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            color: Colors.grey[700],
-                          ),
-                        ),
-                        SizedBox(width: 4.w),
-                        Text(
-                          state is BabyLoaded
-                              ? calculateBabyAge(state.selectedBaby!.dateTime)
-                              : 'unknown',
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.bold,
-                            color: primaryColor,
-                          ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              SizedBox(width: 10.w,),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.more_horiz_outlined,
-                  // color: Theme.of(context).primaryColor,
-                ),
-              ),
-            ],
-          ),
-        ),
+            ),
 
-        // Action buttons
-        /*Container(
+            // Action buttons
+            /*Container(
           padding: EdgeInsets.symmetric(vertical: 6.h),
           decoration: BoxDecoration(
             color: Colors.white,
@@ -189,18 +207,18 @@ class CustomBabyHeaderCard extends StatelessWidget {
             ],
           ),
         ),*/
-      ],
+          ],
+        );
+      },
     );
-  },
-);
   }
 
   Widget _buildActionButton(
-      BuildContext context, {
-        required IconData icon,
-        required String label,
-        required VoidCallback onTap,
-      }) {
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
     final primaryColor = Theme.of(context).primaryColor;
 
     return GestureDetector(
@@ -210,18 +228,11 @@ class CustomBabyHeaderCard extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              icon,
-              color: primaryColor,
-              size: 22.sp,
-            ),
+            Icon(icon, color: primaryColor, size: 22.sp),
             SizedBox(height: 4.h),
             Text(
               label,
-              style: TextStyle(
-                fontSize: 12.sp,
-                color: Colors.grey[700],
-              ),
+              style: TextStyle(fontSize: 12.sp, color: Colors.grey[700]),
             ),
           ],
         ),

@@ -103,7 +103,7 @@ class SleepTimerBloc extends Bloc<SleepTimerEvent, SleepTimerState> {
     });
 
     on<StopTimer>((event, emit) async {
-      _timer!.cancel();
+      _timer?.cancel();
 
       _endTime = DateTime.now();
 

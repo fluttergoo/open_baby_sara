@@ -52,6 +52,7 @@ class _BabyRelaxingSoundsPageState extends State<BabyRelaxingSoundsPage> {
   @override
   void initState() {
     super.initState();
+    configureAudio(_player);
     context.read<SoundRelaxingBloc>().add(LoadSound());
   }
 
@@ -191,6 +192,24 @@ class _BabyRelaxingSoundsPageState extends State<BabyRelaxingSoundsPage> {
         ),
       ],
     );
+  }
+
+  void configureAudio(AudioPlayer player) async{
+    await AudioPlayer.global.setAudioContext(AudioContext(
+      iOS: AudioContextIOS(
+        category: AVAudioSessionCategory.playback,
+        options: <AVAudioSessionOptions>{
+          AVAudioSessionOptions.mixWithOthers,
+        },
+      ),
+      android: const AudioContextAndroid(
+        isSpeakerphoneOn: true,
+        stayAwake: true,
+        contentType: AndroidContentType.music,
+        usageType: AndroidUsageType.media,
+        audioFocus: AndroidAudioFocus.gain,
+      ),
+    ));
   }
 
 }
