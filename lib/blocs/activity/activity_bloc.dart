@@ -28,7 +28,7 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
     });
     on<StartAutoSync>((event, emit) {
       _syncTimer?.cancel();
-      _syncTimer = Timer.periodic(Duration(seconds: 15), (_) async {
+      _syncTimer = Timer.periodic(Duration(minutes: 1), (_) async {
         try {
           final connectivityResult = await Connectivity().checkConnectivity();
           if (connectivityResult != ConnectivityResult.none) {

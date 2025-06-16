@@ -21,7 +21,6 @@ class CustomSleepTrackerBottomSheet extends StatefulWidget {
   final ActivityModel? existingActivity;
   final bool isEdit;
 
-
   CustomSleepTrackerBottomSheet({
     super.key,
     required this.babyID,
@@ -76,15 +75,16 @@ class _CustomSleepTrackerBottomSheetState
         totalSleepTime = formatDuration(widget.duration!);
       }
 
-
-      context.read<SleepTimerBloc>().add(
-        SetDurationTimer(duration: widget.duration ?? Duration.zero, activityType: 'sleepTimer'),
-      );
-      
-      context.read<SleepTimerBloc>().add(StopTimer(activityType: 'sleepTimer'));
-      context.read<SleepTimerBloc>().add(
-        SetDurationTimer(duration: widget.duration ?? Duration.zero, activityType: 'sleepTimer'),
-      );
+      Future.microtask(() {
+        final sleepBloc = context.read<SleepTimerBloc>();
+        sleepBloc.add(
+          SetDurationTimer(
+            duration: widget.duration ?? Duration.zero,
+            activityType: 'sleepTimer',
+          ),
+        );
+        sleepBloc.add(StopTimer(activityType: 'sleepTimer'));
+      });
     }
   }
 
@@ -421,13 +421,13 @@ class _CustomSleepTrackerBottomSheetState
 
     try {
       final activityModel = ActivityModel(
-        activityID: widget.isEdit
-            ? widget.existingActivity!.activityID
-            : const Uuid().v4(),
+        activityID:
+            widget.isEdit
+                ? widget.existingActivity!.activityID
+                : const Uuid().v4(),
         activityType: activityName,
-        createdAt: widget.isEdit
-            ? widget.existingActivity!.createdAt
-            : DateTime.now(),
+        createdAt:
+            widget.isEdit ? widget.existingActivity!.createdAt : DateTime.now(),
         updatedAt: DateTime.now(),
         activityDateTime: selectedDatetime!,
         data: {
@@ -444,18 +444,23 @@ class _CustomSleepTrackerBottomSheetState
       );
 
       if (widget.isEdit) {
-        context.read<ActivityBloc>().add(UpdateActivity(activityModel: activityModel));
+        context.read<ActivityBloc>().add(
+          UpdateActivity(activityModel: activityModel),
+        );
       } else {
-        context.read<ActivityBloc>().add(AddActivity(activityModel: activityModel));
+        context.read<ActivityBloc>().add(
+          AddActivity(activityModel: activityModel),
+        );
       }
 
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => NavigationWrapper()),
-      );
+      Navigator.of(
+        context,
+      ).pushReplacement(MaterialPageRoute(builder: (_) => NavigationWrapper()));
 
       context.read<SleepTimerBloc>().add(
         ResetTimer(activityType: 'sleepTimer'),
       );
+      _onPressedDelete(context);
     } catch (e, stack) {
       print(stack);
     }

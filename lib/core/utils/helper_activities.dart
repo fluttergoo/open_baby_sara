@@ -263,10 +263,10 @@ String? getLastTeethingSummary(
     status = context.tr('Teething activity');
   }
 
-  final List<String> descriptions =
-      teethingNumbers.map((num) {
-        return isoToothDescriptions[num] ?? '${context.tr('tooth')} $num';
-      }).toList();
+  final List<String> descriptions = teethingNumbers.map((num) {
+    final key = isoToothDescriptions[num];
+    return key != null ? context.tr(key) : '${context.tr('tooth')} $num';
+  }).toList();
 
   final descriptionText = descriptions.join(', ');
 
