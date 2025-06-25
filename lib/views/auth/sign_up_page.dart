@@ -59,7 +59,7 @@ class _SignUpPageState extends State<SignUpPage> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
 
@@ -110,6 +110,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 Align(
                   alignment: Alignment.center,
                   child: SingleChildScrollView(
+                    padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
                     child: Stack(
                       clipBehavior: Clip.none,
                       children: [
@@ -228,18 +229,6 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                 ),
 
-                // Footer logo
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: Image.asset(
-                    'assets/images/logo.png',
-                    fit: BoxFit.contain,
-                    width: 75.w,
-                    height: 75.h,
-                  ),
-                ),
               ],
             ),
           );

@@ -65,7 +65,6 @@ class _CaregiverSignInPageState extends State<CaregiverSignInPage> {
           ),
           child: Stack(
             children: [
-              // Üst bulut görseli
               Positioned(
                 top: -30.sp,
                 left: 0,
@@ -78,10 +77,11 @@ class _CaregiverSignInPageState extends State<CaregiverSignInPage> {
                 ),
               ),
 
-              // Ortalanmış içerik
               Align(
                 alignment: Alignment.center,
                 child: SingleChildScrollView(
+                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+
                   child: Stack(
                     clipBehavior: Clip.none,
                     children: [
