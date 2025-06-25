@@ -90,6 +90,8 @@ class _SignInPageState extends State<SignInPage> {
                   Align(
                     alignment: Alignment.center,
                     child: SingleChildScrollView(
+                      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+
                       child: Center(
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
