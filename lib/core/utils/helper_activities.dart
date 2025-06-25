@@ -107,8 +107,13 @@ String? getLastSleepSummary(List<ActivityModel> activities, bool? isRunning, Bui
     final last = getLastActivity(activities);
     if (last == null) return '➕ ${context.tr('tap_to_start_only')}';
 
-    final timeText = formatSmartDate(last.activityDateTime);
-    if (timeText == null) return '➕\n${context.tr('tap_to_start_only')}';
+    final endHour = last.data['endTimeHour'];
+    final endMin = last.data['endTimeMin'];
+
+    if (endHour == null || endMin == null) return '➕\n${context.tr('tap_to_start_only')}';
+
+    final timeOfDay = TimeOfDay(hour: endHour, minute: endMin);
+    final timeText = timeOfDay.format(context);
 
     final durationMs = last.data['totalTime'] ?? 0;
     final duration = Duration(milliseconds: durationMs);
@@ -121,7 +126,7 @@ String? getLastSleepSummary(List<ActivityModel> activities, bool? isRunning, Bui
         ? '${hours}h'
         : '${minutes}m';
 
-    return '${context.tr('woke_up_at')} $timeText \n($durationText ${context.tr('sleep')})';
+    return '${context.tr('woke_up_at')} $timeText\n($durationText ${context.tr('sleep')})';
   }
   return null;
 }
