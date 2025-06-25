@@ -96,7 +96,7 @@ lib/
 ├── main.dart          # Entry point
 ├── widgets/           # Common widgets
 └── firebase_options.dart # Firebase config
-
+```
 ---
 
 ## 🧪 Testing
