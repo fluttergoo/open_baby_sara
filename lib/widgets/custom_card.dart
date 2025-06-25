@@ -66,68 +66,71 @@ class _CustomCardState extends State<CustomCard> {
         return state is ActivityLoading
             ? Center(child: CircularProgressIndicator())
             : Card(
-              color: widget.color,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.r),
-              ),
-              child: SizedBox(
-                height: 110.h,
-                child: Stack(
-                  children: [
-                    /// Title
-                    Positioned(
-                      top: 6.h,
-                      left: 10.w,
-                      child: Text(
-                        widget.title,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18.sp,
-                        ),
-                      ),
+          color: widget.color,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.r),
+          ),
+          child: SizedBox(
+            height: 110.h,
+            child: Stack(
+              children: [
+                /// Title
+                Positioned(
+                  top: 6.h,
+                  left: 10.w,
+                  right: 30.w,
+                  child: Text(
+                    widget.title,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18.sp,
                     ),
-
-                    /// Add new activity icon
-                    Positioned(
-                      top: 4.h,
-                      right: 6.w,
-                      child: CircleAvatar(
-                        radius: 16.r,
-                        backgroundColor: Theme.of(context).primaryColor,
-                        child: IconButton(
-                          onPressed: widget.voidCallback,
-                          icon: Icon(
-                            Icons.add,
-                            color: Colors.white,
-                            size: 20.sp,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    // Sol alt icon (asset image)
-                    Positioned(
-                      bottom: 10.h,
-                      left: 6.w,
-                      child: Image.asset(
-                        widget.imgUrl,
-                        height: 40.h,
-                        width: 40.w,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-
-                    // Icon'un yanındaki metin
-                    Positioned(
-                      bottom: 8.h,
-                      left: 45.w,
-                      right: 5.w,
-                      child: getLastActivityText(widget.title),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            );
+
+                /// Add new activity icon
+                Positioned(
+                  top: 4.h,
+                  right: 6.w,
+                  child: CircleAvatar(
+                    radius: 16.r,
+                    backgroundColor: Theme.of(context).primaryColor,
+                    child: IconButton(
+                      onPressed: widget.voidCallback,
+                      icon: Icon(
+                        Icons.add,
+                        color: Colors.white,
+                        size: 20.sp,
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Sol alt icon (asset image)
+                Positioned(
+                  bottom: 10.h,
+                  left: 6.w,
+                  child: Image.asset(
+                    widget.imgUrl,
+                    height: 40.h,
+                    width: 40.w,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+
+                // Icon'un yanındaki metin
+                Positioned(
+                  bottom: 8.h,
+                  left: 45.w,
+                  right: 5.w,
+                  child: getLastActivityText(widget.title),
+                ),
+              ],
+            ),
+          ),
+        );
       },
     );
   }
@@ -200,10 +203,10 @@ class _CustomCardState extends State<CustomCard> {
     if (lastPumpActivity != null) {
       final startTime = TimeOfDay(
         hour:
-            lastPumpActivity.data['totalEndTimeHour'] ??
+        lastPumpActivity.data['totalEndTimeHour'] ??
             lastPumpActivity.data['leftSideEndTimeHour'],
         minute:
-            lastPumpActivity.data['totalEndTimeMin'] ??
+        lastPumpActivity.data['totalEndTimeMin'] ??
             lastPumpActivity.data['leftSideEndTimeMin'],
       );
       lastPumpActivityTimeText = startTime.format(context);
@@ -266,28 +269,28 @@ class _CustomCardState extends State<CustomCard> {
     switch (title) {
       case 'Sleep':
         displayText =
-            sleepActivities != null
-                ? getLastSleepSummary(
-                  sleepActivities!,
-                  widget.isActivityRunning!,
-                  context,
-                )
-                : '➕ ${context.tr('tap_to_start_only')}';
+        sleepActivities != null
+            ? getLastSleepSummary(
+          sleepActivities!,
+          widget.isActivityRunning!,
+          context,
+        )
+            : '➕ ${context.tr('tap_to_start_only')}';
       case 'Feed':
         displayText =
-            feedActivities != null
-                ? getLastFeedSummary(feedActivities!, context)
-                : '➕ ${context.tr('tap_to_start_only')}';
+        feedActivities != null
+            ? getLastFeedSummary(feedActivities!, context)
+            : '➕ ${context.tr('tap_to_start_only')}';
       case 'Pump':
         displayText =
-            pumpActivities != null
-                ? getLastPumpSummary(pumpActivities!, context)
-                : '➕ ${context.tr('tap_to_start_only')}';
+        pumpActivities != null
+            ? getLastPumpSummary(pumpActivities!, context)
+            : '➕ ${context.tr('tap_to_start_only')}';
       case 'Diaper':
         displayText =
-            pumpActivities != null
-                ? getLastDiaperSummary(diaperActivities!, context)
-                : '➕ ${context.tr('tap_to_start_only')}';
+        pumpActivities != null
+            ? getLastDiaperSummary(diaperActivities!, context)
+            : '➕ ${context.tr('tap_to_start_only')}';
       default:
         displayText = '➕ ${context.tr('tap_to_start_only')}';
     }
