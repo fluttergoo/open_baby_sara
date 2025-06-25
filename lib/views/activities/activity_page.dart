@@ -40,7 +40,9 @@ class _ActivityPageState extends State<ActivityPage> {
 
   @override
   void initState() {
-    context.read<BabyBloc>().add(LoadBabies());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<BabyBloc>().add(LoadBabies());
+    });
     super.initState();
   }
 
@@ -104,7 +106,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                   ///
                                   SizedBox(
                                     width: double.infinity,
-                                    height: 125.h,
+                                    // height: 125.h,
                                     child: CustomTodaySummaryCard(
                                       colorSummaryTitle:
                                           AppColors.summaryHeader,
@@ -325,7 +327,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                   ///
                                   SizedBox(
                                     width: double.infinity,
-                                    height: 80.h,
+                                    height: 100.h,
                                     child: CustomizeGrowthCard(
                                       color: AppColors.growthColor,
                                       title: 'Weight',
