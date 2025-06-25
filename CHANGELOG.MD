@@ -79,4 +79,8 @@
 
 ---
 
+## [1.1.0] – First Release - June 24, 2025
+
+
+
 @formatter:off
