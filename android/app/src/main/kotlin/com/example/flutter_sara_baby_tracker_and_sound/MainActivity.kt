@@ -1,4 +1,4 @@
-package com.example.flutter_sara_baby_tracker_and_sound
+package com.suleymansurucu.sarababy
 
 import io.flutter.embedding.android.FlutterActivity
 
