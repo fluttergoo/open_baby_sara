@@ -1,10 +1,11 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/activity/activity_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/core/utils/helper_activities.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/models/activity_model.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:easy_localization/easy_localization.dart';
+
+import 'package:flutter_sara_baby_tracker_and_sound/blocs/activity/activity_bloc.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/data/models/activity_model.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/core/utils/helper_activities.dart';
 
 class CustomizeGrowthCard extends StatefulWidget {
   final Color color;
@@ -38,138 +39,80 @@ class _CustomizeGrowthCardState extends State<CustomizeGrowthCard> {
         if (state is ActivitiesWithDateLoaded) {
           growthActivities = state.growthActivities;
         }
+
         return state is ActivityLoading
             ? Center(child: CircularProgressIndicator())
             : Card(
-              color: widget.color,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.r),
-              ),
-              child: SizedBox(
-                height: 110.h,
-                child: Stack(
-                  children: [
-                    /// Title
-                    Positioned(
-                      top: 10.h,
-                      left: 15.w,
-                      right: 15.w,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                context.tr('weight'),
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.bodyMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16.sp,
-                                ),
-                              ),
-                              Center(
-                                child: Text(
-                                  getLastWeight(growthActivities!, context) ??
-                                      "➕\n${context.tr('tap_to_start_only')}",
-                                  textAlign: TextAlign.center,
-
-                                  style: Theme.of(context).textTheme.titleSmall
-                                      ?.copyWith(fontSize: 10.sp),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(width: 10.w),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-
-                            children: [
-                              Text(
-                                context.tr('height'),
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.bodyMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16.sp,
-                                ),
-                              ),
-                              Center(
-                                child: Text(
-                                  getLastHeight(growthActivities!, context) ??
-                                      context.tr('tap_to_start'),
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context).textTheme.titleSmall
-                                      ?.copyWith(fontSize: 10.sp),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(width: 10.w),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-
-                            children: [
-                              Text(
-                                context.tr('head_size'),
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.bodyMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16.sp,
-                                ),
-                              ),
-                              Center(
-                                child: Text(
-                                  getLastHeadSize(growthActivities!, context) ??
-                                      context.tr('tap_to_start'),
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context).textTheme.titleSmall
-                                      ?.copyWith(fontSize: 10.sp),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    /// Add new activity icon
-                    Positioned(
-                      top: 4.h,
-                      right: 6.w,
-                      child: CircleAvatar(
-                        radius: 16.r,
-                        backgroundColor: Theme.of(context).primaryColor,
-                        child: IconButton(
-                          onPressed: widget.voidCallback,
-                          icon: Icon(
-                            Icons.add,
-                            color: Colors.white,
-                            size: 20.sp,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    // Sol alt icon (asset image)
-                    Positioned(
-                      top: 10.h,
-                      bottom: 10.h,
-
-                      child: Image.asset(
-                        widget.imgUrl,
-                        height: 40.h,
-                        width: 40.w,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ],
+          color: widget.color,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.r),
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+            child: Row(
+              children: [
+                /// Left Image
+                Image.asset(
+                  widget.imgUrl,
+                  height: 40.h,
+                  width: 40.w,
+                  fit: BoxFit.contain,
                 ),
-              ),
-            );
+                SizedBox(width: 12.w),
+
+                /// Weight, Height, Head Size Columns
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildInfoColumn(context.tr('weight'), getLastWeight(growthActivities!, context)),
+                      _buildInfoColumn(context.tr('height'), getLastHeight(growthActivities!, context)),
+                      _buildInfoColumn(context.tr('head_size'), getLastHeadSize(growthActivities!, context)),
+                    ],
+                  ),
+                ),
+
+                /// Add Button
+                CircleAvatar(
+                  radius: 16.r,
+                  backgroundColor: Theme.of(context).primaryColor,
+                  child: IconButton(
+                    onPressed: widget.voidCallback,
+                    icon: Icon(Icons.add, color: Colors.white, size: 16.sp),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
       },
+    );
+  }
+
+  Widget _buildInfoColumn(String title, String? value) {
+    return Flexible(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              title,
+              maxLines: 1,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 13.sp,
+              ),
+            ),
+          ),
+          SizedBox(height: 4.h),
+          Text(
+            value ?? "➕",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 10.sp),
+          ),
+        ],
+      ),
     );
   }
 }

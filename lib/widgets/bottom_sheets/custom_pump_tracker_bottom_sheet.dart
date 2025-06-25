@@ -17,6 +17,7 @@ import 'package:flutter_sara_baby_tracker_and_sound/data/models/activity_model.d
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/all_timers/pump_left_side_timer.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/all_timers/pump_right_side_timer.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/all_timers/pump_total_timer.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_bottom_sheet_header.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_show_flush_bar.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_text_form_field.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/unit_input_field_with_toggle.dart';
@@ -137,51 +138,14 @@ class _CustomPumpTrackerBottomSheetState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header
-              Container(
-                height: 50.h,
-                padding: EdgeInsets.symmetric(horizontal: 16.r, vertical: 12.r),
-                decoration: BoxDecoration(
-                  color: AppColors.pumpColor,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Back button
-                    GestureDetector(
-                      onTap: () => Navigator.of(context).pop(),
-                      child: Icon(Icons.arrow_back, color: Colors.deepPurple),
-                    ),
-
-                    // Title
-                    Text(
-                      context.tr("pump_tracker"),
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Colors.deepPurple,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16.sp,
-                      ),
-                    ),
-
-                    // Save button
-                    TextButton(
-                      onPressed: () {
-                        onPressedSave();
-                      },
-                      child: Text(
-                        widget.isEdit ? context.tr('update'):
-                        context.tr('save'),                        style: Theme.of(
-                          context,
-                        ).textTheme.titleMedium?.copyWith(
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.w900,
-                          fontSize: 16.sp,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+              CustomSheetHeader(
+                title: context.tr('pump_tracker'),
+                onBack: () => Navigator.of(context).pop(),
+                onSave: () => onPressedSave(),
+                saveText: widget.isEdit ? context.tr('update') : context.tr('save'),
+                backgroundColor: AppColors.pumpColor,
               ),
+
               Container(
                 decoration: BoxDecoration(
                   color: const Color(0xFFF0F0F0),
