@@ -79,21 +79,22 @@ support.
 
 ## 🗂 Project Structure
 
+```text
 lib/
-├── app/ # themes, routing,
-├── blocs/ # BLoC logic for each module
-├── core/ # Constants, helper class, routing, localization
+├── app/               # themes, routing
+├── blocs/             # BLoC logic for each module
+├── core/              # Constants, helper classes, routing, localization
 ├── data/
-│ ├── models/ # Data models
-│ ├── repositories/ # Firebase/local logic abstraction
-│ └── services/ # Firebase, SQLite services
-├── l10n/ # easy localization
+│   ├── models/        # Data models
+│   ├── repositories/  # Firebase/local logic abstraction
+│   └── services/      # Firebase, SQLite services
+├── l10n/              # Easy localization files
 ├── views/
-│ ├── screens/ # Pages & screens
-│ ├── widgets/ # Reusable UI components
-│ └── bottom_sheets/ # Bottom sheet activity forms
-├── main.dart # Entry point
-├── widgets/
+│   ├── screens/       # Pages & screens
+│   ├── widgets/       # Reusable UI components
+│   └── bottom_sheets/ # Bottom sheet activity forms
+├── main.dart          # Entry point
+├── widgets/           # Common widgets
 └── firebase_options.dart # Firebase config
 
 ---
