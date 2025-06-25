@@ -36,7 +36,6 @@ Future<void> showDialogAddAndVaccination({
                     children: [
                       //header
                       Container(
-                        height: 50.h,
                         padding: EdgeInsets.symmetric(
                           horizontal: 16.r,
                           vertical: 12.r,

@@ -14,6 +14,8 @@ import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_text_form_fie
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:uuid/uuid.dart';
 
+import '../custom_bottom_sheet_header.dart';
+
 class CustomTeethingTrackerBottomSheet extends StatefulWidget {
   final String babyID;
   final String firstName;
@@ -104,56 +106,12 @@ class _CustomTeethingTrackerBottomSheetState
                       child: Column(
                         children: [
                           // Header
-                          Container(
-                            height: 50.h,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 16.r,
-                              vertical: 12.r,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.teethingColor,
-                              borderRadius: BorderRadius.vertical(
-                                top: Radius.circular(20),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                GestureDetector(
-                                  onTap:
-                                      () => Navigator.of(
-                                        context,
-                                      ).pushReplacement(
-                                        MaterialPageRoute(
-                                          builder: (_) => NavigationWrapper(),
-                                        ),
-                                      ),
-                                  child: Icon(
-                                    Icons.arrow_back,
-                                    color: Colors.deepPurple,
-                                  ),
-                                ),
-                                Text(
-                                  context.tr('teething'),
-                                  style: Theme.of(
-                                    context,
-                                  ).textTheme.titleMedium?.copyWith(
-                                    color: Colors.deepPurple,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16.sp,
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  icon: Icon(
-                                    Icons.close,
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                ),
-                              ],
-                            ),
+                          CustomSheetHeader(
+                            title: context.tr('teething'),
+                            onBack: () => Navigator.of(context).pop(),
+                            onSave: () => onPressedSave(),
+                            saveText: widget.isEdit ? context.tr('update') : context.tr('save'),
+                            backgroundColor: AppColors.teethingColor,
                           ),
 
                           /// Body
@@ -288,45 +246,12 @@ class _CustomTeethingTrackerBottomSheetState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     //header
-                    Container(
-                      height: 50.h,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16.r,
-                        vertical: 12.r,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.teethingColor,
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(20),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            context.tr('add_teething'),
-                            style: Theme.of(
-                              context,
-                            ).textTheme.titleMedium?.copyWith(
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: onPressedSave,
-                            child: Text(
-                              context.tr('save'),
-                              style: Theme.of(
-                                context,
-                              ).textTheme.titleMedium?.copyWith(
-                                color: Theme.of(context).primaryColor,
-                                fontWeight: FontWeight.w900,
-                                fontSize: 16.sp,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                    CustomSheetHeader(
+                      title: context.tr('add_teething'),
+                      onBack: () => Navigator.of(context).pop(),
+                      onSave: () => onPressedSave(),
+                      saveText: widget.isEdit ? context.tr('update') : context.tr('save'),
+                      backgroundColor: AppColors.teethingColor,
                     ),
                     Expanded(
                       child: ListView(

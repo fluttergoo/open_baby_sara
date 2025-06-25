@@ -5,6 +5,7 @@ import 'package:flutter_sara_baby_tracker_and_sound/app/routes/navigation_wrappe
 import 'package:flutter_sara_baby_tracker_and_sound/blocs/activity/activity_bloc.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/core/app_colors.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/activity_model.dart';
+import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_bottom_sheet_header.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_check_box_tile.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_date_time_picker.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_show_flush_bar.dart';
@@ -89,53 +90,14 @@ class _CustomDiaperTrackerBottomSheetState
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Header
-                Container(
-                  height: 50.h,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.r,
-                    vertical: 12.r,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.diaperColor,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(20),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () => Navigator.of(context).pop(),
-                        child: Icon(Icons.arrow_back, color: Colors.deepPurple),
-                      ),
-                      Text(
-                        context.tr("diaper_tracker"),
-                        style: Theme.of(
-                          context,
-                        ).textTheme.titleMedium?.copyWith(
-                          color: Colors.deepPurple,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16.sp,
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: onPressedSave,
-                        child: Text(
-                          widget.isEdit
-                              ? context.tr('update')
-                              : context.tr('save'),
-                          style: Theme.of(
-                            context,
-                          ).textTheme.titleMedium?.copyWith(
-                            color: Theme.of(context).primaryColor,
-                            fontWeight: FontWeight.w900,
-                            fontSize: 16.sp,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                CustomSheetHeader(
+                  title: context.tr('diaper_tracker'),
+                  onBack: () => Navigator.of(context).pop(),
+                  onSave: () => onPressedSave(),
+                  saveText: widget.isEdit ? context.tr('update') : context.tr('save'),
+                  backgroundColor: AppColors.diaperColor,
                 ),
+
 
                 // Body: SCROLLABLE
                 Expanded(
