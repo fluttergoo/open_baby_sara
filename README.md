@@ -7,6 +7,14 @@ with tracking essential baby care activities. The app supports real-time logging
 multiple caregivers, and enriched baby care insights through charts, reminders, and local/offline
 support.
 
+## 📲 Try It Now
+
+Track every precious moment of your baby's growth — sleep, feeding, milestones, and more.
+
+- 🟣 **[Download on the App Store](https://apps.apple.com/us/app/sara-baby-tracker-sounds/id6746516938)**
+- 🟢 **[Get it on Google Play](https://play.google.com/store/apps/details?id=com.suleymansurucu.sarababy)**
+
+
 ---
 
 ## 🧩 Features Overview
