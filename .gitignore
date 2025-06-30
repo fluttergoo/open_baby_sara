@@ -1,3 +1,5 @@
+.idea
+.dart_tool
 *.iml
 .gradle
 /local.properties
