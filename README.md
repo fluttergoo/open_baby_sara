@@ -17,6 +17,10 @@ Track every precious moment of your baby's growth — sleep, feeding, milestones
 
 ---
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/fluttergoo/open_baby_sara) DeepWiki is an AI-powered platform that transforms any public GitHub repository into a fully interactive, easy-to-understand wiki. By analysing code, documentation, and configuration files, it creates clear explanations, interactive diagrams, and even allows for real-time Q&A with the AI.
+
+---
+
 ## 🧩 Features Overview
 
 ### Feeding Tracker
