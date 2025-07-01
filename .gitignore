@@ -15,3 +15,10 @@
 .externalNativeBuild
 .cxx
 local.properties
+# Firebase
+google-services.json
+GoogleService-Info.plist
+*.p12
+firebase.json
+.firebaserc
+firebase.flutter.js
