@@ -1,12 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_show_flush_bar.dart';
+import 'package:open_baby_sara/widgets/custom_show_flush_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/auth/auth_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/views/auth/baby_sign_up_page.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/views/auth/sign_in_page.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_text_form_field.dart';
+import 'package:open_baby_sara/blocs/auth/auth_bloc.dart';
+import 'package:open_baby_sara/views/auth/baby_sign_up_page.dart';
+import 'package:open_baby_sara/views/auth/sign_in_page.dart';
+import 'package:open_baby_sara/widgets/custom_text_form_field.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});

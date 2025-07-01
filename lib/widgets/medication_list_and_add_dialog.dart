@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/medication/medication_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/core/app_colors.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/models/medication_model.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_check_box_tile.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_text_form_field.dart';
+import 'package:open_baby_sara/blocs/medication/medication_bloc.dart';
+import 'package:open_baby_sara/core/app_colors.dart';
+import 'package:open_baby_sara/data/models/medication_model.dart';
+import 'package:open_baby_sara/widgets/custom_check_box_tile.dart';
+import 'package:open_baby_sara/widgets/custom_text_form_field.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 Future<void> showMedicationDialog({

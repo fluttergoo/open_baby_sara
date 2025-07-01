@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/app/routes/app_router.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/views/auth/sign_in_page.dart';
+import 'package:open_baby_sara/app/routes/app_router.dart';
+import 'package:open_baby_sara/views/auth/sign_in_page.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:introduction_screen/introduction_screen.dart';

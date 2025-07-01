@@ -1,7 +1,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/services/firebase/auth_base.dart';
+import 'package:open_baby_sara/data/services/firebase/auth_base.dart';
 
 class AuthService implements AuthBase{
 

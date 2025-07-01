@@ -1,13 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/baby/baby_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/views/auth/request_notification_permission.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_show_flush_bar.dart';
+import 'package:open_baby_sara/blocs/baby/baby_bloc.dart';
+import 'package:open_baby_sara/views/auth/request_notification_permission.dart';
+import 'package:open_baby_sara/widgets/custom_show_flush_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_birthdate_picker.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_gender_selector.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_text_form_field.dart';
+import 'package:open_baby_sara/widgets/custom_birthdate_picker.dart';
+import 'package:open_baby_sara/widgets/custom_gender_selector.dart';
+import 'package:open_baby_sara/widgets/custom_text_form_field.dart';
 import 'package:gender_picker/source/enums.dart';
 import 'package:intl/intl.dart';
 

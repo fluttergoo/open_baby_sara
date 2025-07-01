@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/core/constant/iso_tooth_descriptions_constants.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/models/activity_model.dart';
+import 'package:open_baby_sara/core/constant/iso_tooth_descriptions_constants.dart';
+import 'package:open_baby_sara/data/models/activity_model.dart';
 
 /// Calculates the total feed amount from a list of feed activities.
 double calculateTotalFeedAmount(List<ActivityModel> feedActivities) {

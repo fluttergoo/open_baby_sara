@@ -1,4 +1,4 @@
-import 'package:flutter_sara_baby_tracker_and_sound/data/models/medication_model.dart';
+import 'package:open_baby_sara/data/models/medication_model.dart';
 
 abstract class MedicationRepository{
   Future<void> insertMedication(MedicationModel medicationModel);

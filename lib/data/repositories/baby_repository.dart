@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:flutter_sara_baby_tracker_and_sound/data/models/baby_model.dart';
+import 'package:open_baby_sara/data/models/baby_model.dart';
 
 abstract class BabyRepository{
   Future<void> createBaby(BabyModel baby);

@@ -1,4 +1,4 @@
-import 'package:flutter_sara_baby_tracker_and_sound/data/models/relaxing_sound_model.dart';
+import 'package:open_baby_sara/data/models/relaxing_sound_model.dart';
 
 final List<RelaxingSoundModel> sounds = [
   RelaxingSoundModel(title: "White Noise", assetPath: "assets/sounds/white_noise.mp3", iconAssetPath: "assets/icons/white_noise.png"),

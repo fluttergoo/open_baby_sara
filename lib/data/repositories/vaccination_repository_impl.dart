@@ -1,4 +1,4 @@
-import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/vaccination_repository.dart';
+import 'package:open_baby_sara/data/repositories/vaccination_repository.dart';
 import 'package:sqflite/sqflite.dart';
 
 class VaccinationRepositoryImpl implements VaccinationRepository {

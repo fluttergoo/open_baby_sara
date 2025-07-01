@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/models/invite_model.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/models/user_model.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/caregiver_repository.dart';
+import 'package:open_baby_sara/data/models/invite_model.dart';
+import 'package:open_baby_sara/data/models/user_model.dart';
+import 'package:open_baby_sara/data/repositories/caregiver_repository.dart';
 
 class CaregiverRepositoryImpl extends CaregiverRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

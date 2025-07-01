@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/models/activity_model.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/models/milestones_model.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/services/local_database/milestone_service.dart';
+import 'package:open_baby_sara/data/models/activity_model.dart';
+import 'package:open_baby_sara/data/models/milestones_model.dart';
+import 'package:open_baby_sara/data/services/local_database/milestone_service.dart';
 import 'package:sqflite/sqlite_api.dart';
 
 class MilestoneServiceImpl implements MilestoneService {
