@@ -1,14 +1,14 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/app/routes/app_router.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/app/theme/app_themes.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/auth/auth_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/baby/baby_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/caregiver/caregiver_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/models/baby_model.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/models/invite_model.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/views/onboarding/welcome_page.dart';
+import 'package:open_baby_sara/app/routes/app_router.dart';
+import 'package:open_baby_sara/app/theme/app_themes.dart';
+import 'package:open_baby_sara/blocs/auth/auth_bloc.dart';
+import 'package:open_baby_sara/blocs/baby/baby_bloc.dart';
+import 'package:open_baby_sara/blocs/caregiver/caregiver_bloc.dart';
+import 'package:open_baby_sara/data/models/baby_model.dart';
+import 'package:open_baby_sara/data/models/invite_model.dart';
+import 'package:open_baby_sara/views/onboarding/welcome_page.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AccountPage extends StatefulWidget {

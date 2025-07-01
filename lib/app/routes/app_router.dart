@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/app/routes/navigation_wrapper.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/views/account/add_baby_page.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/views/account/add_caregiver.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/views/account/change_password_page.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/views/account/edit_baby_page.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/views/account/edit_caregiver_page.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/views/account/faq_page.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/views/account/language_settings_page.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/views/account/legal_page.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/views/account/my_account_page.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/views/auth/caregiver_sign_in_page.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/views/auth/forgot_password.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/views/auth/sign_in_options_page.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/views/auth/sign_in_page.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/views/auth/sign_up_page.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/views/onboarding/welcome_page.dart';
+import 'package:open_baby_sara/app/routes/navigation_wrapper.dart';
+import 'package:open_baby_sara/views/account/add_baby_page.dart';
+import 'package:open_baby_sara/views/account/add_caregiver.dart';
+import 'package:open_baby_sara/views/account/change_password_page.dart';
+import 'package:open_baby_sara/views/account/edit_baby_page.dart';
+import 'package:open_baby_sara/views/account/edit_caregiver_page.dart';
+import 'package:open_baby_sara/views/account/faq_page.dart';
+import 'package:open_baby_sara/views/account/language_settings_page.dart';
+import 'package:open_baby_sara/views/account/legal_page.dart';
+import 'package:open_baby_sara/views/account/my_account_page.dart';
+import 'package:open_baby_sara/views/auth/caregiver_sign_in_page.dart';
+import 'package:open_baby_sara/views/auth/forgot_password.dart';
+import 'package:open_baby_sara/views/auth/sign_in_options_page.dart';
+import 'package:open_baby_sara/views/auth/sign_in_page.dart';
+import 'package:open_baby_sara/views/auth/sign_up_page.dart';
+import 'package:open_baby_sara/views/onboarding/welcome_page.dart';
 
 class AppRoutes {
   static const String onboarding = '/onboarding';

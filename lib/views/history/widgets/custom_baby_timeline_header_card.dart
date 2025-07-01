@@ -1,12 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/baby/baby_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/core/app_colors.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/core/constant/activity_constants.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/core/utils/shared_prefs_helper.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/models/baby_model.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_avatar.dart';
+import 'package:open_baby_sara/blocs/baby/baby_bloc.dart';
+import 'package:open_baby_sara/core/app_colors.dart';
+import 'package:open_baby_sara/core/constant/activity_constants.dart';
+import 'package:open_baby_sara/core/utils/shared_prefs_helper.dart';
+import 'package:open_baby_sara/data/models/baby_model.dart';
+import 'package:open_baby_sara/widgets/custom_avatar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:table_calendar/table_calendar.dart';
 

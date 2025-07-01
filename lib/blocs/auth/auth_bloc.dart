@@ -1,14 +1,14 @@
 import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/core/constant/message_constants.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/locator.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/models/invite_model.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/models/user_model.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/caregiver_repository.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/user_repository.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/services/firebase/auth_service.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/core/utils/firebase_auth_errors.dart';
+import 'package:open_baby_sara/core/constant/message_constants.dart';
+import 'package:open_baby_sara/data/repositories/locator.dart';
+import 'package:open_baby_sara/data/models/invite_model.dart';
+import 'package:open_baby_sara/data/models/user_model.dart';
+import 'package:open_baby_sara/data/repositories/caregiver_repository.dart';
+import 'package:open_baby_sara/data/repositories/user_repository.dart';
+import 'package:open_baby_sara/data/services/firebase/auth_service.dart';
+import 'package:open_baby_sara/core/utils/firebase_auth_errors.dart';
 
 import 'package:meta/meta.dart';
 import 'package:uuid/uuid.dart';

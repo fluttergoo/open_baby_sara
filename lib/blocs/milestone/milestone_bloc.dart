@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/locator.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/models/milestones_model.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/services/local_database/milestone_service.dart';
+import 'package:open_baby_sara/data/repositories/locator.dart';
+import 'package:open_baby_sara/data/models/milestones_model.dart';
+import 'package:open_baby_sara/data/services/local_database/milestone_service.dart';
 import 'package:meta/meta.dart';
 
 part 'milestone_event.dart';

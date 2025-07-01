@@ -6,10 +6,10 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/services/local_database/local_database_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:flutter_sara_baby_tracker_and_sound/main.dart';
+import 'package:open_baby_sara/data/services/local_database/local_database_service.dart';
+import 'package:open_baby_sara/main.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {

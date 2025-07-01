@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/models/recipe_model.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/recipe_repository.dart';
+import 'package:open_baby_sara/data/models/recipe_model.dart';
+import 'package:open_baby_sara/data/repositories/recipe_repository.dart';
 
 class RecipeRepositoryImpl extends RecipeRepository{
   @override

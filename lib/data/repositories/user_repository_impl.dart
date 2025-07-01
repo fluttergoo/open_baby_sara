@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/models/invite_model.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/models/user_model.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/user_repository.dart';
+import 'package:open_baby_sara/data/models/invite_model.dart';
+import 'package:open_baby_sara/data/models/user_model.dart';
+import 'package:open_baby_sara/data/repositories/user_repository.dart';
 
 class UserRepositoryImpl implements UserRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
