@@ -1,3 +1,4 @@
+
 .idea
 .dart_tool
 *.iml
@@ -15,6 +16,7 @@
 .externalNativeBuild
 .cxx
 local.properties
+
 # Firebase
 google-services.json
 GoogleService-Info.plist
@@ -22,3 +24,15 @@ GoogleService-Info.plist
 firebase.json
 .firebaserc
 firebase.flutter.js
+
+# iOS
+ios/Flutter/Generated.xcconfig
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/ephemeral/
+ios/Runner/GoogleService-Info.plist
+
+# Android
+android/.gradle/
+android/app/google-services.json
+android/local.properties
