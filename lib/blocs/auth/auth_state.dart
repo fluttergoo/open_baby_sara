@@ -34,10 +34,16 @@ class PasswordChanged extends AuthState {
 
   PasswordChanged(this.message);
 }
-class UserDeleted extends AuthState{}
+
+class UserDeleted extends AuthState {}
+
 class ForgotPasswordSuccess extends AuthState {}
 
 class ForgotPasswordFailure extends AuthState {
   final String error;
   ForgotPasswordFailure(this.error);
+}
+
+class GoogleSignInNewUserAuthenticated extends Authenticated {
+  GoogleSignInNewUserAuthenticated({required super.userModel});
 }

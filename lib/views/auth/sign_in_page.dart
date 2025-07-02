@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_baby_sara/app/routes/app_router.dart';
 import 'package:open_baby_sara/blocs/auth/auth_bloc.dart';
+import 'package:open_baby_sara/views/auth/baby_sign_up_page.dart';
 import 'package:open_baby_sara/views/auth/sign_up_page.dart';
 import 'package:open_baby_sara/widgets/custom_show_flush_bar.dart';
 import 'package:open_baby_sara/widgets/custom_text_form_field.dart';
@@ -31,6 +32,10 @@ class _SignInPageState extends State<SignInPage> {
     }
   }
 
+  void _onSignInWithGooglePressed(BuildContext context) {
+    context.read<AuthBloc>().add(SignInWithGoogleRequested());
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -39,8 +44,14 @@ class _SignInPageState extends State<SignInPage> {
       resizeToAvoidBottomInset: false,
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
-          if (state is Authenticated) {
+          if (state is GoogleSignInNewUserAuthenticated) {
+            Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (context) => BabySignUpPage()));
+            return;
+          }
 
+          if (state is Authenticated) {
             showCustomFlushbar(
               context,
               context.tr('welcome_back'),
@@ -90,7 +101,9 @@ class _SignInPageState extends State<SignInPage> {
                   Align(
                     alignment: Alignment.center,
                     child: SingleChildScrollView(
-                      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                      padding: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).viewInsets.bottom,
+                      ),
 
                       child: Center(
                         child: Column(
@@ -131,8 +144,10 @@ class _SignInPageState extends State<SignInPage> {
                                       SizedBox(height: 20.h),
 
                                       // TODO: sign in with Google...
-                                      /*ElevatedButton(
-                                        onPressed: () {},
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          _onSignInWithGooglePressed(context);
+                                        },
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.white,
                                           minimumSize: Size(
@@ -144,8 +159,8 @@ class _SignInPageState extends State<SignInPage> {
                                               12.r,
                                             ),
                                           ),
-                                        ),*/
-                                      /*child: Row(
+                                        ),
+                                        child: Row(
                                           children: [
                                             Image.asset(
                                               'assets/images/google.png',
@@ -163,8 +178,8 @@ class _SignInPageState extends State<SignInPage> {
                                             ),
                                           ],
                                         ),
-                                      ),*/
-                                      /*  SizedBox(height: 10.h),
+                                      ),
+                                      SizedBox(height: 10.h),
                                       Row(
                                         children: [
                                           Expanded(
@@ -193,7 +208,7 @@ class _SignInPageState extends State<SignInPage> {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(height: 10.h),*/
+                                      SizedBox(height: 10.h),
                                       Form(
                                         key: _formKey,
                                         child: Column(
