@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,6 +12,7 @@ import 'package:flutter_sara_baby_tracker_and_sound/data/models/baby_model.dart'
 import 'package:flutter_sara_baby_tracker_and_sound/data/models/invite_model.dart';
 import 'package:flutter_sara_baby_tracker_and_sound/views/onboarding/welcome_page.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -288,7 +291,9 @@ class _AccountPageState extends State<AccountPage> {
                                         color: Theme.of(context).primaryColor,
                                       ),
                                       title: Text(
-                                        context.tr('you_have_not_added_any_caregivers_yet'),
+                                        context.tr(
+                                          'you_have_not_added_any_caregivers_yet',
+                                        ),
                                         style: Theme.of(context)
                                             .textTheme
                                             .titleMedium
@@ -314,14 +319,18 @@ class _AccountPageState extends State<AccountPage> {
                                   leading: Icon(Icons.settings_outlined),
                                   title: Text(
                                     context.tr('my_account'),
-                                    style:
-                                        Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 16.sp),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(fontSize: 16.sp),
                                   ),
                                   trailing: Icon(
                                     Icons.keyboard_arrow_right_outlined,
                                   ),
                                   onTap: () {
-                                    Navigator.of(context).pushNamed(AppRoutes.myAccount);
+                                    Navigator.of(
+                                      context,
+                                    ).pushNamed(AppRoutes.myAccount);
                                   },
                                 ),
 
@@ -335,18 +344,26 @@ class _AccountPageState extends State<AccountPage> {
                                 ListTile(
                                   leading: Icon(Icons.share_outlined),
                                   title: Text(
-                                    context.tr('share_sara_baby_with_your_friends'),
-                                    style:
-                                        Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 16.sp),
+                                    context.tr(
+                                      'share_sara_baby_with_your_friends',
+                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(fontSize: 16.sp),
                                   ),
                                   onTap: () {},
                                 ),
                                 ListTile(
                                   leading: Icon(Icons.star_border_outlined),
                                   title: Text(
-                                    context.tr('rate_sara_baby_on_the_app_store'),style: Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 16.sp),
+                                    context.tr('rate_sara_baby'),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(fontSize: 16.sp),
                                   ),
-                                  onTap: () {},
+                                  onTap: () => _showRatingDialog(),
                                 ),
                                 ListTile(
                                   leading: Icon(
@@ -355,7 +372,10 @@ class _AccountPageState extends State<AccountPage> {
                                   ),
                                   title: Text(
                                     context.tr('log_out'),
-                                    style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.red),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(color: Colors.red),
                                   ),
                                   onTap: () {
                                     _onPressedSignOut();
@@ -407,14 +427,17 @@ class _AccountPageState extends State<AccountPage> {
         leading: Icon(icon, color: Theme.of(context).primaryColor),
         title: Text(
           title,
-          style:Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900, fontSize: 16.sp),
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w900,
+            fontSize: 16.sp,
+          ),
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.settings_outlined, size: 16.sp,),
+            Icon(Icons.settings_outlined, size: 16.sp),
             SizedBox(width: 4),
-            Text(trailingText, style: Theme.of(context).textTheme.titleSmall,),
+            Text(trailingText, style: Theme.of(context).textTheme.titleSmall),
           ],
         ),
         onTap: onTap,
@@ -424,6 +447,55 @@ class _AccountPageState extends State<AccountPage> {
 
   void _onPressedSignOut() {
     context.read<AuthBloc>().add(SignOut());
+  }
+
+  /// Show the rating dialog
+  void _showRatingDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(context.tr('rate_dialog_title')),
+          content: Text(context.tr('rate_dialog_content')),
+          actions: <Widget>[
+            TextButton(
+              child: Text(context.tr('rate_dialog_cancel')),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text(context.tr('rate_dialog_confirm')),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _launchStore();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Launch the store to rate the app
+  void _launchStore() async {
+    const String androidUrl =
+        'https://play.google.com/store/apps/details?id=com.suleymansurucu.sarababy';
+    const String iosUrl =
+        'https://apps.apple.com/us/app/sara-baby-tracker-sounds/id6746516938';
+
+    String url = '';
+    if (Platform.isAndroid) {
+      url = androidUrl;
+    } else if (Platform.isIOS) {
+      url = iosUrl;
+    }
+
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    } else {
+      // Handle error
+    }
   }
 
   /// Converts the input [string] so that the first letter is uppercase

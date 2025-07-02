@@ -1,0 +1,60 @@
+
+# Flutter Project Rules
+
+## Context: Overall Project Structure and Conventions
+
+### Rule: BLoC Pattern Enforcement
+- **Description:** All new features requiring state management must implement the BLoC pattern.
+- **Rationale:** Maintains consistent state management across the application.
+- **Enforcement:** New BLoC-related files should follow the `feature_bloc.dart`, `feature_event.dart`, `feature_state.dart` naming convention and be placed in `lib/blocs/`.
+
+### Rule: Dependency Injection
+- **Description:** Use `get_it` for dependency injection of repositories and services.
+- **Rationale:** Centralizes dependency management and improves testability.
+- **Enforcement:** All new services and repositories must be registered in `lib/data/repositories/locator.dart`.
+
+### Rule: File Naming Conventions
+- **Description:** Adhere strictly to `snake_case` for all file names.
+- **Rationale:** Maintains a clean and predictable file structure.
+- **Enforcement:** All new Dart files should be named in `snake_case` (e.g., `my_new_feature.dart`).
+
+### Rule: Code Formatting
+- **Description:** Ensure all Dart code adheres to the official Dart style guide and is formatted using `dart format`.
+- **Rationale:** Promotes consistent code readability and maintainability.
+- **Enforcement:** Run `dart format .` before committing any changes.
+
+### Rule: Error Handling
+- **Description:** Implement robust error handling using `try-catch` blocks for all asynchronous operations.
+- **Rationale:** Enhances application stability and provides better user feedback.
+- **Enforcement:** All asynchronous operations (e.g., network requests, database interactions) must include `try-catch` blocks, and errors should be propagated through BLoC states to inform the UI.
+
+## Context: UI Layer (lib/views, lib/widgets)
+
+### Rule: UI Component Organization
+- **Description:** Place full-page UI components in `lib/views/` and reusable, smaller UI widgets in `lib/widgets/`.
+- **Rationale:** Ensures a clear separation of concerns and promotes UI reusability.
+- **Enforcement:** New screens should go into `lib/views/` and new reusable components into `lib/widgets/`.
+
+### Rule: Styling and Theming Consistency
+- **Description:** Always use `flutter_screenutil` for responsive sizing and utilize `lib/core/app_colors.dart` and `lib/app/theme/app_themes.dart` for all color and typography definitions.
+- **Rationale:** Guarantees a consistent visual design and adapts well to various screen sizes.
+- **Enforcement:** Avoid hardcoding dimensions or colors; always refer to `flutter_screenutil` for sizing and the defined theme/color files.
+
+### Rule: Internationalization Best Practices
+- **Description:** All user-facing strings must be localized using `easy_localization`.
+- **Rationale:** Supports multiple languages and simplifies future localization efforts.
+- **Enforcement:** Use `context.tr('your_string_key')` for all displayable text. Ensure new string keys are added to `lib/l10n/`.
+
+## Context: Data Layer (lib/data)
+
+### Rule: Data Layer Separation
+- **Description:** Separate data access logic into dedicated service classes within `lib/data/services/` (Firebase or local database specific).
+- **Rationale:** Encapsulates data operations and keeps business logic clean.
+- **Enforcement:** Direct Firebase or SQLite calls should be encapsulated within service classes, not directly in repositories or BLoCs.
+
+## Context: Documentation and Comments
+
+### Rule: Comments
+- **Description:** Add comments sparingly, focusing on *why* a piece of code exists or *why* a particular design choice was made, rather than simply restating *what* the code does.
+- **Rationale:** Improves long-term maintainability and understanding for developers.
+- **Enforcement:** Review comments for clarity and conciseness, ensuring they add value beyond what the code itself conveys.

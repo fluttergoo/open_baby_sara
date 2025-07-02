@@ -222,7 +222,11 @@
   "my_account": "Мой аккаунт",
   "share_and_more": "Поделиться и другое",
   "share_sara_baby_with_your_friends": "Поделитесь Sara Baby с друзьями",
-  "rate_sara_baby_on_the_app_store": "Оцените Sara Baby в App Store",
+  "rate_sara_baby": "Оцените Sara Baby",
+  "rate_dialog_title": "Оцените Sara Baby",
+  "rate_dialog_content": "Вы будете перенаправлены в магазин приложений для оценки нашего приложения. Спасибо за вашу поддержку!",
+  "rate_dialog_confirm": "Продолжить",
+  "rate_dialog_cancel": "Отмена",
   "log_out": "Выйти",
   "tap_to_upload_your_baby_photo": "Нажмите, чтобы загрузить фото малыша",
   "first_name:": "Имя:",
@@ -704,5 +708,4 @@
   "Tooth erupted": "Зуб прорезался",
   "Tooth shed": "Зуб выпал",
   "Teething activity": "Прорезывание зубов"
-
 }
