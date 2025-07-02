@@ -28,6 +28,7 @@ import 'package:open_baby_sara/blocs/recipe/recipe_bloc.dart';
 import 'package:open_baby_sara/blocs/sound_relaxing/sound_relaxing_bloc.dart';
 import 'package:open_baby_sara/blocs/theme/theme_bloc.dart';
 import 'package:open_baby_sara/blocs/vaccination/vaccination_bloc.dart';
+import 'package:open_baby_sara/core/constant/locale_constants.dart';
 import 'package:open_baby_sara/data/repositories/locator.dart';
 import 'package:open_baby_sara/views/onboarding/welcome_page.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -43,19 +44,7 @@ void main() async {
 
   runApp(
     EasyLocalization(
-      supportedLocales: [
-        Locale('en', 'US'),
-        Locale('tr', 'TR'),
-        Locale('de', 'DE'),
-        Locale('es', 'ES'),
-        Locale('fr', 'FR'),
-        Locale('ar', 'SA'),
-        Locale('zh', 'CN'),
-        Locale('nl', 'NL'),
-        Locale('ru', 'RU'),
-        Locale('ko', 'KR'),
-        Locale('zh', 'TW'),
-      ],
+      supportedLocales: supportedLocales.map((item) => item.locale).toList(),
       path: 'lib/l10n',
       fallbackLocale: Locale('en', 'US'),
       child: ScreenUtilInit(
