@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:open_baby_sara/data/models/invite_model.dart';
 import 'package:open_baby_sara/data/models/user_model.dart';
 import 'package:open_baby_sara/data/repositories/user_repository.dart';
@@ -7,6 +8,7 @@ import 'package:open_baby_sara/data/repositories/user_repository.dart';
 class UserRepositoryImpl implements UserRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final _google = GoogleSignIn.instance;
 
   @override
   Future<void> createUserInFireStore(UserModel user) async {
@@ -30,7 +32,9 @@ class UserRepositoryImpl implements UserRepository {
       if (doc.exists && doc.data() != null) {
         return UserModel.fromMap(doc.data()!);
       } else {
-        print('Firestore document does not exist or has no data for user: ${user.uid}');
+        print(
+          'Firestore document does not exist or has no data for user: ${user.uid}',
+        );
         return null;
       }
     }
@@ -85,5 +89,17 @@ class UserRepositoryImpl implements UserRepository {
     } catch (e) {
       throw Exception(e.toString());
     }
+  }
+
+  @override
+  Future<void> signInWithGoogle() async {
+    await _google.initialize();
+    final user = await _google.authenticate();
+    final googleAuth = user.authentication;
+    final OAuthCredential credential = GoogleAuthProvider.credential(
+      idToken: googleAuth.idToken,
+    );
+
+    await FirebaseAuth.instance.signInWithCredential(credential);
   }
 }
