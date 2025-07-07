@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:open_baby_sara/core/constant/locale_constants.dart';
 
 class LanguageSettingsPage extends StatelessWidget {
   const LanguageSettingsPage({super.key});
@@ -66,7 +67,7 @@ class LanguageSettingsPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-                     Text(
+                    Text(
                       context.tr('language_selection'),
                       style: TextStyle(
                         fontSize: 28,
@@ -99,18 +100,18 @@ class LanguageSettingsPage extends StatelessWidget {
                   ),
                   child: ListView(
                     padding: const EdgeInsets.only(top: 24, bottom: 24),
-                    children: [
-                      _buildLanguageTile(context, 'English', '🇺🇸', const Locale('en', 'US'), currentLocale),
-                      _buildLanguageTile(context, 'Türkçe', '🇹🇷', const Locale('tr', 'TR'), currentLocale),
-                      _buildLanguageTile(context, 'Deutsch', '🇩🇪', const Locale('de', 'DE'), currentLocale),
-                      _buildLanguageTile(context, 'Español', '🇪🇸', const Locale('es', 'ES'), currentLocale),
-                      _buildLanguageTile(context, 'Français', '🇫🇷', const Locale('fr', 'FR'), currentLocale),
-                      _buildLanguageTile(context, 'العربية', '🇸🇦', const Locale('ar', 'SA'), currentLocale),
-                      _buildLanguageTile(context, '中文', '🇨🇳', const Locale('zh', 'TW'), currentLocale),
-                      _buildLanguageTile(context, 'Nederlands', '🇳🇱', const Locale('nl', 'NL'), currentLocale),
-                      _buildLanguageTile(context, 'Русский', '🇷🇺', const Locale('ru', 'RU'), currentLocale),
-                      _buildLanguageTile(context, '한국어', '🇰🇷', const Locale('ko', 'KR'), currentLocale),
-                    ],
+                    children:
+                        supportedLocales
+                            .map(
+                              (item) => _buildLanguageTile(
+                                context,
+                                item.name,
+                                item.flag,
+                                item.locale,
+                                currentLocale,
+                              ),
+                            )
+                            .toList(),
                   ),
                 ),
               ),
@@ -121,7 +122,13 @@ class LanguageSettingsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildLanguageTile(BuildContext context, String title, String flag, Locale locale, Locale currentLocale) {
+  Widget _buildLanguageTile(
+    BuildContext context,
+    String title,
+    String flag,
+    Locale locale,
+    Locale currentLocale,
+  ) {
     final isSelected = locale == currentLocale;
 
     return Container(
@@ -161,14 +168,16 @@ class LanguageSettingsPage extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             decoration: BoxDecoration(
-              color: isSelected
-                  ? const Color(0xFF667eea).withOpacity(0.1)
-                  : Colors.grey.withOpacity(0.05),
+              color:
+                  isSelected
+                      ? const Color(0xFF667eea).withOpacity(0.1)
+                      : Colors.grey.withOpacity(0.05),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: isSelected
-                    ? const Color(0xFF667eea).withOpacity(0.3)
-                    : Colors.transparent,
+                color:
+                    isSelected
+                        ? const Color(0xFF667eea).withOpacity(0.3)
+                        : Colors.transparent,
                 width: 2,
               ),
             ),
@@ -183,10 +192,7 @@ class LanguageSettingsPage extends StatelessWidget {
                     color: Colors.grey.withOpacity(0.1),
                   ),
                   child: Center(
-                    child: Text(
-                      flag,
-                      style: const TextStyle(fontSize: 20),
-                    ),
+                    child: Text(flag, style: const TextStyle(fontSize: 20)),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -197,10 +203,10 @@ class LanguageSettingsPage extends StatelessWidget {
                     title,
                     style: TextStyle(
                       fontSize: 16,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                      color: isSelected
-                          ? const Color(0xFF667eea)
-                          : Colors.black87,
+                      fontWeight:
+                          isSelected ? FontWeight.w600 : FontWeight.w400,
+                      color:
+                          isSelected ? const Color(0xFF667eea) : Colors.black87,
                     ),
                   ),
                 ),
