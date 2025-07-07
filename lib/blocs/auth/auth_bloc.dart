@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:open_baby_sara/core/constant/message_constants.dart';
 import 'package:open_baby_sara/data/repositories/locator.dart';
 import 'package:open_baby_sara/data/models/invite_model.dart';
@@ -29,13 +30,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         event.password,
       );
       if (user != null) {
-        final userModel = UserModel(
+        final userModel = UserModel.create(
           userID: user.uid,
           email: event.email,
-          parentID: Uuid().v4(),
           firstName: event.firstname,
-          caregivers: [],
-          createdAt: DateTime.now(),
         );
         await _userRepository.createUserInFireStore(userModel);
         emit(Authenticated(userModel: userModel));
@@ -75,13 +73,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(Unauthenticated());
       }
     });
-    UserModel? _lastEmittedUser;
+    UserModel? lastEmittedUser;
     on<GetUserModel>((event, emit) async {
       emit(AuthLoading());
       final userModel = await _userRepository.getCurrentUser();
       if (userModel != null) {
-        if (userModel.userID != _lastEmittedUser?.userID) {
-          _lastEmittedUser = userModel;
+        if (userModel.userID != lastEmittedUser?.userID) {
+          lastEmittedUser = userModel;
           emit(Authenticated(userModel: userModel));
         }
       } else {
@@ -102,7 +100,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
 
-    on<DeleteUser>((event, emit) async{
+    on<DeleteUser>((event, emit) async {
       emit(AuthLoading());
       try {
         await _userRepository.deleteUser();
@@ -112,13 +110,43 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
 
-    on<ForgotPasswordUser>((event, emit)async{
+    on<ForgotPasswordUser>((event, emit) async {
       emit(AuthLoading());
-      try{
+      try {
         await _userRepository.forgotPassword(event.email);
         emit(ForgotPasswordSuccess());
-      }catch (e){
+      } catch (e) {
         emit(AuthFailure('Error $e'));
+      }
+    });
+    on<SignInWithGoogleRequested>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        await _userRepository.signInWithGoogle();
+        await Future.delayed(Duration(milliseconds: 300));
+        final user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          await Future.delayed(Duration(milliseconds: 300));
+          final userModel = await _userRepository.getCurrentUser();
+
+          if (userModel != null) {
+            emit(Authenticated(userModel: userModel));
+          } else {
+            final userModel = UserModel.create(
+              userID: user.uid,
+              email: user.email!,
+              firstName: user.displayName!,
+            );
+            await _userRepository.createUserInFireStore(userModel);
+            emit(GoogleSignInNewUserAuthenticated(userModel: userModel));
+          }
+        } else {
+          emit(AuthFailure('User not found'));
+        }
+      } on GoogleSignInException catch (e) {
+        emit(AuthFailure(e.description ?? "Unexpected error"));
+      } catch (e) {
+        emit(AuthFailure('Error ${e.toString()}'));
       }
     });
   }
