@@ -8,6 +8,7 @@ import 'package:open_baby_sara/data/repositories/locator.dart';
 import 'package:open_baby_sara/data/models/activity_model.dart';
 import 'package:open_baby_sara/data/repositories/activity_reposityory.dart';
 import 'package:meta/meta.dart';
+import 'package:open_baby_sara/data/services/firebase/analytics_service.dart';
 
 part 'activity_event.dart';
 
@@ -21,6 +22,7 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
     on<AddActivity>((event, emit) {
       try {
         _activityRepository.saveLocallyActivity(event.activityModel);
+        getIt<AnalyticsService>().logActivitySaved(event.activityModel.babyID, event.activityModel.activityType);
         emit(ActivityAdded());
       } catch (e) {
         emit(ActivityError(e.toString()));

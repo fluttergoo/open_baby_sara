@@ -14,6 +14,8 @@ import 'package:open_baby_sara/blocs/all_timer/pump_total_timer/pump_total_timer
     as pumpTotal;
 import 'package:open_baby_sara/core/app_colors.dart';
 import 'package:open_baby_sara/data/models/activity_model.dart';
+import 'package:open_baby_sara/data/repositories/locator.dart';
+import 'package:open_baby_sara/data/services/firebase/analytics_service.dart';
 import 'package:open_baby_sara/widgets/all_timers/pump_left_side_timer.dart';
 import 'package:open_baby_sara/widgets/all_timers/pump_right_side_timer.dart';
 import 'package:open_baby_sara/widgets/all_timers/pump_total_timer.dart';
@@ -105,6 +107,8 @@ class _CustomPumpTrackerBottomSheetState
         _tabController.index = 1;
       }
     }
+    getIt<AnalyticsService>().logScreenView('PumpActivityTracker');
+
   }
 
   DateTime? _fromHourMinute(int? hour, int? min) {

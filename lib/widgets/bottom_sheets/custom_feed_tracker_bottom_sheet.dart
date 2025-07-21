@@ -10,6 +10,8 @@ import 'package:open_baby_sara/blocs/all_timer/breastfeed_right_side_timer/breas
     as rightBreastfeed;
 import 'package:open_baby_sara/core/app_colors.dart';
 import 'package:open_baby_sara/data/models/activity_model.dart';
+import 'package:open_baby_sara/data/repositories/locator.dart';
+import 'package:open_baby_sara/data/services/firebase/analytics_service.dart';
 import 'package:open_baby_sara/widgets/all_timers/breastfeed_left_side_timer.dart';
 import 'package:open_baby_sara/widgets/all_timers/breastfeed_right_side_timer.dart';
 import 'package:open_baby_sara/widgets/build_custom_snack_bar.dart';
@@ -104,6 +106,8 @@ class _CustomFeedTrackerBottomSheetState
     }
 
     super.initState();
+    getIt<AnalyticsService>().logScreenView('FeedActivityTracker');
+
   }
   DateTime _buildTime(Map<String, dynamic> data, String hourKey, String minKey) {
     final now = DateTime.now();
