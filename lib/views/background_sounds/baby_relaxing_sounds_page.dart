@@ -8,6 +8,7 @@ import 'package:open_baby_sara/core/constant/sounds_constants.dart';
 import 'package:open_baby_sara/data/repositories/locator.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:open_baby_sara/data/services/firebase/analytics_service.dart';
 
 class BabyRelaxingSoundsPage extends StatefulWidget {
   const BabyRelaxingSoundsPage({super.key});
@@ -43,6 +44,8 @@ class _BabyRelaxingSoundsPageState extends State<BabyRelaxingSoundsPage> {
           sounds[index].isPlaying = 1;
           _currentPlayingIndex = index;
         });
+        getIt<AnalyticsService>().logSoundsView(sounds[index].title);
+
       }
     } catch (e) {
       print('🔴 Error: $e');

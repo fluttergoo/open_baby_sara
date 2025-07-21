@@ -2,6 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_baby_sara/data/models/activity_model.dart';
+import 'package:open_baby_sara/data/repositories/locator.dart';
+import 'package:open_baby_sara/data/services/firebase/analytics_service.dart';
 import 'package:open_baby_sara/widgets/custom_bottom_sheet_header.dart';
 import 'package:open_baby_sara/widgets/custom_show_flush_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -72,6 +74,8 @@ class _CustomDoctorVisitTrackerBottomSheetState
       diagnosisController.text = data['diagnosis'] ?? '';
       notesController.text = data['notes'] ?? '';
     }
+    getIt<AnalyticsService>().logScreenView('DoctorVisitActivityTracker');
+
   }
 
   @override

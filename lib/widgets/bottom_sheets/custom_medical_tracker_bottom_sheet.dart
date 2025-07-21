@@ -7,6 +7,8 @@ import 'package:open_baby_sara/blocs/medication/medication_bloc.dart';
 import 'package:open_baby_sara/core/app_colors.dart';
 import 'package:open_baby_sara/data/models/activity_model.dart';
 import 'package:open_baby_sara/data/models/medication_model.dart';
+import 'package:open_baby_sara/data/repositories/locator.dart';
+import 'package:open_baby_sara/data/services/firebase/analytics_service.dart';
 import 'package:open_baby_sara/widgets/custom_bottom_sheet_header.dart';
 import 'package:open_baby_sara/widgets/custom_date_time_picker.dart';
 import 'package:open_baby_sara/widgets/custom_show_flush_bar.dart';
@@ -62,6 +64,8 @@ class _CustomMedicalTrackerBottomSheetState
                 .toList();
       }
     }
+    getIt<AnalyticsService>().logScreenView('MedicalActivityTracker');
+
   }
 
   @override

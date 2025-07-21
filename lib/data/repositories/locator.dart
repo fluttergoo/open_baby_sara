@@ -19,6 +19,8 @@ import 'package:open_baby_sara/data/repositories/vaccination_repository.dart';
 import 'package:open_baby_sara/data/repositories/vaccination_repository_impl.dart';
 import 'package:open_baby_sara/data/services/firebase/activity_service.dart';
 import 'package:open_baby_sara/data/services/firebase/activity_service_impl.dart';
+import 'package:open_baby_sara/data/services/firebase/analytics_service.dart';
+import 'package:open_baby_sara/data/services/firebase/analytics_service_impl.dart';
 import 'package:open_baby_sara/data/services/firebase/auth_service.dart';
 import 'package:open_baby_sara/data/services/local_database/milestone_service.dart';
 import 'package:open_baby_sara/data/services/local_database/milestone_service_impl.dart';
@@ -51,5 +53,6 @@ Future<void> setupLocator() async {
 
   getIt.registerLazySingleton<AudioPlayer>(() => AudioPlayer());
   getIt.registerLazySingleton<RecipeRepository>(() => RecipeRepositoryImpl());
+  getIt.registerLazySingleton<AnalyticsService>(()=>AnalyticsServiceImpl());
 
 }
