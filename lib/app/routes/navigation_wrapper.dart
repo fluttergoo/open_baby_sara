@@ -5,8 +5,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_baby_sara/blocs/activity/activity_bloc.dart';
 import 'package:open_baby_sara/blocs/baby/baby_bloc.dart';
 import 'package:open_baby_sara/blocs/bottom_nav/bottom_nav_bloc.dart';
+import 'package:open_baby_sara/core/utils/check_for_update.dart';
 import 'package:open_baby_sara/data/repositories/locator.dart';
 import 'package:open_baby_sara/data/services/firebase/analytics_service.dart';
+import 'package:open_baby_sara/data/services/firebase/update_service.dart';
 import 'package:open_baby_sara/views/account/account_page.dart';
 import 'package:open_baby_sara/views/activities/activity_page.dart';
 import 'package:open_baby_sara/views/history/history_page.dart';
@@ -27,7 +29,7 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
   void initState() {
     super.initState();
     getIt<AnalyticsService>().logScreenView('ActivityPage');
-
+    checkAppUpdate(context);
   }
 
   @override
