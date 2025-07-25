@@ -703,5 +703,21 @@
   "tooth_85": "Unterer rechter zweiter Molar",
   "Tooth erupted": "Zahn ausgebrochen",
   "Tooth shed": "Zahn ausgefallen",
-  "Teething activity": "Zahnen Aktivität"
+  "Teething activity": "Zahnen Aktivität",
+  "White Noise": "Weißes Rauschen",
+  "Rain": "Regen",
+  "Heartbeat": "Herzschlag",
+  "Shushing": "Schhh-Geräusch",
+  "Ocean Waves": "Meeresrauschen",
+  "Forest Birds": "Waldvögel",
+  "Lullaby": "Wiegenlied",
+  "Fan": "Ventilator",
+  "new_update_available": "Neues Update verfügbar!",
+  "good_news_a_newer": "Gute Nachrichten! Eine neuere, bessere Version der App ist bereit für dich.",
+  "whats_new:": "Was ist neu:",
+  "performance_improvements": "- Leistungsverbesserungen\n- Fehlerbehebungen für eine reibungslosere Nutzung\n- Spannende neue Funktionen (Details in den Update-Hinweisen)",
+  "current_version:":"Aktuelle Version:",
+  "latest_version:": "Neueste Version:",
+  "update_now": "Jetzt aktualisieren",
+  "maybe_later": "Vielleicht später"
 }

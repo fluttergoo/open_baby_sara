@@ -703,5 +703,21 @@
   "tooth_85": "오른쪽 아래 두 번째 어금니",
   "Tooth erupted": "이빨이 나옴",
   "Tooth shed": "이빨이 빠짐",
-  "Teething activity": "이빨 나기 활동"
+  "Teething activity": "이빨 나기 활동",
+  "White Noise": "백색 소음",
+  "Rain": "비",
+  "Heartbeat": "심장 박동",
+  "Shushing": "쉬 소리",
+  "Ocean Waves": "파도 소리",
+  "Forest Birds": "숲 속 새소리",
+  "Lullaby": "자장가",
+  "Fan": "선풍기",
+  "new_update_available": "새로운 업데이트 이용 가능!",
+  "good_news_a_newer": "좋은 소식입니다! 앱의 더 새롭고 향상된 버전이 준비되었습니다.",
+  "whats_new:": "새로운 기능:",
+  "performance_improvements": "- 성능 개선\n- 더 부드러운 사용을 위한 버그 수정\n- 흥미로운 새 기능 (자세한 내용은 업데이트 노트 참조)",
+  "current_version:":"현재 버전:",
+  "latest_version:": "최신 버전:",
+  "update_now": "지금 업데이트",
+  "maybe_later": "나중에"
 }

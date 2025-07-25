@@ -703,5 +703,21 @@
   "tooth_85": "Deuxième molaire inférieure droite",
   "Tooth erupted": "Dent éruptée",
   "Tooth shed": "Dent tombée",
-  "Teething activity": "Activité de poussée dentaire"
+  "Teething activity": "Activité de poussée dentaire",
+  "White Noise": "Bruit Blanc",
+  "Rain": "Pluie",
+  "Heartbeat": "Battement de Cœur",
+  "Shushing": "Chuchotement",
+  "Ocean Waves": "Vagues de l'Océan",
+  "Forest Birds": "Oiseaux de la Forêt",
+  "Lullaby": "Berceuse",
+  "Fan": "Ventilateur",
+  "new_update_available": "Nouvelle Mise à Jour Disponible !",
+  "good_news_a_newer": "Bonne nouvelle ! Une version plus récente et meilleure de l'application est prête pour vous.",
+  "whats_new:": "Quoi de Neuf :",
+  "performance_improvements": "- Améliorations des performances\n- Corrections de bugs pour une expérience plus fluide\n- Nouvelles fonctionnalités passionnantes (détails dans les notes de mise à jour)",
+  "current_version:":"Version Actuelle :",
+  "latest_version:": "Dernière Version :",
+  "update_now": "Mettre à Jour Maintenant",
+  "maybe_later": "Peut-être Plus Tard"
 }

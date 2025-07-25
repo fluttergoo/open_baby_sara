@@ -704,5 +704,21 @@
   "tooth_85": "Molar kedua kanan bawah",
   "Tooth erupted": "Gigi meletus",
   "Tooth shed": "Gudang gigi",
-  "Teething activity": "Aktivitas gigi"
+  "Teething activity": "Aktivitas gigi",
+  "White Noise": "Suara Putih",
+  "Rain": "Hujan",
+  "Heartbeat": "Detak Jantung",
+  "Shushing": "Suara 'Sst'",
+  "Ocean Waves": "Ombak Laut",
+  "Forest Birds": "Burung Hutan",
+  "Lullaby": "Lagu Nina Bobo",
+  "Fan": "Kipas Angin",
+  "new_update_available": "Pembaruan Baru Tersedia!",
+  "good_news_a_newer": "Kabar baik! Versi aplikasi yang lebih baru dan lebih baik siap untuk Anda.",
+  "whats_new:": "Apa yang Baru:",
+  "performance_improvements": "- Peningkatan kinerja\n- Perbaikan bug untuk pengalaman yang lebih lancar\n- Fitur baru yang menarik (detail di catatan pembaruan)",
+  "current_version:":"Versi Saat Ini:",
+  "latest_version:": "Versi Terbaru:",
+  "update_now": "Perbarui Sekarang",
+  "maybe_later": "Mungkin Nanti"
 }
