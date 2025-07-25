@@ -40,14 +40,19 @@
 
         signingConfigs {
             create("release") {
-                val keystoreProperties = Properties().apply {
-                    load(FileInputStream(rootProject.file("key.properties")))
-                }
+                val keystoreFile = rootProject.file("key.properties")
+                if (keystoreFile.exists()) {
+                    val keystoreProperties = Properties().apply {
+                        load(FileInputStream(keystoreFile))
+                    }
 
-                keyAlias = keystoreProperties["keyAlias"] as String
-                keyPassword = keystoreProperties["keyPassword"] as String
-                storeFile = rootProject.file(keystoreProperties["storeFile"] as String)
-                storePassword = keystoreProperties["storePassword"] as String
+                    keyAlias = keystoreProperties["keyAlias"] as String
+                    keyPassword = keystoreProperties["keyPassword"] as String
+                    storeFile = rootProject.file(keystoreProperties["storeFile"] as String)
+                    storePassword = keystoreProperties["storePassword"] as String
+                } else {
+                    println("⚠️  key.properties not found. Release signing config will be skipped.")
+                }
             }
         }
 
@@ -55,7 +60,9 @@
             getByName("release") {
                 isMinifyEnabled = true
                 isShrinkResources = true
-                signingConfig = signingConfigs.getByName("release")
+                if (signingConfigs.findByName("release")?.storeFile != null) {
+                    signingConfig = signingConfigs.getByName("release")
+                }
                 proguardFiles(
                     getDefaultProguardFile("proguard-android-optimize.txt"),
                     "proguard-rules.pro"
