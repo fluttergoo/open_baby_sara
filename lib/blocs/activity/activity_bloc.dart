@@ -9,6 +9,7 @@ import 'package:open_baby_sara/data/models/activity_model.dart';
 import 'package:open_baby_sara/data/repositories/activity_reposityory.dart';
 import 'package:meta/meta.dart';
 import 'package:open_baby_sara/data/services/firebase/analytics_service.dart';
+import 'package:open_baby_sara/data/services/review_service.dart';
 
 part 'activity_event.dart';
 
@@ -19,10 +20,11 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
   Timer? _syncTimer;
 
   ActivityBloc() : super(ActivityInitial()) {
-    on<AddActivity>((event, emit) {
+    on<AddActivity>((event, emit) async{
       try {
         _activityRepository.saveLocallyActivity(event.activityModel);
         getIt<AnalyticsService>().logActivitySaved(event.activityModel.babyID, event.activityModel.activityType);
+        await ReviewService().incrementRecordCount();
         emit(ActivityAdded());
       } catch (e) {
         emit(ActivityError(e.toString()));
