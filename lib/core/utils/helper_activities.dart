@@ -101,6 +101,8 @@ String? getLastFeedSummary(List<ActivityModel> activities, BuildContext context)
 }
 
 String? getLastSleepSummary(List<ActivityModel> activities, bool? isRunning, BuildContext context) {
+
+  debugPrint(isRunning.toString());
   if (isRunning == true) {
     return '💤 ${context.tr('your_baby_is_now_sleeping')}';
   } else if (isRunning == false) {
