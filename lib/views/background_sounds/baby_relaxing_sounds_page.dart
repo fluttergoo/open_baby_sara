@@ -139,7 +139,8 @@ class _BabyRelaxingSoundsPageState extends State<BabyRelaxingSoundsPage> {
               contentPadding: EdgeInsets.zero,
               leading: Image.asset(sound.iconAssetPath, width: 40.w, height: 40.h),
               title: Text(
-                sound.title,
+                context.tr(sound.title,),
+
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: Theme.of(context).primaryColor,
                 ),
