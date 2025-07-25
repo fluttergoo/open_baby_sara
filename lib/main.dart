@@ -30,6 +30,7 @@ import 'package:open_baby_sara/blocs/theme/theme_bloc.dart';
 import 'package:open_baby_sara/blocs/vaccination/vaccination_bloc.dart';
 import 'package:open_baby_sara/core/constant/locale_constants.dart';
 import 'package:open_baby_sara/data/repositories/locator.dart';
+import 'package:open_baby_sara/data/services/review_service.dart';
 import 'package:open_baby_sara/views/onboarding/welcome_page.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -41,6 +42,7 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   await setupLocator();
+  await ReviewService().checkIfShouldRequestReview();
 
   runApp(
     EasyLocalization(
