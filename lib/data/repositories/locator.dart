@@ -1,4 +1,5 @@
 import 'package:audioplayers/audioplayers.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:open_baby_sara/data/repositories/activity_repository_impl.dart';
 import 'package:open_baby_sara/data/repositories/activity_reposityory.dart';
 import 'package:open_baby_sara/data/repositories/baby_repository.dart';
@@ -22,6 +23,7 @@ import 'package:open_baby_sara/data/services/firebase/activity_service_impl.dart
 import 'package:open_baby_sara/data/services/firebase/analytics_service.dart';
 import 'package:open_baby_sara/data/services/firebase/analytics_service_impl.dart';
 import 'package:open_baby_sara/data/services/firebase/auth_service.dart';
+import 'package:open_baby_sara/data/services/firebase/update_service.dart';
 import 'package:open_baby_sara/data/services/local_database/milestone_service.dart';
 import 'package:open_baby_sara/data/services/local_database/milestone_service_impl.dart';
 import 'package:get_it/get_it.dart';
@@ -54,5 +56,12 @@ Future<void> setupLocator() async {
   getIt.registerLazySingleton<AudioPlayer>(() => AudioPlayer());
   getIt.registerLazySingleton<RecipeRepository>(() => RecipeRepositoryImpl());
   getIt.registerLazySingleton<AnalyticsService>(()=>AnalyticsServiceImpl());
+
+  final remoteConfig = FirebaseRemoteConfig.instance;
+
+  final updateService = UpdateService(remoteConfig);
+  await updateService.initialize();
+
+  getIt.registerSingleton<UpdateService>(updateService);
 
 }
