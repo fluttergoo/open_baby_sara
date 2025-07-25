@@ -703,5 +703,21 @@
   "tooth_85": "Sağ Alt İkinci Azı Dişi",
   "Tooth erupted": "Diş çıktı",
   "Tooth shed": "Diş düştü",
-  "Teething activity": "Diş çıkarma aktivitesi"
+  "Teething activity": "Diş çıkarma aktivitesi",
+  "White Noise": "Beyaz Gürültü",
+  "Rain": "Yağmur",
+  "Heartbeat": "Kalp Atışı",
+  "Shushing": "Şşşt Sesi",
+  "Ocean Waves": "Okyanus Dalgaları",
+  "Forest Birds": "Orman Kuşları",
+  "Lullaby": "Ninni",
+  "Fan": "Vantilatör",
+  "new_update_available": "Yeni Güncelleme Mevcut!",
+  "good_news_a_newer": "Harika haber! Uygulamanın daha yeni, daha iyi bir sürümü hazır.",
+  "whats_new:": "Yenilikler:",
+  "performance_improvements": "- Performans iyileştirmeleri\n- Daha akıcı bir deneyim için hata düzeltmeleri\n- Heyecan verici yeni özellikler (detaylar güncelleme notlarında)",
+  "current_version:":"Mevcut Sürüm:",
+  "latest_version:": "Son Sürüm:",
+  "update_now": "Şimdi Güncelle",
+  "maybe_later": "Belki Sonra"
 }

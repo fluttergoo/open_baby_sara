@@ -703,5 +703,21 @@
   "tooth_85": "Segundo molar inferior derecho",
   "Tooth erupted": "Diente erupcionado",
   "Tooth shed": "Diente caído",
-  "Teething activity": "Actividad de dentición"
+  "Teething activity": "Actividad de dentición",
+  "White Noise": "Ruido Blanco",
+  "Rain": "Lluvia",
+  "Heartbeat": "Latido de Corazón",
+  "Shushing": "Sonido de 'Shhh'",
+  "Ocean Waves": "Olas del Océano",
+  "Forest Birds": "Pájaros del Bosque",
+  "Lullaby": "Nana",
+  "Fan": "Ventilador",
+  "new_update_available": "¡Nueva Actualización Disponible!",
+  "good_news_a_newer": "¡Buenas noticias! Hay una versión más nueva y mejor de la app lista para ti.",
+  "whats_new:": "Novedades:",
+  "performance_improvements": "- Mejoras de rendimiento\n- Corrección de errores para una experiencia más fluida\n- Nuevas funciones emocionantes (detalles en las notas de la actualización)",
+  "current_version:":"Versión Actual:",
+  "latest_version:": "Última Versión:",
+  "update_now": "Actualizar Ahora",
+  "maybe_later": "Quizás Más Tarde"
 }
