@@ -17,7 +17,26 @@ Track every precious moment of your baby's growth — sleep, feeding, milestones
 
 ---
 
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/fluttergoo/open_baby_sara) DeepWiki is an AI-powered platform that transforms any public GitHub repository into a fully interactive, easy-to-understand wiki. By analysing code, documentation, and configuration files, it creates clear explanations, interactive diagrams, and even allows for real-time Q&A with the AI.
+## 🧱 High Level Architecture
+The following diagram provides a high-level overview of the system architecture for the Sara: Baby Tracker & Sounds app.
+It illustrates how the mobile app interacts with Firebase services, local storage, and third-party integrations.
+![High Level Architecture](design/HIGH-LEVEL-ARCHITECTURE.png)
+
+---
+
+## 🔄 Activity Log Flow
+
+This sequence diagram illustrates how activities are created, stored locally, and synced with Firestore.
+
+![Activity Log Flow](design/activity_log_flow_sequence_diagram.png)
+
+---
+
+## 👨‍👩‍👧 Caregiver Invite & Registration Flow
+
+This flowchart illustrates how a user can invite a caregiver and how the caregiver joins using the same baby profile.
+
+![Caregiver Flowchart](design/caregiver_invite_flowchart.png)
 
 ---
 
