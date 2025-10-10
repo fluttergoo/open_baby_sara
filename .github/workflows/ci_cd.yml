@@ -188,37 +188,35 @@ jobs:
           if [ ! -f "android/app/google-services.json" ]; then
             echo "⚠️ google-services.json not found, creating minimal version..."
             mkdir -p android/app
-            cat > android/app/google-services.json << 'EOF'
-{
-  "project_info": {
-    "project_number": "123456789",
-    "project_id": "demo-project",
-    "storage_bucket": "demo-project.appspot.com"
-  },
-  "client": [
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:123456789:android:demo",
-        "android_client_info": {
-          "package_name": "com.suleymansurucu.sarababy"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "demo-api-key"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    }
-  ],
-  "configuration_version": "1"
-}
-EOF
+            echo '{' > android/app/google-services.json
+            echo '  "project_info": {' >> android/app/google-services.json
+            echo '    "project_number": "123456789",' >> android/app/google-services.json
+            echo '    "project_id": "demo-project",' >> android/app/google-services.json
+            echo '    "storage_bucket": "demo-project.appspot.com"' >> android/app/google-services.json
+            echo '  },' >> android/app/google-services.json
+            echo '  "client": [' >> android/app/google-services.json
+            echo '    {' >> android/app/google-services.json
+            echo '      "client_info": {' >> android/app/google-services.json
+            echo '        "mobilesdk_app_id": "1:123456789:android:demo",' >> android/app/google-services.json
+            echo '        "android_client_info": {' >> android/app/google-services.json
+            echo '          "package_name": "com.suleymansurucu.sarababy"' >> android/app/google-services.json
+            echo '        }' >> android/app/google-services.json
+            echo '      },' >> android/app/google-services.json
+            echo '      "oauth_client": [],' >> android/app/google-services.json
+            echo '      "api_key": [' >> android/app/google-services.json
+            echo '        {' >> android/app/google-services.json
+            echo '          "current_key": "demo-api-key"' >> android/app/google-services.json
+            echo '        }' >> android/app/google-services.json
+            echo '      ],' >> android/app/google-services.json
+            echo '      "services": {' >> android/app/google-services.json
+            echo '        "appinvite_service": {' >> android/app/google-services.json
+            echo '          "other_platform_oauth_client": []' >> android/app/google-services.json
+            echo '        }' >> android/app/google-services.json
+            echo '      }' >> android/app/google-services.json
+            echo '    }' >> android/app/google-services.json
+            echo '  ],' >> android/app/google-services.json
+            echo '  "configuration_version": "1"' >> android/app/google-services.json
+            echo '}' >> android/app/google-services.json
           fi
 
       - name: Build Development APK
@@ -323,37 +321,35 @@ EOF
           if [ ! -f "android/app/google-services.json" ]; then
             echo "⚠️ google-services.json not found, creating minimal version..."
             mkdir -p android/app
-            cat > android/app/google-services.json << 'EOF'
-{
-  "project_info": {
-    "project_number": "123456789",
-    "project_id": "demo-project",
-    "storage_bucket": "demo-project.appspot.com"
-  },
-  "client": [
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:123456789:android:demo",
-        "android_client_info": {
-          "package_name": "com.suleymansurucu.sarababy"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "demo-api-key"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    }
-  ],
-  "configuration_version": "1"
-}
-EOF
+            echo '{' > android/app/google-services.json
+            echo '  "project_info": {' >> android/app/google-services.json
+            echo '    "project_number": "123456789",' >> android/app/google-services.json
+            echo '    "project_id": "demo-project",' >> android/app/google-services.json
+            echo '    "storage_bucket": "demo-project.appspot.com"' >> android/app/google-services.json
+            echo '  },' >> android/app/google-services.json
+            echo '  "client": [' >> android/app/google-services.json
+            echo '    {' >> android/app/google-services.json
+            echo '      "client_info": {' >> android/app/google-services.json
+            echo '        "mobilesdk_app_id": "1:123456789:android:demo",' >> android/app/google-services.json
+            echo '        "android_client_info": {' >> android/app/google-services.json
+            echo '          "package_name": "com.suleymansurucu.sarababy"' >> android/app/google-services.json
+            echo '        }' >> android/app/google-services.json
+            echo '      },' >> android/app/google-services.json
+            echo '      "oauth_client": [],' >> android/app/google-services.json
+            echo '      "api_key": [' >> android/app/google-services.json
+            echo '        {' >> android/app/google-services.json
+            echo '          "current_key": "demo-api-key"' >> android/app/google-services.json
+            echo '        }' >> android/app/google-services.json
+            echo '      ],' >> android/app/google-services.json
+            echo '      "services": {' >> android/app/google-services.json
+            echo '        "appinvite_service": {' >> android/app/google-services.json
+            echo '          "other_platform_oauth_client": []' >> android/app/google-services.json
+            echo '        }' >> android/app/google-services.json
+            echo '      }' >> android/app/google-services.json
+            echo '    }' >> android/app/google-services.json
+            echo '  ],' >> android/app/google-services.json
+            echo '  "configuration_version": "1"' >> android/app/google-services.json
+            echo '}' >> android/app/google-services.json
           fi
 
       - name: Decode keystore
@@ -471,38 +467,36 @@ EOF
           if [ ! -f "ios/Runner/GoogleService-Info.plist" ]; then
             echo "⚠️ GoogleService-Info.plist not found, creating minimal version..."
             mkdir -p ios/Runner
-            cat > ios/Runner/GoogleService-Info.plist << 'EOF'
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>API_KEY</key>
-	<string>demo-api-key</string>
-	<key>GCM_SENDER_ID</key>
-	<string>123456789</string>
-	<key>PLIST_VERSION</key>
-	<string>1</string>
-	<key>BUNDLE_ID</key>
-	<string>com.suleymansurucu.sarababy</string>
-	<key>PROJECT_ID</key>
-	<string>demo-project</string>
-	<key>STORAGE_BUCKET</key>
-	<string>demo-project.appspot.com</string>
-	<key>IS_ADS_ENABLED</key>
-	<false></false>
-	<key>IS_ANALYTICS_ENABLED</key>
-	<false></false>
-	<key>IS_APPINVITE_ENABLED</key>
-	<true></true>
-	<key>IS_GCM_ENABLED</key>
-	<true></true>
-	<key>IS_SIGNIN_ENABLED</key>
-	<true></true>
-	<key>GOOGLE_APP_ID</key>
-	<string>1:123456789:ios:demo</string>
-</dict>
-</plist>
-EOF
+            echo '<?xml version="1.0" encoding="UTF-8"?>' > ios/Runner/GoogleService-Info.plist
+            echo '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> ios/Runner/GoogleService-Info.plist
+            echo '<plist version="1.0">' >> ios/Runner/GoogleService-Info.plist
+            echo '<dict>' >> ios/Runner/GoogleService-Info.plist
+            echo '	<key>API_KEY</key>' >> ios/Runner/GoogleService-Info.plist
+            echo '	<string>demo-api-key</string>' >> ios/Runner/GoogleService-Info.plist
+            echo '	<key>GCM_SENDER_ID</key>' >> ios/Runner/GoogleService-Info.plist
+            echo '	<string>123456789</string>' >> ios/Runner/GoogleService-Info.plist
+            echo '	<key>PLIST_VERSION</key>' >> ios/Runner/GoogleService-Info.plist
+            echo '	<string>1</string>' >> ios/Runner/GoogleService-Info.plist
+            echo '	<key>BUNDLE_ID</key>' >> ios/Runner/GoogleService-Info.plist
+            echo '	<string>com.suleymansurucu.sarababy</string>' >> ios/Runner/GoogleService-Info.plist
+            echo '	<key>PROJECT_ID</key>' >> ios/Runner/GoogleService-Info.plist
+            echo '	<string>demo-project</string>' >> ios/Runner/GoogleService-Info.plist
+            echo '	<key>STORAGE_BUCKET</key>' >> ios/Runner/GoogleService-Info.plist
+            echo '	<string>demo-project.appspot.com</string>' >> ios/Runner/GoogleService-Info.plist
+            echo '	<key>IS_ADS_ENABLED</key>' >> ios/Runner/GoogleService-Info.plist
+            echo '	<false></false>' >> ios/Runner/GoogleService-Info.plist
+            echo '	<key>IS_ANALYTICS_ENABLED</key>' >> ios/Runner/GoogleService-Info.plist
+            echo '	<false></false>' >> ios/Runner/GoogleService-Info.plist
+            echo '	<key>IS_APPINVITE_ENABLED</key>' >> ios/Runner/GoogleService-Info.plist
+            echo '	<true></true>' >> ios/Runner/GoogleService-Info.plist
+            echo '	<key>IS_GCM_ENABLED</key>' >> ios/Runner/GoogleService-Info.plist
+            echo '	<true></true>' >> ios/Runner/GoogleService-Info.plist
+            echo '	<key>IS_SIGNIN_ENABLED</key>' >> ios/Runner/GoogleService-Info.plist
+            echo '	<true></true>' >> ios/Runner/GoogleService-Info.plist
+            echo '	<key>GOOGLE_APP_ID</key>' >> ios/Runner/GoogleService-Info.plist
+            echo '	<string>1:123456789:ios:demo</string>' >> ios/Runner/GoogleService-Info.plist
+            echo '</dict>' >> ios/Runner/GoogleService-Info.plist
+            echo '</plist>' >> ios/Runner/GoogleService-Info.plist
           fi
 
       - name: Install Fastlane
