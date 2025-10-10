@@ -18,9 +18,9 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
       var baby = await _babyRepository.getSelectedBaby(event.babyID);
       if (baby!.gender == "Male") {
         emit(ThemeInitial.boy());
-      }  else if (baby.gender == "Female") {
+      } else if (baby.gender == "Female") {
         emit(ThemeInitial.girl());
-      }  else{
+      } else {
         emit(ThemeInitial.girl());
       }
     });

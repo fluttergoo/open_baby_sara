@@ -13,7 +13,8 @@ Widget customCheckboxTile({
       decoration: BoxDecoration(
         color: value ? Colors.deepPurpleAccent.shade100 : Colors.white,
         border: Border.all(
-          color: value ? Colors.deepPurpleAccent.shade100 : Colors.grey.shade300,
+          color:
+              value ? Colors.deepPurpleAccent.shade100 : Colors.grey.shade300,
         ),
         borderRadius: BorderRadius.circular(12),
       ),

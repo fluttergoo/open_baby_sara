@@ -89,13 +89,12 @@ class MyAccountPage extends StatelessWidget {
                           context,
                         ).textTheme.titleMedium?.copyWith(fontSize: 16.sp),
                       ),
-                      trailing: Icon(
-                        Icons.language_outlined,
-                        size: 16.sp,
-                      ),
+                      trailing: Icon(Icons.language_outlined, size: 16.sp),
 
                       onTap: () {
-                        Navigator.of(context).pushNamed(AppRoutes.languageSettings);
+                        Navigator.of(
+                          context,
+                        ).pushNamed(AppRoutes.languageSettings);
                       },
                     ),
                     Divider(

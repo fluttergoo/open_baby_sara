@@ -54,12 +54,13 @@ class _FaqPageState extends State<FaqPage> with TickerProviderStateMixin {
       if (query.isEmpty) {
         _filteredFaqKeys = _faqKeys;
       } else {
-        _filteredFaqKeys = _faqKeys.where((key) {
-          final question = "${key}_question".tr().toLowerCase();
-          final answer = "${key}_answer".tr().toLowerCase();
-          return question.contains(query.toLowerCase()) ||
-              answer.contains(query.toLowerCase());
-        }).toList();
+        _filteredFaqKeys =
+            _faqKeys.where((key) {
+              final question = "${key}_question".tr().toLowerCase();
+              final answer = "${key}_answer".tr().toLowerCase();
+              return question.contains(query.toLowerCase()) ||
+                  answer.contains(query.toLowerCase());
+            }).toList();
       }
     });
   }
@@ -71,11 +72,7 @@ class _FaqPageState extends State<FaqPage> with TickerProviderStateMixin {
         height: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color(0xFFF5E6E8),
-              Color(0xFFF6F5F5),
-              Color(0xFFE8F4F8),
-            ],
+            colors: [Color(0xFFF5E6E8), Color(0xFFF6F5F5), Color(0xFFE8F4F8)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -175,18 +172,19 @@ class _FaqPageState extends State<FaqPage> with TickerProviderStateMixin {
                                 size: 24,
                               ),
                             ),
-                            suffixIcon: _searchController.text.isNotEmpty
-                                ? IconButton(
-                              onPressed: () {
-                                _searchController.clear();
-                                _filterFaqs('');
-                              },
-                              icon: Icon(
-                                Icons.clear_rounded,
-                                color: Color(0xFF6B7280),
-                              ),
-                            )
-                                : null,
+                            suffixIcon:
+                                _searchController.text.isNotEmpty
+                                    ? IconButton(
+                                      onPressed: () {
+                                        _searchController.clear();
+                                        _filterFaqs('');
+                                      },
+                                      icon: Icon(
+                                        Icons.clear_rounded,
+                                        color: Color(0xFF6B7280),
+                                      ),
+                                    )
+                                    : null,
                             border: InputBorder.none,
                             contentPadding: EdgeInsets.symmetric(
                               horizontal: 8,
@@ -201,21 +199,22 @@ class _FaqPageState extends State<FaqPage> with TickerProviderStateMixin {
 
                 // FAQ List
                 Expanded(
-                  child: _filteredFaqKeys.isEmpty
-                      ? _buildEmptyState()
-                      : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: _filteredFaqKeys.length,
-                    itemBuilder: (context, index) {
-                      final key = _filteredFaqKeys[index];
-                      return AnimatedContainer(
-                        duration: Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                        margin: const EdgeInsets.only(bottom: 16),
-                        child: _buildFaqCard(key, index),
-                      );
-                    },
-                  ),
+                  child:
+                      _filteredFaqKeys.isEmpty
+                          ? _buildEmptyState()
+                          : ListView.builder(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            itemCount: _filteredFaqKeys.length,
+                            itemBuilder: (context, index) {
+                              final key = _filteredFaqKeys[index];
+                              return AnimatedContainer(
+                                duration: Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                                margin: const EdgeInsets.only(bottom: 16),
+                                child: _buildFaqCard(key, index),
+                              );
+                            },
+                          ),
                 ),
               ],
             ),
@@ -247,9 +246,9 @@ class _FaqPageState extends State<FaqPage> with TickerProviderStateMixin {
                 ],
               ),
               child: Theme(
-                data: Theme.of(context).copyWith(
-                  dividerColor: Colors.transparent,
-                ),
+                data: Theme.of(
+                  context,
+                ).copyWith(dividerColor: Colors.transparent),
                 child: ExpansionTile(
                   tilePadding: const EdgeInsets.symmetric(
                     horizontal: 24,
@@ -305,10 +304,7 @@ class _FaqPageState extends State<FaqPage> with TickerProviderStateMixin {
                       decoration: BoxDecoration(
                         color: Color(0xFFF8FAFC),
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Color(0xFFE2E8F0),
-                          width: 1,
-                        ),
+                        border: Border.all(color: Color(0xFFE2E8F0), width: 1),
                       ),
                       child: Text(
                         "${key}_answer".tr(),
@@ -360,10 +356,7 @@ class _FaqPageState extends State<FaqPage> with TickerProviderStateMixin {
           const SizedBox(height: 8),
           Text(
             "try_different_keywords".tr(),
-            style: TextStyle(
-              fontSize: 16,
-              color: Color(0xFF6B7280),
-            ),
+            style: TextStyle(fontSize: 16, color: Color(0xFF6B7280)),
           ),
         ],
       ),

@@ -16,7 +16,7 @@ class VaccinationRepositoryImpl implements VaccinationRepository {
   }
 
   @override
-  Future<List<String>?> fetchVaccinationList() async{
+  Future<List<String>?> fetchVaccinationList() async {
     final result = await database.rawQuery('SELECT * FROM vaccinations');
 
     if (result.isNotEmpty) {

@@ -13,7 +13,8 @@ class CustomInputFieldWithToggle extends StatefulWidget {
     super.key,
     this.selectedMeasurementOfUnit = MeasurementOfUnitNames.drink,
     this.vertical = false,
-    required this.onChanged, required this.title,
+    required this.onChanged,
+    required this.title,
   });
 
   @override
@@ -41,10 +42,7 @@ class _CustomInputFieldWithToggleState
         )
         : Row(
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(child: buildTextField()),
-            buildToggleButtons(),
-          ],
+          children: [Expanded(child: buildTextField()), buildToggleButtons()],
         );
   }
 

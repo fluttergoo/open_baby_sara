@@ -64,7 +64,6 @@ class _CustomDiaperTrackerBottomSheetState
       isBloodInStool = data['isBloodInStool'] ?? false;
     }
     getIt<AnalyticsService>().logScreenView('DiaperActivityTracker');
-
   }
 
   @override
@@ -98,10 +97,10 @@ class _CustomDiaperTrackerBottomSheetState
                   title: context.tr('diaper_tracker'),
                   onBack: () => Navigator.of(context).pop(),
                   onSave: () => onPressedSave(),
-                  saveText: widget.isEdit ? context.tr('update') : context.tr('save'),
+                  saveText:
+                      widget.isEdit ? context.tr('update') : context.tr('save'),
                   backgroundColor: AppColors.diaperColor,
                 ),
-
 
                 // Body: SCROLLABLE
                 Expanded(

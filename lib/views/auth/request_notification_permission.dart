@@ -56,9 +56,11 @@ class _RequestNotificationPermissionState
 
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.of(
-                          context,
-                        ).push(MaterialPageRoute(builder: (context) => NavigationWrapper()));
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => NavigationWrapper(),
+                          ),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         minimumSize: Size(double.infinity, 40.h),

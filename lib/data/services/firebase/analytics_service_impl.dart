@@ -16,14 +16,18 @@ class AnalyticsServiceImpl extends AnalyticsService {
   Future<void> logScreenView(String screenName) async {
     await _analytics.logEvent(
       name: 'screen_view_$screenName',
-      parameters: {'firebase_screen': screenName, 'firebase_screen_class':screenName},
+      parameters: {
+        'firebase_screen': screenName,
+        'firebase_screen_class': screenName,
+      },
     );
   }
 
   @override
-  Future<void> logSoundsView(String soundsName) async{
-   await _analytics.logEvent(name: 'sound_played_$soundsName',parameters: {
-     'sound_title':soundsName
-   });
+  Future<void> logSoundsView(String soundsName) async {
+    await _analytics.logEvent(
+      name: 'sound_played_$soundsName',
+      parameters: {'sound_title': soundsName},
+    );
   }
 }

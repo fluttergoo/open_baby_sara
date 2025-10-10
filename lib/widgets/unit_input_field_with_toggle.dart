@@ -117,13 +117,9 @@ class _UnitInputFieldWithToggleState extends State<UnitInputFieldWithToggle> {
             fillColor: Colors.deepPurple.shade300,
             color: Colors.deepPurple.shade300,
             onPressed: handleToggleChange,
-            children: const [
-              Text('oz'),
-              Text('ml'),
-            ],
+            children: const [Text('oz'), Text('ml')],
           ),
         ),
-
       ],
     );
   }

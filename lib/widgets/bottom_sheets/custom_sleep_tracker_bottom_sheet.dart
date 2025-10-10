@@ -91,7 +91,6 @@ class _CustomSleepTrackerBottomSheetState
     }
 
     getIt<AnalyticsService>().logScreenView('SleepActivityTracker');
-
   }
 
   @override
@@ -128,155 +127,161 @@ class _CustomSleepTrackerBottomSheetState
                   title: context.tr('sleep_tracker'),
                   onBack: () => Navigator.of(context).pop(),
                   onSave: () => onPressedSave(),
-                  saveText: widget.isEdit ? context.tr('update') : context.tr('save'),
+                  saveText:
+                      widget.isEdit ? context.tr('update') : context.tr('save'),
                   backgroundColor: AppColors.sleepColor,
                 ),
 
                 // Body (you can customize this)
                 Expanded(
                   child: ListView(
-                      padding: EdgeInsets.only(
-                        left: 16.r,
-                        right: 16.r,
-                        bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-                        top: 16,
-                      ),
-                    children: [BlocBuilder<SleepTimerBloc, SleepTimerState>(
-                      builder: (context, state) {
-                        if (state is TimerStopped) {
-                          endTime = state.endTime;
-                          widget.duration = state.duration;
-                          totalSleepTime = formatDuration(state.duration);
-                          if (state.startTime != null) {
-                            start = state.startTime;
+                    padding: EdgeInsets.only(
+                      left: 16.r,
+                      right: 16.r,
+                      bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+                      top: 16,
+                    ),
+                    children: [
+                      BlocBuilder<SleepTimerBloc, SleepTimerState>(
+                        builder: (context, state) {
+                          if (state is TimerStopped) {
+                            endTime = state.endTime;
+                            widget.duration = state.duration;
+                            totalSleepTime = formatDuration(state.duration);
+                            if (state.startTime != null) {
+                              start = state.startTime;
+                            }
                           }
-                        }
-                        if (state is TimerRunning) {
-                          endTime = null;
-                          start = state.startTime;
-                          widget.duration = state.duration;
-                        }
+                          if (state is TimerRunning) {
+                            endTime = null;
+                            start = state.startTime;
+                            widget.duration = state.duration;
+                          }
 
-                        if (state is TimerReset) {
-                          start = null;
-                          endTime = null;
-                        }
+                          if (state is TimerReset) {
+                            start = null;
+                            endTime = null;
+                          }
 
-                        return Column(
-                          children: [
-                            /// Text('Start Time - End Time Picker Placeholder'),
-                            SizedBox(height: 16),
-                            SleepTimerCircle(activityType: 'sleepTimer'),
-                            SizedBox(height: 32.h),
-                            Divider(color: Colors.grey.shade300),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(context.tr("start_time")),
-                                TextButton(
-                                  onPressed: () {
-                                    _onPressedShowTimePicker(context);
-                                  },
-                                  child:
-                                  start != null
-                                      ? Text(
-                                    DateFormat(
-                                      'HH:mm:ss',
-                                    ).format(start!),
-                                  )
-                                      : Text(context.tr("add")),
-                                ),
-                              ],
-                            ),
-                            Divider(color: Colors.grey.shade300),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(context.tr("end_time")),
-                                TextButton(
-                                  onPressed: () {
-                                    _onPressedEndTimeShowPicker(context);
-                                  },
-                                  child:
-                                  endTime != null
-                                      ? Text(
-                                    DateFormat(
-                                      'HH:mm:ss',
-                                    ).format(endTime!),
-                                  )
-                                      : Text(context.tr("add")),
-                                ),
-                              ],
-                            ),
-                            Divider(color: Colors.grey.shade300),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(context.tr("total_sleep_time")),
-                                TextButton(
-                                  onPressed: () {
-                                    // _onPressedEndTimeShowPicker(context);
-                                    _onPressedShowDurationSet(context);
-                                  },
-                                  child:
-                                  totalSleepTime != null
-                                      ? Text(totalSleepTime!)
-                                      : Text('00:00'),
-                                ),
-                              ],
-                            ),
-                            Divider(color: Colors.grey.shade300),
-                            SizedBox(height: 5.h),
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                context.tr("notes:"),
-                                style: Theme.of(context).textTheme.titleSmall!
-                                    .copyWith(fontSize: 16.sp),
+                          return Column(
+                            children: [
+                              /// Text('Start Time - End Time Picker Placeholder'),
+                              SizedBox(height: 16),
+                              SleepTimerCircle(activityType: 'sleepTimer'),
+                              SizedBox(height: 32.h),
+                              Divider(color: Colors.grey.shade300),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(context.tr("start_time")),
+                                  TextButton(
+                                    onPressed: () {
+                                      _onPressedShowTimePicker(context);
+                                    },
+                                    child:
+                                        start != null
+                                            ? Text(
+                                              DateFormat(
+                                                'HH:mm:ss',
+                                              ).format(start!),
+                                            )
+                                            : Text(context.tr("add")),
+                                  ),
+                                ],
                               ),
-                            ),
-
-                            SizedBox(height: 5.h),
-                            CustomTextFormField(
-                              hintText: '',
-                              isNotes: true,
-                              controller: notesController,
-                            ),
-                            SizedBox(height: 5.h),
-
-                            Divider(color: Colors.grey.shade300),
-
-                            SizedBox(height: 20.h),
-
-                            Text(
-                              '${context.tr("created_by")} ${widget.firstName}',
-                              style: Theme.of(
-                                context,
-                              ).textTheme.titleSmall!.copyWith(
-                                fontSize: 12.sp,
-                                fontStyle: FontStyle.italic,
+                              Divider(color: Colors.grey.shade300),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(context.tr("end_time")),
+                                  TextButton(
+                                    onPressed: () {
+                                      _onPressedEndTimeShowPicker(context);
+                                    },
+                                    child:
+                                        endTime != null
+                                            ? Text(
+                                              DateFormat(
+                                                'HH:mm:ss',
+                                              ).format(endTime!),
+                                            )
+                                            : Text(context.tr("add")),
+                                  ),
+                                ],
                               ),
-                            ),
-                            SizedBox(height: 10.h),
+                              Divider(color: Colors.grey.shade300),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(context.tr("total_sleep_time")),
+                                  TextButton(
+                                    onPressed: () {
+                                      // _onPressedEndTimeShowPicker(context);
+                                      _onPressedShowDurationSet(context);
+                                    },
+                                    child:
+                                        totalSleepTime != null
+                                            ? Text(totalSleepTime!)
+                                            : Text('00:00'),
+                                  ),
+                                ],
+                              ),
+                              Divider(color: Colors.grey.shade300),
+                              SizedBox(height: 5.h),
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  context.tr("notes:"),
+                                  style: Theme.of(context).textTheme.titleSmall!
+                                      .copyWith(fontSize: 16.sp),
+                                ),
+                              ),
 
-                            TextButton(
-                              onPressed: () {
-                                _onPressedDelete(context);
-                              },
-                              child: Text(
-                                context.tr("reset"),
+                              SizedBox(height: 5.h),
+                              CustomTextFormField(
+                                hintText: '',
+                                isNotes: true,
+                                controller: notesController,
+                              ),
+                              SizedBox(height: 5.h),
+
+                              Divider(color: Colors.grey.shade300),
+
+                              SizedBox(height: 20.h),
+
+                              Text(
+                                '${context.tr("created_by")} ${widget.firstName}',
                                 style: Theme.of(
                                   context,
-                                ).textTheme.titleMedium?.copyWith(
-                                  color: Theme.of(context).primaryColor,
-                                  fontSize: 16.sp,
+                                ).textTheme.titleSmall!.copyWith(
+                                  fontSize: 12.sp,
+                                  fontStyle: FontStyle.italic,
                                 ),
                               ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),]
+                              SizedBox(height: 10.h),
+
+                              TextButton(
+                                onPressed: () {
+                                  _onPressedDelete(context);
+                                },
+                                child: Text(
+                                  context.tr("reset"),
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.titleMedium?.copyWith(
+                                    color: Theme.of(context).primaryColor,
+                                    fontSize: 16.sp,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
               ],

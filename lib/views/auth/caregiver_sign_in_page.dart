@@ -41,16 +41,19 @@ class _CaregiverSignInPageState extends State<CaregiverSignInPage> {
     return BlocListener<CaregiverBloc, CaregiverState>(
       listener: (context, state) {
         if (state is CaregiverSignedUp) {
-          ScaffoldMessenger.of(context).showSnackBar(buildCustomSnackBar(state.message));
-          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => NavigationWrapper()));
-        }else if (state is CaregiverError) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(buildCustomSnackBar(state.message));
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => NavigationWrapper()),
+          );
+        } else if (state is CaregiverError) {
           showCustomFlushbar(
             context,
             context.tr('error'),
             state.message,
             Icons.warning_outlined,
           );
-
         }
       },
       child: Scaffold(
@@ -80,14 +83,19 @@ class _CaregiverSignInPageState extends State<CaregiverSignInPage> {
               Align(
                 alignment: Alignment.center,
                 child: SingleChildScrollView(
-                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom,
+                  ),
 
                   child: Stack(
                     clipBehavior: Clip.none,
                     children: [
                       Container(
                         width: size.width * 0.85,
-                        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 24.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 24.h,
+                        ),
                         decoration: BoxDecoration(
                           color: const Color(0xFFFFF8E1),
                           borderRadius: BorderRadius.circular(15.r),
@@ -110,10 +118,12 @@ class _CaregiverSignInPageState extends State<CaregiverSignInPage> {
                               SizedBox(height: 10.h),
                               Text(
                                 context.tr('join_a_family_info'),
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.bodyMedium?.copyWith(
                                   fontSize: 14.sp,
                                   color: Colors.black,
-                                  fontWeight: FontWeight.w300
+                                  fontWeight: FontWeight.w300,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -124,23 +134,33 @@ class _CaregiverSignInPageState extends State<CaregiverSignInPage> {
                                 hintText: context.tr("first_name"),
                                 isPassword: false,
                                 controller: _firstNameController,
-                                validator: (value) => value == null || value.isEmpty ? context.tr("required") : null,
+                                validator:
+                                    (value) =>
+                                        value == null || value.isEmpty
+                                            ? context.tr("required")
+                                            : null,
                               ),
                               SizedBox(height: 7.h),
                               CustomTextFormField(
                                 hintText: 'Email',
                                 isPassword: false,
                                 controller: _emailController,
-                                validator: (value) =>
-                                value != null && value.contains('@') ? null : context.tr("invalid_email"),
+                                validator:
+                                    (value) =>
+                                        value != null && value.contains('@')
+                                            ? null
+                                            : context.tr("invalid_email"),
                               ),
                               SizedBox(height: 7.h),
                               CustomTextFormField(
                                 hintText: context.tr("password"),
                                 isPassword: true,
                                 controller: _passwordController,
-                                validator: (value) =>
-                                value != null && value.length > 5 ? null : context.tr("min_6_characters"),
+                                validator:
+                                    (value) =>
+                                        value != null && value.length > 5
+                                            ? null
+                                            : context.tr("min_6_characters"),
                               ),
                               SizedBox(height: 20.h),
 
@@ -151,16 +171,21 @@ class _CaregiverSignInPageState extends State<CaregiverSignInPage> {
                                 child: ElevatedButton(
                                   onPressed: _onPressedSignIn,
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Theme.of(context).primaryColor,
+                                    backgroundColor:
+                                        Theme.of(context).primaryColor,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12.r),
                                     ),
                                   ),
                                   child: Text(
                                     context.tr('join_a_family'),
-                                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 18.sp,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.titleMedium?.copyWith(
+                                      fontSize: 18.sp,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.white,),
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -169,13 +194,19 @@ class _CaregiverSignInPageState extends State<CaregiverSignInPage> {
                               TextButton(
                                 onPressed: () {
                                   Navigator.of(context).push(
-                                    MaterialPageRoute(builder: (_) => const SignInPage()),
+                                    MaterialPageRoute(
+                                      builder: (_) => const SignInPage(),
+                                    ),
                                   );
                                 },
                                 child: Text(
                                   context.tr("already_have_an_account_sign_in"),
-                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 15.sp,
-                                    color: Theme.of(context).primaryColor),
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.titleMedium?.copyWith(
+                                    fontSize: 15.sp,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
                                 ),
                               ),
                             ],

@@ -44,111 +44,115 @@ class _EditCaregiverPageState extends State<EditCaregiverPage> {
         elevation: 2,
       ),
       body: BlocListener<CaregiverBloc, CaregiverState>(
-  listener: (context, state) {
-    if (state is CaregiverDeleted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(buildCustomSnackBar(state.message));
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => NavigationWrapper()),
-      );
-    }  },
-  child: BlocBuilder<CaregiverBloc, CaregiverState>(
-        builder: (context, state) {
-
-
-          return Container(
-            height: double.infinity,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFFF5E6E8), Color(0xFFF6F5F5)],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-            ),
-            child: SafeArea(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    /// Caregiver First Name
-                    RichText(
-                      text: TextSpan(
-                        text: context.tr('caregiver_first_name'),
-                        style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                          color: Theme.of(context).primaryColor,
-                          fontSize: 16.sp,
-                        ),
-                        children: [
-                          TextSpan(
-                            text: '*',
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 20.sp,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 4.h),
-                    CustomTextFormField(
-                      controller: firstNameController,
-                      hintText: context.tr("first_name"),
-                      isPassword: false,
-                      validator:
-                          (value) =>
-                              value == null || value.isEmpty
-                                  ? context.tr('required')
-                                  : null,
-                    ),
-                    SizedBox(height: 10.h),
-
-                    ///Delete Button
-                    Align(
-                      alignment: Alignment.center,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          _onPressedDelete();
-                        },
-
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: Size(double.infinity, 40.h),
-                          backgroundColor: Colors.pinkAccent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.r),
-                          ),
-                        ),
-                        child: Text(
-                          context.tr('delete'),
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(height: 10.h),
-                    Text(
-                      context.tr('edit_caregiver_page_info'),
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        color: Colors.grey.shade700,
-                        fontSize: 14.sp,
-                      ),
-                    ),
-                    SizedBox(height: 16.h),
-                  ],
+        listener: (context, state) {
+          if (state is CaregiverDeleted) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(buildCustomSnackBar(state.message));
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (_) => NavigationWrapper()),
+            );
+          }
+        },
+        child: BlocBuilder<CaregiverBloc, CaregiverState>(
+          builder: (context, state) {
+            return Container(
+              height: double.infinity,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFFF5E6E8), Color(0xFFF6F5F5)],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                 ),
               ),
-            ),
-          );
-        },
+              child: SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 24.w,
+                    vertical: 16.h,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      /// Caregiver First Name
+                      RichText(
+                        text: TextSpan(
+                          text: context.tr('caregiver_first_name'),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.titleSmall!.copyWith(
+                            color: Theme.of(context).primaryColor,
+                            fontSize: 16.sp,
+                          ),
+                          children: [
+                            TextSpan(
+                              text: '*',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 20.sp,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 4.h),
+                      CustomTextFormField(
+                        controller: firstNameController,
+                        hintText: context.tr("first_name"),
+                        isPassword: false,
+                        validator:
+                            (value) =>
+                                value == null || value.isEmpty
+                                    ? context.tr('required')
+                                    : null,
+                      ),
+                      SizedBox(height: 10.h),
+
+                      ///Delete Button
+                      Align(
+                        alignment: Alignment.center,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            _onPressedDelete();
+                          },
+
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: Size(double.infinity, 40.h),
+                            backgroundColor: Colors.pinkAccent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                          ),
+                          child: Text(
+                            context.tr('delete'),
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(height: 10.h),
+                      Text(
+                        context.tr('edit_caregiver_page_info'),
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          color: Colors.grey.shade700,
+                          fontSize: 14.sp,
+                        ),
+                      ),
+                      SizedBox(height: 16.h),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
       ),
-),
     );
   }
 

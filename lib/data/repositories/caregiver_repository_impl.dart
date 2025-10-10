@@ -131,36 +131,30 @@ class CaregiverRepositoryImpl extends CaregiverRepository {
             .data()?['caregivers'] ??
         [];
     String? isCaregiverActive;
-    for(var cg in caregiversList){
-      if (cg['caregiverID']==caregiverID) {
-        isCaregiverActive=cg['status'];
+    for (var cg in caregiversList) {
+      if (cg['caregiverID'] == caregiverID) {
+        isCaregiverActive = cg['status'];
       }
     }
-    try{
-      if (isCaregiverActive=='active') {
-        caregiversList.removeWhere((cg)=>cg['caregiverID']==caregiverID);
+    try {
+      if (isCaregiverActive == 'active') {
+        caregiversList.removeWhere((cg) => cg['caregiverID'] == caregiverID);
         await _firestore.collection('users').doc(userID).update({
           'caregivers': caregiversList,
         });
 
         await _firestore.collection('users').doc(caregiverID).delete();
-
-      }else{
-        caregiversList.removeWhere((cg)=>cg['caregiverID']==caregiverID);
+      } else {
+        caregiversList.removeWhere((cg) => cg['caregiverID'] == caregiverID);
         await _firestore.collection('users').doc(userID).update({
           'caregivers': caregiversList,
         });
-        await _firestore
-            .collection('invites')
-            .doc(caregiverID)
-            .delete();
+        await _firestore.collection('invites').doc(caregiverID).delete();
       }
-    }on FirebaseAuthException catch(e){
+    } on FirebaseAuthException catch (e) {
       throw e.toString();
-    }catch (e){
+    } catch (e) {
       throw e.toString();
     }
-
-
   }
 }

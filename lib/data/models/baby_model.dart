@@ -49,11 +49,12 @@ class BabyModel {
     );
   }
 
-
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is BabyModel && runtimeType == other.runtimeType && babyID == other.babyID;
+      other is BabyModel &&
+          runtimeType == other.runtimeType &&
+          babyID == other.babyID;
 
   @override
   int get hashCode => babyID.hashCode;

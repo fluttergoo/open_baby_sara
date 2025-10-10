@@ -14,7 +14,8 @@ class RecipesPage extends StatefulWidget {
   State<RecipesPage> createState() => _RecipesPageState();
 }
 
-class _RecipesPageState extends State<RecipesPage> with TickerProviderStateMixin {
+class _RecipesPageState extends State<RecipesPage>
+    with TickerProviderStateMixin {
   Map<String, List<RecipeModel>> grouped = {};
   List<RecipeModel> filteredRecipes = [];
   String? selectedAgeGroup;
@@ -143,7 +144,9 @@ class _RecipesPageState extends State<RecipesPage> with TickerProviderStateMixin
                           // Filter Buttons
                           Container(
                             padding: EdgeInsets.symmetric(vertical: 16.h),
-                            child: _buildAgeFilterButtons(grouped.keys.toList()),
+                            child: _buildAgeFilterButtons(
+                              grouped.keys.toList(),
+                            ),
                           ),
 
                           SizedBox(height: 8.h),
@@ -155,9 +158,15 @@ class _RecipesPageState extends State<RecipesPage> with TickerProviderStateMixin
                               itemCount: filteredRecipes.length,
                               itemBuilder: (context, index) {
                                 return AnimatedContainer(
-                                  duration: Duration(milliseconds: 300 + (index * 100)),
+                                  duration: Duration(
+                                    milliseconds: 300 + (index * 100),
+                                  ),
                                   curve: Curves.easeOutBack,
-                                  child: _buildModernCard(context, filteredRecipes[index], index),
+                                  child: _buildModernCard(
+                                    context,
+                                    filteredRecipes[index],
+                                    index,
+                                  ),
                                 );
                               },
                             ),
@@ -196,7 +205,9 @@ class _RecipesPageState extends State<RecipesPage> with TickerProviderStateMixin
               ],
             ),
             child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurple.shade400),
+              valueColor: AlwaysStoppedAnimation<Color>(
+                Colors.deepPurple.shade400,
+              ),
               strokeWidth: 3.w,
             ),
           ),
@@ -243,10 +254,7 @@ class _RecipesPageState extends State<RecipesPage> with TickerProviderStateMixin
           SizedBox(height: 8.h),
           Text(
             'Try adjusting your filters'.tr(),
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: Colors.grey.shade500,
-            ),
+            style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade500),
           ),
         ],
       ),
@@ -262,9 +270,14 @@ class _RecipesPageState extends State<RecipesPage> with TickerProviderStateMixin
 
   Widget _buildAgeFilterButtons(List<String> ageGroupKeys) {
     final pastelColors = [
-      const Color(0xFFFFE5E5), const Color(0xFFE5F3FF), const Color(0xFFE5FFE5),
-      const Color(0xFFFFF5E5), const Color(0xFFF5E5FF), const Color(0xFFE5FFFF),
-      const Color(0xFFFFFDE5), const Color(0xFFFFE5F5),
+      const Color(0xFFFFE5E5),
+      const Color(0xFFE5F3FF),
+      const Color(0xFFE5FFE5),
+      const Color(0xFFFFF5E5),
+      const Color(0xFFF5E5FF),
+      const Color(0xFFE5FFFF),
+      const Color(0xFFFFFDE5),
+      const Color(0xFFFFE5F5),
     ];
 
     return SizedBox(
@@ -296,7 +309,8 @@ class _RecipesPageState extends State<RecipesPage> with TickerProviderStateMixin
                     style: TextStyle(
                       color: isSelected ? Colors.white : Colors.grey.shade700,
                       fontSize: 12.sp,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.w500,
                     ),
                   ),
                 ),
@@ -307,6 +321,7 @@ class _RecipesPageState extends State<RecipesPage> with TickerProviderStateMixin
       ),
     );
   }
+
   Widget _buildModernCard(BuildContext context, RecipeModel recipe, int index) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 8.h, horizontal: 8.w),
@@ -320,13 +335,21 @@ class _RecipesPageState extends State<RecipesPage> with TickerProviderStateMixin
             Navigator.push(
               context,
               PageRouteBuilder(
-                pageBuilder: (context, animation, secondaryAnimation) =>
-                    RecipeDetailPage(recipe: recipe),
-                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                pageBuilder:
+                    (context, animation, secondaryAnimation) =>
+                        RecipeDetailPage(recipe: recipe),
+                transitionsBuilder: (
+                  context,
+                  animation,
+                  secondaryAnimation,
+                  child,
+                ) {
                   return SlideTransition(
                     position: animation.drive(
-                      Tween(begin: const Offset(1.0, 0.0), end: Offset.zero)
-                          .chain(CurveTween(curve: Curves.easeInOut)),
+                      Tween(
+                        begin: const Offset(1.0, 0.0),
+                        end: Offset.zero,
+                      ).chain(CurveTween(curve: Curves.easeInOut)),
                     ),
                     child: child,
                   );
@@ -360,10 +383,7 @@ class _RecipesPageState extends State<RecipesPage> with TickerProviderStateMixin
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(16.r),
-                      child: Image.asset(
-                        recipe.image,
-                        fit: BoxFit.cover,
-                      ),
+                      child: Image.asset(recipe.image, fit: BoxFit.cover),
                     ),
                   ),
                 ),
@@ -429,7 +449,13 @@ class _RecipesPageState extends State<RecipesPage> with TickerProviderStateMixin
       ),
     );
   }
-  Widget _buildTimeChip(IconData icon, String time, Color bgColor, Color textColor) {
+
+  Widget _buildTimeChip(
+    IconData icon,
+    String time,
+    Color bgColor,
+    Color textColor,
+  ) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 3.h),
       decoration: BoxDecoration(
@@ -439,11 +465,7 @@ class _RecipesPageState extends State<RecipesPage> with TickerProviderStateMixin
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: 12.sp,
-            color: textColor,
-          ),
+          Icon(icon, size: 12.sp, color: textColor),
           SizedBox(width: 3.w),
           Text(
             time,

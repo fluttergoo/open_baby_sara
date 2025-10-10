@@ -24,7 +24,6 @@ class TimerStopped extends PumpTotalTimerState {
 
   final String activityType;
 
-
   TimerStopped({
     required this.duration,
     this.endTime,
@@ -34,5 +33,3 @@ class TimerStopped extends PumpTotalTimerState {
 }
 
 final class TimerReset extends PumpTotalTimerState {}
-
-

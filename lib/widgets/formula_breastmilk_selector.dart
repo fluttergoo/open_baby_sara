@@ -7,7 +7,8 @@ class FormulaBreastmilkSelector extends StatefulWidget {
   const FormulaBreastmilkSelector({super.key, required this.onChanged});
 
   @override
-  State<FormulaBreastmilkSelector> createState() => _FormulaBreastmilkSelectorState();
+  State<FormulaBreastmilkSelector> createState() =>
+      _FormulaBreastmilkSelectorState();
 }
 
 class _FormulaBreastmilkSelectorState extends State<FormulaBreastmilkSelector> {
@@ -23,12 +24,14 @@ class _FormulaBreastmilkSelectorState extends State<FormulaBreastmilkSelector> {
       ],
     );
   }
+
   void toggleSelection(String value) {
     setState(() {
       selected = (selected == value) ? '' : value;
       widget.onChanged(selected);
     });
   }
+
   Widget buildToggleButton(String label) {
     final isSelected = selected == label;
 
@@ -46,7 +49,8 @@ class _FormulaBreastmilkSelectorState extends State<FormulaBreastmilkSelector> {
           child: Text(
             label,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: isSelected ? Colors.white : Theme.of(context).primaryColor, fontSize: 16.sp
+              color: isSelected ? Colors.white : Theme.of(context).primaryColor,
+              fontSize: 16.sp,
               // fontWeight: FontWeight.bold,
             ),
           ),
@@ -54,7 +58,4 @@ class _FormulaBreastmilkSelectorState extends State<FormulaBreastmilkSelector> {
       ),
     );
   }
-
 }
-
-

@@ -27,15 +27,13 @@ class AppRoutes {
   static const String caregiverSignin = '/caregiverSignin';
   static const String signinOptions = '/signinOptions';
   static const String signup = '/signup';
-  static const String myAccount='/myAccount';
+  static const String myAccount = '/myAccount';
   static const String caregiverEdit = '/caregiverEdit';
-  static const String changePassword='/changePassword';
+  static const String changePassword = '/changePassword';
   static const String forgotPassword = '/forgotPassword';
   static const String faq = '/faqPage';
   static const String legalPage = '/legalPage';
   static const String languageSettings = '/languageSettingsPage';
-
-
 }
 
 Route<dynamic> generateRoute(RouteSettings settings) {
@@ -73,14 +71,13 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case AppRoutes.myAccount:
       return MaterialPageRoute(builder: (_) => MyAccountPage());
     case AppRoutes.changePassword:
-      return MaterialPageRoute(builder: (_)=>ChangePasswordPage());
+      return MaterialPageRoute(builder: (_) => ChangePasswordPage());
     case AppRoutes.faq:
-      return MaterialPageRoute(builder: (_)=>FaqPage());
+      return MaterialPageRoute(builder: (_) => FaqPage());
     case AppRoutes.legalPage:
-      return MaterialPageRoute(builder: (_)=>LegalPage());
+      return MaterialPageRoute(builder: (_) => LegalPage());
     case AppRoutes.languageSettings:
-      return MaterialPageRoute(builder: (_)=>LanguageSettingsPage());
-
+      return MaterialPageRoute(builder: (_) => LanguageSettingsPage());
 
     default:
       return MaterialPageRoute(

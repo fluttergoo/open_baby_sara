@@ -22,7 +22,6 @@ class _BabyRelaxingSoundsPageState extends State<BabyRelaxingSoundsPage> {
   int? _currentPlayingIndex;
   double _volume = 0.5;
 
-
   Future<void> _toggleSound(int index) async {
     try {
       if (_currentPlayingIndex == index) {
@@ -33,7 +32,9 @@ class _BabyRelaxingSoundsPageState extends State<BabyRelaxingSoundsPage> {
         });
       } else {
         await _player.stop();
-        await _player.play(AssetSource(sounds[index].assetPath.replaceFirst('assets/', '')));
+        await _player.play(
+          AssetSource(sounds[index].assetPath.replaceFirst('assets/', '')),
+        );
         await _player.setReleaseMode(ReleaseMode.loop);
         await _player.setVolume(_volume);
 
@@ -45,7 +46,6 @@ class _BabyRelaxingSoundsPageState extends State<BabyRelaxingSoundsPage> {
           _currentPlayingIndex = index;
         });
         getIt<AnalyticsService>().logSoundsView(sounds[index].title);
-
       }
     } catch (e) {
       print('🔴 Error: $e');
@@ -58,8 +58,6 @@ class _BabyRelaxingSoundsPageState extends State<BabyRelaxingSoundsPage> {
     configureAudio(_player);
     context.read<SoundRelaxingBloc>().add(LoadSound());
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -80,8 +78,8 @@ class _BabyRelaxingSoundsPageState extends State<BabyRelaxingSoundsPage> {
         ),
       ),
     );
-
   }
+
   Widget _buildContent(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
@@ -112,22 +110,27 @@ class _BabyRelaxingSoundsPageState extends State<BabyRelaxingSoundsPage> {
       ),
     );
   }
+
   Widget _buildSoundTile(int index, int isActive) {
     final sound = sounds[index];
     return AnimatedContainer(
       duration: Duration(milliseconds: 300),
       decoration: BoxDecoration(
-        color: isActive ==1 ? Theme.of(context).primaryColor.withOpacity(0.1) : Colors.white,
+        color:
+            isActive == 1
+                ? Theme.of(context).primaryColor.withOpacity(0.1)
+                : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: isActive==1
-            ? [
-          BoxShadow(
-            color: Theme.of(context).primaryColor.withOpacity(0.2),
-            blurRadius: 10,
-            offset: Offset(0, 4),
-          )
-        ]
-            : [],
+        boxShadow:
+            isActive == 1
+                ? [
+                  BoxShadow(
+                    color: Theme.of(context).primaryColor.withOpacity(0.2),
+                    blurRadius: 10,
+                    offset: Offset(0, 4),
+                  ),
+                ]
+                : [],
       ),
       margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
       child: Padding(
@@ -137,9 +140,13 @@ class _BabyRelaxingSoundsPageState extends State<BabyRelaxingSoundsPage> {
           children: [
             ListTile(
               contentPadding: EdgeInsets.zero,
-              leading: Image.asset(sound.iconAssetPath, width: 40.w, height: 40.h),
+              leading: Image.asset(
+                sound.iconAssetPath,
+                width: 40.w,
+                height: 40.h,
+              ),
               title: Text(
-                context.tr(sound.title,),
+                context.tr(sound.title),
 
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: Theme.of(context).primaryColor,
@@ -147,19 +154,22 @@ class _BabyRelaxingSoundsPageState extends State<BabyRelaxingSoundsPage> {
               ),
               trailing: IconButton(
                 icon: Icon(
-                  isActive==1 ? Icons.pause_circle_filled : Icons.play_circle_fill,
+                  isActive == 1
+                      ? Icons.pause_circle_filled
+                      : Icons.play_circle_fill,
                   color: Theme.of(context).primaryColor,
                   size: 32.sp,
                 ),
                 onPressed: () => _toggleSound(index),
               ),
             ),
-            if (isActive==1) _buildVolumeSlider(),
+            if (isActive == 1) _buildVolumeSlider(),
           ],
         ),
       ),
     );
   }
+
   Widget _buildVolumeSlider() {
     return Row(
       children: [
@@ -198,22 +208,21 @@ class _BabyRelaxingSoundsPageState extends State<BabyRelaxingSoundsPage> {
     );
   }
 
-  void configureAudio(AudioPlayer player) async{
-    await AudioPlayer.global.setAudioContext(AudioContext(
-      iOS: AudioContextIOS(
-        category: AVAudioSessionCategory.playback,
-        options: <AVAudioSessionOptions>{
-          AVAudioSessionOptions.mixWithOthers,
-        },
+  void configureAudio(AudioPlayer player) async {
+    await AudioPlayer.global.setAudioContext(
+      AudioContext(
+        iOS: AudioContextIOS(
+          category: AVAudioSessionCategory.playback,
+          options: <AVAudioSessionOptions>{AVAudioSessionOptions.mixWithOthers},
+        ),
+        android: const AudioContextAndroid(
+          isSpeakerphoneOn: true,
+          stayAwake: true,
+          contentType: AndroidContentType.music,
+          usageType: AndroidUsageType.media,
+          audioFocus: AndroidAudioFocus.gain,
+        ),
       ),
-      android: const AudioContextAndroid(
-        isSpeakerphoneOn: true,
-        stayAwake: true,
-        contentType: AndroidContentType.music,
-        usageType: AndroidUsageType.media,
-        audioFocus: AndroidAudioFocus.gain,
-      ),
-    ));
+    );
   }
-
 }

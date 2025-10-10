@@ -102,7 +102,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
 
-    on<DeleteUser>((event, emit) async{
+    on<DeleteUser>((event, emit) async {
       emit(AuthLoading());
       try {
         await _userRepository.deleteUser();
@@ -112,12 +112,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
 
-    on<ForgotPasswordUser>((event, emit)async{
+    on<ForgotPasswordUser>((event, emit) async {
       emit(AuthLoading());
-      try{
+      try {
         await _userRepository.forgotPassword(event.email);
         emit(ForgotPasswordSuccess());
-      }catch (e){
+      } catch (e) {
         emit(AuthFailure('Error $e'));
       }
     });

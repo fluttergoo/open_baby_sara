@@ -16,7 +16,6 @@ import 'package:open_baby_sara/views/food_recipes/recipes_page.dart';
 import 'package:open_baby_sara/views/background_sounds/baby_relaxing_sounds_page.dart';
 
 class NavigationWrapper extends StatefulWidget {
-
   const NavigationWrapper({super.key});
 
   @override
@@ -24,7 +23,6 @@ class NavigationWrapper extends StatefulWidget {
 }
 
 class _NavigationWrapperState extends State<NavigationWrapper> {
-
   @override
   void initState() {
     super.initState();
@@ -67,11 +65,26 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
             activeColor: Colors.white,
             color: Colors.white70,
             items: [
-              TabItem(icon: Icons.history_outlined, title: context.tr('history')),
-              TabItem(icon: Icons.surround_sound_outlined, title: context.tr('sounds')),
-              TabItem(icon: Icons.local_activity_outlined, title: context.tr('activity')),
-              TabItem(icon: Icons.receipt_long_outlined, title: context.tr('recipes')),
-              TabItem(icon: Icons.account_circle_outlined, title: context.tr('profile')),
+              TabItem(
+                icon: Icons.history_outlined,
+                title: context.tr('history'),
+              ),
+              TabItem(
+                icon: Icons.surround_sound_outlined,
+                title: context.tr('sounds'),
+              ),
+              TabItem(
+                icon: Icons.local_activity_outlined,
+                title: context.tr('activity'),
+              ),
+              TabItem(
+                icon: Icons.receipt_long_outlined,
+                title: context.tr('recipes'),
+              ),
+              TabItem(
+                icon: Icons.account_circle_outlined,
+                title: context.tr('profile'),
+              ),
             ],
           ),
           body: Container(

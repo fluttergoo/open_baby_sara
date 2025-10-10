@@ -20,9 +20,9 @@ Future<void> showMedicationDialog({
       return BlocBuilder<MedicationBloc, MedicationState>(
         builder: (context, state) {
           List<MedicationModel> medications =
-          state is MedicationLoaded && state.medications != null
-              ? state.medications
-              : [];
+              state is MedicationLoaded && state.medications != null
+                  ? state.medications
+                  : [];
           return StatefulBuilder(
             builder: (context, setState) {
               return Dialog(
@@ -142,26 +142,35 @@ Future<void> showMedicationDialog({
                               Center(
                                 child: Column(
                                   children: [
-                                    Icon(Icons.medication_outlined, size: 48.sp, color: Colors.grey),
+                                    Icon(
+                                      Icons.medication_outlined,
+                                      size: 48.sp,
+                                      color: Colors.grey,
+                                    ),
                                     SizedBox(height: 8.h),
                                     Text(
                                       'No medications yet.',
-                                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                        color: Colors.grey[700],
-                                      ),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall
+                                          ?.copyWith(color: Colors.grey[700]),
                                     ),
                                     SizedBox(height: 4.h),
                                     Text(
                                       'Add one using the field above.',
-                                      style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.titleSmall?.copyWith(
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   ],
                                 ),
-                              )
+                              ),
                             ] else ...[
                               ...medications.map((med) {
-                                final isSelected = selectedMedicationNames.contains(med.name);
+                                final isSelected = selectedMedicationNames
+                                    .contains(med.name);
                                 return Row(
                                   children: [
                                     Expanded(
@@ -171,63 +180,96 @@ Future<void> showMedicationDialog({
                                         onChanged: (val) {
                                           setState(() {
                                             if (val) {
-                                              selectedMedicationNames.add(med.name);
+                                              selectedMedicationNames.add(
+                                                med.name,
+                                              );
                                             } else {
-                                              selectedMedicationNames.remove(med.name);
+                                              selectedMedicationNames.remove(
+                                                med.name,
+                                              );
                                             }
                                           });
                                         },
                                       ),
                                     ),
                                     IconButton(
-                                      icon: Icon(Icons.delete_outline, color: Colors.red),
+                                      icon: Icon(
+                                        Icons.delete_outline,
+                                        color: Colors.red,
+                                      ),
                                       onPressed: () {
                                         showDialog(
                                           context: context,
-                                          builder: (_) => AlertDialog(
-                                            title: Text('Delete Medication', style: Theme.of(context).textTheme.titleMedium),
-                                            content: Text('Are you sure you want to delete "${med.name}"?'),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () => Navigator.pop(context),
-                                                child: Text('Cancel'),
+                                          builder:
+                                              (_) => AlertDialog(
+                                                title: Text(
+                                                  'Delete Medication',
+                                                  style:
+                                                      Theme.of(
+                                                        context,
+                                                      ).textTheme.titleMedium,
+                                                ),
+                                                content: Text(
+                                                  'Are you sure you want to delete "${med.name}"?',
+                                                ),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed:
+                                                        () => Navigator.pop(
+                                                          context,
+                                                        ),
+                                                    child: Text('Cancel'),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      context
+                                                          .read<
+                                                            MedicationBloc
+                                                          >()
+                                                          .add(
+                                                            DeleteMedication(
+                                                              id: med.id!,
+                                                            ),
+                                                          );
+                                                      selectedMedicationNames
+                                                          .remove(med.name);
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: Text(
+                                                      'Delete',
+                                                      style: TextStyle(
+                                                        color: Colors.red,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                              TextButton(
-                                                onPressed: () {
-                                                  context.read<MedicationBloc>().add(DeleteMedication(id: med.id!));
-                                                  selectedMedicationNames.remove(med.name);
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text('Delete', style: TextStyle(color: Colors.red)),
-                                              ),
-                                            ],
-                                          ),
                                         );
                                       },
                                     ),
                                   ],
                                 );
-                              }).toList()
+                              }).toList(),
                             ],
-                            SizedBox(height: 40.h,),
+                            SizedBox(height: 40.h),
                             Center(
                               child: Padding(
                                 padding: EdgeInsets.only(top: 8.h),
                                 child: Text(
                                   'Add a medication above, then select it below to include it in the activity.',
                                   textAlign: TextAlign.center,
-                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.bodyMedium?.copyWith(
                                     color: Colors.grey[600],
                                     fontStyle: FontStyle.italic,
                                   ),
                                 ),
                               ),
                             ),
-
                           ],
                         ),
                       ),
-
                     ],
                   ),
                 ),

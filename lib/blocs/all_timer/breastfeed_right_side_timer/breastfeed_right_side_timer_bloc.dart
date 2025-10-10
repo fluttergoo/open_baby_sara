@@ -167,7 +167,14 @@ class BreastfeedRightSideTimerBloc
       if (data != null && data['isRunning'] == 1) {
         final getTime = DateTime.parse(data['startTime']);
 
-        _startTime = DateTime(getTime.year, getTime.month, getTime.day, getTime.hour,getTime.minute, getTime.second);
+        _startTime = DateTime(
+          getTime.year,
+          getTime.month,
+          getTime.day,
+          getTime.hour,
+          getTime.minute,
+          getTime.second,
+        );
         _endTime = null;
         _duration = DateTime.now().difference(getTime);
 

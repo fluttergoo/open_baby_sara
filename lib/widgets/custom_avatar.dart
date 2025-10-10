@@ -76,7 +76,13 @@ class _CustomAvatarState extends State<CustomAvatar> {
         decoration: BoxDecoration(
           color: AppColors.vaccineColor,
           shape: BoxShape.circle,
-          boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 8, offset: Offset(2, 4))],
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 8,
+              offset: Offset(2, 4),
+            ),
+          ],
           border: Border.all(color: Colors.white, width: 3.w),
         ),
         child: ClipOval(

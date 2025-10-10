@@ -88,7 +88,9 @@ class _EditBabyPageState extends State<AddBabyPage> {
                     ScaffoldMessenger.of(
                       context,
                     ).showSnackBar(buildCustomSnackBar(state.message));
-                  Navigator.of(context).push(MaterialPageRoute(builder: (_)=>NavigationWrapper()));
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => NavigationWrapper()),
+                    );
                   }
                 },
                 child: BlocBuilder<BabyBloc, BabyState>(
@@ -97,6 +99,7 @@ class _EditBabyPageState extends State<AddBabyPage> {
                     if (state is BabyImagePathLoaded) {
                       imagePath = state.imagePath;
                     }
+
                     /// Edit Profile
                     return Column(
                       children: [

@@ -19,7 +19,6 @@ class BabyBloc extends Bloc<BabyEvent, BabyState> {
   final BabyRepository _babyRepository = getIt<BabyRepository>();
 
   BabyBloc() : super(BabyInitial()) {
-
     on<RegisterBaby>((event, emit) async {
       emit(BabyLoading());
       final user = FirebaseAuth.instance.currentUser;
@@ -58,12 +57,12 @@ class BabyBloc extends Bloc<BabyEvent, BabyState> {
     });
     on<GetBabyInfo>((event, emit) async {
       emit(BabyLoading());
-      try{
+      try {
         final babyModel = await _babyRepository.getSelectedBaby(event.babyID);
         if (babyModel != null) {
           emit(GotBabyInfo(babyModel: babyModel));
         }
-      } catch(e){
+      } catch (e) {
         debugPrint(e.toString());
         emit(BabyFailure('Get Baby selected Error!: ${e.toString()}'));
       }
@@ -155,13 +154,17 @@ class BabyBloc extends Bloc<BabyEvent, BabyState> {
       if (state is BabyLoaded) {
         final currentState = state as BabyLoaded;
 
-        final file = await _babyRepository.getLocalBabyImage(event.selectBabyModel.babyID);
+        final file = await _babyRepository.getLocalBabyImage(
+          event.selectBabyModel.babyID,
+        );
 
-        emit(BabyLoaded(
-          babies: currentState.babies,
-          selectedBaby: event.selectBabyModel,
-          imagePath: file?.path,
-        ));
+        emit(
+          BabyLoaded(
+            babies: currentState.babies,
+            selectedBaby: event.selectBabyModel,
+            imagePath: file?.path,
+          ),
+        );
       }
     });
 
@@ -177,15 +180,16 @@ class BabyBloc extends Bloc<BabyEvent, BabyState> {
 
         final filePath = '$savePath/${event.babyID}.jpg';
         await event.imageFile.copy(filePath);
-
       } catch (e) {
         emit(BabyFailure('Failed to save image: ${e.toString()}'));
       }
     });
 
-
     on<UpdateBabyImageLocal>((event, emit) async {
-      final newPath = await _babyRepository.saveBabyImageLocally(event.babyID, event.imagePath);
+      final newPath = await _babyRepository.saveBabyImageLocally(
+        event.babyID,
+        event.imagePath,
+      );
       if (newPath != null) {
         emit(BabyImagePathLoaded(imagePath: newPath));
       } else {

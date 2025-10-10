@@ -176,9 +176,7 @@ Future<void> showDialogAddAndVaccination({
                                         onChanged: (val) {
                                           setState(() {
                                             if (val) {
-                                              selectedVaccinationNames.add(
-                                                med,
-                                              );
+                                              selectedVaccinationNames.add(med);
                                             } else {
                                               selectedVaccinationNames.remove(
                                                 med,
@@ -223,7 +221,9 @@ Future<void> showDialogAddAndVaccination({
                                                             VaccinationBloc
                                                           >()
                                                           .add(
-                                                            DeleteVaccination(vaccination: med)
+                                                            DeleteVaccination(
+                                                              vaccination: med,
+                                                            ),
                                                           );
                                                       selectedVaccinationNames
                                                           .remove(med);

@@ -51,7 +51,6 @@ class LocalDatabaseService {
         await db.execute(
           '''CREATE TABLE relaxing_sound(id INTEGER PRIMARY KEY,sound_index INTEGER, isRunning INTEGER)''',
         );
-
       },
     );
   }

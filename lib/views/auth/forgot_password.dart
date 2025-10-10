@@ -148,7 +148,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                                       ?.copyWith(
                                                         color: Colors.white,
                                                         fontSize: 18.sp,
-                                                    fontWeight: FontWeight.bold
+                                                        fontWeight:
+                                                            FontWeight.bold,
                                                       ),
                                                 ),
                                       ),
@@ -220,7 +221,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     if (!_formKey.currentState!.validate()) {
       showCustomFlushbar(
         context,
-          context.tr("error"),
+        context.tr("error"),
         context.tr("failure_forgot_password"),
         Icons.warning_outlined,
       );

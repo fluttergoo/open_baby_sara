@@ -30,7 +30,9 @@ class UserRepositoryImpl implements UserRepository {
       if (doc.exists && doc.data() != null) {
         return UserModel.fromMap(doc.data()!);
       } else {
-        print('Firestore document does not exist or has no data for user: ${user.uid}');
+        print(
+          'Firestore document does not exist or has no data for user: ${user.uid}',
+        );
         return null;
       }
     }

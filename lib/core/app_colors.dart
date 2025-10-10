@@ -1,21 +1,20 @@
 import 'dart:ui';
 
-class AppColors{
+class AppColors {
   static const Color feedColor = Color(0xFFFFF4CC);
   static const Color pumpColor = Color(0xFFFFD6E8);
   static const Color diaperColor = Color(0xFFD7F5DC);
   static const Color sleepColor = Color(0xFFD9E4FF);
   static const Color growthColor = Color(0xFFE7E0FF);
   static const Color babyFirstsColor = Color(0xFFFFE0E0);
-  static const Color teethingColor   = Color(0xFFE0F7FA);
-  static const Color medicalColor    = Color(0xFFFFEEDD);
+  static const Color teethingColor = Color(0xFFE0F7FA);
+  static const Color medicalColor = Color(0xFFFFEEDD);
   static const Color vaccineColor = Color(0xFFE0CFFF);
   static const Color summaryColor = Color(0xFFFFF0E1);
   static const Color doctorVisitColor = Color(0xFFD0F0FF);
   static const Color feverTrackerColor = Color(0xFFFFD1D1);
   static const Color summaryHeader = Color(0xFFFFF0D9);
-  static const Color summaryBody=Color(0xFFFFF4E2);
-
+  static const Color summaryBody = Color(0xFFFFF4E2);
 
   // 🎀 GIRL THEME COLORS
   static const Color girlPrimary = Color(0xFFE91E63);
@@ -40,5 +39,4 @@ class AppColors{
   static const Color boyDisabled = Color(0xFFBBDEFB);
   static const Color boyIcon = Color(0xFF1E88E5);
   static const Color boyShadow = Color(0xFFB3E5FC);
-
 }

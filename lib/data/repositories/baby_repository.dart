@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:open_baby_sara/data/models/baby_model.dart';
 
-abstract class BabyRepository{
+abstract class BabyRepository {
   Future<void> createBaby(BabyModel baby);
   Future<BabyModel?> getSelectedBaby(String? babyID);
   Future<List<BabyModel>> getBabies();
@@ -12,7 +12,4 @@ abstract class BabyRepository{
   Future<void> deleteBaby(String babyID);
   Future<String?> uploadBabyImageToFile(String babyID, File file);
   Future<File?> getLocalBabyImage(String babyID);
-
-
-
 }

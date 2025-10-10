@@ -9,15 +9,19 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class BreastfeedRightSideTimer extends StatefulWidget {
   final double size;
   final String activityType;
-  const BreastfeedRightSideTimer({super.key, this.size = 140,
-    required this.activityType,});
+  const BreastfeedRightSideTimer({
+    super.key,
+    this.size = 140,
+    required this.activityType,
+  });
 
   @override
-  State<BreastfeedRightSideTimer> createState() => _BreastfeedRightSideTimerState();
+  State<BreastfeedRightSideTimer> createState() =>
+      _BreastfeedRightSideTimerState();
 }
 
-class _BreastfeedRightSideTimerState extends State<BreastfeedRightSideTimer> with SingleTickerProviderStateMixin {
-
+class _BreastfeedRightSideTimerState extends State<BreastfeedRightSideTimer>
+    with SingleTickerProviderStateMixin {
   Timer? _timer;
   Duration _duration = Duration.zero;
   bool _isRunning = false;
@@ -79,14 +83,19 @@ class _BreastfeedRightSideTimerState extends State<BreastfeedRightSideTimer> wit
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BreastfeedRightSideTimerBloc, BreastfeedRightSideTimerState>(
+    return BlocBuilder<
+      BreastfeedRightSideTimerBloc,
+      BreastfeedRightSideTimerState
+    >(
       builder: (context, state) {
-        if (state is TimerRunning && state.activityType == widget.activityType) {
+        if (state is TimerRunning &&
+            state.activityType == widget.activityType) {
           _duration = state.duration;
           _isRunning = true;
           _animationController.forward();
         }
-        if (state is TimerStopped && state.activityType == widget.activityType) {
+        if (state is TimerStopped &&
+            state.activityType == widget.activityType) {
           _duration = state.duration;
           _isRunning = false;
           _animationController.stop();
@@ -158,13 +167,17 @@ class _BreastfeedRightSideTimerState extends State<BreastfeedRightSideTimer> wit
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
-                      _isRunning ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                      _isRunning
+                          ? Icons.pause_rounded
+                          : Icons.play_arrow_rounded,
                       size: 20.sp,
                       color: textColor,
                     ),
                   ),
                   Text(
-                    _isRunning ? context.tr('tap_to_pause') : context.tr('tap_to_start_2'),
+                    _isRunning
+                        ? context.tr('tap_to_pause')
+                        : context.tr('tap_to_start_2'),
                     style: TextStyle(
                       fontSize: 12.sp,
                       color: textColor.withOpacity(0.8),

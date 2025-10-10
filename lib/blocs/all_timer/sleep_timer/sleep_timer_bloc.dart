@@ -97,7 +97,7 @@ class SleepTimerBloc extends Bloc<SleepTimerEvent, SleepTimerState> {
           duration: _duration,
           startTime: _startTime,
           activityType: event.activityType,
-          endTime: _endTime
+          endTime: _endTime,
         ),
       );
     });
@@ -169,7 +169,14 @@ class SleepTimerBloc extends Bloc<SleepTimerEvent, SleepTimerState> {
       if (data != null && data['isRunning'] == 1) {
         final getTime = DateTime.parse(data['startTime']);
 
-        _startTime = DateTime(getTime.year, getTime.month, getTime.day, getTime.hour,getTime.minute, getTime.second);
+        _startTime = DateTime(
+          getTime.year,
+          getTime.month,
+          getTime.day,
+          getTime.hour,
+          getTime.minute,
+          getTime.second,
+        );
         _endTime = null;
         _duration = DateTime.now().difference(getTime);
 

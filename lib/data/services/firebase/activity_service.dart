@@ -4,9 +4,6 @@ abstract class ActivityService {
   Future<void> uploadActivity(ActivityModel activityModel);
 
   Future<ActivityModel?> getActivity(String babyID, String activityID);
-  Future<void> deleteActivityFromFirebase(String babyID,String activityID);
+  Future<void> deleteActivityFromFirebase(String babyID, String activityID);
   Future<void> updateActivity(ActivityModel activityModel);
-
-
-
 }

@@ -31,9 +31,7 @@ class GenderSelector extends StatelessWidget {
         color: Colors.pinkAccent,
         fontWeight: FontWeight.bold,
       ),
-      unSelectedGenderTextStyle: const TextStyle(
-        color: Colors.grey,
-      ),
+      unSelectedGenderTextStyle: const TextStyle(color: Colors.grey),
     );
   }
 }

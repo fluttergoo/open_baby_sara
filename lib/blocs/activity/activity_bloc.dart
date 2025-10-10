@@ -20,10 +20,13 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
   Timer? _syncTimer;
 
   ActivityBloc() : super(ActivityInitial()) {
-    on<AddActivity>((event, emit) async{
+    on<AddActivity>((event, emit) async {
       try {
         _activityRepository.saveLocallyActivity(event.activityModel);
-        getIt<AnalyticsService>().logActivitySaved(event.activityModel.babyID, event.activityModel.activityType);
+        getIt<AnalyticsService>().logActivitySaved(
+          event.activityModel.babyID,
+          event.activityModel.activityType,
+        );
         await ReviewService().incrementRecordCount();
         emit(ActivityAdded());
       } catch (e) {
@@ -160,10 +163,10 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
         emit(ActivityError('Error, ${e.toString()}'));
       }
     });
-    on<LoadActivitiesByDateRange>((event,emit)async{
+    on<LoadActivitiesByDateRange>((event, emit) async {
       emit(ActivityLoading());
 
-      try{
+      try {
         final selectedDisplayType = event.activityType ?? 'All Activities';
         final dbTypes = activityTypeMap[selectedDisplayType] ?? [];
 
@@ -174,19 +177,20 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
           activityTypes: dbTypes.isEmpty ? null : dbTypes, // all activities
         );
         emit(ActivityByDateRangeLoaded(activities: results ?? []));
-
-      }catch (e){
+      } catch (e) {
         emit(ActivityError('Error, ${e.toString()}'));
       }
-
     });
 
-    on<DeleteActivity>((event, emit)async{
+    on<DeleteActivity>((event, emit) async {
       emit(ActivityLoading());
-      try{
-        await _activityRepository.deleteActivity(event.babyID, event.activityID);
+      try {
+        await _activityRepository.deleteActivity(
+          event.babyID,
+          event.activityID,
+        );
         emit(ActivityDeleted());
-      }catch(e){
+      } catch (e) {
         emit(ActivityError('Error ${e.toString()}'));
       }
     });
@@ -199,6 +203,5 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
         emit(ActivityUpdateError(e.toString()));
       }
     });
-
   }
 }

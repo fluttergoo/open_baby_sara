@@ -70,7 +70,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                           child: Text(
                             context.tr("change_password_description"),
                             textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodyMedium?.copyWith(
                               fontSize: 14.sp,
                               color: Colors.grey.shade700,
                             ),

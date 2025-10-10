@@ -75,7 +75,6 @@ class _CustomDoctorVisitTrackerBottomSheetState
       notesController.text = data['notes'] ?? '';
     }
     getIt<AnalyticsService>().logScreenView('DoctorVisitActivityTracker');
-
   }
 
   @override
@@ -108,7 +107,8 @@ class _CustomDoctorVisitTrackerBottomSheetState
                   title: context.tr('doctor_visit'),
                   onBack: () => Navigator.of(context).pop(),
                   onSave: () => onPressedSave(),
-                  saveText: widget.isEdit ? context.tr('update') : context.tr('save'),
+                  saveText:
+                      widget.isEdit ? context.tr('update') : context.tr('save'),
                   backgroundColor: AppColors.doctorVisitColor,
                 ),
 

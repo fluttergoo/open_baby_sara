@@ -7,7 +7,7 @@ class UserModel {
   final String firstName;
   final String? parentID;
   final DateTime createdAt;
-   List<InviteModel>? caregivers;
+  List<InviteModel>? caregivers;
 
   UserModel({
     required this.userID,
@@ -23,12 +23,12 @@ class UserModel {
       'userID': userID,
       'email': email,
       'firstName': firstName,
-      'parentID' : parentID,
+      'parentID': parentID,
       'createdAt': createdAt.toIso8601String(),
-      'caregivers': caregivers ==null ? [] : caregivers?.map((e) => e.toMap()).toList(),
+      'caregivers':
+          caregivers == null ? [] : caregivers?.map((e) => e.toMap()).toList(),
     };
   }
-
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
@@ -36,12 +36,14 @@ class UserModel {
       email: map['email'] ?? '',
       firstName: map['firstName'] ?? '',
       parentID: map['parentID'] ?? '',
-      createdAt: map['createdAt'] is Timestamp
-          ? (map['createdAt'] as Timestamp).toDate()
-          : DateTime.tryParse(map['createdAt'] ?? '') ?? DateTime.now(),
-      caregivers: (map['caregivers'] as List<dynamic>? ?? []).map((e) {
-        return InviteModel.fromMap(e as Map<String, dynamic>);
-      }).toList(),
+      createdAt:
+          map['createdAt'] is Timestamp
+              ? (map['createdAt'] as Timestamp).toDate()
+              : DateTime.tryParse(map['createdAt'] ?? '') ?? DateTime.now(),
+      caregivers:
+          (map['caregivers'] as List<dynamic>? ?? []).map((e) {
+            return InviteModel.fromMap(e as Map<String, dynamic>);
+          }).toList(),
     );
   }
 }

@@ -17,10 +17,12 @@ class BreastfeedLeftSideTimer extends StatefulWidget {
   });
 
   @override
-  State<BreastfeedLeftSideTimer> createState() => _BreastfeedLeftSideTimerState();
+  State<BreastfeedLeftSideTimer> createState() =>
+      _BreastfeedLeftSideTimerState();
 }
 
-class _BreastfeedLeftSideTimerState extends State<BreastfeedLeftSideTimer> with SingleTickerProviderStateMixin {
+class _BreastfeedLeftSideTimerState extends State<BreastfeedLeftSideTimer>
+    with SingleTickerProviderStateMixin {
   Timer? _timer;
   Duration _duration = Duration.zero;
   bool _isRunning = false;
@@ -84,12 +86,14 @@ class _BreastfeedLeftSideTimerState extends State<BreastfeedLeftSideTimer> with 
   Widget build(BuildContext context) {
     return BlocBuilder<BreasfeedLeftSideTimerBloc, BreasfeedLeftSideTimerState>(
       builder: (context, state) {
-        if (state is TimerRunning && state.activityType == widget.activityType) {
+        if (state is TimerRunning &&
+            state.activityType == widget.activityType) {
           _duration = state.duration;
           _isRunning = true;
           _animationController.forward();
         }
-        if (state is TimerStopped && state.activityType == widget.activityType) {
+        if (state is TimerStopped &&
+            state.activityType == widget.activityType) {
           _duration = state.duration;
           _isRunning = false;
           _animationController.stop();
@@ -161,13 +165,17 @@ class _BreastfeedLeftSideTimerState extends State<BreastfeedLeftSideTimer> with 
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
-                      _isRunning ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                      _isRunning
+                          ? Icons.pause_rounded
+                          : Icons.play_arrow_rounded,
                       size: 20.sp,
                       color: textColor,
                     ),
                   ),
                   Text(
-                    _isRunning ? context.tr('tap_to_pause') : context.tr('tap_to_start_2'),
+                    _isRunning
+                        ? context.tr('tap_to_pause')
+                        : context.tr('tap_to_start_2'),
                     style: TextStyle(
                       fontSize: 12.sp,
                       color: textColor.withOpacity(0.8),
@@ -181,5 +189,4 @@ class _BreastfeedLeftSideTimerState extends State<BreastfeedLeftSideTimer> with 
       },
     );
   }
-
 }

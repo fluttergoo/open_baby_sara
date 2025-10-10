@@ -4,6 +4,7 @@ part of 'sleep_timer_bloc.dart';
 sealed class SleepTimerState {}
 
 final class SleepTimerInitial extends SleepTimerState {}
+
 final class TimerRunning extends SleepTimerState {
   final DateTime? startTime;
   final Duration duration;
@@ -22,7 +23,6 @@ class TimerStopped extends SleepTimerState {
   final DateTime? startTime;
 
   final String activityType;
-
 
   TimerStopped({
     required this.duration,

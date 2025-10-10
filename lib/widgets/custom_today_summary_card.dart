@@ -60,7 +60,10 @@ class _CustomTodaySummaryCardState extends State<CustomTodaySummaryCard> {
             state.pumpActivities,
           );
           final totalPumpUnit = getPumpUnit(state.pumpActivities);
-          final totalDiaper = summarizeDiaperTypes(state.diaperActivities,context);
+          final totalDiaper = summarizeDiaperTypes(
+            state.diaperActivities,
+            context,
+          );
           return Card(
             color: widget.colorSummaryBody,
             shape: RoundedRectangleBorder(
@@ -118,22 +121,27 @@ class _CustomTodaySummaryCardState extends State<CustomTodaySummaryCard> {
                               children: [
                                 Text(
                                   context.tr('total:'),
-                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(fontSize: 12.sp),
+                                  style: Theme.of(context).textTheme.titleSmall
+                                      ?.copyWith(fontSize: 12.sp),
                                 ),
                                 Text(
                                   totalFeedAmount.toString(),
-                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(fontSize: 12.sp),
+                                  style: Theme.of(context).textTheme.titleSmall
+                                      ?.copyWith(fontSize: 12.sp),
                                 ),
                                 SizedBox(width: 5.w),
                                 Text(
                                   totalFeedUnit.toString(),
-                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(fontSize: 12.sp),
+                                  style: Theme.of(context).textTheme.titleSmall
+                                      ?.copyWith(fontSize: 12.sp),
                                 ),
                               ],
                             ),
                             Text(
                               '${state.feedActivities.length} ${context.tr('times')}',
-                              style: Theme.of(context).textTheme.titleSmall?.copyWith(fontSize: 12.sp),
+                              style: Theme.of(
+                                context,
+                              ).textTheme.titleSmall?.copyWith(fontSize: 12.sp),
                             ),
                           ],
                         ),
@@ -149,13 +157,16 @@ class _CustomTodaySummaryCardState extends State<CustomTodaySummaryCard> {
                               children: [
                                 Text(
                                   '${context.tr('total')} $sleptFormatted',
-                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(fontSize: 12.sp),
+                                  style: Theme.of(context).textTheme.titleSmall
+                                      ?.copyWith(fontSize: 12.sp),
                                 ),
                               ],
                             ),
                             Text(
                               '${state.sleepActivities.length} ${context.tr('times')}',
-                              style: Theme.of(context).textTheme.titleSmall?.copyWith(fontSize: 12.sp),
+                              style: Theme.of(
+                                context,
+                              ).textTheme.titleSmall?.copyWith(fontSize: 12.sp),
                             ),
                           ],
                         ),
@@ -171,13 +182,16 @@ class _CustomTodaySummaryCardState extends State<CustomTodaySummaryCard> {
                               children: [
                                 Text(
                                   totalDiaper!,
-                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(fontSize: 12.sp),
+                                  style: Theme.of(context).textTheme.titleSmall
+                                      ?.copyWith(fontSize: 12.sp),
                                 ),
                               ],
                             ),
                             Text(
                               '${state.diaperActivities.length} ${context.tr("times changed.")}',
-                              style: Theme.of(context).textTheme.titleSmall?.copyWith(fontSize: 12.sp),
+                              style: Theme.of(
+                                context,
+                              ).textTheme.titleSmall?.copyWith(fontSize: 12.sp),
                             ),
                           ],
                         ),
@@ -193,22 +207,27 @@ class _CustomTodaySummaryCardState extends State<CustomTodaySummaryCard> {
                               children: [
                                 Text(
                                   context.tr("total:"),
-                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(fontSize: 12.sp),
+                                  style: Theme.of(context).textTheme.titleSmall
+                                      ?.copyWith(fontSize: 12.sp),
                                 ),
                                 Text(
                                   totalPumpAmount.toString(),
-                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(fontSize: 12.sp),
+                                  style: Theme.of(context).textTheme.titleSmall
+                                      ?.copyWith(fontSize: 12.sp),
                                 ),
                                 SizedBox(width: 5.w),
                                 Text(
                                   totalPumpUnit.toString(),
-                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(fontSize: 12.sp),
+                                  style: Theme.of(context).textTheme.titleSmall
+                                      ?.copyWith(fontSize: 12.sp),
                                 ),
                               ],
                             ),
                             Text(
                               '${state.pumpActivities.length} ${context.tr("times")}',
-                              style: Theme.of(context).textTheme.titleSmall?.copyWith(fontSize: 12.sp),
+                              style: Theme.of(
+                                context,
+                              ).textTheme.titleSmall?.copyWith(fontSize: 12.sp),
                             ),
                           ],
                         ),

@@ -17,27 +17,23 @@ class BirthdayField extends StatefulWidget {
 class _BirthdayFieldState extends State<BirthdayField> {
   void _showBottomDatePicker(BuildContext context) {
     BottomPicker.date(
-      pickerTitle:  Text(
+      pickerTitle: Text(
         context.tr("set_your_birthday_or_due_date"),
-        style: TextStyle(
-          fontSize: 14.sp,
-          color: Colors.blue,
-        ),
+        style: TextStyle(fontSize: 14.sp, color: Colors.blue),
       ),
       dateOrder: DatePickerDateOrder.dmy,
       initialDateTime: DateTime.now(),
       maxDateTime: DateTime(2050),
       minDateTime: DateTime(1980),
       pickerTextStyle: TextStyle(
-        color:Theme.of(context).primaryColor,
+        color: Theme.of(context).primaryColor,
         // fontWeight: FontWeight.bold,
         fontSize: 16.sp,
       ),
       onSubmit: (date) {
         widget.controller.text = DateFormat('M/d/yyyy').format(date);
       },
-      onChange: (date) {
-      },
+      onChange: (date) {},
       bottomPickerTheme: BottomPickerTheme.plumPlate,
     ).show(context);
   }
@@ -80,9 +76,7 @@ class _BirthdayFieldState extends State<BirthdayField> {
         labelStyle: TextStyle(fontSize: 14.sp),
         hintStyle: TextStyle(fontSize: 14.sp),
         suffixIcon: const Icon(Icons.calendar_month),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }

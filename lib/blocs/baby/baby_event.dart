@@ -64,16 +64,16 @@ class AddBaby extends BabyEvent {
     required this.gender,
     required this.dateTime,
     required this.nighttimeHours,
-    this.file
+    this.file,
   });
 }
 
-class SelectBaby extends BabyEvent{
+class SelectBaby extends BabyEvent {
   final BabyModel selectBabyModel;
 
   SelectBaby({required this.selectBabyModel});
-
 }
+
 class LoadBabyImagePath extends BabyEvent {
   final String babyID;
   LoadBabyImagePath({required this.babyID});
@@ -84,12 +84,11 @@ class SaveBabyImage extends BabyEvent {
   final File imageFile;
 
   SaveBabyImage({required this.babyID, required this.imageFile});
-
 }
+
 class UpdateBabyImageLocal extends BabyEvent {
   final String babyID;
   final String imagePath;
 
   UpdateBabyImageLocal({required this.babyID, required this.imagePath});
 }
-

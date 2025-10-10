@@ -10,16 +10,15 @@ class CustomTextFormField extends StatefulWidget {
   final void Function(String)? onChanged;
   final TextInputType? keyboardType;
 
-
   const CustomTextFormField({
     super.key,
     required this.hintText,
     this.controller,
     this.validator,
     this.isPassword = false,
-    this.isNotes=false,
+    this.isNotes = false,
     this.onChanged,
-    this.keyboardType=TextInputType.text
+    this.keyboardType = TextInputType.text,
   });
 
   @override
@@ -43,7 +42,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       validator: widget.validator,
       maxLines: widget.isNotes ? null : 1,
       onChanged: widget.onChanged,
-      keyboardType: widget.isNotes ? TextInputType.multiline : widget.keyboardType,
+      keyboardType:
+          widget.isNotes ? TextInputType.multiline : widget.keyboardType,
       style: Theme.of(
         context,
       ).textTheme.titleMedium?.copyWith(color: Colors.black, fontSize: 16.sp),

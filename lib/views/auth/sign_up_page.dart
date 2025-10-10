@@ -42,7 +42,6 @@ class _SignUpPageState extends State<SignUpPage> {
   void _onSignUpPressed(BuildContext context) {
     if (_formKey.currentState!.validate()) {
       if (_passwordController.text != _confirmPasswordController.text) {
-
         showCustomFlushbar(
           context,
           context.tr('passwords_do_not_match'),
@@ -70,27 +69,25 @@ class _SignUpPageState extends State<SignUpPage> {
       resizeToAvoidBottomInset: true,
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
-
           /// if User registered successfully account
           if (state is Authenticated) {
             showCustomFlushbar(
               context,
-                context.tr('successfully_you_created'),
+              context.tr('successfully_you_created'),
               context.tr('successfully_login'),
               Icons.check_circle_outline,
             );
 
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) => BabySignUpPage()));
-
+            Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (context) => BabySignUpPage()));
           } else if (state is AuthFailure) {
-
             showCustomFlushbar(
               context,
               context.tr('error'),
               state.message,
               Icons.warning_outlined,
             );
-
           }
         },
         builder: (context, state) {
@@ -99,7 +96,11 @@ class _SignUpPageState extends State<SignUpPage> {
               gradient: LinearGradient(
                 begin: Alignment.topRight,
                 end: Alignment.bottomLeft,
-                colors: [Color(0xFFFFF9C4), Color(0xFFFFE0B2), Color(0xFFFFCDD2)],
+                colors: [
+                  Color(0xFFFFF9C4),
+                  Color(0xFFFFE0B2),
+                  Color(0xFFFFCDD2),
+                ],
               ),
             ),
             child: Stack(
@@ -118,17 +119,28 @@ class _SignUpPageState extends State<SignUpPage> {
                 Align(
                   alignment: Alignment.center,
                   child: SingleChildScrollView(
-                    padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                    padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom,
+                    ),
                     child: Stack(
                       clipBehavior: Clip.none,
                       children: [
                         Container(
                           width: size.width * 0.85,
-                          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 24.h),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 24.h,
+                          ),
                           decoration: BoxDecoration(
                             color: const Color(0xFFFFF8E1),
                             borderRadius: BorderRadius.circular(15.r),
-                            boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, 4))],
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black26,
+                                blurRadius: 10,
+                                offset: Offset(0, 4),
+                              ),
+                            ],
                           ),
                           child: Form(
                             key: _formKey,
@@ -137,77 +149,107 @@ class _SignUpPageState extends State<SignUpPage> {
                               children: [
                                 Text(
                                   context.tr("create_an_account"),
-                                  style: Theme.of(context).textTheme.titleLarge
+                                  style: Theme.of(context).textTheme.titleLarge,
                                 ),
                                 SizedBox(height: 10.h),
                                 Text(
                                   context.tr("lets_sign_up"),
-                                  style: Theme.of(context).textTheme.titleMedium,
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
                                 ),
                                 SizedBox(height: 20.h),
                                 CustomTextFormField(
                                   hintText: context.tr("first_name"),
                                   controller: _firstNameController,
                                   isPassword: false,
-                                  validator: (value) => value == null || value.isEmpty ? context.tr("required") : null,
+                                  validator:
+                                      (value) =>
+                                          value == null || value.isEmpty
+                                              ? context.tr("required")
+                                              : null,
                                 ),
                                 SizedBox(height: 7.h),
                                 CustomTextFormField(
                                   hintText: "Email",
                                   controller: _emailController,
                                   isPassword: false,
-                                  validator: (value) =>
-                                  value != null && value.contains('@') ? null : context.tr("invalid_email"),
+                                  validator:
+                                      (value) =>
+                                          value != null && value.contains('@')
+                                              ? null
+                                              : context.tr("invalid_email"),
                                 ),
                                 SizedBox(height: 7.h),
                                 CustomTextFormField(
                                   hintText: context.tr("password"),
                                   controller: _passwordController,
                                   isPassword: true,
-                                  validator: (value) =>
-                                  value != null && value.length > 5 ? null : context.tr("min_6_characters"),
+                                  validator:
+                                      (value) =>
+                                          value != null && value.length > 5
+                                              ? null
+                                              : context.tr("min_6_characters"),
                                 ),
                                 SizedBox(height: 7.h),
                                 CustomTextFormField(
                                   hintText: context.tr("confirm_password"),
                                   controller: _confirmPasswordController,
                                   isPassword: true,
-                                  validator: (value) =>
-                                  value == _passwordController.text ? null : context.tr("passwords_do_not_match"),
+                                  validator:
+                                      (value) =>
+                                          value == _passwordController.text
+                                              ? null
+                                              : context.tr(
+                                                "passwords_do_not_match",
+                                              ),
                                 ),
                                 SizedBox(height: 20.h),
                                 SizedBox(
                                   width: double.infinity,
                                   height: 45.h,
                                   child: ElevatedButton(
-                                    onPressed: state is AuthLoading ? null : () => _onSignUpPressed(context),
+                                    onPressed:
+                                        state is AuthLoading
+                                            ? null
+                                            : () => _onSignUpPressed(context),
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: Theme.of(context).primaryColor,
+                                      backgroundColor:
+                                          Theme.of(context).primaryColor,
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12.r),
+                                        borderRadius: BorderRadius.circular(
+                                          12.r,
+                                        ),
                                       ),
                                     ),
-                                    child: state is AuthLoading
-                                        ? CircularProgressIndicator(color: Colors.white)
-                                        : Text(
-                                      context.tr("sign_up"),
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 18.sp,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
+                                    child:
+                                        state is AuthLoading
+                                            ? CircularProgressIndicator(
+                                              color: Colors.white,
+                                            )
+                                            : Text(
+                                              context.tr("sign_up"),
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 18.sp,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
                                   ),
                                 ),
                                 SizedBox(height: 10.h),
                                 TextButton(
                                   onPressed: () {
                                     Navigator.of(context).push(
-                                      MaterialPageRoute(builder: (context) => const SignInPage()),
+                                      MaterialPageRoute(
+                                        builder:
+                                            (context) => const SignInPage(),
+                                      ),
                                     );
                                   },
                                   child: Text(
-                                    context.tr("already_have_an_account_sign_in"),
+                                    context.tr(
+                                      "already_have_an_account_sign_in",
+                                    ),
                                     style: Theme.of(
                                       context,
                                     ).textTheme.titleMedium?.copyWith(
@@ -236,7 +278,6 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                   ),
                 ),
-
               ],
             ),
           );
