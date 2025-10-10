@@ -1,0 +1,60 @@
+# ios/fastlane/Fastfile
+default_platform(:ios)
+
+# Environment variables kullanarak güvenli hale getirildi
+API_KEY_ID = ENV['APP_STORE_CONNECT_API_KEY_ID'] || 'T793NZB3B5'
+ISSUER_ID = ENV['APP_STORE_CONNECT_ISSUER_ID'] || 'bd3d7716-83ab-4e9a-9a30-a77ec9bc8b9f'
+API_KEY_PATH = File.expand_path("AuthKey_#{API_KEY_ID}.p8", __dir__)
+
+platform :ios do
+  desc "Deploy to App Store"
+  lane :release do
+    api_key_obj = app_store_connect_api_key(
+      key_id: API_KEY_ID,
+      issuer_id: ISSUER_ID,
+      key_filepath: API_KEY_PATH
+    )
+
+    build_app(
+      workspace: "Runner.xcworkspace",
+      scheme: "Runner",
+      export_method: "app-store"
+    )
+
+    upload_to_app_store(
+      api_key: api_key_obj,
+      force: true,
+      skip_metadata: true,
+      skip_screenshots: true
+    )
+  end
+
+  desc "Build for TestFlight"
+  lane :beta do
+    api_key_obj = app_store_connect_api_key(
+      key_id: API_KEY_ID,
+      issuer_id: ISSUER_ID,
+      key_filepath: API_KEY_PATH
+    )
+
+    build_app(
+      workspace: "Runner.xcworkspace",
+      scheme: "Runner",
+      export_method: "app-store"
+    )
+
+    upload_to_testflight(
+      api_key: api_key_obj,
+      skip_waiting_for_build_processing: true
+    )
+  end
+
+  desc "Build for development"
+  lane :build do
+    build_app(
+      workspace: "Runner.xcworkspace",
+      scheme: "Runner",
+      export_method: "development"
+    )
+  end
+end
