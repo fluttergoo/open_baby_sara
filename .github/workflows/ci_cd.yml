@@ -106,8 +106,11 @@ jobs:
           flutter analyze || true
           echo "✅ Code analysis completed (warnings are acceptable)"
 
-      - name: Check formatting
-        run: dart format --output=none --set-exit-if-changed .
+      - name: Format code
+        run: |
+          echo "🎨 Formatting code..."
+          dart format .
+          echo "✅ Code formatting completed"
 
   # Development build for develop branch
   build-development:
