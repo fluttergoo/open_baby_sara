@@ -432,6 +432,12 @@ jobs:
       - name: Setup Firebase configuration
         run: |
           echo "🔥 Setting up Firebase configuration..."
+          echo "📁 Current directory: $(pwd)"
+          echo "📁 Contents of current directory:"
+          ls -la
+          echo "📁 Contents of lib directory:"
+          ls -la lib/ || echo "lib directory does not exist"
+          
           # Create firebase_options.dart if it doesn't exist
           if [ ! -f "lib/firebase_options.dart" ]; then
             echo "⚠️ firebase_options.dart not found, creating minimal version..."
@@ -461,7 +467,15 @@ jobs:
             echo "  static const FirebaseOptions macos = FirebaseOptions(apiKey: 'demo-api-key', appId: '1:123456789:ios:demo', messagingSenderId: '123456789', projectId: 'demo-project');" >> lib/firebase_options.dart
             echo "  static const FirebaseOptions windows = FirebaseOptions(apiKey: 'demo-api-key', appId: '1:123456789:web:demo', messagingSenderId: '123456789', projectId: 'demo-project');" >> lib/firebase_options.dart
             echo "}" >> lib/firebase_options.dart
+            echo "✅ firebase_options.dart created successfully"
+          else
+            echo "✅ firebase_options.dart already exists"
           fi
+          
+          echo "📁 Final contents of lib directory:"
+          ls -la lib/
+          echo "📄 Contents of firebase_options.dart:"
+          cat lib/firebase_options.dart
           
           # Create GoogleService-Info.plist if it doesn't exist
           if [ ! -f "ios/Runner/GoogleService-Info.plist" ]; then
