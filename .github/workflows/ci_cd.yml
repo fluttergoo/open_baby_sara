@@ -1,0 +1,784 @@
+# .github/workflows/ci_cd.yml
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  FLUTTER_VERSION: '3.24.0'
+  BUNDLE_ID_ANDROID: ${{ secrets.BUNDLE_ID_ANDROID || 'com.suleymansurucu.sarababy' }}
+  BUNDLE_ID_IOS: ${{ secrets.BUNDLE_ID_IOS || 'com.suleymansurucu.babysara' }}
+  SUPPORTED_LOCALES: 'en-US,tr-TR,ar-SA,de-DE,es-ES,fr-FR,id-ID,ko-KR,nl-NL,ru-RU,zh-TW'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
+
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pub-cache
+            **/.packages
+            **/.flutter-plugins
+            **/.flutter-plugin-dependencies
+          key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # Validate localization files
+      - name: Validate localization files
+        run: |
+          echo "🔍 Validating localization files..."
+          for locale in $(echo "${{ env.SUPPORTED_LOCALES }}" | tr ',' ' '); do
+            if [ -f "lib/l10n/${locale}.json" ]; then
+              echo "✅ Found: ${locale}.json"
+              python3 -m json.tool "lib/l10n/${locale}.json" > /dev/null
+            else
+              echo "❌ Missing: ${locale}.json"
+              exit 1
+            fi
+          done
+          echo "🎉 All localization files are valid!"
+
+      - name: Run tests
+        run: flutter test --coverage
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          file: coverage/lcov.info
+
+      - name: Analyze code
+        run: flutter analyze
+
+      - name: Check formatting
+        run: dart format --output=none --set-exit-if-changed .
+
+  # Development build for develop branch
+  build-development:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/develop'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pub-cache
+            **/.packages
+            **/.flutter-plugins
+            **/.flutter-plugin-dependencies
+          key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Development APK
+        run: |
+          flutter build apk --debug \
+            --build-name=dev-${{ github.event.head_commit.id }} \
+            --build-number=${{ github.run_number }}
+
+      - name: Upload Development APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-development-apk-${{ github.sha }}
+          path: build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 7
+
+      - name: Build Development App Bundle
+        run: |
+          flutter build appbundle --debug \
+            --build-name=dev-${{ github.event.head_commit.id }} \
+            --build-number=${{ github.run_number }}
+
+      - name: Upload Development App Bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-development-bundle-${{ github.sha }}
+          path: build/app/outputs/bundle/debug/app-debug.aab
+          retention-days: 7
+
+  # Production build for main branch and tags
+  build-android:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pub-cache
+            **/.packages
+            **/.flutter-plugins
+            **/.flutter-plugin-dependencies
+          key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Decode keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/keystore.jks
+
+      - name: Create key.properties
+        run: |
+          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" >> android/key.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
+          echo "storeFile=keystore.jks" >> android/key.properties
+
+      - name: Build App Bundle
+        run: |
+          flutter build appbundle --release \
+            --build-name=${{ github.event.head_commit.id }} \
+            --build-number=${{ github.run_number }}
+
+      - name: Build APK
+        run: |
+          flutter build apk --release \
+            --build-name=${{ github.event.head_commit.id }} \
+            --build-number=${{ github.run_number }}
+
+      - name: Upload App Bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-app-bundle-${{ github.sha }}
+          path: build/app/outputs/bundle/release/app-release.aab
+          retention-days: 30
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk-${{ github.sha }}
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 30
+
+  # .github/workflows/ci_cd.yml - Eklenecek job (satır 210'dan sonra)
+
+  # iOS production build and deployment for main branch and tags
+  build-ios-production:
+    needs: test
+    runs-on: macos-latest
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0'
+          bundler-cache: true
+
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pub-cache
+            **/.packages
+            **/.flutter-plugins
+            **/.flutter-plugin-dependencies
+          key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Install Fastlane
+        run: |
+          cd ios
+          bundle install
+
+      # API key dosyasını secret'tan oluştur
+      - name: Setup API Key
+        run: |
+          cd ios
+          echo "${{ secrets.APP_STORE_CONNECT_API_KEY }}" > AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID || 'T793NZB3B5' }}.p8
+
+      - name: Build and Deploy iOS
+        env:
+          BUNDLE_ID_IOS: ${{ secrets.BUNDLE_ID_IOS || 'com.suleymansurucu.babysara' }}
+          APPLE_ID: ${{ secrets.APPLE_ID || 'suleymansurucu95@icloud.com' }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID || '3588AF9993' }}
+          APP_STORE_CONNECT_TEAM_ID: ${{ secrets.APP_STORE_CONNECT_TEAM_ID || '3588AF9993' }}
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID || 'T793NZB3B5' }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID || 'bd3d7716-83ab-4e9a-9a30-a77ec9bc8b9f' }}
+        run: |
+          cd ios
+          bundle exec fastlane release
+
+      - name: Upload iOS Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-production-build-${{ github.sha }}
+          path: ios/build/
+          retention-days: 30
+
+  # iOS deployment notification
+  notify-ios-deployment:
+    needs: [build-ios-production, generate-release-notes]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: iOS Deployment Complete
+        run: |
+          echo "🍎 iOS deployment completed successfully!"
+          echo "📱 App uploaded to App Store Connect"
+          echo "🔗 Check App Store Connect for processing status"
+          echo "📋 Commit: ${{ github.sha }}"
+          echo "🌿 Branch: main"
+          echo "🌍 Release notes available in 11 languages"
+
+  # Multilanguage Release Notes Generation
+  generate-release-notes:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    outputs:
+      release-notes-en: ${{ steps.generate-notes.outputs.notes-en }}
+      release-notes-tr: ${{ steps.generate-notes.outputs.notes-tr }}
+      release-notes-ar: ${{ steps.generate-notes.outputs.notes-ar }}
+      release-notes-de: ${{ steps.generate-notes.outputs.notes-de }}
+      release-notes-es: ${{ steps.generate-notes.outputs.notes-es }}
+      release-notes-fr: ${{ steps.generate-notes.outputs.notes-fr }}
+      release-notes-id: ${{ steps.generate-notes.outputs.notes-id }}
+      release-notes-ko: ${{ steps.generate-notes.outputs.notes-ko }}
+      release-notes-nl: ${{ steps.generate-notes.outputs.notes-nl }}
+      release-notes-ru: ${{ steps.generate-notes.outputs.notes-ru }}
+      release-notes-zh: ${{ steps.generate-notes.outputs.notes-zh }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate Multilanguage Release Notes
+        id: generate-notes
+        run: |
+          # Find last tag
+          LAST_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          
+          if [ -z "$LAST_TAG" ]; then
+            COMMITS=$(git log --pretty=format:"- %s (%h)" --no-merges)
+          else
+            COMMITS=$(git log ${LAST_TAG}..HEAD --pretty=format:"- %s (%h)" --no-merges)
+          fi
+          
+          VERSION=$(echo "${{ github.ref_name }}" | sed 's/v//')
+          
+          # English Release Notes
+          cat > release_notes_en.md << EOF
+          ## 🚀 Version $VERSION
+          
+          ### ✨ New Features
+          $(echo "$COMMITS" | grep -E "^(feat|✨)" || echo "- New features added")
+          
+          ### 🐛 Bug Fixes
+          $(echo "$COMMITS" | grep -E "^(fix|🐛)" || echo "- Bug fixes implemented")
+          
+          ### 🔧 Improvements
+          $(echo "$COMMITS" | grep -E "^(perf|refactor|🚀|🔧)" || echo "- Performance improvements")
+          
+          ### 🌍 Multi-Language Support
+          - 11 different languages supported: Turkish, English, Arabic, German, Spanish, French, Indonesian, Korean, Dutch, Russian, Traditional Chinese
+          
+          ### 📱 Platform Support
+          - Android (API 23+)
+          - iOS (iOS 12+)
+          
+          ---
+          **Full changelog:** [CHANGELOG.MD](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.MD)
+          EOF
+          
+          # Turkish Release Notes
+          cat > release_notes_tr.md << EOF
+          ## 🚀 Sürüm $VERSION
+          
+          ### ✨ Yeni Özellikler
+          $(echo "$COMMITS" | grep -E "^(feat|✨)" || echo "- Yeni özellikler eklendi")
+          
+          ### 🐛 Hata Düzeltmeleri
+          $(echo "$COMMITS" | grep -E "^(fix|🐛)" || echo "- Hata düzeltmeleri yapıldı")
+          
+          ### 🔧 İyileştirmeler
+          $(echo "$COMMITS" | grep -E "^(perf|refactor|🚀|🔧)" || echo "- Performans iyileştirmeleri")
+          
+          ### 🌍 Çoklu Dil Desteği
+          - 11 farklı dil desteği: Türkçe, İngilizce, Arapça, Almanca, İspanyolca, Fransızca, Endonezce, Korece, Hollandaca, Rusça, Geleneksel Çince
+          
+          ### 📱 Platform Desteği
+          - Android (API 23+)
+          - iOS (iOS 12+)
+          
+          ---
+          **Tam değişiklik listesi:** [CHANGELOG.MD](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.MD)
+          EOF
+          
+          # Arabic Release Notes
+          cat > release_notes_ar.md << EOF
+          ## 🚀 الإصدار $VERSION
+          
+          ### ✨ ميزات جديدة
+          $(echo "$COMMITS" | grep -E "^(feat|✨)" || echo "- تم إضافة ميزات جديدة")
+          
+          ### 🐛 إصلاحات الأخطاء
+          $(echo "$COMMITS" | grep -E "^(fix|🐛)" || echo "- تم إصلاح الأخطاء")
+          
+          ### 🔧 تحسينات
+          $(echo "$COMMITS" | grep -E "^(perf|refactor|🚀|🔧)" || echo "- تحسينات الأداء")
+          
+          ### 🌍 دعم متعدد اللغات
+          - دعم 11 لغة مختلفة: التركية، الإنجليزية، العربية، الألمانية، الإسبانية، الفرنسية، الإندونيسية، الكورية، الهولندية، الروسية، الصينية التقليدية
+          
+          ### 📱 دعم المنصات
+          - Android (API 23+)
+          - iOS (iOS 12+)
+          
+          ---
+          **سجل التغييرات الكامل:** [CHANGELOG.MD](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.MD)
+          EOF
+          
+          # German Release Notes
+          cat > release_notes_de.md << EOF
+          ## 🚀 Version $VERSION
+          
+          ### ✨ Neue Funktionen
+          $(echo "$COMMITS" | grep -E "^(feat|✨)" || echo "- Neue Funktionen hinzugefügt")
+          
+          ### 🐛 Fehlerbehebungen
+          $(echo "$COMMITS" | grep -E "^(fix|🐛)" || echo "- Fehler behoben")
+          
+          ### 🔧 Verbesserungen
+          $(echo "$COMMITS" | grep -E "^(perf|refactor|🚀|🔧)" || echo "- Leistungsverbesserungen")
+          
+          ### 🌍 Mehrsprachige Unterstützung
+          - 11 verschiedene Sprachen unterstützt: Türkisch, Englisch, Arabisch, Deutsch, Spanisch, Französisch, Indonesisch, Koreanisch, Niederländisch, Russisch, Traditionelles Chinesisch
+          
+          ### 📱 Plattform-Unterstützung
+          - Android (API 23+)
+          - iOS (iOS 12+)
+          
+          ---
+          **Vollständiges Änderungsprotokoll:** [CHANGELOG.MD](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.MD)
+          EOF
+          
+          # Spanish Release Notes
+          cat > release_notes_es.md << EOF
+          ## 🚀 Versión $VERSION
+          
+          ### ✨ Nuevas Características
+          $(echo "$COMMITS" | grep -E "^(feat|✨)" || echo "- Nuevas características añadidas")
+          
+          ### 🐛 Correcciones de Errores
+          $(echo "$COMMITS" | grep -E "^(fix|🐛)" || echo "- Errores corregidos")
+          
+          ### 🔧 Mejoras
+          $(echo "$COMMITS" | grep -E "^(perf|refactor|🚀|🔧)" || echo "- Mejoras de rendimiento")
+          
+          ### 🌍 Soporte Multiidioma
+          - 11 idiomas diferentes soportados: Turco, Inglés, Árabe, Alemán, Español, Francés, Indonesio, Coreano, Holandés, Ruso, Chino Tradicional
+          
+          ### 📱 Soporte de Plataformas
+          - Android (API 23+)
+          - iOS (iOS 12+)
+          
+          ---
+          **Registro de cambios completo:** [CHANGELOG.MD](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.MD)
+          EOF
+          
+          # French Release Notes
+          cat > release_notes_fr.md << EOF
+          ## 🚀 Version $VERSION
+          
+          ### ✨ Nouvelles Fonctionnalités
+          $(echo "$COMMITS" | grep -E "^(feat|✨)" || echo "- Nouvelles fonctionnalités ajoutées")
+          
+          ### 🐛 Corrections de Bugs
+          $(echo "$COMMITS" | grep -E "^(fix|🐛)" || echo "- Bugs corrigés")
+          
+          ### 🔧 Améliorations
+          $(echo "$COMMITS" | grep -E "^(perf|refactor|🚀|🔧)" || echo "- Améliorations des performances")
+          
+          ### 🌍 Support Multilingue
+          - 11 langues différentes supportées: Turc, Anglais, Arabe, Allemand, Espagnol, Français, Indonésien, Coréen, Néerlandais, Russe, Chinois Traditionnel
+          
+          ### 📱 Support des Plateformes
+          - Android (API 23+)
+          - iOS (iOS 12+)
+          
+          ---
+          **Journal des modifications complet:** [CHANGELOG.MD](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.MD)
+          EOF
+          
+          # Indonesian Release Notes
+          cat > release_notes_id.md << EOF
+          ## 🚀 Versi $VERSION
+          
+          ### ✨ Fitur Baru
+          $(echo "$COMMITS" | grep -E "^(feat|✨)" || echo "- Fitur baru ditambahkan")
+          
+          ### 🐛 Perbaikan Bug
+          $(echo "$COMMITS" | grep -E "^(fix|🐛)" || echo "- Bug diperbaiki")
+          
+          ### 🔧 Peningkatan
+          $(echo "$COMMITS" | grep -E "^(perf|refactor|🚀|🔧)" || echo "- Peningkatan performa")
+          
+          ### 🌍 Dukungan Multi Bahasa
+          - 11 bahasa berbeda didukung: Turki, Inggris, Arab, Jerman, Spanyol, Prancis, Indonesia, Korea, Belanda, Rusia, Tionghoa Tradisional
+          
+          ### 📱 Dukungan Platform
+          - Android (API 23+)
+          - iOS (iOS 12+)
+          
+          ---
+          **Log perubahan lengkap:** [CHANGELOG.MD](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.MD)
+          EOF
+          
+          # Korean Release Notes
+          cat > release_notes_ko.md << EOF
+          ## 🚀 버전 $VERSION
+          
+          ### ✨ 새로운 기능
+          $(echo "$COMMITS" | grep -E "^(feat|✨)" || echo "- 새로운 기능이 추가되었습니다")
+          
+          ### 🐛 버그 수정
+          $(echo "$COMMITS" | grep -E "^(fix|🐛)" || echo "- 버그가 수정되었습니다")
+          
+          ### 🔧 개선사항
+          $(echo "$COMMITS" | grep -E "^(perf|refactor|🚀|🔧)" || echo "- 성능 개선")
+          
+          ### 🌍 다국어 지원
+          - 11개 언어 지원: 터키어, 영어, 아랍어, 독일어, 스페인어, 프랑스어, 인도네시아어, 한국어, 네덜란드어, 러시아어, 번체 중국어
+          
+          ### 📱 플랫폼 지원
+          - Android (API 23+)
+          - iOS (iOS 12+)
+          
+          ---
+          **전체 변경 로그:** [CHANGELOG.MD](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.MD)
+          EOF
+          
+          # Dutch Release Notes
+          cat > release_notes_nl.md << EOF
+          ## 🚀 Versie $VERSION
+          
+          ### ✨ Nieuwe Functies
+          $(echo "$COMMITS" | grep -E "^(feat|✨)" || echo "- Nieuwe functies toegevoegd")
+          
+          ### 🐛 Bugfixes
+          $(echo "$COMMITS" | grep -E "^(fix|🐛)" || echo "- Bugs opgelost")
+          
+          ### 🔧 Verbeteringen
+          $(echo "$COMMITS" | grep -E "^(perf|refactor|🚀|🔧)" || echo "- Prestatieverbeteringen")
+          
+          ### 🌍 Meertalige Ondersteuning
+          - 11 verschillende talen ondersteund: Turks, Engels, Arabisch, Duits, Spaans, Frans, Indonesisch, Koreaans, Nederlands, Russisch, Traditioneel Chinees
+          
+          ### 📱 Platformondersteuning
+          - Android (API 23+)
+          - iOS (iOS 12+)
+          
+          ---
+          **Volledig wijzigingslogboek:** [CHANGELOG.MD](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.MD)
+          EOF
+          
+          # Russian Release Notes
+          cat > release_notes_ru.md << EOF
+          ## 🚀 Версия $VERSION
+          
+          ### ✨ Новые Функции
+          $(echo "$COMMITS" | grep -E "^(feat|✨)" || echo "- Добавлены новые функции")
+          
+          ### 🐛 Исправления Ошибок
+          $(echo "$COMMITS" | grep -E "^(fix|🐛)" || echo "- Исправлены ошибки")
+          
+          ### 🔧 Улучшения
+          $(echo "$COMMITS" | grep -E "^(perf|refactor|🚀|🔧)" || echo "- Улучшения производительности")
+          
+          ### 🌍 Многоязычная Поддержка
+          - Поддержка 11 языков: Турецкий, Английский, Арабский, Немецкий, Испанский, Французский, Индонезийский, Корейский, Голландский, Русский, Традиционный Китайский
+          
+          ### 📱 Поддержка Платформ
+          - Android (API 23+)
+          - iOS (iOS 12+)
+          
+          ---
+          **Полный журнал изменений:** [CHANGELOG.MD](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.MD)
+          EOF
+          
+          # Chinese Release Notes
+          cat > release_notes_zh.md << EOF
+          ## 🚀 版本 $VERSION
+          
+          ### ✨ 新功能
+          $(echo "$COMMITS" | grep -E "^(feat|✨)" || echo "- 新增功能")
+          
+          ### 🐛 錯誤修復
+          $(echo "$COMMITS" | grep -E "^(fix|🐛)" || echo "- 修復錯誤")
+          
+          ### 🔧 改進
+          $(echo "$COMMITS" | grep -E "^(perf|refactor|🚀|🔧)" || echo "- 性能改進")
+          
+          ### 🌍 多語言支持
+          - 支持11種語言：土耳其語、英語、阿拉伯語、德語、西班牙語、法語、印尼語、韓語、荷蘭語、俄語、繁體中文
+          
+          ### 📱 平台支持
+          - Android (API 23+)
+          - iOS (iOS 12+)
+          
+          ---
+          **完整變更日誌：** [CHANGELOG.MD](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.MD)
+          EOF
+          
+          # Set outputs
+          echo "notes-en<<EOF" >> $GITHUB_OUTPUT
+          cat release_notes_en.md >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          echo "notes-tr<<EOF" >> $GITHUB_OUTPUT
+          cat release_notes_tr.md >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          echo "notes-ar<<EOF" >> $GITHUB_OUTPUT
+          cat release_notes_ar.md >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          echo "notes-de<<EOF" >> $GITHUB_OUTPUT
+          cat release_notes_de.md >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          echo "notes-es<<EOF" >> $GITHUB_OUTPUT
+          cat release_notes_es.md >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          echo "notes-fr<<EOF" >> $GITHUB_OUTPUT
+          cat release_notes_fr.md >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          echo "notes-id<<EOF" >> $GITHUB_OUTPUT
+          cat release_notes_id.md >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          echo "notes-ko<<EOF" >> $GITHUB_OUTPUT
+          cat release_notes_ko.md >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          echo "notes-nl<<EOF" >> $GITHUB_OUTPUT
+          cat release_notes_nl.md >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          echo "notes-ru<<EOF" >> $GITHUB_OUTPUT
+          cat release_notes_ru.md >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          echo "notes-zh<<EOF" >> $GITHUB_OUTPUT
+          cat release_notes_zh.md >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+  deploy-android:
+    needs: [build-android, generate-release-notes]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Download App Bundle
+        uses: actions/download-artifact@v4
+        with:
+          name: android-app-bundle-${{ github.sha }}
+          path: .
+
+      - name: Deploy to Google Play
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: ${{ env.BUNDLE_ID_ANDROID }}
+          releaseFiles: app-release.aab
+          track: production
+          status: completed
+          inAppUpdatePriority: 2
+          releaseNotes: ${{ needs.generate-release-notes.outputs.release-notes-en }}
+
+  # iOS development build for develop branch
+  build-ios-development:
+    needs: test
+    runs-on: macos-latest
+    if: github.ref == 'refs/heads/develop'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
+
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pub-cache
+            **/.packages
+            **/.flutter-plugins
+            **/.flutter-plugin-dependencies
+          key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build iOS Development
+        run: |
+          cd ios
+          flutter build ios --debug --no-codesign \
+            --build-name=dev-${{ github.event.head_commit.id }} \
+            --build-number=${{ github.run_number }}
+
+      - name: Upload iOS Development Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-development-build-${{ github.sha }}
+          path: build/ios/iphoneos/Runner.app
+          retention-days: 7
+
+  # Development build notification
+  notify-development-build:
+    needs: [build-development, build-ios-development]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/develop'
+
+    steps:
+      - name: Development Build Complete
+        run: |
+          echo "🚀 Development build completed successfully!"
+          echo "📱 Android APK and App Bundle are ready for testing"
+          echo "🍎 iOS build is ready for testing"
+          echo "🔗 Download artifacts from the Actions tab"
+          echo "📋 Commit: ${{ github.sha }}"
+          echo "🌿 Branch: develop"
+
+  # iOS deployment notification with multilanguage notes
+  notify-ios-deploy:
+    needs: [test, generate-release-notes]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Create iOS Release Notes Files
+        run: |
+          mkdir -p ios_release_notes
+          
+          # Create release notes files for each language
+          echo "${{ needs.generate-release-notes.outputs.release-notes-en }}" > ios_release_notes/release_notes_en.txt
+          echo "${{ needs.generate-release-notes.outputs.release-notes-tr }}" > ios_release_notes/release_notes_tr.txt
+          echo "${{ needs.generate-release-notes.outputs.release-notes-ar }}" > ios_release_notes/release_notes_ar.txt
+          echo "${{ needs.generate-release-notes.outputs.release-notes-de }}" > ios_release_notes/release_notes_de.txt
+          echo "${{ needs.generate-release-notes.outputs.release-notes-es }}" > ios_release_notes/release_notes_es.txt
+          echo "${{ needs.generate-release-notes.outputs.release_notes-fr }}" > ios_release_notes/release_notes_fr.txt
+          echo "${{ needs.generate-release-notes.outputs.release-notes-id }}" > ios_release_notes/release_notes_id.txt
+          echo "${{ needs.generate-release-notes.outputs.release-notes-ko }}" > ios_release_notes/release_notes_ko.txt
+          echo "${{ needs.generate-release-notes.outputs.release-notes-nl }}" > ios_release_notes/release_notes_nl.txt
+          echo "${{ needs.generate-release-notes.outputs.release-notes-ru }}" > ios_release_notes/release_notes_ru.txt
+          echo "${{ needs.generate-release-notes.outputs.release-notes-zh }}" > ios_release_notes/release_notes_zh.txt
+          
+          echo "📱 iOS release notes created for all 11 languages!"
+          echo "🍎 Use these files with your Fastlane deployment:"
+          echo "cd ios && fastlane release"
+
+      - name: Upload iOS Release Notes
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-release-notes-${{ github.sha }}
+          path: ios_release_notes/
+          retention-days: 30
+
+  # Create GitHub Release with multilanguage notes
+  create-github-release:
+    needs: [build-android, generate-release-notes]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: Download Android APK
+        uses: actions/download-artifact@v4
+        with:
+          name: android-apk-${{ github.sha }}
+          path: ./artifacts/
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: Sara Baby Tracker ${{ github.ref_name }}
+          body: ${{ needs.generate-release-notes.outputs.release-notes-en }}
+          draft: false
+          prerelease: false
+          files: |
+            ./artifacts/app-release.apk
