@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/locator.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/relaxing_sound_repository.dart';
+import 'package:open_baby_sara/data/repositories/locator.dart';
+import 'package:open_baby_sara/data/repositories/relaxing_sound_repository.dart';
 import 'package:meta/meta.dart';
 
 part 'sound_relaxing_event.dart';

@@ -2,28 +2,32 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/all_timer/sleep_timer/sleep_timer_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/auth/auth_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/baby/baby_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/core/app_colors.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/core/utils/shared_prefs_helper.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/models/baby_model.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_baby_firsts_tracker_bottom_sheet.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_diaper_tracker_bottom_sheet.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_doctor_visit_tracker_bottom_sheet.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_feed_tracker_bottom_sheet.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_fever_tracker_bottom_sheet.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_growth_development_tracker_bottom_sheet.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_medical_tracker_bottom_sheet.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_sleep_tracker_bottom_sheet.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_teething_tracker_bottom_sheet.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_vaccination_tracker_bottom_sheet.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_baby_header_card.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_card.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/bottom_sheets/custom_pump_tracker_bottom_sheet.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_today_summary_card.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/customize_growth_card.dart';
+import 'package:open_baby_sara/blocs/all_timer/sleep_timer/sleep_timer_bloc.dart';
+import 'package:open_baby_sara/blocs/auth/auth_bloc.dart';
+import 'package:open_baby_sara/blocs/baby/baby_bloc.dart';
+import 'package:open_baby_sara/core/app_colors.dart';
+import 'package:open_baby_sara/core/utils/shared_prefs_helper.dart';
+import 'package:open_baby_sara/data/models/activity_model.dart';
+import 'package:open_baby_sara/data/models/baby_model.dart';
+import 'package:open_baby_sara/data/repositories/locator.dart';
+import 'package:open_baby_sara/data/services/firebase/update_service.dart';
+import 'package:open_baby_sara/widgets/bottom_sheets/custom_baby_firsts_tracker_bottom_sheet.dart';
+import 'package:open_baby_sara/widgets/bottom_sheets/custom_diaper_tracker_bottom_sheet.dart';
+import 'package:open_baby_sara/widgets/bottom_sheets/custom_doctor_visit_tracker_bottom_sheet.dart';
+import 'package:open_baby_sara/widgets/bottom_sheets/custom_feed_tracker_bottom_sheet.dart';
+import 'package:open_baby_sara/widgets/bottom_sheets/custom_fever_tracker_bottom_sheet.dart';
+import 'package:open_baby_sara/widgets/bottom_sheets/custom_growth_development_tracker_bottom_sheet.dart';
+import 'package:open_baby_sara/widgets/bottom_sheets/custom_medical_tracker_bottom_sheet.dart';
+import 'package:open_baby_sara/widgets/bottom_sheets/custom_sleep_tracker_bottom_sheet.dart';
+import 'package:open_baby_sara/widgets/bottom_sheets/custom_teething_tracker_bottom_sheet.dart';
+import 'package:open_baby_sara/widgets/bottom_sheets/custom_vaccination_tracker_bottom_sheet.dart';
+import 'package:open_baby_sara/widgets/custom_baby_header_card.dart';
+import 'package:open_baby_sara/widgets/custom_card.dart';
+import 'package:open_baby_sara/widgets/bottom_sheets/custom_pump_tracker_bottom_sheet.dart';
+import 'package:open_baby_sara/widgets/custom_today_summary_card.dart';
+import 'package:open_baby_sara/widgets/customize_growth_card.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ActivityPage extends StatefulWidget {
   const ActivityPage({super.key});
@@ -38,11 +42,13 @@ class _ActivityPageState extends State<ActivityPage> {
 
   bool isSleepActivityRunning = false;
 
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<BabyBloc>().add(LoadBabies());
     });
+
     super.initState();
   }
 
@@ -153,6 +159,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                       CustomCard(
                                         color: AppColors.feedColor,
                                         title: context.tr("feed"),
+                                        activityType: ActivityType.breastFeed.name,
                                         babyID:
                                             state is BabyLoaded
                                                 ? state.selectedBaby!.babyID
@@ -192,6 +199,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                       CustomCard(
                                         color: AppColors.pumpColor,
                                         title: context.tr("pump"),
+                                        activityType: ActivityType.pumpTotal.name,
                                         babyID:
                                             state is BabyLoaded
                                                 ? state.selectedBaby!.babyID
@@ -231,6 +239,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                       CustomCard(
                                         color: AppColors.diaperColor,
                                         title: context.tr("diaper"),
+                                        activityType: ActivityType.diaper.name,
                                         babyID:
                                             state is BabyLoaded
                                                 ? state.selectedBaby!.babyID
@@ -270,6 +279,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                       CustomCard(
                                         color: AppColors.sleepColor,
                                         title: context.tr('sleep'),
+                                        activityType: ActivityType.sleep.name,
                                         babyID:
                                             state is BabyLoaded
                                                 ? state.selectedBaby!.babyID
@@ -373,11 +383,12 @@ class _ActivityPageState extends State<ActivityPage> {
                                     childAspectRatio: 1.6,
                                     children: [
                                       ///
-                                      /// Feed Activity
+                                      /// Baby First Activity
                                       ///
                                       CustomCard(
                                         color: AppColors.babyFirstsColor,
                                         title: context.tr('baby_firsts'),
+                                        activityType: ActivityType.babyFirsts.name,
                                         babyID:
                                             state is BabyLoaded
                                                 ? state.selectedBaby!.babyID
@@ -413,11 +424,12 @@ class _ActivityPageState extends State<ActivityPage> {
                                       ),
 
                                       ///
-                                      /// Pump Activity
+                                      /// Teething Activity
                                       ///
                                       CustomCard(
                                         color: AppColors.teethingColor,
                                         title: context.tr('teething'),
+                                        activityType: ActivityType.teething.name,
                                         babyID:
                                             state is BabyLoaded
                                                 ? state.selectedBaby!.babyID
@@ -476,11 +488,12 @@ class _ActivityPageState extends State<ActivityPage> {
                                     childAspectRatio: 1.6,
                                     children: [
                                       ///
-                                      /// Feed Activity
+                                      /// Medication Activity
                                       ///
                                       CustomCard(
                                         color: AppColors.medicalColor,
                                         title: context.tr('medication'),
+                                        activityType: ActivityType.medication.name,
                                         babyID:
                                             state is BabyLoaded
                                                 ? state.selectedBaby!.babyID
@@ -516,11 +529,12 @@ class _ActivityPageState extends State<ActivityPage> {
                                       ),
 
                                       ///
-                                      /// Pump Activity
+                                      /// Doctor Visit Activity
                                       ///
                                       CustomCard(
                                         color: AppColors.doctorVisitColor,
                                         title: context.tr('doctor_visit'),
+                                        activityType: ActivityType.doctorVisit.name,
                                         babyID:
                                             state is BabyLoaded
                                                 ? state.selectedBaby!.babyID
@@ -558,6 +572,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                       CustomCard(
                                         color: AppColors.vaccineColor,
                                         title: context.tr('vaccination'),
+                                        activityType: ActivityType.vaccination.name,
                                         babyID:
                                             state is BabyLoaded
                                                 ? state.selectedBaby!.babyID
@@ -595,6 +610,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                       CustomCard(
                                         color: AppColors.feverTrackerColor,
                                         title: context.tr('fever'),
+                                        activityType: ActivityType.fever.name,
                                         babyID:
                                             state is BabyLoaded
                                                 ? state.selectedBaby!.babyID
@@ -681,4 +697,6 @@ class _ActivityPageState extends State<ActivityPage> {
 
     return age.isEmpty ? '0 day' : age;
   }
+
+
 }

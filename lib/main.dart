@@ -2,34 +2,36 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/app/routes/app_router.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/app/routes/navigation_wrapper.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/app/theme/app_themes.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/activity/activity_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/all_timer/breasfeed_left_side_timer/breasfeed_left_side_timer_bloc.dart'
+import 'package:open_baby_sara/app/routes/app_router.dart';
+import 'package:open_baby_sara/app/routes/navigation_wrapper.dart';
+import 'package:open_baby_sara/app/theme/app_themes.dart';
+import 'package:open_baby_sara/blocs/activity/activity_bloc.dart';
+import 'package:open_baby_sara/blocs/all_timer/breasfeed_left_side_timer/breasfeed_left_side_timer_bloc.dart'
     as leftBreastfeed;
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/all_timer/breastfeed_right_side_timer/breastfeed_right_side_timer_bloc.dart'
+import 'package:open_baby_sara/blocs/all_timer/breastfeed_right_side_timer/breastfeed_right_side_timer_bloc.dart'
     as rightBreastfeed;
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/all_timer/pump_left_side_timer/pump_left_side_timer_bloc.dart'
+import 'package:open_baby_sara/blocs/all_timer/pump_left_side_timer/pump_left_side_timer_bloc.dart'
     as leftPump;
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/all_timer/pump_right_side_timer/pump_right_side_timer_bloc.dart'
+import 'package:open_baby_sara/blocs/all_timer/pump_right_side_timer/pump_right_side_timer_bloc.dart'
     as rightPump;
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/all_timer/pump_total_timer/pump_total_timer_bloc.dart'
+import 'package:open_baby_sara/blocs/all_timer/pump_total_timer/pump_total_timer_bloc.dart'
     as totalPump;
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/all_timer/sleep_timer/sleep_timer_bloc.dart'
+import 'package:open_baby_sara/blocs/all_timer/sleep_timer/sleep_timer_bloc.dart'
     as sleep;
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/auth/auth_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/baby/baby_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/bottom_nav/bottom_nav_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/caregiver/caregiver_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/medication/medication_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/milestone/milestone_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/recipe/recipe_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/sound_relaxing/sound_relaxing_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/theme/theme_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/vaccination/vaccination_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/locator.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/views/onboarding/welcome_page.dart';
+import 'package:open_baby_sara/blocs/auth/auth_bloc.dart';
+import 'package:open_baby_sara/blocs/baby/baby_bloc.dart';
+import 'package:open_baby_sara/blocs/bottom_nav/bottom_nav_bloc.dart';
+import 'package:open_baby_sara/blocs/caregiver/caregiver_bloc.dart';
+import 'package:open_baby_sara/blocs/medication/medication_bloc.dart';
+import 'package:open_baby_sara/blocs/milestone/milestone_bloc.dart';
+import 'package:open_baby_sara/blocs/recipe/recipe_bloc.dart';
+import 'package:open_baby_sara/blocs/sound_relaxing/sound_relaxing_bloc.dart';
+import 'package:open_baby_sara/blocs/theme/theme_bloc.dart';
+import 'package:open_baby_sara/blocs/vaccination/vaccination_bloc.dart';
+import 'package:open_baby_sara/core/constant/locale_constants.dart';
+import 'package:open_baby_sara/data/repositories/locator.dart';
+import 'package:open_baby_sara/data/services/review_service.dart';
+import 'package:open_baby_sara/views/onboarding/welcome_page.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'firebase_options.dart';
@@ -40,22 +42,11 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   await setupLocator();
+  await ReviewService().checkIfShouldRequestReview();
 
   runApp(
     EasyLocalization(
-      supportedLocales: [
-        Locale('en', 'US'),
-        Locale('tr', 'TR'),
-        Locale('de', 'DE'),
-        Locale('es', 'ES'),
-        Locale('fr', 'FR'),
-        Locale('ar', 'SA'),
-        Locale('zh', 'CN'),
-        Locale('nl', 'NL'),
-        Locale('ru', 'RU'),
-        Locale('ko', 'KR'),
-        Locale('zh', 'TW'),
-      ],
+      supportedLocales: supportedLocales.map((item) => item.locale).toList(),
       path: 'lib/l10n',
       fallbackLocale: Locale('en', 'US'),
       child: ScreenUtilInit(

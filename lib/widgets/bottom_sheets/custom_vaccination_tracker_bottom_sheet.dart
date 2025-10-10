@@ -1,16 +1,18 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/app/routes/navigation_wrapper.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/activity/activity_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/vaccination/vaccination_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/core/app_colors.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/models/activity_model.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_bottom_sheet_header.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_date_time_picker.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_show_flush_bar.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_text_form_field.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/show_dialog_add_vaccination.dart';
+import 'package:open_baby_sara/app/routes/navigation_wrapper.dart';
+import 'package:open_baby_sara/blocs/activity/activity_bloc.dart';
+import 'package:open_baby_sara/blocs/vaccination/vaccination_bloc.dart';
+import 'package:open_baby_sara/core/app_colors.dart';
+import 'package:open_baby_sara/data/models/activity_model.dart';
+import 'package:open_baby_sara/data/repositories/locator.dart';
+import 'package:open_baby_sara/data/services/firebase/analytics_service.dart';
+import 'package:open_baby_sara/widgets/custom_bottom_sheet_header.dart';
+import 'package:open_baby_sara/widgets/custom_date_time_picker.dart';
+import 'package:open_baby_sara/widgets/custom_show_flush_bar.dart';
+import 'package:open_baby_sara/widgets/custom_text_form_field.dart';
+import 'package:open_baby_sara/widgets/show_dialog_add_vaccination.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:uuid/uuid.dart';
 
@@ -52,6 +54,8 @@ class _CustomVaccinationTrackerBottomSheetState
               .toList();
     }
     super.initState();
+    getIt<AnalyticsService>().logScreenView('VaccinationActivityTracker');
+
   }
 
   @override

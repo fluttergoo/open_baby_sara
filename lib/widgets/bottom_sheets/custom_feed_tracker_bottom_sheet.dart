@@ -2,23 +2,25 @@ import 'package:duration_picker/duration_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/app/routes/navigation_wrapper.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/activity/activity_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/all_timer/breasfeed_left_side_timer/breasfeed_left_side_timer_bloc.dart'
+import 'package:open_baby_sara/app/routes/navigation_wrapper.dart';
+import 'package:open_baby_sara/blocs/activity/activity_bloc.dart';
+import 'package:open_baby_sara/blocs/all_timer/breasfeed_left_side_timer/breasfeed_left_side_timer_bloc.dart'
     as leftBreastfeed;
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/all_timer/breastfeed_right_side_timer/breastfeed_right_side_timer_bloc.dart'
+import 'package:open_baby_sara/blocs/all_timer/breastfeed_right_side_timer/breastfeed_right_side_timer_bloc.dart'
     as rightBreastfeed;
-import 'package:flutter_sara_baby_tracker_and_sound/core/app_colors.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/models/activity_model.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/all_timers/breastfeed_left_side_timer.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/all_timers/breastfeed_right_side_timer.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/build_custom_snack_bar.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_bottom_sheet_header.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_date_time_picker.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_show_flush_bar.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_text_form_field.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/formula_breastmilk_selector.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/unit_input_field_with_toggle.dart';
+import 'package:open_baby_sara/core/app_colors.dart';
+import 'package:open_baby_sara/data/models/activity_model.dart';
+import 'package:open_baby_sara/data/repositories/locator.dart';
+import 'package:open_baby_sara/data/services/firebase/analytics_service.dart';
+import 'package:open_baby_sara/widgets/all_timers/breastfeed_left_side_timer.dart';
+import 'package:open_baby_sara/widgets/all_timers/breastfeed_right_side_timer.dart';
+import 'package:open_baby_sara/widgets/build_custom_snack_bar.dart';
+import 'package:open_baby_sara/widgets/custom_bottom_sheet_header.dart';
+import 'package:open_baby_sara/widgets/custom_date_time_picker.dart';
+import 'package:open_baby_sara/widgets/custom_show_flush_bar.dart';
+import 'package:open_baby_sara/widgets/custom_text_form_field.dart';
+import 'package:open_baby_sara/widgets/formula_breastmilk_selector.dart';
+import 'package:open_baby_sara/widgets/unit_input_field_with_toggle.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:uuid/uuid.dart';
 
@@ -104,6 +106,8 @@ class _CustomFeedTrackerBottomSheetState
     }
 
     super.initState();
+    getIt<AnalyticsService>().logScreenView('FeedActivityTracker');
+
   }
   DateTime _buildTime(Map<String, dynamic> data, String hourKey, String minKey) {
     final now = DateTime.now();

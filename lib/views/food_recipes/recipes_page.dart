@@ -1,11 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/core/app_colors.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/views/food_recipes/recipe_detail_page.dart';
+import 'package:open_baby_sara/core/app_colors.dart';
+import 'package:open_baby_sara/views/food_recipes/recipe_detail_page.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/recipe/recipe_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/models/recipe_model.dart';
+import 'package:open_baby_sara/blocs/recipe/recipe_bloc.dart';
+import 'package:open_baby_sara/data/models/recipe_model.dart';
 
 class RecipesPage extends StatefulWidget {
   const RecipesPage({super.key});

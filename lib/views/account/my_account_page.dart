@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/app/routes/app_router.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/auth/auth_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_show_dialog.dart';
+import 'package:open_baby_sara/app/routes/app_router.dart';
+import 'package:open_baby_sara/blocs/auth/auth_bloc.dart';
+import 'package:open_baby_sara/widgets/custom_show_dialog.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MyAccountPage extends StatelessWidget {

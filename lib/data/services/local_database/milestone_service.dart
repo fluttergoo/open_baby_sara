@@ -1,4 +1,4 @@
-import 'package:flutter_sara_baby_tracker_and_sound/data/models/milestones_model.dart';
+import 'package:open_baby_sara/data/models/milestones_model.dart';
 
 abstract class MilestoneService{
   Future<List<MonthlyMilestonesModel>> loadMilestonesFromAssets();

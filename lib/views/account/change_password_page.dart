@@ -1,10 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/app/routes/navigation_wrapper.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/auth/auth_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/build_custom_snack_bar.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/widgets/custom_text_form_field.dart';
+import 'package:open_baby_sara/app/routes/navigation_wrapper.dart';
+import 'package:open_baby_sara/blocs/auth/auth_bloc.dart';
+import 'package:open_baby_sara/widgets/build_custom_snack_bar.dart';
+import 'package:open_baby_sara/widgets/custom_text_form_field.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ChangePasswordPage extends StatefulWidget {

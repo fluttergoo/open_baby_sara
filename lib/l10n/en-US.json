@@ -704,7 +704,25 @@
   "tooth_85": "Lower Right Second Molar",
   "Tooth erupted": "Tooth erupted",
   "Tooth shed": "Tooth shed",
-  "Teething activity": "Teething activity"
+  "Teething activity": "Teething activity",
+
+  "White Noise": "White Noise",
+  "Rain": "Rain",
+  "Heartbeat": "Heartbeat",
+  "Shushing": "Shushing",
+  "Ocean Waves": "Ocean Waves",
+  "Forest Birds": "Forest Birds",
+  "Lullaby": "Lullaby",
+  "Fan": "Fan",
+  "new_update_available": "New Update Available!",
+  "good_news_a_newer": "Good news! A newer, better version of the app is ready for you.",
+  "whats_new:": "What's New:",
+  "performance_improvements": "- Performance improvements\n- Bug fixes for a smoother experience\n- Exciting new features (details in update notes)",
+  "current_version:":"Current Version:",
+  "latest_version:": "Latest Version:",
+  "update_now": "Update Now",
+  "maybe_later": "Maybe Later"
+
 
 
 }

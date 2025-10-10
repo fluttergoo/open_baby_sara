@@ -3,12 +3,12 @@ import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/locator.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/baby_repository.dart';
+import 'package:open_baby_sara/data/repositories/locator.dart';
+import 'package:open_baby_sara/data/repositories/baby_repository.dart';
 import 'package:gender_picker/source/enums.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/models/baby_model.dart';
+import 'package:open_baby_sara/data/models/baby_model.dart';
 import 'package:meta/meta.dart';
 
 part 'baby_event.dart';

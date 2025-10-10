@@ -3,11 +3,12 @@ import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/sound_relaxing/sound_relaxing_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/core/constant/sounds_constants.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/repositories/locator.dart';
+import 'package:open_baby_sara/blocs/sound_relaxing/sound_relaxing_bloc.dart';
+import 'package:open_baby_sara/core/constant/sounds_constants.dart';
+import 'package:open_baby_sara/data/repositories/locator.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:open_baby_sara/data/services/firebase/analytics_service.dart';
 
 class BabyRelaxingSoundsPage extends StatefulWidget {
   const BabyRelaxingSoundsPage({super.key});
@@ -43,6 +44,8 @@ class _BabyRelaxingSoundsPageState extends State<BabyRelaxingSoundsPage> {
           sounds[index].isPlaying = 1;
           _currentPlayingIndex = index;
         });
+        getIt<AnalyticsService>().logSoundsView(sounds[index].title);
+
       }
     } catch (e) {
       print('🔴 Error: $e');
@@ -136,7 +139,8 @@ class _BabyRelaxingSoundsPageState extends State<BabyRelaxingSoundsPage> {
               contentPadding: EdgeInsets.zero,
               leading: Image.asset(sound.iconAssetPath, width: 40.w, height: 40.h),
               title: Text(
-                sound.title,
+                context.tr(sound.title,),
+
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: Theme.of(context).primaryColor,
                 ),

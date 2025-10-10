@@ -1,15 +1,17 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/app/routes/app_router.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/app/theme/app_themes.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/auth/auth_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/baby/baby_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/blocs/caregiver/caregiver_bloc.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/models/baby_model.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/models/invite_model.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/views/onboarding/welcome_page.dart';
+import 'package:in_app_review/in_app_review.dart';
+import 'package:open_baby_sara/app/routes/app_router.dart';
+import 'package:open_baby_sara/app/theme/app_themes.dart';
+import 'package:open_baby_sara/blocs/auth/auth_bloc.dart';
+import 'package:open_baby_sara/blocs/baby/baby_bloc.dart';
+import 'package:open_baby_sara/blocs/caregiver/caregiver_bloc.dart';
+import 'package:open_baby_sara/data/models/baby_model.dart';
+import 'package:open_baby_sara/data/models/invite_model.dart';
+import 'package:open_baby_sara/views/onboarding/welcome_page.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:share_plus/share_plus.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -339,14 +341,44 @@ class _AccountPageState extends State<AccountPage> {
                                     style:
                                         Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 16.sp),
                                   ),
-                                  onTap: () {},
+                                  onTap: () {
+                                    const appStoreUrl = 'https://apps.apple.com/app/id6746516938';
+                                    const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.suleymansurucu.sarababy';
+
+                                    final message =
+                                        'Hey, I\'ve been using Sara Baby 👶 to track my baby\'s activities and it\'s been a lifesaver! '
+                                        'It\'s super helpful for logging feedings, sleeps, diaper changes, and more. '
+                                        'Thought you might find it useful too!\n\n'
+                                        'Download it here:\n'
+                                        'Android: $playStoreUrl\n'
+                                        'iPhone: $appStoreUrl\n\n'
+                                        'Give it a try!';
+
+
+
+                                    SharePlus.instance.share(
+                                        ShareParams(text: message, title:'Sara Baby Tracker – Must Have App for Parents!' )
+                                    );
+                                  },
                                 ),
                                 ListTile(
                                   leading: Icon(Icons.star_border_outlined),
                                   title: Text(
                                     context.tr('rate_sara_baby_on_the_app_store'),style: Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 16.sp),
                                   ),
-                                  onTap: () {},
+                                  onTap: () async {
+                                    final InAppReview inAppReview = InAppReview.instance;
+
+                                    if (await inAppReview.isAvailable()) {
+
+
+                                    inAppReview.requestReview();
+
+                                    } else {
+
+                                    print('In-app review is not available on this platform or already requested too often.');
+                                    }
+                                  },
                                 ),
                                 ListTile(
                                   leading: Icon(

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/models/activity_model.dart';
-import 'package:flutter_sara_baby_tracker_and_sound/data/services/firebase/activity_service.dart';
+import 'package:open_baby_sara/data/models/activity_model.dart';
+import 'package:open_baby_sara/data/services/firebase/activity_service.dart';
 
 class ActivityServiceImpl extends ActivityService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

@@ -1,4 +1,4 @@
-name: flutter_sara_baby_tracker_and_sound
+name: open_baby_sara
 description: "Sara Baby Tracker helps parents log sleep, feedings, milestones, and more — all in one app."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.1.0+4
+version: 1.2.0
 
 environment:
   sdk: ^3.7.2
@@ -61,6 +61,13 @@ dependencies:
   path_provider: ^2.1.5
   flutter_slidable: ^3.0.1
   auto_size_text: ^3.0.0
+  firebase_analytics: ^11.5.2
+  firebase_remote_config: ^5.5.0
+  package_info_plus: ^8.3.0
+  url_launcher: ^6.3.2
+  flutter_native_splash: ^2.4.6
+  share_plus: ^11.0.0
+  in_app_review: ^2.0.10
 
 
 
@@ -69,7 +76,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: ^0.14.3
-  flutter_native_splash: ^2.3.2
 
 
   flutter_lints: ^5.0.0

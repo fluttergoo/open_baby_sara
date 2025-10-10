@@ -703,5 +703,21 @@
   "tooth_85": "右下第二磨牙",
   "Tooth erupted": "牙齿萌出",
   "Tooth shed": "牙齿脱落",
-  "Teething activity": "出牙活动"
+  "Teething activity": "出牙活动",
+  "White Noise": "白噪音",
+  "Rain": "下雨聲",
+  "Heartbeat": "心跳聲",
+  "Shushing": "噓聲",
+  "Ocean Waves": "海浪聲",
+  "Forest Birds": "森林鳥鳴",
+  "Lullaby": "搖籃曲",
+  "Fan": "風扇聲",
+  "new_update_available": "新版本可用！",
+  "good_news_a_newer": "好消息！應用程式有更新、更好的版本囉。",
+  "whats_new:": "新功能：",
+  "performance_improvements": "- 效能提升\n- 錯誤修復，提供更流暢的體驗\n- 更多令人興奮的新功能（詳情請見更新說明）",
+  "current_version:":"目前版本：",
+  "latest_version:": "最新版本：",
+  "update_now": "立即更新",
+  "maybe_later": "稍後再說"
 }
