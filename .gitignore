@@ -336,3 +336,12 @@ macos/Podfile
 
 # Generated background images
 android/app/src/main/res/drawable/background.png
+
+# iOS Build artifacts (too large for GitHub)
+ios/Runner.app.dSYM.zip
+ios/Runner.ipa
+ios/build/
+ios/*.app
+ios/*.ipa
+ios/*.dSYM.zip
+ios/*.dSYM
