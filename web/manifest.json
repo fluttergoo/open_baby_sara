@@ -1,11 +1,11 @@
 {
-    "name": "flutter_sara_baby_tracker_and_sound",
-    "short_name": "flutter_sara_baby_tracker_and_sound",
+    "name": "Sara Baby Tracker & Sounds",
+    "short_name": "Sara Baby",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Sara Baby Tracker helps parents log sleep, feedings, milestones, and more — all in one app.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

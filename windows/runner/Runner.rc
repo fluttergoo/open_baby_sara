@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "flutter_sara_baby_tracker_and_sound" "\0"
+            VALUE "CompanyName", "com.suleymansurucu" "\0"
+            VALUE "FileDescription", "Sara Baby Tracker & Sounds" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "flutter_sara_baby_tracker_and_sound" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2025 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "flutter_sara_baby_tracker_and_sound.exe" "\0"
-            VALUE "ProductName", "flutter_sara_baby_tracker_and_sound" "\0"
+            VALUE "InternalName", "Sara Baby Tracker & Sounds" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2025 com.suleymansurucu. All rights reserved." "\0"
+            VALUE "OriginalFilename", "Sara Baby Tracker & Sounds.exe" "\0"
+            VALUE "ProductName", "Sara Baby Tracker & Sounds" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
