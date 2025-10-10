@@ -218,6 +218,12 @@ jobs:
             echo '  "configuration_version": "1"' >> android/app/google-services.json
             echo '}' >> android/app/google-services.json
           fi
+          
+          # Copy splash.png to drawable-v21 directory
+          echo "📱 Copying splash.png to drawable-v21 directory..."
+          mkdir -p android/app/src/main/res/drawable-v21
+          cp android/app/src/main/res/drawable/splash.png android/app/src/main/res/drawable-v21/splash.png
+          echo "✅ splash.png copied to drawable-v21"
 
       - name: Build Development APK
         run: |
@@ -351,6 +357,12 @@ jobs:
             echo '  "configuration_version": "1"' >> android/app/google-services.json
             echo '}' >> android/app/google-services.json
           fi
+          
+          # Copy splash.png to drawable-v21 directory
+          echo "📱 Copying splash.png to drawable-v21 directory..."
+          mkdir -p android/app/src/main/res/drawable-v21
+          cp android/app/src/main/res/drawable/splash.png android/app/src/main/res/drawable-v21/splash.png
+          echo "✅ splash.png copied to drawable-v21"
 
       - name: Decode keystore
         run: |
