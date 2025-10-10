@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:open_baby_sara/data/repositories/locator.dart';
 import 'package:open_baby_sara/data/models/activity_model.dart';
@@ -22,7 +21,9 @@ class ActivityRepositoryImpl extends ActivityRepository {
   }
 
   @override
-  Future<List<ActivityModel>> fetchLocalActivities({bool onlyUnsynced = false}) async {
+  Future<List<ActivityModel>> fetchLocalActivities({
+    bool onlyUnsynced = false,
+  }) async {
     final result = await database.query(
       'activities',
       where: onlyUnsynced ? 'isSynced = ?' : null,
@@ -65,10 +66,10 @@ class ActivityRepositoryImpl extends ActivityRepository {
   }
 
   @override
-  Future<ActivityModel?> fetchLastPumpActivity(String babyID) async{
+  Future<ActivityModel?> fetchLastPumpActivity(String babyID) async {
     final result = await database.rawQuery(
       'SELECT * FROM activities WHERE activityType IN(?,?) AND babyID = ? ORDER BY activityDateTime DESC LIMIT 1',
-      ['pumpTotal','pumpLeftRight', babyID],
+      ['pumpTotal', 'pumpLeftRight', babyID],
     );
 
     if (result.isNotEmpty) {
@@ -79,7 +80,10 @@ class ActivityRepositoryImpl extends ActivityRepository {
   }
 
   @override
-  Future<List<ActivityModel>?> fetchAllTypeOfActivity(String babyID, String activityType) async {
+  Future<List<ActivityModel>?> fetchAllTypeOfActivity(
+    String babyID,
+    String activityType,
+  ) async {
     final result = await database.rawQuery(
       'SELECT * FROM activities WHERE activityType = ? AND babyID = ?',
       [activityType, babyID],
@@ -89,17 +93,23 @@ class ActivityRepositoryImpl extends ActivityRepository {
   }
 
   @override
-  Future<List<ActivityModel>?> fetchActivity(DateTime day, String babyID) async{
+  Future<List<ActivityModel>?> fetchActivity(
+    DateTime day,
+    String babyID,
+  ) async {
     final startOfDay = DateTime(day.year, day.month, day.day);
     final endOfDay = startOfDay.add(const Duration(days: 1));
 
     final result = await database.query(
       'activities',
       where: 'activityDateTime >= ? AND activityDateTime <= ? AND babyID =?',
-      whereArgs: [startOfDay.toIso8601String(), endOfDay.toIso8601String(), babyID],
+      whereArgs: [
+        startOfDay.toIso8601String(),
+        endOfDay.toIso8601String(),
+        babyID,
+      ],
     );
-    return result.map((e)=> ActivityModel.fromSqlite(e)).toList();
-    
+    return result.map((e) => ActivityModel.fromSqlite(e)).toList();
   }
 
   @override
@@ -107,7 +117,7 @@ class ActivityRepositoryImpl extends ActivityRepository {
     required DateTime start,
     required DateTime end,
     required String babyID,
-    List<String>? activityTypes
+    List<String>? activityTypes,
   }) async {
     final startOfRange = DateTime(start.year, start.month, start.day);
     final endOfRange = DateTime(end.year, end.month, end.day, 23, 59, 59);
@@ -140,7 +150,7 @@ class ActivityRepositoryImpl extends ActivityRepository {
   }
 
   @override
-  Future<void> deleteActivity(String babyID, String activityID) async{
+  Future<void> deleteActivity(String babyID, String activityID) async {
     try {
       await database.delete(
         'activities',
@@ -155,15 +165,13 @@ class ActivityRepositoryImpl extends ActivityRepository {
   }
 
   @override
-  Future<void> updateActivity(ActivityModel activityModel) async
-  {
+  Future<void> updateActivity(ActivityModel activityModel) async {
     await database.update(
       'activities',
       activityModel.toSqlite(),
       where: 'activityID = ?',
       whereArgs: [activityModel.activityID],
     );
-
 
     try {
       await _activityService.uploadActivity(activityModel);
@@ -177,9 +185,4 @@ class ActivityRepositoryImpl extends ActivityRepository {
       debugPrint('Firebase update failed: $e');
     }
   }
-
-
-
-
-
 }

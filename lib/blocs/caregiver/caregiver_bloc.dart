@@ -21,8 +21,13 @@ class CaregiverBloc extends Bloc<CaregiverEvent, CaregiverState> {
     on<CreateCaregiver>((event, emit) async {
       emit(CaregiverLoading());
       final user = FirebaseAuth.instance.currentUser;
-      var userMap=(await FirebaseFirestore.instance.collection('users').doc(user!.uid).get()).data();
-      final String parentID=userMap!['parentID'];
+      var userMap =
+          (await FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(user!.uid)
+                  .get())
+              .data();
+      final String parentID = userMap!['parentID'];
 
       InviteModel newCaregiver = InviteModel(
         senderID: user!.uid,
@@ -43,37 +48,34 @@ class CaregiverBloc extends Bloc<CaregiverEvent, CaregiverState> {
     });
     on<CaregiverSignUp>((event, emit) async {
       emit(CaregiverLoading());
-      try{
+      try {
         await _caregiverRepository.signUpCaregiverAndCheck(
           event.firstName,
           event.email,
           event.password,
         );
         emit(CaregiverSignedUp());
-      }catch(e){
+      } catch (e) {
         emit(CaregiverError(e.toString()));
       }
-
-      
     });
     on<GetCaregivers>((event, emit) async {
-      final caregiverList  = await _caregiverRepository.getCaregiverList();
+      final caregiverList = await _caregiverRepository.getCaregiverList();
 
       if (caregiverList!.isNotEmpty) {
         emit(GetCaregiverList(caregiverList: caregiverList));
-      }else{
+      } else {
         emit(GetCaregiverList(caregiverList: caregiverList));
       }
     });
-    
-    on<DeleteCaregiver>((event,emit)async{
-      try{
+
+    on<DeleteCaregiver>((event, emit) async {
+      try {
         await _caregiverRepository.deleteCaregiver(event.caregiverID);
         emit(CaregiverDeleted());
-      }catch(e){
+      } catch (e) {
         emit(CaregiverError(e.toString()));
       }
-      
     });
   }
 }

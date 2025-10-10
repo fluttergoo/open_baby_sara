@@ -8,12 +8,13 @@ class CustomBottlerFeedTracker extends StatefulWidget {
   const CustomBottlerFeedTracker({super.key});
 
   @override
-  State<CustomBottlerFeedTracker> createState() => _CustomBottlerFeedTrackerState();
+  State<CustomBottlerFeedTracker> createState() =>
+      _CustomBottlerFeedTrackerState();
 }
 
 class _CustomBottlerFeedTrackerState extends State<CustomBottlerFeedTracker> {
-  String selectedMainActivity='';
-  DateTime selectedDatetime=DateTime.now();
+  String selectedMainActivity = '';
+  DateTime selectedDatetime = DateTime.now();
   @override
   Widget build(BuildContext context) {
     return Expanded(

@@ -65,7 +65,6 @@ class _CustomMedicalTrackerBottomSheetState
       }
     }
     getIt<AnalyticsService>().logScreenView('MedicalActivityTracker');
-
   }
 
   @override
@@ -102,7 +101,10 @@ class _CustomMedicalTrackerBottomSheetState
                     title: context.tr('medical_tracker'),
                     onBack: () => Navigator.of(context).pop(),
                     onSave: () => onPressedSave(),
-                    saveText: widget.isEdit ? context.tr('update') : context.tr('save'),
+                    saveText:
+                        widget.isEdit
+                            ? context.tr('update')
+                            : context.tr('save'),
                     backgroundColor: AppColors.medicalColor,
                   ),
 
@@ -286,7 +288,8 @@ class _CustomMedicalTrackerBottomSheetState
 
   void onPressedSave() {
     final bool hasValidMedications = selectedMedications.any(
-          (med) => (med.amount != null && med.amount!.isNotEmpty) &&
+      (med) =>
+          (med.amount != null && med.amount!.isNotEmpty) &&
           (med.unit != null && med.unit!.isNotEmpty),
     );
 
@@ -303,29 +306,34 @@ class _CustomMedicalTrackerBottomSheetState
     final activityName = ActivityType.medication.name;
 
     final activityModel = ActivityModel(
-      activityID: widget.isEdit
-          ? widget.existingActivity!.activityID
-          : const Uuid().v4(),
+      activityID:
+          widget.isEdit
+              ? widget.existingActivity!.activityID
+              : const Uuid().v4(),
       activityType: activityName,
-      createdAt: widget.isEdit
-          ? widget.existingActivity!.createdAt
-          : DateTime.now(),
+      createdAt:
+          widget.isEdit ? widget.existingActivity!.createdAt : DateTime.now(),
       updatedAt: DateTime.now(),
       activityDateTime: selectedDatetime!,
       data: {
         'startTimeHour': selectedDatetime?.hour,
         'startTimeMin': selectedDatetime?.minute,
         'notes': notesController.text,
-        'medications': selectedMedications
-            .where((med) =>
-        (med.amount != null && med.amount!.isNotEmpty) &&
-            (med.unit != null && med.unit!.isNotEmpty))
-            .map((med) => {
-          'name': med.name,
-          'amount': med.amount,
-          'unit': med.unit,
-        })
-            .toList(),
+        'medications':
+            selectedMedications
+                .where(
+                  (med) =>
+                      (med.amount != null && med.amount!.isNotEmpty) &&
+                      (med.unit != null && med.unit!.isNotEmpty),
+                )
+                .map(
+                  (med) => {
+                    'name': med.name,
+                    'amount': med.amount,
+                    'unit': med.unit,
+                  },
+                )
+                .toList(),
       },
       isSynced: false,
       createdBy: widget.firstName,
@@ -333,14 +341,18 @@ class _CustomMedicalTrackerBottomSheetState
     );
 
     if (widget.isEdit) {
-      context.read<ActivityBloc>().add(UpdateActivity(activityModel: activityModel));
+      context.read<ActivityBloc>().add(
+        UpdateActivity(activityModel: activityModel),
+      );
     } else {
-      context.read<ActivityBloc>().add(AddActivity(activityModel: activityModel));
+      context.read<ActivityBloc>().add(
+        AddActivity(activityModel: activityModel),
+      );
     }
 
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => NavigationWrapper()),
-    );
+    Navigator.of(
+      context,
+    ).pushReplacement(MaterialPageRoute(builder: (_) => NavigationWrapper()));
   }
 
   _onPressedDelete(BuildContext context) {

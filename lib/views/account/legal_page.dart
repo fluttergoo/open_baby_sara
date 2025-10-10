@@ -71,11 +71,7 @@ class _LegalPageState extends State<LegalPage> with TickerProviderStateMixin {
         height: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color(0xFFF5E6E8),
-              Color(0xFFF6F5F5),
-              Color(0xFFE8F4F8),
-            ],
+            colors: [Color(0xFFF5E6E8), Color(0xFFF6F5F5), Color(0xFFE8F4F8)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -184,9 +180,9 @@ class _LegalPageState extends State<LegalPage> with TickerProviderStateMixin {
                 ],
               ),
               child: Theme(
-                data: Theme.of(context).copyWith(
-                  dividerColor: Colors.transparent,
-                ),
+                data: Theme.of(
+                  context,
+                ).copyWith(dividerColor: Colors.transparent),
                 child: ExpansionTile(
                   tilePadding: const EdgeInsets.symmetric(
                     horizontal: 28,
@@ -211,11 +207,7 @@ class _LegalPageState extends State<LegalPage> with TickerProviderStateMixin {
                         width: 1.5,
                       ),
                     ),
-                    child: Icon(
-                      section.icon,
-                      color: section.color,
-                      size: 32,
-                    ),
+                    child: Icon(section.icon, color: section.color, size: 32),
                   ),
                   title: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -418,7 +410,8 @@ class _LegalPageState extends State<LegalPage> with TickerProviderStateMixin {
           ),
           const SizedBox(height: 12),
           Text(
-            "last_updated".tr() + ": ${DateFormat('dd/MM/yyyy').format(DateTime.now())}",
+            "last_updated".tr() +
+                ": ${DateFormat('dd/MM/yyyy').format(DateTime.now())}",
             style: TextStyle(
               fontSize: 11,
               color: Color(0xFF94A3B8),

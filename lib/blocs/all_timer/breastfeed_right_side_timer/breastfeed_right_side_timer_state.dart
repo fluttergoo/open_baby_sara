@@ -3,9 +3,12 @@ part of 'breastfeed_right_side_timer_bloc.dart';
 @immutable
 sealed class BreastfeedRightSideTimerState {}
 
-final class BreastfeedRightSideTimerInitial extends BreastfeedRightSideTimerState {}
+final class BreastfeedRightSideTimerInitial
+    extends BreastfeedRightSideTimerState {}
 
-final class BreasfeedLeftSideTimerInitial extends BreastfeedRightSideTimerState {}
+final class BreasfeedLeftSideTimerInitial
+    extends BreastfeedRightSideTimerState {}
+
 final class TimerRunning extends BreastfeedRightSideTimerState {
   final DateTime? startTime;
   final Duration duration;
@@ -25,7 +28,6 @@ class TimerStopped extends BreastfeedRightSideTimerState {
 
   final String activityType;
 
-
   TimerStopped({
     required this.duration,
     this.endTime,
@@ -35,5 +37,3 @@ class TimerStopped extends BreastfeedRightSideTimerState {
 }
 
 final class TimerReset extends BreastfeedRightSideTimerState {}
-
-

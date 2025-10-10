@@ -9,14 +9,18 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class PumpTotalTimer extends StatefulWidget {
   final double size;
   final String activityType;
-  const PumpTotalTimer({super.key,this.size = 140,required this.activityType});
+  const PumpTotalTimer({
+    super.key,
+    this.size = 140,
+    required this.activityType,
+  });
 
   @override
   State<PumpTotalTimer> createState() => _PumpTotalTimerState();
 }
 
-class _PumpTotalTimerState extends State<PumpTotalTimer> with SingleTickerProviderStateMixin{
-
+class _PumpTotalTimerState extends State<PumpTotalTimer>
+    with SingleTickerProviderStateMixin {
   Timer? _timer;
   Duration _duration = Duration.zero;
   bool _isRunning = false;
@@ -27,7 +31,9 @@ class _PumpTotalTimerState extends State<PumpTotalTimer> with SingleTickerProvid
   void initState() {
     // TODO: implement initState
     super.initState();
-    context.read<PumpTotalTimerBloc>().add(LoadTimerFromLocalDatabase(activityType: widget.activityType));
+    context.read<PumpTotalTimerBloc>().add(
+      LoadTimerFromLocalDatabase(activityType: widget.activityType),
+    );
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
@@ -43,13 +49,17 @@ class _PumpTotalTimerState extends State<PumpTotalTimer> with SingleTickerProvid
   }
 
   void _startTimer() {
-    context.read<PumpTotalTimerBloc>().add(StartTimer(activityType: widget.activityType));
+    context.read<PumpTotalTimerBloc>().add(
+      StartTimer(activityType: widget.activityType),
+    );
     _isRunning = true;
     _animationController.forward();
   }
 
   void _stopTimer() {
-    context.read<PumpTotalTimerBloc>().add(StopTimer(activityType: widget.activityType));
+    context.read<PumpTotalTimerBloc>().add(
+      StopTimer(activityType: widget.activityType),
+    );
     _timer?.cancel();
     _isRunning = false;
     _animationController.stop();
@@ -69,16 +79,19 @@ class _PumpTotalTimerState extends State<PumpTotalTimer> with SingleTickerProvid
     _animationController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<PumpTotalTimerBloc, PumpTotalTimerState>(
       builder: (context, state) {
-        if (state is TimerRunning && state.activityType == widget.activityType) {
+        if (state is TimerRunning &&
+            state.activityType == widget.activityType) {
           _duration = state.duration;
           _isRunning = true;
           _animationController.forward();
         }
-        if (state is TimerStopped && state.activityType == widget.activityType) {
+        if (state is TimerStopped &&
+            state.activityType == widget.activityType) {
           _duration = state.duration;
           _isRunning = false;
           _animationController.stop();
@@ -150,13 +163,17 @@ class _PumpTotalTimerState extends State<PumpTotalTimer> with SingleTickerProvid
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
-                      _isRunning ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                      _isRunning
+                          ? Icons.pause_rounded
+                          : Icons.play_arrow_rounded,
                       size: 20.sp,
                       color: textColor,
                     ),
                   ),
                   Text(
-                    _isRunning ? context.tr('tap_to_pause') : context.tr('tap_to_start_2'),
+                    _isRunning
+                        ? context.tr('tap_to_pause')
+                        : context.tr('tap_to_start_2'),
 
                     style: TextStyle(
                       fontSize: 12.sp,
@@ -171,5 +188,4 @@ class _PumpTotalTimerState extends State<PumpTotalTimer> with SingleTickerProvid
       },
     );
   }
-
 }

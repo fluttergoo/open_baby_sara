@@ -11,7 +11,12 @@ AlertDialog buildCustomAlertDialog({
   required VoidCallback yesButtonTap,
 }) {
   return AlertDialog(
-    title: Text(title, style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold)),
+    title: Text(
+      title,
+      style: Theme.of(
+        context,
+      ).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold),
+    ),
     content: Text(content, style: Theme.of(context).textTheme.bodyMedium),
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
     actions: [

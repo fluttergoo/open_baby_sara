@@ -48,14 +48,18 @@ class _CustomDateTimePickerState extends State<CustomDateTimePicker> {
       },
       child: Text(
         displayText,
-        style:Theme.of(context).textTheme.titleSmall!.copyWith(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+        style: Theme.of(context).textTheme.titleSmall!.copyWith(
+          color: Theme.of(context).primaryColor,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
 
   String formatDateTime(DateTime datetime) {
     final now = DateTime.now();
-    final isToday = datetime.day == now.day &&
+    final isToday =
+        datetime.day == now.day &&
         datetime.month == now.month &&
         datetime.year == now.year;
 

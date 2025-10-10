@@ -18,9 +18,10 @@ class UpdateService {
 
   String get latestVersion => _remoteConfig.getString('latest_version');
 
-  String get updateUrl => Platform.isAndroid
-      ? _remoteConfig.getString('update_url_android')
-      : _remoteConfig.getString('update_url_ios');
+  String get updateUrl =>
+      Platform.isAndroid
+          ? _remoteConfig.getString('update_url_android')
+          : _remoteConfig.getString('update_url_ios');
 
   Future<String> getCurrentVersion() async {
     final info = await PackageInfo.fromPlatform();
@@ -32,7 +33,8 @@ class UpdateService {
     final currentParts = current.split('.').map(int.parse).toList();
 
     for (int i = 0; i < latestParts.length; i++) {
-      if (i >= currentParts.length || latestParts[i] > currentParts[i]) return true;
+      if (i >= currentParts.length || latestParts[i] > currentParts[i])
+        return true;
       if (latestParts[i] < currentParts[i]) return false;
     }
     return false;

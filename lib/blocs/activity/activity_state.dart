@@ -8,7 +8,6 @@ final class ActivityInitial extends ActivityState {}
 final class ActivityLoading extends ActivityState {}
 
 final class ActivityAdded extends ActivityState {
-
   ActivityAdded();
 }
 
@@ -77,12 +76,12 @@ class ActivitiesWithDateLoaded extends ActivityState {
   });
 }
 
-class ActivityByDateRangeLoaded extends ActivityState{
-final List<ActivityModel> activities;
+class ActivityByDateRangeLoaded extends ActivityState {
+  final List<ActivityModel> activities;
   ActivityByDateRangeLoaded({required this.activities});
 }
 
-class ActivityDeleted extends ActivityState{}
+class ActivityDeleted extends ActivityState {}
 
 class ActivityUpdated extends ActivityState {}
 
@@ -90,4 +89,3 @@ class ActivityUpdateError extends ActivityState {
   final String error;
   ActivityUpdateError(this.error);
 }
-

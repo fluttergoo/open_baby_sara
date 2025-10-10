@@ -85,12 +85,14 @@ class _PumpLeftSideTimerState extends State<PumpLeftSideTimer>
   Widget build(BuildContext context) {
     return BlocBuilder<PumpLeftSideTimerBloc, PumpLeftSideTimerState>(
       builder: (context, state) {
-        if (state is TimerRunning && state.activityType == widget.activityType) {
+        if (state is TimerRunning &&
+            state.activityType == widget.activityType) {
           _duration = state.duration;
           _isRunning = true;
           _animationController.forward();
         }
-        if (state is TimerStopped && state.activityType == widget.activityType) {
+        if (state is TimerStopped &&
+            state.activityType == widget.activityType) {
           _duration = state.duration;
           _isRunning = false;
           _animationController.stop();
@@ -162,13 +164,17 @@ class _PumpLeftSideTimerState extends State<PumpLeftSideTimer>
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
-                      _isRunning ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                      _isRunning
+                          ? Icons.pause_rounded
+                          : Icons.play_arrow_rounded,
                       size: 20.sp,
                       color: textColor,
                     ),
                   ),
                   Text(
-                    _isRunning ? context.tr('tap_to_pause') : context.tr('tap_to_start_2'),
+                    _isRunning
+                        ? context.tr('tap_to_pause')
+                        : context.tr('tap_to_start_2'),
                     style: TextStyle(
                       fontSize: 12.sp,
                       color: textColor.withOpacity(0.8),
@@ -182,5 +188,4 @@ class _PumpLeftSideTimerState extends State<PumpLeftSideTimer>
       },
     );
   }
-
 }

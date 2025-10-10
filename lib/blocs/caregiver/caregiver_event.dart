@@ -3,9 +3,7 @@ part of 'caregiver_bloc.dart';
 @immutable
 sealed class CaregiverEvent {}
 
-
-
-class CreateCaregiver extends CaregiverEvent{
+class CreateCaregiver extends CaregiverEvent {
   final String firstName;
   final String email;
 
@@ -24,12 +22,16 @@ class DeleteCaregiver extends CaregiverEvent {
   DeleteCaregiver({required this.caregiverID});
 }
 
-class CaregiverSignUp extends CaregiverEvent{
+class CaregiverSignUp extends CaregiverEvent {
   final String firstName;
   final String email;
   final String password;
 
-  CaregiverSignUp({required this.firstName, required this.email, required this.password});
+  CaregiverSignUp({
+    required this.firstName,
+    required this.email,
+    required this.password,
+  });
 }
-class GetCaregivers extends CaregiverEvent{}
 
+class GetCaregivers extends CaregiverEvent {}

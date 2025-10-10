@@ -31,36 +31,40 @@ class FetchAllTypeOfActivity extends ActivityEvent {
 
   FetchAllTypeOfActivity({required this.babyID, required this.activityType});
 }
+
 class FetchToothIsoNumber extends ActivityEvent {
   final String babyID;
   final String activityType;
 
   FetchToothIsoNumber({required this.babyID, required this.activityType});
-
 }
 
-class LoadActivitiesWithDate extends ActivityEvent{
+class LoadActivitiesWithDate extends ActivityEvent {
   final String babyID;
   final DateTime day;
 
   LoadActivitiesWithDate({required this.babyID, required this.day});
 }
 
-class LoadActivitiesByDateRange extends ActivityEvent{
+class LoadActivitiesByDateRange extends ActivityEvent {
   final String babyID;
   final DateTime startDay;
   final DateTime endDay;
   final String? activityType;
 
-  LoadActivitiesByDateRange({required this.babyID, required this.startDay, required this.endDay,  this.activityType});
+  LoadActivitiesByDateRange({
+    required this.babyID,
+    required this.startDay,
+    required this.endDay,
+    this.activityType,
+  });
 }
 
-class DeleteActivity extends ActivityEvent{
+class DeleteActivity extends ActivityEvent {
   final String babyID;
   final String activityID;
 
   DeleteActivity({required this.babyID, required this.activityID});
-
 }
 
 class UpdateActivity extends ActivityEvent {

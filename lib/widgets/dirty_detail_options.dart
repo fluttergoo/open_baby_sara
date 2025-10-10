@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 
 class DirtyDetailOptions extends StatefulWidget {
   final void Function({
-  required List<String> selectedTextures,
-  required List<String> selectedColors,
-  }) onChanged;
+    required List<String> selectedTextures,
+    required List<String> selectedColors,
+  })
+  onChanged;
   const DirtyDetailOptions({super.key, required this.onChanged});
 
   @override
@@ -13,7 +14,13 @@ class DirtyDetailOptions extends StatefulWidget {
 }
 
 class _DirtyDetailOptionsState extends State<DirtyDetailOptions> {
-  final List<String> textures = ['Runny', 'Mucous', 'Mushy', 'Solid', 'Pebbles'];
+  final List<String> textures = [
+    'Runny',
+    'Mucous',
+    'Mushy',
+    'Solid',
+    'Pebbles',
+  ];
   final List<String> colors = ['Black', 'Green', 'Yellow', 'Brown', 'Red'];
 
   List<String> selectedTextures = [];
@@ -23,11 +30,17 @@ class _DirtyDetailOptionsState extends State<DirtyDetailOptions> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-         Text(context.tr('Texture:'), style: TextStyle(fontWeight: FontWeight.bold)),
+        Text(
+          context.tr('Texture:'),
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 5),
         buildChips(textures, selectedTextures, true),
         const SizedBox(height: 15),
-         Text(context.tr('Color:'), style: TextStyle(fontWeight: FontWeight.bold)),
+        Text(
+          context.tr('Color:'),
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 5),
         buildChips(colors, selectedColors, false),
       ],
@@ -49,19 +62,23 @@ class _DirtyDetailOptionsState extends State<DirtyDetailOptions> {
     });
   }
 
-  Widget buildChips(List<String> items, List<String> selectedList, bool isTexture) {
+  Widget buildChips(
+    List<String> items,
+    List<String> selectedList,
+    bool isTexture,
+  ) {
     return Wrap(
       spacing: 8,
-      children: items.map((item) {
-        final isSelected = selectedList.contains(item);
-        return ChoiceChip(
-          label: Text(context.tr(item)),
-          selected: isSelected,
-          onSelected: (_) => toggleSelection(item, isTexture),
-          selectedColor: Colors.orange,
-        );
-      }).toList(),
+      children:
+          items.map((item) {
+            final isSelected = selectedList.contains(item);
+            return ChoiceChip(
+              label: Text(context.tr(item)),
+              selected: isSelected,
+              onSelected: (_) => toggleSelection(item, isTexture),
+              selectedColor: Colors.orange,
+            );
+          }).toList(),
     );
   }
-
 }

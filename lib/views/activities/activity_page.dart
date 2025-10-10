@@ -42,7 +42,6 @@ class _ActivityPageState extends State<ActivityPage> {
 
   bool isSleepActivityRunning = false;
 
-
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -159,7 +158,8 @@ class _ActivityPageState extends State<ActivityPage> {
                                       CustomCard(
                                         color: AppColors.feedColor,
                                         title: context.tr("feed"),
-                                        activityType: ActivityType.breastFeed.name,
+                                        activityType:
+                                            ActivityType.breastFeed.name,
                                         babyID:
                                             state is BabyLoaded
                                                 ? state.selectedBaby!.babyID
@@ -199,7 +199,8 @@ class _ActivityPageState extends State<ActivityPage> {
                                       CustomCard(
                                         color: AppColors.pumpColor,
                                         title: context.tr("pump"),
-                                        activityType: ActivityType.pumpTotal.name,
+                                        activityType:
+                                            ActivityType.pumpTotal.name,
                                         babyID:
                                             state is BabyLoaded
                                                 ? state.selectedBaby!.babyID
@@ -286,7 +287,8 @@ class _ActivityPageState extends State<ActivityPage> {
                                                 : '',
                                         firstName: firstName ?? '',
                                         imgUrl: 'assets/images/sleep_icon.png',
-                                        isActivityRunning: isSleepActivityRunning,
+                                        isActivityRunning:
+                                            isSleepActivityRunning,
                                         voidCallback: () {
                                           showModalBottomSheet(
                                             context: context,
@@ -388,7 +390,8 @@ class _ActivityPageState extends State<ActivityPage> {
                                       CustomCard(
                                         color: AppColors.babyFirstsColor,
                                         title: context.tr('baby_firsts'),
-                                        activityType: ActivityType.babyFirsts.name,
+                                        activityType:
+                                            ActivityType.babyFirsts.name,
                                         babyID:
                                             state is BabyLoaded
                                                 ? state.selectedBaby!.babyID
@@ -429,7 +432,8 @@ class _ActivityPageState extends State<ActivityPage> {
                                       CustomCard(
                                         color: AppColors.teethingColor,
                                         title: context.tr('teething'),
-                                        activityType: ActivityType.teething.name,
+                                        activityType:
+                                            ActivityType.teething.name,
                                         babyID:
                                             state is BabyLoaded
                                                 ? state.selectedBaby!.babyID
@@ -493,7 +497,8 @@ class _ActivityPageState extends State<ActivityPage> {
                                       CustomCard(
                                         color: AppColors.medicalColor,
                                         title: context.tr('medication'),
-                                        activityType: ActivityType.medication.name,
+                                        activityType:
+                                            ActivityType.medication.name,
                                         babyID:
                                             state is BabyLoaded
                                                 ? state.selectedBaby!.babyID
@@ -534,7 +539,8 @@ class _ActivityPageState extends State<ActivityPage> {
                                       CustomCard(
                                         color: AppColors.doctorVisitColor,
                                         title: context.tr('doctor_visit'),
-                                        activityType: ActivityType.doctorVisit.name,
+                                        activityType:
+                                            ActivityType.doctorVisit.name,
                                         babyID:
                                             state is BabyLoaded
                                                 ? state.selectedBaby!.babyID
@@ -572,7 +578,8 @@ class _ActivityPageState extends State<ActivityPage> {
                                       CustomCard(
                                         color: AppColors.vaccineColor,
                                         title: context.tr('vaccination'),
-                                        activityType: ActivityType.vaccination.name,
+                                        activityType:
+                                            ActivityType.vaccination.name,
                                         babyID:
                                             state is BabyLoaded
                                                 ? state.selectedBaby!.babyID
@@ -697,6 +704,4 @@ class _ActivityPageState extends State<ActivityPage> {
 
     return age.isEmpty ? '0 day' : age;
   }
-
-
 }

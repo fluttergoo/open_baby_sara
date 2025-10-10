@@ -83,24 +83,47 @@ class _CustomPumpTrackerBottomSheetState
       selectedDatetime = widget.existingActivity!.activityDateTime;
       final data = widget.existingActivity!.data;
 
-      if (widget.existingActivity!.activityType == ActivityType.pumpTotal.name) {
-        totalStartTime = _fromHourMinute(data['totalStartTimeHour'], data['totalStartTimeMin']);
-        totalEndTime = _fromHourMinute(data['totalEndTimeHour'], data['totalEndTimeMin']);
+      if (widget.existingActivity!.activityType ==
+          ActivityType.pumpTotal.name) {
+        totalStartTime = _fromHourMinute(
+          data['totalStartTimeHour'],
+          data['totalStartTimeMin'],
+        );
+        totalEndTime = _fromHourMinute(
+          data['totalEndTimeHour'],
+          data['totalEndTimeMin'],
+        );
         totalTotalTime = Duration(milliseconds: data['totalTime'] ?? 0);
         totalAmout = data['totalAmount']?.toDouble();
         totalUnit = data['totalUnit'];
         notesTotalController.text = data['notes'] ?? '';
         _tabController.index = 0;
       } else {
-        leftSideStartTime = _fromHourMinute(data['leftSideStartTimeHour'], data['leftSideStartTimeMin']);
-        leftSideEndTime = _fromHourMinute(data['leftSideEndTimeHour'], data['leftSideEndTimeMin']);
-        leftSideTotalTime = Duration(milliseconds: data['leftSideTotalTime'] ?? 0);
+        leftSideStartTime = _fromHourMinute(
+          data['leftSideStartTimeHour'],
+          data['leftSideStartTimeMin'],
+        );
+        leftSideEndTime = _fromHourMinute(
+          data['leftSideEndTimeHour'],
+          data['leftSideEndTimeMin'],
+        );
+        leftSideTotalTime = Duration(
+          milliseconds: data['leftSideTotalTime'] ?? 0,
+        );
         leftSideAmout = data['leftSideAmount']?.toDouble();
         leftSideUnit = data['leftSideUnit'];
 
-        rightSideStartTime = _fromHourMinute(data['rightSideStartTimeHour'], data['rightSideStartTimeMin']);
-        rightSideEndTime = _fromHourMinute(data['rightSideEndTimeHour'], data['rightSideEndTimeMin']);
-        rightSideTotalTime = Duration(milliseconds: data['rightSideTotalTime'] ?? 0);
+        rightSideStartTime = _fromHourMinute(
+          data['rightSideStartTimeHour'],
+          data['rightSideStartTimeMin'],
+        );
+        rightSideEndTime = _fromHourMinute(
+          data['rightSideEndTimeHour'],
+          data['rightSideEndTimeMin'],
+        );
+        rightSideTotalTime = Duration(
+          milliseconds: data['rightSideTotalTime'] ?? 0,
+        );
         rightSideAmout = data['rightSideAmount']?.toDouble();
         rightSideUnit = data['rightSideUnit'];
         notesController.text = data['notes'] ?? '';
@@ -108,7 +131,6 @@ class _CustomPumpTrackerBottomSheetState
       }
     }
     getIt<AnalyticsService>().logScreenView('PumpActivityTracker');
-
   }
 
   DateTime? _fromHourMinute(int? hour, int? min) {
@@ -116,6 +138,7 @@ class _CustomPumpTrackerBottomSheetState
     final now = DateTime.now();
     return DateTime(now.year, now.month, now.day, hour, min);
   }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<ActivityBloc, ActivityState>(
@@ -146,7 +169,8 @@ class _CustomPumpTrackerBottomSheetState
                 title: context.tr('pump_tracker'),
                 onBack: () => Navigator.of(context).pop(),
                 onSave: () => onPressedSave(),
-                saveText: widget.isEdit ? context.tr('update') : context.tr('save'),
+                saveText:
+                    widget.isEdit ? context.tr('update') : context.tr('save'),
                 backgroundColor: AppColors.pumpColor,
               ),
 
@@ -482,22 +506,40 @@ class _CustomPumpTrackerBottomSheetState
 
     if (activity != null) {
       final activityToSave = activity.copyWith(
-        activityID: widget.isEdit ? widget.existingActivity!.activityID : activity.activityID,
-        createdAt: widget.isEdit ? widget.existingActivity!.createdAt : activity.createdAt,
+        activityID:
+            widget.isEdit
+                ? widget.existingActivity!.activityID
+                : activity.activityID,
+        createdAt:
+            widget.isEdit
+                ? widget.existingActivity!.createdAt
+                : activity.createdAt,
         updatedAt: DateTime.now(),
       );
 
       if (widget.isEdit) {
-        context.read<ActivityBloc>().add(UpdateActivity(activityModel: activityToSave));
+        context.read<ActivityBloc>().add(
+          UpdateActivity(activityModel: activityToSave),
+        );
       } else {
-        context.read<ActivityBloc>().add(AddActivity(activityModel: activityToSave));
+        context.read<ActivityBloc>().add(
+          AddActivity(activityModel: activityToSave),
+        );
       }
 
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => NavigationWrapper()));
+      Navigator.of(
+        context,
+      ).pushReplacement(MaterialPageRoute(builder: (_) => NavigationWrapper()));
 
-      context.read<pumpLeft.PumpLeftSideTimerBloc>().add(pumpLeft.ResetTimer(activityType: 'leftPumpTimer'));
-      context.read<pumpRight.PumpRightSideTimerBloc>().add(pumpRight.ResetTimer(activityType: 'rightPumpTimer'));
-      context.read<pumpTotal.PumpTotalTimerBloc>().add(pumpTotal.ResetTimer(activityType: 'pumpTotalTimer'));
+      context.read<pumpLeft.PumpLeftSideTimerBloc>().add(
+        pumpLeft.ResetTimer(activityType: 'leftPumpTimer'),
+      );
+      context.read<pumpRight.PumpRightSideTimerBloc>().add(
+        pumpRight.ResetTimer(activityType: 'rightPumpTimer'),
+      );
+      context.read<pumpTotal.PumpTotalTimerBloc>().add(
+        pumpTotal.ResetTimer(activityType: 'pumpTotalTimer'),
+      );
     } else {
       showCustomFlushbar(
         context,

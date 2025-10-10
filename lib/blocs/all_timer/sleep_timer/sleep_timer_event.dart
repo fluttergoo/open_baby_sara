@@ -3,56 +3,55 @@ part of 'sleep_timer_bloc.dart';
 @immutable
 sealed class SleepTimerEvent {}
 
-class StartTimer extends SleepTimerEvent{
+class StartTimer extends SleepTimerEvent {
   final DateTime? timerStart;
   final String activityType;
 
-  StartTimer({required this.activityType,this.timerStart});
-
+  StartTimer({required this.activityType, this.timerStart});
 }
-class StopTimer extends SleepTimerEvent{
+
+class StopTimer extends SleepTimerEvent {
   final String activityType;
 
   StopTimer({required this.activityType});
-
 }
-class SetStartTimeTimer extends SleepTimerEvent{
+
+class SetStartTimeTimer extends SleepTimerEvent {
   final DateTime? startTime;
   final String activityType;
 
-
-  SetStartTimeTimer({required this.startTime,required this.activityType});
+  SetStartTimeTimer({required this.startTime, required this.activityType});
 }
-class SetEndTimeTimer extends SleepTimerEvent{
+
+class SetEndTimeTimer extends SleepTimerEvent {
   final DateTime endTime;
 
   final String activityType;
 
-  SetEndTimeTimer({required this.endTime,required this.activityType});
+  SetEndTimeTimer({required this.endTime, required this.activityType});
 }
-class SetDurationTimer extends SleepTimerEvent{
+
+class SetDurationTimer extends SleepTimerEvent {
   Duration duration;
   final String activityType;
 
-  SetDurationTimer({required this.duration,required this.activityType});
-
+  SetDurationTimer({required this.duration, required this.activityType});
 }
-class ResetTimer extends SleepTimerEvent{
+
+class ResetTimer extends SleepTimerEvent {
   final String activityType;
 
   ResetTimer({required this.activityType});
-
 }
-class LoadTimerFromLocalDatabase extends SleepTimerEvent{
+
+class LoadTimerFromLocalDatabase extends SleepTimerEvent {
   final String activityType;
 
   LoadTimerFromLocalDatabase({required this.activityType});
-
 }
-class Tick extends SleepTimerEvent{
+
+class Tick extends SleepTimerEvent {
   final String activityType;
 
   Tick({required this.activityType});
-
 }
-

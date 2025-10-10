@@ -16,7 +16,7 @@ class InviteModel {
     required this.firstName,
     required this.parentID,
     required this.createdAt,
-    required this.caregiverID
+    required this.caregiverID,
   });
 
   Map<String, dynamic> toMap() {
@@ -24,7 +24,7 @@ class InviteModel {
       'senderID': senderID,
       'firstName': firstName,
       'receiverEmail': receiverEmail,
-      'parentID':parentID,
+      'parentID': parentID,
       'status': status,
       'caregiverID': caregiverID,
       'createdAt': Timestamp.fromDate(createdAt),
@@ -37,7 +37,7 @@ class InviteModel {
       receiverEmail: map['receiverEmail'] as String,
       status: map['status'] as String,
       parentID: map['parentID'] as String,
-      firstName:map['firstName'] as String,
+      firstName: map['firstName'] as String,
       caregiverID: map['caregiverID'] as String,
       createdAt: (map['createdAt'] as Timestamp).toDate(),
     );

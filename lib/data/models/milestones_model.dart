@@ -1,4 +1,3 @@
-
 class MilestonesModel {
   final String titleKey;
   final String descriptionKey;
@@ -6,10 +5,7 @@ class MilestonesModel {
   MilestonesModel({required this.titleKey, required this.descriptionKey});
 
   Map<String, dynamic> toMap() {
-    return {
-      'titleKey': titleKey,
-      'descriptionKey': descriptionKey,
-    };
+    return {'titleKey': titleKey, 'descriptionKey': descriptionKey};
   }
 
   factory MilestonesModel.fromMap(Map<String, dynamic> map) {
@@ -30,9 +26,10 @@ class MonthlyMilestonesModel {
     final List<dynamic> milestoneList = map['milestones'];
     return MonthlyMilestonesModel(
       month: map['month'] as int,
-      milestones: milestoneList
-          .map((e) => MilestonesModel.fromMap(e as Map<String, dynamic>))
-          .toList(),
+      milestones:
+          milestoneList
+              .map((e) => MilestonesModel.fromMap(e as Map<String, dynamic>))
+              .toList(),
     );
   }
 }

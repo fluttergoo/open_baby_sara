@@ -15,11 +15,7 @@ class LanguageSettingsPage extends StatelessWidget {
         height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color(0xFF667eea),
-              Color(0xFF764ba2),
-              Color(0xFFF093fb),
-            ],
+            colors: [Color(0xFF667eea), Color(0xFF764ba2), Color(0xFFF093fb)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),

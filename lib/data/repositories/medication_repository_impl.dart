@@ -8,8 +8,6 @@ class MedicationRepositoryImpl implements MedicationRepository {
 
   MedicationRepositoryImpl({required this.database});
 
-
-
   @override
   Future<void> deleteMedication(int id) async {
     final result = await database.delete(

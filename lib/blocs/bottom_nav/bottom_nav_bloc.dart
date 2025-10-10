@@ -6,10 +6,8 @@ part 'bottom_nav_state.dart';
 
 class BottomNavBloc extends Bloc<BottomNavEvent, BottomNavState> {
   BottomNavBloc() : super(BottomNavNext(2)) {
-
     on<NavItemSelected>((event, emit) {
       emit(BottomNavNext(event.index));
     });
-
   }
 }

@@ -55,7 +55,6 @@ class _CustomVaccinationTrackerBottomSheetState
     }
     super.initState();
     getIt<AnalyticsService>().logScreenView('VaccinationActivityTracker');
-
   }
 
   @override
@@ -88,7 +87,8 @@ class _CustomVaccinationTrackerBottomSheetState
                   title: context.tr('vaccination_tracker'),
                   onBack: () => Navigator.of(context).pop(),
                   onSave: () => onPressedSave(),
-                  saveText: widget.isEdit ? context.tr('update') : context.tr('save'),
+                  saveText:
+                      widget.isEdit ? context.tr('update') : context.tr('save'),
                   backgroundColor: AppColors.vaccineColor,
                 ),
 
@@ -244,13 +244,13 @@ class _CustomVaccinationTrackerBottomSheetState
     }
 
     final activityModel = ActivityModel(
-      activityID: widget.isEdit
-          ? widget.existingActivity!.activityID
-          : const Uuid().v4(),
+      activityID:
+          widget.isEdit
+              ? widget.existingActivity!.activityID
+              : const Uuid().v4(),
       activityType: ActivityType.vaccination.name,
-      createdAt: widget.isEdit
-          ? widget.existingActivity!.createdAt
-          : DateTime.now(),
+      createdAt:
+          widget.isEdit ? widget.existingActivity!.createdAt : DateTime.now(),
       updatedAt: DateTime.now(),
       activityDateTime: selectedDatetime!,
       data: {
@@ -265,13 +265,20 @@ class _CustomVaccinationTrackerBottomSheetState
     );
 
     if (widget.isEdit) {
-      context.read<ActivityBloc>().add(UpdateActivity(activityModel: activityModel));
+      context.read<ActivityBloc>().add(
+        UpdateActivity(activityModel: activityModel),
+      );
     } else {
-      context.read<ActivityBloc>().add(AddActivity(activityModel: activityModel));
+      context.read<ActivityBloc>().add(
+        AddActivity(activityModel: activityModel),
+      );
     }
 
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const NavigationWrapper()));
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (_) => const NavigationWrapper()),
+    );
   }
+
   _onPressedDelete(BuildContext context) {
     setState(() {
       selectedDatetime = DateTime.now();

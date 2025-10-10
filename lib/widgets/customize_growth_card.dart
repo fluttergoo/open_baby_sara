@@ -43,48 +43,57 @@ class _CustomizeGrowthCardState extends State<CustomizeGrowthCard> {
         return state is ActivityLoading
             ? Center(child: CircularProgressIndicator())
             : Card(
-          color: widget.color,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.r),
-          ),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-            child: Row(
-              children: [
-                /// Left Image
-                Image.asset(
-                  widget.imgUrl,
-                  height: 40.h,
-                  width: 40.w,
-                  fit: BoxFit.contain,
-                ),
-                SizedBox(width: 12.w),
+              color: widget.color,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.r),
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+                child: Row(
+                  children: [
+                    /// Left Image
+                    Image.asset(
+                      widget.imgUrl,
+                      height: 40.h,
+                      width: 40.w,
+                      fit: BoxFit.contain,
+                    ),
+                    SizedBox(width: 12.w),
 
-                /// Weight, Height, Head Size Columns
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _buildInfoColumn(context.tr('weight'), getLastWeight(growthActivities!, context)),
-                      _buildInfoColumn(context.tr('height'), getLastHeight(growthActivities!, context)),
-                      _buildInfoColumn(context.tr('head_size'), getLastHeadSize(growthActivities!, context)),
-                    ],
-                  ),
-                ),
+                    /// Weight, Height, Head Size Columns
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          _buildInfoColumn(
+                            context.tr('weight'),
+                            getLastWeight(growthActivities!, context),
+                          ),
+                          _buildInfoColumn(
+                            context.tr('height'),
+                            getLastHeight(growthActivities!, context),
+                          ),
+                          _buildInfoColumn(
+                            context.tr('head_size'),
+                            getLastHeadSize(growthActivities!, context),
+                          ),
+                        ],
+                      ),
+                    ),
 
-                /// Add Button
-                CircleAvatar(
-                  radius: 16.r,
-                  backgroundColor: Theme.of(context).primaryColor,
-                  child: IconButton(
-                    onPressed: widget.voidCallback,
-                    icon: Icon(Icons.add, color: Colors.white, size: 16.sp),
-                  ),
+                    /// Add Button
+                    CircleAvatar(
+                      radius: 16.r,
+                      backgroundColor: Theme.of(context).primaryColor,
+                      child: IconButton(
+                        onPressed: widget.voidCallback,
+                        icon: Icon(Icons.add, color: Colors.white, size: 16.sp),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-        );
+              ),
+            );
       },
     );
   }
@@ -99,10 +108,7 @@ class _CustomizeGrowthCardState extends State<CustomizeGrowthCard> {
             child: Text(
               title,
               maxLines: 1,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 13.sp,
-              ),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13.sp),
             ),
           ),
           SizedBox(height: 4.h),

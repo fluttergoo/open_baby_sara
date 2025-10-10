@@ -1,4 +1,3 @@
-
 const Map<String, List<String>> activityTypeMap = {
   'All Activities': [],
   'Feed': ['breastFeed', 'bottleFeed', 'solids'],

@@ -156,7 +156,7 @@ class SignInOptionsPage extends StatelessWidget {
                               ).textTheme.titleMedium?.copyWith(
                                 fontSize: 16.sp,
                                 color: Theme.of(context).primaryColor,
-                                 fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),

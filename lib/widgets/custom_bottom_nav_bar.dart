@@ -27,8 +27,9 @@ class CustomBottomNavBar extends StatelessWidget {
                 ],
               ),
               child: BottomNavigationBar(
-                currentIndex:(state is BottomNavNext)? state.selectedIndex : 0,
-                onTap: (index){
+                currentIndex:
+                    (state is BottomNavNext) ? state.selectedIndex : 0,
+                onTap: (index) {
                   context.read<BottomNavBloc>().add(NavItemSelected(index));
                 },
                 backgroundColor: Colors.deepPurpleAccent,
@@ -36,21 +37,27 @@ class CustomBottomNavBar extends StatelessWidget {
                 type: BottomNavigationBarType.fixed,
                 selectedItemColor: Colors.white,
                 unselectedItemColor: Colors.white60,
-                items: const[
+                items: const [
                   BottomNavigationBarItem(
-                      icon: Icon(Icons.local_activity_outlined),
-                      label: 'Activity'),
+                    icon: Icon(Icons.local_activity_outlined),
+                    label: 'Activity',
+                  ),
                   BottomNavigationBarItem(
-                      icon: Icon(Icons.history_outlined), label: 'History'),
+                    icon: Icon(Icons.history_outlined),
+                    label: 'History',
+                  ),
                   BottomNavigationBarItem(
-                      icon: Icon(Icons.surround_sound_outlined),
-                      label: 'Sounds'),
+                    icon: Icon(Icons.surround_sound_outlined),
+                    label: 'Sounds',
+                  ),
                   BottomNavigationBarItem(
-                      icon: Icon(Icons.receipt_long_outlined),
-                      label: 'Recipes'),
+                    icon: Icon(Icons.receipt_long_outlined),
+                    label: 'Recipes',
+                  ),
                   BottomNavigationBarItem(
-                      icon: Icon(Icons.account_circle_outlined),
-                      label: 'Account'),
+                    icon: Icon(Icons.account_circle_outlined),
+                    label: 'Account',
+                  ),
                 ],
               ),
             ),

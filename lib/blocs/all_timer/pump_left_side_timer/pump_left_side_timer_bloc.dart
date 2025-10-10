@@ -9,7 +9,8 @@ import 'package:meta/meta.dart';
 part 'pump_left_side_timer_event.dart';
 part 'pump_left_side_timer_state.dart';
 
-class PumpLeftSideTimerBloc extends Bloc<PumpLeftSideTimerEvent, PumpLeftSideTimerState> {
+class PumpLeftSideTimerBloc
+    extends Bloc<PumpLeftSideTimerEvent, PumpLeftSideTimerState> {
   final TimerRepository _timerRepository = getIt<TimerRepository>();
 
   Timer? _timer;
@@ -63,7 +64,6 @@ class PumpLeftSideTimerBloc extends Bloc<PumpLeftSideTimerEvent, PumpLeftSideTim
     });
 
     on<SetStartTimeTimer>((event, emit) {
-
       _startTime = event.startTime;
 
       if (_startTime != null) {
@@ -91,16 +91,15 @@ class PumpLeftSideTimerBloc extends Bloc<PumpLeftSideTimerEvent, PumpLeftSideTim
 
       emit(
         TimerStopped(
-            duration: _duration,
-            startTime: _startTime,
-            activityType: event.activityType,
-            endTime: _endTime
+          duration: _duration,
+          startTime: _startTime,
+          activityType: event.activityType,
+          endTime: _endTime,
         ),
       );
     });
 
     on<StopTimer>((event, emit) async {
-
       _timer!.cancel();
 
       _endTime = DateTime.now();
@@ -110,7 +109,13 @@ class PumpLeftSideTimerBloc extends Bloc<PumpLeftSideTimerEvent, PumpLeftSideTim
       }
       await _timerRepository.stopTimer(event.activityType);
 
-      emit(TimerStopped(duration: _duration, endTime: _endTime,activityType: event.activityType));
+      emit(
+        TimerStopped(
+          duration: _duration,
+          endTime: _endTime,
+          activityType: event.activityType,
+        ),
+      );
     });
     on<SetEndTimeTimer>((event, emit) {
       _endTime = event.endTime;
@@ -119,20 +124,30 @@ class PumpLeftSideTimerBloc extends Bloc<PumpLeftSideTimerEvent, PumpLeftSideTim
         _duration = _calculateDuration(_startTime!, _endTime!);
       }
 
-      emit(TimerStopped(duration: _duration, endTime: _endTime,activityType: event.activityType));
+      emit(
+        TimerStopped(
+          duration: _duration,
+          endTime: _endTime,
+          activityType: event.activityType,
+        ),
+      );
     });
-    on<SetDurationTimer>((event,emit){
+    on<SetDurationTimer>((event, emit) {
+      _endTime = DateTime.now();
 
+      _startTime = _calculateStartTime(_endTime!, event.duration);
 
-      _endTime=DateTime.now();
-
-      _startTime=_calculateStartTime(_endTime!, event.duration);
-
-      emit(TimerStopped(duration: event.duration, activityType: event.activityType,endTime: _endTime,startTime: _startTime));
+      emit(
+        TimerStopped(
+          duration: event.duration,
+          activityType: event.activityType,
+          endTime: _endTime,
+          startTime: _startTime,
+        ),
+      );
     });
 
     on<ResetTimer>((event, emit) async {
-
       _timer?.cancel(); // Stop the timer
       _timer = null;
       _duration = Duration.zero;
@@ -150,14 +165,27 @@ class PumpLeftSideTimerBloc extends Bloc<PumpLeftSideTimerEvent, PumpLeftSideTim
       if (data != null && data['isRunning'] == 1) {
         final getTime = DateTime.parse(data['startTime']);
 
-        _startTime = DateTime(getTime.year, getTime.month, getTime.day, getTime.hour,getTime.minute, getTime.second);
+        _startTime = DateTime(
+          getTime.year,
+          getTime.month,
+          getTime.day,
+          getTime.hour,
+          getTime.minute,
+          getTime.second,
+        );
         _endTime = null;
         _duration = DateTime.now().difference(getTime);
 
         _timer = Timer.periodic(Duration(seconds: 1), (_) {
-          add(Tick( activityType: event.activityType,));
+          add(Tick(activityType: event.activityType));
         });
-        emit(TimerRunning(duration: _duration, startTime: _startTime,activityType: event.activityType));
+        emit(
+          TimerRunning(
+            duration: _duration,
+            startTime: _startTime,
+            activityType: event.activityType,
+          ),
+        );
       } else {
         emit(PumpLeftSideTimerInitial());
       }
@@ -172,7 +200,7 @@ class PumpLeftSideTimerBloc extends Bloc<PumpLeftSideTimerEvent, PumpLeftSideTim
       now.day,
       start.hour,
       start.minute,
-      start.second
+      start.second,
     );
     var endDateTime = DateTime(
       now.year,
@@ -180,7 +208,7 @@ class PumpLeftSideTimerBloc extends Bloc<PumpLeftSideTimerEvent, PumpLeftSideTim
       now.day,
       end.hour,
       end.minute,
-      end.second
+      end.second,
     );
 
     if (endDateTime.isBefore(startDateTime)) {
@@ -189,6 +217,7 @@ class PumpLeftSideTimerBloc extends Bloc<PumpLeftSideTimerEvent, PumpLeftSideTim
 
     return endDateTime.difference(startDateTime);
   }
+
   @override
   Future<void> close() {
     _timer?.cancel();

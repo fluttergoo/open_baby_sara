@@ -21,6 +21,7 @@ class _WelcomePageState extends State<WelcomePage> {
     super.initState();
     getIt<AnalyticsService>().logScreenView('WelcomePage');
   }
+
   final introKey = GlobalKey<IntroductionScreenState>();
 
   void _onIntroEnd(context) {
@@ -51,11 +52,7 @@ class _WelcomePageState extends State<WelcomePage> {
           gradient: const LinearGradient(
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
-            colors: [
-              Color(0xFFFFF9C4),
-              Color(0xFFFFE0B2),
-              Color(0xFFFFCDD2),
-            ],
+            colors: [Color(0xFFFFF9C4), Color(0xFFFFE0B2), Color(0xFFFFCDD2)],
           ),
         ),
         child: SafeArea(

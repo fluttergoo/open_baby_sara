@@ -49,7 +49,6 @@ class _EditBabyPageState extends State<EditBabyPage> {
   BabyModel? previousBaby;
   String? localImagePath;
 
-
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -113,7 +112,7 @@ class _EditBabyPageState extends State<EditBabyPage> {
                     setState(() {
                       imgUrl = state.babyModel.imageUrl;
                     });
-                  } else  if (state is BabyImagePathLoaded) {
+                  } else if (state is BabyImagePathLoaded) {
                     setState(() {
                       localImagePath = state.imagePath;
                     });
@@ -183,12 +182,16 @@ class _EditBabyPageState extends State<EditBabyPage> {
                                   imagePath: localImagePath,
                                   onTap: () async {
                                     final picker = ImagePicker();
-                                    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+                                    final pickedFile = await picker.pickImage(
+                                      source: ImageSource.gallery,
+                                    );
                                     if (pickedFile != null) {
-                                      context.read<BabyBloc>().add(UpdateBabyImageLocal(
-                                        babyID: widget.babyID,
-                                        imagePath: pickedFile.path,
-                                      ));
+                                      context.read<BabyBloc>().add(
+                                        UpdateBabyImageLocal(
+                                          babyID: widget.babyID,
+                                          imagePath: pickedFile.path,
+                                        ),
+                                      );
                                     }
                                   },
                                 ),
@@ -344,7 +347,7 @@ class _EditBabyPageState extends State<EditBabyPage> {
                             ),
                           ],
                         ),
-                        
+
                         ListTile(
                           leading: Icon(
                             Icons.delete_outline,

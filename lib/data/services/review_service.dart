@@ -11,17 +11,27 @@ class ReviewService {
   ReviewService._internal();
 
   static const String _recordCountKey = 'recordCount';
-  static const String _lastReviewRequestTimestampKey = 'lastReviewRequestTimestamp';
-  static const List<int> _reviewThresholds = [1, 10, 25, 50, 100, 200, 300, 500];
+  static const String _lastReviewRequestTimestampKey =
+      'lastReviewRequestTimestamp';
+  static const List<int> _reviewThresholds = [
+    1,
+    10,
+    25,
+    50,
+    100,
+    200,
+    300,
+    500,
+  ];
   static const int _minTimeBetweenReviewsMs = 30 * 24 * 60 * 60 * 1000;
-
 
   Future<void> checkIfShouldRequestReview() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final InAppReview inAppReview = InAppReview.instance;
 
     int recordCount = prefs.getInt(_recordCountKey) ?? 0;
-    int lastReviewRequestTimestamp = prefs.getInt(_lastReviewRequestTimestampKey) ?? 0;
+    int lastReviewRequestTimestamp =
+        prefs.getInt(_lastReviewRequestTimestampKey) ?? 0;
 
     if (!await inAppReview.isAvailable()) {
       return;
@@ -29,15 +39,19 @@ class ReviewService {
 
     bool isAtThreshold = _reviewThresholds.contains(recordCount);
 
-    bool enoughTimePassed = (DateTime.now().millisecondsSinceEpoch - lastReviewRequestTimestamp) > _minTimeBetweenReviewsMs;
+    bool enoughTimePassed =
+        (DateTime.now().millisecondsSinceEpoch - lastReviewRequestTimestamp) >
+        _minTimeBetweenReviewsMs;
 
     if (isAtThreshold && enoughTimePassed) {
       print('ReviewService: Requesting review at record count $recordCount.');
       inAppReview.requestReview();
-      await prefs.setInt(_lastReviewRequestTimestampKey, DateTime.now().millisecondsSinceEpoch);
+      await prefs.setInt(
+        _lastReviewRequestTimestampKey,
+        DateTime.now().millisecondsSinceEpoch,
+      );
     }
   }
-
 
   Future<void> incrementRecordCount() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -45,10 +59,8 @@ class ReviewService {
     recordCount++;
     await prefs.setInt(_recordCountKey, recordCount);
 
-
     await checkIfShouldRequestReview();
   }
-
 
   Future<int> getCurrentRecordCount() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();

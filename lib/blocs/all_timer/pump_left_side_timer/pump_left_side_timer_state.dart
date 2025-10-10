@@ -4,6 +4,7 @@ part of 'pump_left_side_timer_bloc.dart';
 sealed class PumpLeftSideTimerState {}
 
 final class PumpLeftSideTimerInitial extends PumpLeftSideTimerState {}
+
 final class TimerRunning extends PumpLeftSideTimerState {
   final DateTime? startTime;
   final Duration duration;
@@ -22,7 +23,6 @@ class TimerStopped extends PumpLeftSideTimerState {
   final DateTime? startTime;
 
   final String activityType;
-
 
   TimerStopped({
     required this.duration,

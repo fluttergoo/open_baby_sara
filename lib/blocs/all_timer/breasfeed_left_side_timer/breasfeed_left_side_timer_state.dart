@@ -4,6 +4,7 @@ part of 'breasfeed_left_side_timer_bloc.dart';
 sealed class BreasfeedLeftSideTimerState {}
 
 final class BreasfeedLeftSideTimerInitial extends BreasfeedLeftSideTimerState {}
+
 final class TimerRunning extends BreasfeedLeftSideTimerState {
   final DateTime? startTime;
   final Duration duration;
@@ -23,7 +24,6 @@ class TimerStopped extends BreasfeedLeftSideTimerState {
 
   final String activityType;
 
-
   TimerStopped({
     required this.duration,
     this.endTime,
@@ -33,4 +33,3 @@ class TimerStopped extends BreasfeedLeftSideTimerState {
 }
 
 final class TimerReset extends BreasfeedLeftSideTimerState {}
-

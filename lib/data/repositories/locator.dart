@@ -48,14 +48,22 @@ Future<void> setupLocator() async {
     () => ActivityRepositoryImpl(database: database),
   );
   getIt.registerLazySingleton<ActivityService>(() => ActivityServiceImpl());
-  getIt.registerLazySingleton<MilestoneService>(() => MilestoneServiceImpl(database: database));
-  getIt.registerLazySingleton<MedicationRepository>(()=>MedicationRepositoryImpl(database: database));
-  getIt.registerLazySingleton<VaccinationRepository>(()=>VaccinationRepositoryImpl(database: database));
-  getIt.registerLazySingleton<RelaxingSoundRepository>(()=>RelaxingSoundRepositoryImpl(database: database));
+  getIt.registerLazySingleton<MilestoneService>(
+    () => MilestoneServiceImpl(database: database),
+  );
+  getIt.registerLazySingleton<MedicationRepository>(
+    () => MedicationRepositoryImpl(database: database),
+  );
+  getIt.registerLazySingleton<VaccinationRepository>(
+    () => VaccinationRepositoryImpl(database: database),
+  );
+  getIt.registerLazySingleton<RelaxingSoundRepository>(
+    () => RelaxingSoundRepositoryImpl(database: database),
+  );
 
   getIt.registerLazySingleton<AudioPlayer>(() => AudioPlayer());
   getIt.registerLazySingleton<RecipeRepository>(() => RecipeRepositoryImpl());
-  getIt.registerLazySingleton<AnalyticsService>(()=>AnalyticsServiceImpl());
+  getIt.registerLazySingleton<AnalyticsService>(() => AnalyticsServiceImpl());
 
   final remoteConfig = FirebaseRemoteConfig.instance;
 
@@ -63,5 +71,4 @@ Future<void> setupLocator() async {
   await updateService.initialize();
 
   getIt.registerSingleton<UpdateService>(updateService);
-
 }

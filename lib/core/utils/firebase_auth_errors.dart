@@ -15,5 +15,4 @@ String getFirebaseAuthErrorMessage(String code) {
     default:
       return 'An unknown error has occurred.';
   }
-
 }

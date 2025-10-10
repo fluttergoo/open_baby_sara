@@ -9,7 +9,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 
-
 class BabyRepositoryImpl extends BabyRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -56,8 +55,10 @@ class BabyRepositoryImpl extends BabyRepository {
   Future<List<BabyModel>> getBabies() async {
     final String? userID = _auth.currentUser?.uid;
     if (userID == null) return [];
-    var userMap=(await FirebaseFirestore.instance.collection('users').doc(userID).get()).data();
-    final String parentID=userMap!['parentID'];
+    var userMap =
+        (await FirebaseFirestore.instance.collection('users').doc(userID).get())
+            .data();
+    final String parentID = userMap!['parentID'];
     try {
       var snapshot =
           await _firestore
@@ -73,7 +74,6 @@ class BabyRepositoryImpl extends BabyRepository {
       return [];
     }
   }
-
 
   /// Upload image to FIRESTORE and Storage !!!
   @override
@@ -103,19 +103,21 @@ class BabyRepositoryImpl extends BabyRepository {
 
   @override
   Future<void> deleteBaby(String babyID) async {
-   await _firestore.collection('babies').doc(babyID).delete();
+    await _firestore.collection('babies').doc(babyID).delete();
   }
 
   /// Upload Image to JUST Storage and get URL LINK!!!
   Future<String?> uploadBabyImageToFile(String babyID, File file) async {
-
     final ref = FirebaseStorage.instance.ref().child('baby_image/$babyID.jpg');
     await ref.putFile(file);
     final downloadUrl = await ref.getDownloadURL();
     return downloadUrl;
   }
 
-  Future<String?> saveBabyImageLocally(String babyID, String originalImagePath) async {
+  Future<String?> saveBabyImageLocally(
+    String babyID,
+    String originalImagePath,
+  ) async {
     try {
       final directory = await getApplicationDocumentsDirectory();
       final savePath = '${directory.path}/baby_images';
@@ -128,7 +130,6 @@ class BabyRepositoryImpl extends BabyRepository {
       final newFile = await File(originalImagePath).copy(newPath);
       return newFile.path;
     } catch (e) {
-
       return null;
     }
   }
@@ -144,5 +145,4 @@ class BabyRepositoryImpl extends BabyRepository {
       return null;
     }
   }
-
 }

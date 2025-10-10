@@ -88,10 +88,10 @@ class _BabySignUpPageState extends State<BabySignUpPage> {
         if (state is BabySuccess) {
           showCustomFlushbar(
             context,
-              context.tr('baby_profile_saved'),
+            context.tr('baby_profile_saved'),
             context.tr('baby_profile_saved_body'),
             Icons.check_circle_outline,
-            color: Colors.green.shade600
+            color: Colors.green.shade600,
           );
           Navigator.of(context).push(
             MaterialPageRoute(
@@ -167,17 +167,24 @@ class _BabySignUpPageState extends State<BabySignUpPage> {
                                       children: [
                                         Text(
                                           '${context.tr("baby")} ${index + 1}',
-                                          style:
-                                              Theme.of(
-                                                context,
-                                              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.titleSmall?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                         if (index != 0)
                                           Row(
                                             children: [
                                               Text(
                                                 context.tr("delete"),
-                                                style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.redAccent,fontSize: 14.sp),
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleSmall
+                                                    ?.copyWith(
+                                                      color: Colors.redAccent,
+                                                      fontSize: 14.sp,
+                                                    ),
                                               ),
                                               IconButton(
                                                 icon: const Icon(

@@ -16,8 +16,7 @@ class CaregiverAdded extends CaregiverState {
 class CaregiverDeleted extends CaregiverState {
   final String message;
 
-  CaregiverDeleted({this.message='Caregiver deleted'});
-
+  CaregiverDeleted({this.message = 'Caregiver deleted'});
 }
 
 class CaregiverError extends CaregiverState {
@@ -31,13 +30,13 @@ class CaregiverListLoaded extends CaregiverState {
 
   CaregiverListLoaded(this.caregivers);
 }
-class CaregiverSignedUp extends CaregiverState{
+
+class CaregiverSignedUp extends CaregiverState {
   final String message;
-  CaregiverSignedUp({this.message='Successfully'});
+  CaregiverSignedUp({this.message = 'Successfully'});
 }
-class GetCaregiverList extends CaregiverState{
+
+class GetCaregiverList extends CaregiverState {
   final List<InviteModel> caregiverList;
   GetCaregiverList({required this.caregiverList});
 }
-
-

@@ -8,7 +8,7 @@ part 'vaccination_state.dart';
 
 class VaccinationBloc extends Bloc<VaccinationEvent, VaccinationState> {
   final VaccinationRepository _vaccinationRepository =
-  getIt<VaccinationRepository>();
+      getIt<VaccinationRepository>();
 
   VaccinationBloc() : super(VaccinationInitial()) {
     on<VaccinationEvent>((event, emit) {
@@ -26,8 +26,9 @@ class VaccinationBloc extends Bloc<VaccinationEvent, VaccinationState> {
     on<FetchVaccination>((event, emit) async {
       emit(VaccinationLoading());
       try {
-        final List<String>? vaccinationList = await _vaccinationRepository.fetchVaccinationList();
-        emit(VaccinationLoaded( vaccinationList ?? []));
+        final List<String>? vaccinationList =
+            await _vaccinationRepository.fetchVaccinationList();
+        emit(VaccinationLoaded(vaccinationList ?? []));
       } catch (e) {
         emit(VaccinationError(message: 'Error, ${e.toString()}'));
       }

@@ -202,131 +202,144 @@ class _HistoryPageState extends State<HistoryPage> {
       showModalBottomSheet(
         isScrollControlled: true,
         context: context,
-        builder: (_) => CustomBabyFirstsTrackerBottomSheet(
-          babyID: activityModel.babyID,
-          firstName: activityModel.createdBy ?? '',
-          isEdit: true,
-          existingActivity: activityModel,
-        ),
+        builder:
+            (_) => CustomBabyFirstsTrackerBottomSheet(
+              babyID: activityModel.babyID,
+              firstName: activityModel.createdBy ?? '',
+              isEdit: true,
+              existingActivity: activityModel,
+            ),
       );
-    } else if (activityType == ActivityType.bottleFeed.name || activityType== ActivityType.breastFeed.name ) {
+    } else if (activityType == ActivityType.bottleFeed.name ||
+        activityType == ActivityType.breastFeed.name) {
       showModalBottomSheet(
         isScrollControlled: true,
         context: context,
-        builder: (_) => CustomFeedTrackerBottomSheet(
-          babyID: activityModel.babyID,
-          firstName: activityModel.createdBy ?? '',
-          isEdit: true,
-          existingActivity: activityModel,
-        ),
+        builder:
+            (_) => CustomFeedTrackerBottomSheet(
+              babyID: activityModel.babyID,
+              firstName: activityModel.createdBy ?? '',
+              isEdit: true,
+              existingActivity: activityModel,
+            ),
       );
     } else if (activityType == ActivityType.doctorVisit.name) {
       showModalBottomSheet(
         isScrollControlled: true,
         context: context,
-        builder: (_) => CustomDoctorVisitTrackerBottomSheet(
-          babyID: activityModel.babyID,
-          firstName: activityModel.createdBy ?? '',
-          isEdit: true,
-          existingActivity: activityModel,
-        ),
+        builder:
+            (_) => CustomDoctorVisitTrackerBottomSheet(
+              babyID: activityModel.babyID,
+              firstName: activityModel.createdBy ?? '',
+              isEdit: true,
+              existingActivity: activityModel,
+            ),
       );
     } else if (activityType == ActivityType.vaccination.name) {
       showModalBottomSheet(
         isScrollControlled: true,
         context: context,
-        builder: (_) => CustomVaccinationTrackerBottomSheet(
-          babyID: activityModel.babyID,
-          firstName: activityModel.createdBy ?? '',
-          isEdit: true,
-          existingActivity: activityModel,
-        ),
+        builder:
+            (_) => CustomVaccinationTrackerBottomSheet(
+              babyID: activityModel.babyID,
+              firstName: activityModel.createdBy ?? '',
+              isEdit: true,
+              existingActivity: activityModel,
+            ),
       );
-    } else if (activityType== ActivityType.fever.name) {
+    } else if (activityType == ActivityType.fever.name) {
       showModalBottomSheet(
         isScrollControlled: true,
         context: context,
-        builder: (_) => CustomFeverTrackerBottomSheet(
-          babyID: activityModel.babyID,
-          firstName: activityModel.createdBy ?? '',
-          isEdit: true,
-          existingActivity: activityModel,
-        ),
+        builder:
+            (_) => CustomFeverTrackerBottomSheet(
+              babyID: activityModel.babyID,
+              firstName: activityModel.createdBy ?? '',
+              isEdit: true,
+              existingActivity: activityModel,
+            ),
       );
     } else if (activityType == ActivityType.medication.name) {
       showModalBottomSheet(
         isScrollControlled: true,
         context: context,
-        builder: (_) => CustomMedicalTrackerBottomSheet(
-          babyID: activityModel.babyID,
-          firstName: activityModel.createdBy ?? '',
-          isEdit: true,
-          existingActivity: activityModel,
-        ),
+        builder:
+            (_) => CustomMedicalTrackerBottomSheet(
+              babyID: activityModel.babyID,
+              firstName: activityModel.createdBy ?? '',
+              isEdit: true,
+              existingActivity: activityModel,
+            ),
       );
-    } else if (activityType==ActivityType.teething.name) {
+    } else if (activityType == ActivityType.teething.name) {
       showModalBottomSheet(
         isScrollControlled: true,
         context: context,
-        builder: (_) => CustomTeethingTrackerBottomSheet(
-          babyID: activityModel.babyID,
-          firstName: activityModel.createdBy ?? '',
-          isEdit: true,
-          existingActivity: activityModel,
-        ),
+        builder:
+            (_) => CustomTeethingTrackerBottomSheet(
+              babyID: activityModel.babyID,
+              firstName: activityModel.createdBy ?? '',
+              isEdit: true,
+              existingActivity: activityModel,
+            ),
       );
-    }   else if (activityType == ActivityType.growth.name) {
+    } else if (activityType == ActivityType.growth.name) {
       showModalBottomSheet(
         isScrollControlled: true,
         context: context,
-        builder: (_) => CustomGrowthDevelopmentTrackerBottomSheet(
-          babyID: activityModel.babyID,
-          firstName: activityModel.createdBy ?? '',
-          isEdit: true,
-          existingActivity: activityModel,
-        ),
+        builder:
+            (_) => CustomGrowthDevelopmentTrackerBottomSheet(
+              babyID: activityModel.babyID,
+              firstName: activityModel.createdBy ?? '',
+              isEdit: true,
+              existingActivity: activityModel,
+            ),
       );
-    }
-    else if (activityType==ActivityType.diaper.name) {
+    } else if (activityType == ActivityType.diaper.name) {
       showModalBottomSheet(
         isScrollControlled: true,
         context: context,
-        builder: (_) => CustomDiaperTrackerBottomSheet(
-          babyID: activityModel.babyID,
-          firstName: activityModel.createdBy ?? '',
-          isEdit: true,
-          existingActivity: activityModel,
-        ),
+        builder:
+            (_) => CustomDiaperTrackerBottomSheet(
+              babyID: activityModel.babyID,
+              firstName: activityModel.createdBy ?? '',
+              isEdit: true,
+              existingActivity: activityModel,
+            ),
       );
-    }  else if (activityType==ActivityType.pumpTotal.name || activityType == ActivityType.pumpLeftRight.name) {
+    } else if (activityType == ActivityType.pumpTotal.name ||
+        activityType == ActivityType.pumpLeftRight.name) {
       showModalBottomSheet(
         isScrollControlled: true,
         context: context,
-        builder: (_) => CustomPumpTrackerBottomSheet(
-          babyID: activityModel.babyID,
-          firstName: activityModel.createdBy ?? '',
-          isEdit: true,
-          existingActivity: activityModel,
-        ),
+        builder:
+            (_) => CustomPumpTrackerBottomSheet(
+              babyID: activityModel.babyID,
+              firstName: activityModel.createdBy ?? '',
+              isEdit: true,
+              existingActivity: activityModel,
+            ),
       );
-    }  else if (activityType== ActivityType.sleep.name) {
+    } else if (activityType == ActivityType.sleep.name) {
       showModalBottomSheet(
         isScrollControlled: true,
         context: context,
-        builder: (_) => CustomSleepTrackerBottomSheet(
-          babyID: activityModel.babyID,
-          firstName: activityModel.createdBy ?? '',
-          isEdit: true,
-          existingActivity: activityModel,
-        ),
+        builder:
+            (_) => CustomSleepTrackerBottomSheet(
+              babyID: activityModel.babyID,
+              firstName: activityModel.createdBy ?? '',
+              isEdit: true,
+              existingActivity: activityModel,
+            ),
       );
-    }  else {
+    } else {
       showDialog(
         context: context,
-        builder: (_) => const AlertDialog(
-          title: Text('Unsupported'),
-          content: Text('Editing this activity is not supported yet.'),
-        ),
+        builder:
+            (_) => const AlertDialog(
+              title: Text('Unsupported'),
+              content: Text('Editing this activity is not supported yet.'),
+            ),
       );
     }
   }

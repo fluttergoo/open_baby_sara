@@ -290,7 +290,9 @@ class _AccountPageState extends State<AccountPage> {
                                         color: Theme.of(context).primaryColor,
                                       ),
                                       title: Text(
-                                        context.tr('you_have_not_added_any_caregivers_yet'),
+                                        context.tr(
+                                          'you_have_not_added_any_caregivers_yet',
+                                        ),
                                         style: Theme.of(context)
                                             .textTheme
                                             .titleMedium
@@ -316,14 +318,18 @@ class _AccountPageState extends State<AccountPage> {
                                   leading: Icon(Icons.settings_outlined),
                                   title: Text(
                                     context.tr('my_account'),
-                                    style:
-                                        Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 16.sp),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(fontSize: 16.sp),
                                   ),
                                   trailing: Icon(
                                     Icons.keyboard_arrow_right_outlined,
                                   ),
                                   onTap: () {
-                                    Navigator.of(context).pushNamed(AppRoutes.myAccount);
+                                    Navigator.of(
+                                      context,
+                                    ).pushNamed(AppRoutes.myAccount);
                                   },
                                 ),
 
@@ -337,13 +343,19 @@ class _AccountPageState extends State<AccountPage> {
                                 ListTile(
                                   leading: Icon(Icons.share_outlined),
                                   title: Text(
-                                    context.tr('share_sara_baby_with_your_friends'),
-                                    style:
-                                        Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 16.sp),
+                                    context.tr(
+                                      'share_sara_baby_with_your_friends',
+                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(fontSize: 16.sp),
                                   ),
                                   onTap: () {
-                                    const appStoreUrl = 'https://apps.apple.com/app/id6746516938';
-                                    const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.suleymansurucu.sarababy';
+                                    const appStoreUrl =
+                                        'https://apps.apple.com/app/id6746516938';
+                                    const playStoreUrl =
+                                        'https://play.google.com/store/apps/details?id=com.suleymansurucu.sarababy';
 
                                     final message =
                                         'Hey, I\'ve been using Sara Baby 👶 to track my baby\'s activities and it\'s been a lifesaver! '
@@ -354,29 +366,36 @@ class _AccountPageState extends State<AccountPage> {
                                         'iPhone: $appStoreUrl\n\n'
                                         'Give it a try!';
 
-
-
                                     SharePlus.instance.share(
-                                        ShareParams(text: message, title:'Sara Baby Tracker – Must Have App for Parents!' )
+                                      ShareParams(
+                                        text: message,
+                                        title:
+                                            'Sara Baby Tracker – Must Have App for Parents!',
+                                      ),
                                     );
                                   },
                                 ),
                                 ListTile(
                                   leading: Icon(Icons.star_border_outlined),
                                   title: Text(
-                                    context.tr('rate_sara_baby_on_the_app_store'),style: Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 16.sp),
+                                    context.tr(
+                                      'rate_sara_baby_on_the_app_store',
+                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(fontSize: 16.sp),
                                   ),
                                   onTap: () async {
-                                    final InAppReview inAppReview = InAppReview.instance;
+                                    final InAppReview inAppReview =
+                                        InAppReview.instance;
 
                                     if (await inAppReview.isAvailable()) {
-
-
-                                    inAppReview.requestReview();
-
+                                      inAppReview.requestReview();
                                     } else {
-
-                                    print('In-app review is not available on this platform or already requested too often.');
+                                      print(
+                                        'In-app review is not available on this platform or already requested too often.',
+                                      );
                                     }
                                   },
                                 ),
@@ -387,7 +406,10 @@ class _AccountPageState extends State<AccountPage> {
                                   ),
                                   title: Text(
                                     context.tr('log_out'),
-                                    style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.red),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(color: Colors.red),
                                   ),
                                   onTap: () {
                                     _onPressedSignOut();
@@ -439,14 +461,17 @@ class _AccountPageState extends State<AccountPage> {
         leading: Icon(icon, color: Theme.of(context).primaryColor),
         title: Text(
           title,
-          style:Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900, fontSize: 16.sp),
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w900,
+            fontSize: 16.sp,
+          ),
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.settings_outlined, size: 16.sp,),
+            Icon(Icons.settings_outlined, size: 16.sp),
             SizedBox(width: 4),
-            Text(trailingText, style: Theme.of(context).textTheme.titleSmall,),
+            Text(trailingText, style: Theme.of(context).textTheme.titleSmall),
           ],
         ),
         onTap: onTap,

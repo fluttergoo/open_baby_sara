@@ -59,7 +59,7 @@ class _WetDirtyDrySelectorState extends State<WetDirtyDrySelector> {
             context.tr(label),
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               color: isSelected ? Colors.white : Theme.of(context).primaryColor,
-                fontSize: 16.sp
+              fontSize: 16.sp,
             ),
           ),
         ),

@@ -9,13 +9,18 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class PumpRightSideTimer extends StatefulWidget {
   final double size;
   final String activityType;
-  const PumpRightSideTimer({super.key,this.size = 140,required this.activityType});
+  const PumpRightSideTimer({
+    super.key,
+    this.size = 140,
+    required this.activityType,
+  });
 
   @override
   State<PumpRightSideTimer> createState() => _PumpRightSideTimerState();
 }
 
-class _PumpRightSideTimerState extends State<PumpRightSideTimer>with SingleTickerProviderStateMixin {
+class _PumpRightSideTimerState extends State<PumpRightSideTimer>
+    with SingleTickerProviderStateMixin {
   Timer? _timer;
   Duration _duration = Duration.zero;
   bool _isRunning = false;
@@ -26,7 +31,9 @@ class _PumpRightSideTimerState extends State<PumpRightSideTimer>with SingleTicke
   void initState() {
     // TODO: implement initState
     super.initState();
-    context.read<PumpRightSideTimerBloc>().add(LoadTimerFromLocalDatabase(activityType: widget.activityType));
+    context.read<PumpRightSideTimerBloc>().add(
+      LoadTimerFromLocalDatabase(activityType: widget.activityType),
+    );
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
@@ -42,13 +49,17 @@ class _PumpRightSideTimerState extends State<PumpRightSideTimer>with SingleTicke
   }
 
   void _startTimer() {
-    context.read<PumpRightSideTimerBloc>().add(StartTimer(activityType: widget.activityType));
+    context.read<PumpRightSideTimerBloc>().add(
+      StartTimer(activityType: widget.activityType),
+    );
     _isRunning = true;
     _animationController.forward();
   }
 
   void _stopTimer() {
-    context.read<PumpRightSideTimerBloc>().add(StopTimer(activityType: widget.activityType));
+    context.read<PumpRightSideTimerBloc>().add(
+      StopTimer(activityType: widget.activityType),
+    );
     _timer?.cancel();
     _isRunning = false;
     _animationController.stop();
@@ -68,16 +79,19 @@ class _PumpRightSideTimerState extends State<PumpRightSideTimer>with SingleTicke
     _animationController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<PumpRightSideTimerBloc, PumpRightSideTimerState>(
       builder: (context, state) {
-        if (state is TimerRunning && state.activityType == widget.activityType) {
+        if (state is TimerRunning &&
+            state.activityType == widget.activityType) {
           _duration = state.duration;
           _isRunning = true;
           _animationController.forward();
         }
-        if (state is TimerStopped && state.activityType == widget.activityType) {
+        if (state is TimerStopped &&
+            state.activityType == widget.activityType) {
           _duration = state.duration;
           _isRunning = false;
           _animationController.stop();
@@ -149,13 +163,17 @@ class _PumpRightSideTimerState extends State<PumpRightSideTimer>with SingleTicke
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
-                      _isRunning ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                      _isRunning
+                          ? Icons.pause_rounded
+                          : Icons.play_arrow_rounded,
                       size: 20.sp,
                       color: textColor,
                     ),
                   ),
                   Text(
-                    _isRunning ? context.tr('tap_to_pause') : context.tr('tap_to_start_2'),
+                    _isRunning
+                        ? context.tr('tap_to_pause')
+                        : context.tr('tap_to_start_2'),
                     style: TextStyle(
                       fontSize: 12.sp,
                       color: textColor.withOpacity(0.8),
@@ -169,5 +187,4 @@ class _PumpRightSideTimerState extends State<PumpRightSideTimer>with SingleTicke
       },
     );
   }
-
 }

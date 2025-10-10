@@ -6,7 +6,6 @@ import 'package:open_baby_sara/data/services/firebase/activity_service.dart';
 class ActivityServiceImpl extends ActivityService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-
   @override
   Future<void> uploadActivity(ActivityModel activityModel) async {
     try {
@@ -37,7 +36,10 @@ class ActivityServiceImpl extends ActivityService {
   }
 
   @override
-  Future<void> deleteActivityFromFirebase(String babyID, String activityID) async{
+  Future<void> deleteActivityFromFirebase(
+    String babyID,
+    String activityID,
+  ) async {
     try {
       await _firestore
           .collection('babies')
@@ -63,6 +65,4 @@ class ActivityServiceImpl extends ActivityService {
       debugPrint('Update error: $e');
     }
   }
-
-
 }

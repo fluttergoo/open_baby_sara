@@ -18,13 +18,12 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
-
   @override
   void initState() {
     super.initState();
     getIt<AnalyticsService>().logScreenView('SignInPage');
-
   }
+
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -49,7 +48,6 @@ class _SignInPageState extends State<SignInPage> {
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is Authenticated) {
-
             showCustomFlushbar(
               context,
               context.tr('welcome_back'),
@@ -99,7 +97,9 @@ class _SignInPageState extends State<SignInPage> {
                   Align(
                     alignment: Alignment.center,
                     child: SingleChildScrollView(
-                      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                      padding: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).viewInsets.bottom,
+                      ),
 
                       child: Center(
                         child: Column(

@@ -42,8 +42,12 @@ class _CustomBabyFirstsTrackerBottomSheetState
     if (widget.existingActivity != null) {
       selectedDatetime = widget.existingActivity!.activityDateTime;
       notesController.text = widget.existingActivity!.data['notes'] ?? '';
-      selectedMilestoneTitle = List<String>.from(widget.existingActivity!.data['milestoneTitle'] ?? []);
-      selectedMilestoneDesc = List<String>.from(widget.existingActivity!.data['milestoneDesc'] ?? []);
+      selectedMilestoneTitle = List<String>.from(
+        widget.existingActivity!.data['milestoneTitle'] ?? [],
+      );
+      selectedMilestoneDesc = List<String>.from(
+        widget.existingActivity!.data['milestoneDesc'] ?? [],
+      );
     }
 
     context.read<MilestoneBloc>().add(LoadMilestones());
@@ -105,7 +109,10 @@ class _CustomBabyFirstsTrackerBottomSheetState
                         title: context.tr('baby_firsts'),
                         onBack: () => Navigator.of(context).pop(),
                         onSave: () => onPressedSave(),
-                        saveText: widget.isEdit ? context.tr('update') : context.tr('save'),
+                        saveText:
+                            widget.isEdit
+                                ? context.tr('update')
+                                : context.tr('save'),
                         backgroundColor: AppColors.babyFirstsColor,
                       ),
 
@@ -216,9 +223,11 @@ class _CustomBabyFirstsTrackerBottomSheetState
     }
 
     final activityModel = ActivityModel(
-      activityID: widget.isEdit ? widget.existingActivity!.activityID : Uuid().v4(),
+      activityID:
+          widget.isEdit ? widget.existingActivity!.activityID : Uuid().v4(),
       activityType: activityName,
-      createdAt: widget.isEdit ? widget.existingActivity!.createdAt : DateTime.now(),
+      createdAt:
+          widget.isEdit ? widget.existingActivity!.createdAt : DateTime.now(),
       updatedAt: DateTime.now(),
       activityDateTime: selectedDatetime!,
       data: {
@@ -235,14 +244,18 @@ class _CustomBabyFirstsTrackerBottomSheetState
 
     try {
       if (widget.isEdit) {
-        context.read<ActivityBloc>().add(UpdateActivity(activityModel: activityModel));
+        context.read<ActivityBloc>().add(
+          UpdateActivity(activityModel: activityModel),
+        );
       } else {
-        context.read<ActivityBloc>().add(AddActivity(activityModel: activityModel));
+        context.read<ActivityBloc>().add(
+          AddActivity(activityModel: activityModel),
+        );
       }
 
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => NavigationWrapper()),
-      );
+      Navigator.of(
+        context,
+      ).pushReplacement(MaterialPageRoute(builder: (_) => NavigationWrapper()));
     } catch (e) {
       showCustomFlushbar(
         context,
@@ -252,7 +265,6 @@ class _CustomBabyFirstsTrackerBottomSheetState
       );
     }
   }
-
 
   _onPressedDelete(BuildContext context) {
     setState(() {

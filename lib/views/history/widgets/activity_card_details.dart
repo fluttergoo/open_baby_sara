@@ -15,8 +15,6 @@ class ActivityCardDetails extends StatefulWidget {
   final VoidCallback? onDelete;
   final VoidCallback? onTap;
 
-
-
   const ActivityCardDetails({
     super.key,
     required this.activity,
@@ -27,7 +25,6 @@ class ActivityCardDetails extends StatefulWidget {
     this.onEdit,
     this.onDelete,
     this.onTap,
-
   });
 
   @override
@@ -129,7 +126,7 @@ class _ActivityCardDetailsState extends State<ActivityCardDetails>
               ),
               SizedBox(height: 20.h),
               Text(
-               context.tr('delete_activity'),
+                context.tr('delete_activity'),
                 style: TextStyle(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
@@ -139,10 +136,7 @@ class _ActivityCardDetailsState extends State<ActivityCardDetails>
               SizedBox(height: 12.h),
               Text(
                 context.tr('delete_activity_body'),
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 14.sp, color: Colors.grey[600]),
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 24.h),
@@ -218,10 +212,7 @@ class _ActivityCardDetailsState extends State<ActivityCardDetails>
           endActionPane: ActionPane(
             motion: const BehindMotion(),
             extentRatio: 0.6,
-            children: [
-              _buildEditAction(),
-              _buildDeleteAction(),
-            ],
+            children: [_buildEditAction(), _buildDeleteAction()],
           ),
           child: GestureDetector(
             onTapDown: _onTapDown,
@@ -229,30 +220,27 @@ class _ActivityCardDetailsState extends State<ActivityCardDetails>
             onTapCancel: _onTapCancel,
             child: Container(
               width: double.infinity,
-              constraints: BoxConstraints(
-                minHeight: 80.h,
-              ),
+              constraints: BoxConstraints(minHeight: 80.h),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [
-                    Colors.white,
-                    Colors.grey.shade50,
-                  ],
+                  colors: [Colors.white, Colors.grey.shade50],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(20.r),
                 border: Border.all(
-                  color: widget.isSelected
-                      ? Theme.of(context).primaryColor
-                      : Colors.grey.shade200,
+                  color:
+                      widget.isSelected
+                          ? Theme.of(context).primaryColor
+                          : Colors.grey.shade200,
                   width: widget.isSelected ? 2 : 1,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: widget.isSelected
-                        ? Theme.of(context).primaryColor.withOpacity(0.2)
-                        : Colors.black.withOpacity(0.08),
+                    color:
+                        widget.isSelected
+                            ? Theme.of(context).primaryColor.withOpacity(0.2)
+                            : Colors.black.withOpacity(0.08),
                     blurRadius: widget.isSelected ? 12 : 8,
                     offset: const Offset(0, 4),
                     spreadRadius: widget.isSelected ? 2 : 0,
@@ -271,10 +259,14 @@ class _ActivityCardDetailsState extends State<ActivityCardDetails>
                           vertical: 8.h,
                         ),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor.withOpacity(0.1),
+                          color: Theme.of(
+                            context,
+                          ).primaryColor.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(12.r),
                           border: Border.all(
-                            color: Theme.of(context).primaryColor.withOpacity(0.2),
+                            color: Theme.of(
+                              context,
+                            ).primaryColor.withOpacity(0.2),
                           ),
                         ),
                         child: Column(
@@ -294,7 +286,9 @@ class _ActivityCardDetailsState extends State<ActivityCardDetails>
                               style: TextStyle(
                                 fontWeight: FontWeight.w500,
                                 fontSize: 10.sp,
-                                color: Theme.of(context).primaryColor.withOpacity(0.7),
+                                color: Theme.of(
+                                  context,
+                                ).primaryColor.withOpacity(0.7),
                               ),
                             ),
                           ],
@@ -333,7 +327,9 @@ class _ActivityCardDetailsState extends State<ActivityCardDetails>
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              toBeginningOfSentenceCase(context.tr(widget.activity.activityType)) ??
+                              toBeginningOfSentenceCase(
+                                    context.tr(widget.activity.activityType),
+                                  ) ??
                                   widget.activity.activityType,
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
@@ -341,7 +337,8 @@ class _ActivityCardDetailsState extends State<ActivityCardDetails>
                                 color: Colors.grey[800],
                               ),
                             ),
-                            if (widget.summary != null && widget.summary!.isNotEmpty) ...[
+                            if (widget.summary != null &&
+                                widget.summary!.isNotEmpty) ...[
                               SizedBox(height: 6.h),
                               Container(
                                 padding: EdgeInsets.symmetric(

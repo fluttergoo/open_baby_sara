@@ -23,10 +23,15 @@ class AppThemes {
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xFFFF4081),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.r),
+        ),
       ),
     ),
-    inputDecorationTheme: _inputDecorationTheme(AppColors.girlBorder, AppColors.girlPrimary),
+    inputDecorationTheme: _inputDecorationTheme(
+      AppColors.girlBorder,
+      AppColors.girlPrimary,
+    ),
   );
 
   static final ThemeData boyTheme = ThemeData(
@@ -48,27 +53,71 @@ class AppThemes {
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xFF0288D1),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.r),
+        ),
       ),
     ),
-    inputDecorationTheme: _inputDecorationTheme(AppColors.boyBorder, AppColors.boyPrimary),
+    inputDecorationTheme: _inputDecorationTheme(
+      AppColors.boyBorder,
+      AppColors.boyPrimary,
+    ),
   );
 
   static TextTheme _commonTextTheme() {
     return TextTheme(
-      headlineLarge: GoogleFonts.dancingScript(fontSize: 32.sp, fontWeight: FontWeight.w300, color: const Color(0xFF333333)),
-      headlineMedium: GoogleFonts.dancingScript(fontSize: 20.sp, fontWeight: FontWeight.w300, color: const Color(0xFF333333)),
-      headlineSmall: GoogleFonts.dancingScript(fontSize: 12.sp, fontWeight: FontWeight.w300, color: const Color(0xFF333333)),
-      bodyLarge: GoogleFonts.baloo2(fontSize: 32.sp, fontWeight: FontWeight.w500, color: const Color(0xFF333333)),
-      bodyMedium: GoogleFonts.baloo2(fontSize: 14.sp, fontWeight: FontWeight.w300, color: const Color(0xFF333333)),
-      bodySmall:  GoogleFonts.baloo2(fontSize: 4.sp, fontWeight: FontWeight.w200, color: const Color(0xFF333333)),
-      titleLarge: GoogleFonts.fredoka(fontSize: 32.sp, fontWeight: FontWeight.w300, color: const Color(0xFF333333)),
-      titleMedium: GoogleFonts.fredoka(fontSize: 20.sp, fontWeight: FontWeight.w300, color: const Color(0xFF333333)),
-      titleSmall: GoogleFonts.fredoka(fontSize: 12.sp, fontWeight: FontWeight.w300, color: const Color(0xFF333333)),
+      headlineLarge: GoogleFonts.dancingScript(
+        fontSize: 32.sp,
+        fontWeight: FontWeight.w300,
+        color: const Color(0xFF333333),
+      ),
+      headlineMedium: GoogleFonts.dancingScript(
+        fontSize: 20.sp,
+        fontWeight: FontWeight.w300,
+        color: const Color(0xFF333333),
+      ),
+      headlineSmall: GoogleFonts.dancingScript(
+        fontSize: 12.sp,
+        fontWeight: FontWeight.w300,
+        color: const Color(0xFF333333),
+      ),
+      bodyLarge: GoogleFonts.baloo2(
+        fontSize: 32.sp,
+        fontWeight: FontWeight.w500,
+        color: const Color(0xFF333333),
+      ),
+      bodyMedium: GoogleFonts.baloo2(
+        fontSize: 14.sp,
+        fontWeight: FontWeight.w300,
+        color: const Color(0xFF333333),
+      ),
+      bodySmall: GoogleFonts.baloo2(
+        fontSize: 4.sp,
+        fontWeight: FontWeight.w200,
+        color: const Color(0xFF333333),
+      ),
+      titleLarge: GoogleFonts.fredoka(
+        fontSize: 32.sp,
+        fontWeight: FontWeight.w300,
+        color: const Color(0xFF333333),
+      ),
+      titleMedium: GoogleFonts.fredoka(
+        fontSize: 20.sp,
+        fontWeight: FontWeight.w300,
+        color: const Color(0xFF333333),
+      ),
+      titleSmall: GoogleFonts.fredoka(
+        fontSize: 12.sp,
+        fontWeight: FontWeight.w300,
+        color: const Color(0xFF333333),
+      ),
     );
   }
 
-  static InputDecorationTheme _inputDecorationTheme(Color borderColor, Color focusColor) {
+  static InputDecorationTheme _inputDecorationTheme(
+    Color borderColor,
+    Color focusColor,
+  ) {
     return InputDecorationTheme(
       labelStyle: TextStyle(fontSize: 10.sp, color: Colors.black),
       floatingLabelStyle: TextStyle(fontSize: 10.sp, color: Colors.black54),

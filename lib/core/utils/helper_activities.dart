@@ -45,7 +45,10 @@ String formatSleepDuration(List<ActivityModel> sleepActivities) {
   return '${hours}h ${minutes}m';
 }
 
-String summarizeDiaperTypes(List<ActivityModel> diaperActivities,BuildContext context) {
+String summarizeDiaperTypes(
+  List<ActivityModel> diaperActivities,
+  BuildContext context,
+) {
   int wetOnly = 0, dirtyOnly = 0, wetAndDirty = 0, dry = 0;
 
   for (final activity in diaperActivities) {
@@ -79,11 +82,15 @@ String summarizeDiaperTypes(List<ActivityModel> diaperActivities,BuildContext co
 ActivityModel? getLastActivity(List<ActivityModel> activities) {
   if (activities.isEmpty) return null;
 
-  return activities.reduce((a, b) =>
-  a.activityDateTime.isAfter(b.activityDateTime) ? a : b);
+  return activities.reduce(
+    (a, b) => a.activityDateTime.isAfter(b.activityDateTime) ? a : b,
+  );
 }
 
-String? getLastFeedSummary(List<ActivityModel> activities, BuildContext context) {
+String? getLastFeedSummary(
+  List<ActivityModel> activities,
+  BuildContext context,
+) {
   final last = getLastActivity(activities);
   if (last == null) return '➕ ${context.tr('tap_to_start_only')}';
 
@@ -100,8 +107,11 @@ String? getLastFeedSummary(List<ActivityModel> activities, BuildContext context)
   return '${context.tr('last_feed')} at\n$timeText';
 }
 
-String? getLastSleepSummary(List<ActivityModel> activities, bool? isRunning, BuildContext context) {
-
+String? getLastSleepSummary(
+  List<ActivityModel> activities,
+  bool? isRunning,
+  BuildContext context,
+) {
   debugPrint(isRunning.toString());
   if (isRunning == true) {
     return '💤 ${context.tr('your_baby_is_now_sleeping')}';
@@ -112,7 +122,8 @@ String? getLastSleepSummary(List<ActivityModel> activities, bool? isRunning, Bui
     final endHour = last.data['endTimeHour'];
     final endMin = last.data['endTimeMin'];
 
-    if (endHour == null || endMin == null) return '➕\n${context.tr('tap_to_start_only')}';
+    if (endHour == null || endMin == null)
+      return '➕\n${context.tr('tap_to_start_only')}';
 
     final timeOfDay = TimeOfDay(hour: endHour, minute: endMin);
     final timeText = timeOfDay.format(context);
@@ -122,18 +133,22 @@ String? getLastSleepSummary(List<ActivityModel> activities, bool? isRunning, Bui
     final hours = duration.inHours;
     final minutes = duration.inMinutes % 60;
 
-    final durationText = hours > 0 && minutes > 0
-        ? '${hours}h ${minutes}m'
-        : hours > 0
-        ? '${hours}h'
-        : '${minutes}m';
+    final durationText =
+        hours > 0 && minutes > 0
+            ? '${hours}h ${minutes}m'
+            : hours > 0
+            ? '${hours}h'
+            : '${minutes}m';
 
     return '${context.tr('woke_up_at')} $timeText\n($durationText ${context.tr('sleep')})';
   }
   return null;
 }
 
-String? getLastDiaperSummary(List<ActivityModel> activities, BuildContext context) {
+String? getLastDiaperSummary(
+  List<ActivityModel> activities,
+  BuildContext context,
+) {
   final last = getLastActivity(activities);
   if (last == null) return '➕ ${context.tr('tap_to_start_only')}';
 
@@ -144,7 +159,10 @@ String? getLastDiaperSummary(List<ActivityModel> activities, BuildContext contex
   return '$types \nat $timeText';
 }
 
-String? getLastPumpSummary(List<ActivityModel> activities, BuildContext context) {
+String? getLastPumpSummary(
+  List<ActivityModel> activities,
+  BuildContext context,
+) {
   final last = getLastActivity(activities);
   if (last == null) return '➕ ${context.tr('tap_to_start_only')}';
 
@@ -162,11 +180,14 @@ String? getLastPumpSummary(List<ActivityModel> activities, BuildContext context)
 }
 
 String? getLastWeight(List<ActivityModel> activities, BuildContext context) {
-  final weightActivities = activities.where(
-        (a) =>
-    a.data['weight'] != null &&
-        a.data['weight'].toString().trim().isNotEmpty,
-  ).toList();
+  final weightActivities =
+      activities
+          .where(
+            (a) =>
+                a.data['weight'] != null &&
+                a.data['weight'].toString().trim().isNotEmpty,
+          )
+          .toList();
 
   final last = getLastActivity(weightActivities);
   if (last == null) return '➕\n ${context.tr('tap_to_start_only')}';
@@ -179,7 +200,7 @@ String? getLastWeight(List<ActivityModel> activities, BuildContext context) {
   return '$weight $unit \nat $timeText';
 }
 
-String? getLastHeight(List<ActivityModel> activities,BuildContext context) {
+String? getLastHeight(List<ActivityModel> activities, BuildContext context) {
   final heightActivities =
       activities
           .where(
@@ -200,7 +221,7 @@ String? getLastHeight(List<ActivityModel> activities,BuildContext context) {
   return '$height $heightUnit \nat $timeText';
 }
 
-String? getLastHeadSize(List<ActivityModel> activities,BuildContext context) {
+String? getLastHeadSize(List<ActivityModel> activities, BuildContext context) {
   final headSizeActivities =
       activities
           .where(
@@ -270,10 +291,11 @@ String? getLastTeethingSummary(
     status = context.tr('Teething activity');
   }
 
-  final List<String> descriptions = teethingNumbers.map((num) {
-    final key = isoToothDescriptions[num];
-    return key != null ? context.tr(key) : '${context.tr('tooth')} $num';
-  }).toList();
+  final List<String> descriptions =
+      teethingNumbers.map((num) {
+        final key = isoToothDescriptions[num];
+        return key != null ? context.tr(key) : '${context.tr('tooth')} $num';
+      }).toList();
 
   final descriptionText = descriptions.join(', ');
 
@@ -306,20 +328,20 @@ String? getActivitySummary(ActivityModel activity, BuildContext context) {
     case 'breastFeed':
     case 'bottleFeed':
     case 'solids':
-      return getLastFeedSummary([activity],context);
+      return getLastFeedSummary([activity], context);
 
     case 'pumpLeftRight':
     case 'pumpTotal':
-      return getLastPumpSummary([activity],context);
+      return getLastPumpSummary([activity], context);
 
     case 'sleep':
-      return getLastSleepSummary([activity], false ,context);
+      return getLastSleepSummary([activity], false, context);
 
     case 'diaper':
-      return getLastDiaperSummary([activity],context);
+      return getLastDiaperSummary([activity], context);
 
     case 'medication':
-      return getLastMedicationSummary([activity],context);
+      return getLastMedicationSummary([activity], context);
     case 'growth':
       final weightSummary = getLastGrowthMetricSummary(
         activities: [activity],
@@ -353,18 +375,21 @@ String? getActivitySummary(ActivityModel activity, BuildContext context) {
     case 'teething':
       return getLastTeethingSummary([activity], context);
     case 'vaccination':
-      return getLastVaccinationSummary([activity],context);
+      return getLastVaccinationSummary([activity], context);
     case 'doctorVisit':
-      return getLastDoctorVisitSummary([activity],context);
+      return getLastDoctorVisitSummary([activity], context);
     case 'fever':
-      return getLastFeverSummary([activity],context);
+      return getLastFeverSummary([activity], context);
 
     default:
       return 'Recorded';
   }
 }
 
-String? getLastFeverSummary(List<ActivityModel> activities,BuildContext context) {
+String? getLastFeverSummary(
+  List<ActivityModel> activities,
+  BuildContext context,
+) {
   final last = getLastActivity(activities);
   if (last == null) return '➕ ${context.tr('tap_to_start_only')}';
 
@@ -382,7 +407,10 @@ String? getLastFeverSummary(List<ActivityModel> activities,BuildContext context)
   return '$temperature $unit';
 }
 
-String? getLastVaccinationSummary(List<ActivityModel> activities,BuildContext context) {
+String? getLastVaccinationSummary(
+  List<ActivityModel> activities,
+  BuildContext context,
+) {
   final last = getLastActivity(activities);
   if (last == null) return '➕ ${context.tr('tap_to_start_only')}';
 
@@ -403,7 +431,10 @@ String? getLastVaccinationSummary(List<ActivityModel> activities,BuildContext co
   return vaccinationNames;
 }
 
-String? getLastDoctorVisitSummary(List<ActivityModel> activities,BuildContext context) {
+String? getLastDoctorVisitSummary(
+  List<ActivityModel> activities,
+  BuildContext context,
+) {
   final last = getLastActivity(activities);
   if (last == null) return '➕ ${context.tr('tap_to_start_only')}';
 
@@ -426,7 +457,10 @@ String? getLastDoctorVisitSummary(List<ActivityModel> activities,BuildContext co
   return joined.isEmpty ? '➕ ${context.tr('tap_to_start_only')}' : joined;
 }
 
-String? getLastMedicationSummary(List<ActivityModel> list,BuildContext context) {
+String? getLastMedicationSummary(
+  List<ActivityModel> list,
+  BuildContext context,
+) {
   final last = getLastActivity(list);
   if (last == null) return '➕ ${context.tr('tap_to_start_only')}';
 

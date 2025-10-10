@@ -56,10 +56,7 @@ class RecipeDetailPage extends StatelessWidget {
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
-                        Image.asset(
-                          recipe.image,
-                          fit: BoxFit.cover,
-                        ),
+                        Image.asset(recipe.image, fit: BoxFit.cover),
                         Container(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
@@ -146,72 +143,104 @@ class RecipeDetailPage extends StatelessWidget {
 
   Widget _buildInfoCardsRow() {
     final infos = [
-      {'icon': Icons.child_care, 'label': 'Age', 'text': recipe.ageGroupKey.tr(), 'color': Color(0xFFB8A9E8)},
-      {'icon': Icons.timer_outlined, 'label': 'Prep', 'text': recipe.prepTimeKey.tr(), 'color': Color(0xFF87D4C8)},
-      {'icon': Icons.local_fire_department_outlined, 'label': 'Cook', 'text': recipe.cookTimeKey.tr(), 'color': Color(0xFFFFB3BA)},
-      {'icon': Icons.restaurant, 'label': 'Serves', 'text': recipe.servingSizeKey.tr(), 'color': Color(0xFFA8D5F2)},
+      {
+        'icon': Icons.child_care,
+        'label': 'Age',
+        'text': recipe.ageGroupKey.tr(),
+        'color': Color(0xFFB8A9E8),
+      },
+      {
+        'icon': Icons.timer_outlined,
+        'label': 'Prep',
+        'text': recipe.prepTimeKey.tr(),
+        'color': Color(0xFF87D4C8),
+      },
+      {
+        'icon': Icons.local_fire_department_outlined,
+        'label': 'Cook',
+        'text': recipe.cookTimeKey.tr(),
+        'color': Color(0xFFFFB3BA),
+      },
+      {
+        'icon': Icons.restaurant,
+        'label': 'Serves',
+        'text': recipe.servingSizeKey.tr(),
+        'color': Color(0xFFA8D5F2),
+      },
     ];
 
     return Row(
-      children: infos.map((info) => Expanded(
-        child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 2.w),
-          // height: 100.h, // Sabit yükseklik
-          child: Card(
-            elevation: 2,
-            shadowColor: Colors.black.withOpacity(0.08),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
-            child: Container(
-              padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 4.w),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12.r),
-                gradient: LinearGradient(
-                  colors: [Colors.white, Color(0xFFFEFEFF)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-              ),
-              child: Column(
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(4.w),
-                    decoration: BoxDecoration(
-                      color: (info['color'] as Color).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                    child: Icon(
-                      info['icon'] as IconData,
-                      size: 24.sp,
-                      color: info['color'] as Color,
-                    ),
-                  ),
-                  SizedBox(height: 8.h),
-                  Text(
-                    info['label'] as String,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 11.sp,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xFF4A5568),
-                    ),
-                  ),
-                  SizedBox(height: 4.h),
+      children:
+          infos
+              .map(
+                (info) => Expanded(
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 2.w),
+                    // height: 100.h, // Sabit yükseklik
+                    child: Card(
+                      elevation: 2,
+                      shadowColor: Colors.black.withOpacity(0.08),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          vertical: 8.h,
+                          horizontal: 4.w,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12.r),
+                          gradient: LinearGradient(
+                            colors: [Colors.white, Color(0xFFFEFEFF)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(4.w),
+                              decoration: BoxDecoration(
+                                color: (info['color'] as Color).withOpacity(
+                                  0.1,
+                                ),
+                                borderRadius: BorderRadius.circular(8.r),
+                              ),
+                              child: Icon(
+                                info['icon'] as IconData,
+                                size: 24.sp,
+                                color: info['color'] as Color,
+                              ),
+                            ),
+                            SizedBox(height: 8.h),
+                            Text(
+                              info['label'] as String,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 11.sp,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xFF4A5568),
+                              ),
+                            ),
+                            SizedBox(height: 4.h),
 
-                  Text(
-                    info['text'] as String,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 11.sp,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xFF4A5568),
+                            Text(
+                              info['text'] as String,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 11.sp,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xFF4A5568),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      )).toList(),
+                ),
+              )
+              .toList(),
     );
   }
 
@@ -255,7 +284,7 @@ class RecipeDetailPage extends StatelessWidget {
             ),
             SizedBox(height: 16.h),
             ...recipe.ingredientsKeys.map(
-                  (key) => Container(
+              (key) => Container(
                 margin: EdgeInsets.only(bottom: 12.h),
                 padding: EdgeInsets.all(12.w),
                 decoration: BoxDecoration(
@@ -355,7 +384,9 @@ class RecipeDetailPage extends StatelessWidget {
                     Container(
                       width: 28.w,
                       height: 28.w,
-                      margin: EdgeInsets.only(top: 2.h), // Row ile hizalama için
+                      margin: EdgeInsets.only(
+                        top: 2.h,
+                      ), // Row ile hizalama için
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [Color(0xFFB8A9E8), Color(0xFFC4B5F0)],
@@ -389,7 +420,10 @@ class RecipeDetailPage extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: Color(0xFFFAF9FF),
                           borderRadius: BorderRadius.circular(8.r),
-                          border: Border.all(color: Color(0xFFF0EFFF), width: 1),
+                          border: Border.all(
+                            color: Color(0xFFF0EFFF),
+                            width: 1,
+                          ),
                         ),
                         child: Text(
                           key.tr(),

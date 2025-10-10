@@ -27,7 +27,7 @@ class MedicationBloc extends Bloc<MedicationEvent, MedicationState> {
       try {
         final List<MedicationModel>? medicationsList =
             await _medicationRepository.fetchMedicationList();
-        emit(MedicationLoaded( medicationsList ?? []));
+        emit(MedicationLoaded(medicationsList ?? []));
       } catch (e) {
         emit(MedicationError(message: 'Error, ${e.toString()}'));
       }

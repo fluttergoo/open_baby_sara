@@ -65,7 +65,6 @@ class _CustomTeethingTrackerBottomSheetState
     );
     super.initState();
     getIt<AnalyticsService>().logScreenView('TeethingActivityTracker');
-
   }
 
   @override
@@ -114,7 +113,10 @@ class _CustomTeethingTrackerBottomSheetState
                             title: context.tr('teething'),
                             onBack: () => Navigator.of(context).pop(),
                             onSave: () => onPressedSave(),
-                            saveText: widget.isEdit ? context.tr('update') : context.tr('save'),
+                            saveText:
+                                widget.isEdit
+                                    ? context.tr('update')
+                                    : context.tr('save'),
                             backgroundColor: AppColors.teethingColor,
                           ),
 
@@ -254,7 +256,10 @@ class _CustomTeethingTrackerBottomSheetState
                       title: context.tr('add_teething'),
                       onBack: () => Navigator.of(context).pop(),
                       onSave: () => onPressedSave(),
-                      saveText: widget.isEdit ? context.tr('update') : context.tr('save'),
+                      saveText:
+                          widget.isEdit
+                              ? context.tr('update')
+                              : context.tr('save'),
                       backgroundColor: AppColors.teethingColor,
                     ),
                     Expanded(

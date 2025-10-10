@@ -9,7 +9,7 @@ on:
     branches: [ main, develop ]
 
 env:
-  FLUTTER_VERSION: '3.24.0'
+  FLUTTER_VERSION: '3.35.4'
   BUNDLE_ID_ANDROID: ${{ secrets.BUNDLE_ID_ANDROID || 'com.suleymansurucu.sarababy' }}
   BUNDLE_ID_IOS: ${{ secrets.BUNDLE_ID_IOS || 'com.suleymansurucu.babysara' }}
   SUPPORTED_LOCALES: 'en-US,tr-TR,ar-SA,de-DE,es-ES,fr-FR,id-ID,ko-KR,nl-NL,ru-RU,zh-TW'

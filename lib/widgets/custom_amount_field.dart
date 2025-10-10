@@ -53,6 +53,7 @@ class _CustomAmountFieldState extends State<CustomAmountField> {
       ),
     );
   }
+
   KeyboardActionsConfig _buildKeyboardConfig(BuildContext context) {
     return KeyboardActionsConfig(
       keyboardBarColor: Colors.grey.shade200,
@@ -60,7 +61,7 @@ class _CustomAmountFieldState extends State<CustomAmountField> {
         KeyboardActionsItem(
           focusNode: widget.focusNode,
           toolbarButtons: [
-                (node) {
+            (node) {
               return Row(
                 children: [
                   TextButton(
