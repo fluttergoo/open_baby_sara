@@ -183,6 +183,43 @@ jobs:
             echo "  static const FirebaseOptions windows = FirebaseOptions(apiKey: 'demo-api-key', appId: '1:123456789:web:demo', messagingSenderId: '123456789', projectId: 'demo-project');" >> lib/firebase_options.dart
             echo "}" >> lib/firebase_options.dart
           fi
+          
+          # Create google-services.json if it doesn't exist
+          if [ ! -f "android/app/google-services.json" ]; then
+            echo "⚠️ google-services.json not found, creating minimal version..."
+            mkdir -p android/app
+            cat > android/app/google-services.json << 'EOF'
+{
+  "project_info": {
+    "project_number": "123456789",
+    "project_id": "demo-project",
+    "storage_bucket": "demo-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:123456789:android:demo",
+        "android_client_info": {
+          "package_name": "com.suleymansurucu.sarababy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "demo-api-key"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
+EOF
+          fi
 
       - name: Build Development APK
         run: |
@@ -280,6 +317,43 @@ jobs:
             echo "  static const FirebaseOptions macos = FirebaseOptions(apiKey: 'demo-api-key', appId: '1:123456789:ios:demo', messagingSenderId: '123456789', projectId: 'demo-project');" >> lib/firebase_options.dart
             echo "  static const FirebaseOptions windows = FirebaseOptions(apiKey: 'demo-api-key', appId: '1:123456789:web:demo', messagingSenderId: '123456789', projectId: 'demo-project');" >> lib/firebase_options.dart
             echo "}" >> lib/firebase_options.dart
+          fi
+          
+          # Create google-services.json if it doesn't exist
+          if [ ! -f "android/app/google-services.json" ]; then
+            echo "⚠️ google-services.json not found, creating minimal version..."
+            mkdir -p android/app
+            cat > android/app/google-services.json << 'EOF'
+{
+  "project_info": {
+    "project_number": "123456789",
+    "project_id": "demo-project",
+    "storage_bucket": "demo-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:123456789:android:demo",
+        "android_client_info": {
+          "package_name": "com.suleymansurucu.sarababy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "demo-api-key"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
+EOF
           fi
 
       - name: Decode keystore
@@ -391,6 +465,44 @@ jobs:
             echo "  static const FirebaseOptions macos = FirebaseOptions(apiKey: 'demo-api-key', appId: '1:123456789:ios:demo', messagingSenderId: '123456789', projectId: 'demo-project');" >> lib/firebase_options.dart
             echo "  static const FirebaseOptions windows = FirebaseOptions(apiKey: 'demo-api-key', appId: '1:123456789:web:demo', messagingSenderId: '123456789', projectId: 'demo-project');" >> lib/firebase_options.dart
             echo "}" >> lib/firebase_options.dart
+          fi
+          
+          # Create GoogleService-Info.plist if it doesn't exist
+          if [ ! -f "ios/Runner/GoogleService-Info.plist" ]; then
+            echo "⚠️ GoogleService-Info.plist not found, creating minimal version..."
+            mkdir -p ios/Runner
+            cat > ios/Runner/GoogleService-Info.plist << 'EOF'
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>demo-api-key</string>
+	<key>GCM_SENDER_ID</key>
+	<string>123456789</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.suleymansurucu.sarababy</string>
+	<key>PROJECT_ID</key>
+	<string>demo-project</string>
+	<key>STORAGE_BUCKET</key>
+	<string>demo-project.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:123456789:ios:demo</string>
+</dict>
+</plist>
+EOF
           fi
 
       - name: Install Fastlane
