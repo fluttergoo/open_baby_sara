@@ -1,48 +1,56 @@
 # Required GitHub Secrets
 
-Bu CI/CD pipeline'ının çalışması için aşağıdaki GitHub Secrets'ların repository settings'de tanımlanması gerekiyor:
+The following GitHub Secrets need to be defined in repository settings for this CI/CD pipeline to work:
 
-## Firebase Secrets
-- `FIREBASE_PROJECT_ID` - Firebase project ID
-- `FIREBASE_PROJECT_NUMBER` - Firebase project number
-- `FIREBASE_STORAGE_BUCKET` - Firebase storage bucket
-- `FIREBASE_MESSAGING_SENDER_ID` - Firebase messaging sender ID
+> 📖 **For detailed setup instructions, see [CI_CD_SETUP.md](CI_CD_SETUP.md) file.**
+> 
+> 🔐 **You can use `scripts/encode_secrets.sh` script to encode secrets.**
 
-### Firebase API Keys
-- `FIREBASE_WEB_API_KEY` - Firebase web API key
-- `FIREBASE_ANDROID_API_KEY` - Firebase Android API key
-- `FIREBASE_IOS_API_KEY` - Firebase iOS API key
+## Required Secrets
 
-### Firebase App IDs
-- `FIREBASE_WEB_APP_ID` - Firebase web app ID
-- `FIREBASE_ANDROID_APP_ID` - Firebase Android app ID
-- `FIREBASE_IOS_APP_ID` - Firebase iOS app ID
-- `FIREBASE_MACOS_APP_ID` - Firebase macOS app ID
-- `FIREBASE_WINDOWS_APP_ID` - Firebase Windows app ID
+### Android Production Build & Deployment
 
-## Bundle Identifiers
-- `BUNDLE_ID_ANDROID` - Android package name (e.g., com.suleymansurucu.sarababy)
-- `BUNDLE_ID_IOS` - iOS bundle identifier (e.g., com.suleymansurucu.babysara)
+#### `KEYSTORE_BASE64` ⚠️ **REQUIRED**
+Base64 encoded Android keystore file.
+```bash
+base64 -i your-keystore.jks | pbcopy  # macOS
+```
+
+#### `KEYSTORE_PASSWORD` ⚠️ **REQUIRED**
+Your keystore password.
+
+#### `KEY_ALIAS` ⚠️ **REQUIRED**
+Key alias in the keystore.
+
+#### `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON` ⚠️ **REQUIRED (For Deploy)**
+Google Play Console Service Account JSON content.
+
+### iOS Production Build & Deployment
+
+#### `APP_STORE_CONNECT_API_KEY` ⚠️ **REQUIRED (For Deploy)**
+App Store Connect API Key (.p8 file content).
+
+#### `APP_STORE_CONNECT_API_KEY_ID` ⚠️ **REQUIRED (For Deploy)**
+App Store Connect API Key ID (e.g.: T793NZB3B5).
+
+#### `APP_STORE_CONNECT_ISSUER_ID` ⚠️ **REQUIRED (For Deploy)**
+App Store Connect Issuer ID (UUID format).
 
 ## Optional Secrets
-- `SUPPORTED_LOCALES` - Supported locales (default: en-US,tr-TR,ar-SA,de-DE,es-ES,fr-FR,id-ID,ko-KR,nl-NL,ru-RU,zh-TW)
 
-## Android Signing Secrets
-- `KEYSTORE_BASE64` - Base64 encoded keystore file
-- `KEYSTORE_PASSWORD` - Keystore password
-- `KEY_PASSWORD` - Key password
-- `KEY_ALIAS` - Key alias
+### Bundle Identifiers
+- `BUNDLE_ID_ANDROID` - Android package name (default: com.suleymansurucu.sarababy)
+- `BUNDLE_ID_IOS` - iOS bundle identifier (default: com.suleymansurucu.babysara)
 
-## Apple/App Store Connect Secrets
-- `APPLE_ID` - Apple ID email
-- `APPLE_TEAM_ID` - Apple Team ID
-- `APP_STORE_CONNECT_TEAM_ID` - App Store Connect Team ID
-- `APP_STORE_CONNECT_API_KEY_ID` - App Store Connect API Key ID
-- `APP_STORE_CONNECT_API_KEY` - App Store Connect API Key (P8 file content)
-- `APP_STORE_CONNECT_ISSUER_ID` - App Store Connect Issuer ID
+### Apple Developer Account
+- `APPLE_ID` - Apple ID email (default: suleymansurucu95@icloud.com)
+- `APPLE_TEAM_ID` - Apple Team ID (default: 3588AF9993)
+- `APP_STORE_CONNECT_TEAM_ID` - App Store Connect Team ID (default: 3588AF9993)
 
-## Google Play Secrets
-- `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON` - Google Play Service Account JSON
+### Fastlane Match (Certificate Management)
+- `MATCH_PASSWORD` - Match repository password
+- `MATCH_GIT_BASIC_AUTHORIZATION` - Base64 encoded git credentials
+- `MATCH_GIT_URL` - Git repository URL for certificates
 
 ## How to Add Secrets
 

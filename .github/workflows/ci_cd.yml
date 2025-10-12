@@ -8,9 +8,10 @@ on:
     branches: [ main, develop ]
 
 env:
-  FLUTTER_VERSION: '3.35.4'
+  FLUTTER_VERSION: '3.27.1'
   BUNDLE_ID_ANDROID: ${{ secrets.BUNDLE_ID_ANDROID || 'com.suleymansurucu.sarababy' }}
   BUNDLE_ID_IOS: ${{ secrets.BUNDLE_ID_IOS || 'com.suleymansurucu.babysara' }}
+  JAVA_VERSION: '17'
 
 jobs:
   test:
@@ -105,7 +106,8 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '17'
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: 'gradle'
 
       - name: Clean project
         run: |
@@ -138,7 +140,7 @@ jobs:
       - name: Build Development APK
         run: |
           flutter build apk --debug \
-            --build-name=dev-${{ github.event.head_commit.id }} \
+            --build-name=1.2.0-dev+${{ github.run_number }} \
             --build-number=${{ github.run_number }}
 
       - name: Upload Development APK
@@ -151,7 +153,7 @@ jobs:
       - name: Build Development App Bundle
         run: |
           flutter build appbundle --debug \
-            --build-name=dev-${{ github.event.head_commit.id }} \
+            --build-name=1.2.0-dev+${{ github.run_number }} \
             --build-number=${{ github.run_number }}
 
       - name: Upload Development App Bundle
@@ -181,7 +183,8 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '17'
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: 'gradle'
 
       - name: Clean project
         run: |
@@ -211,12 +214,19 @@ jobs:
             echo "splash.png copied to drawable-v21"
           fi
 
+      - name: Get version from pubspec
+        id: version
+        run: |
+          VERSION=$(grep "version:" pubspec.yaml | awk '{print $2}')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+
       - name: Setup Android Signing
         run: |
           if [ -n "${{ secrets.KEYSTORE_BASE64 }}" ]; then
             echo "Setting up Android signing..."
             echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/keystore.jks
-            echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" >> android/key.properties
+            echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" > android/key.properties
             echo "keyPassword=${{ secrets.KEYSTORE_PASSWORD }}" >> android/key.properties
             echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
             echo "storeFile=keystore.jks" >> android/key.properties
@@ -227,25 +237,31 @@ jobs:
 
       - name: Build App Bundle
         run: |
-          if [ -f "android/key.properties" ]; then
+          VERSION="${{ steps.version.outputs.version }}"
+          if [ -f "android/key.properties" ] && [ -n "${{ secrets.KEYSTORE_BASE64 }}" ]; then
+            echo "Building release App Bundle..."
             flutter build appbundle --release \
-              --build-name=${{ github.event.head_commit.id }} \
+              --build-name="${VERSION}" \
               --build-number=${{ github.run_number }}
           else
+            echo "Building debug App Bundle..."
             flutter build appbundle --debug \
-              --build-name=${{ github.event.head_commit.id }} \
+              --build-name="${VERSION}" \
               --build-number=${{ github.run_number }}
           fi
 
       - name: Build APK
         run: |
-          if [ -f "android/key.properties" ]; then
+          VERSION="${{ steps.version.outputs.version }}"
+          if [ -f "android/key.properties" ] && [ -n "${{ secrets.KEYSTORE_BASE64 }}" ]; then
+            echo "Building release APK..."
             flutter build apk --release \
-              --build-name=${{ github.event.head_commit.id }} \
+              --build-name="${VERSION}" \
               --build-number=${{ github.run_number }}
           else
+            echo "Building debug APK..."
             flutter build apk --debug \
-              --build-name=${{ github.event.head_commit.id }} \
+              --build-name="${VERSION}" \
               --build-number=${{ github.run_number }}
           fi
 
@@ -284,6 +300,7 @@ jobs:
         with:
           ruby-version: '3.0'
           bundler-cache: true
+          working-directory: ios
 
       - name: Clean project
         run: flutter clean
@@ -291,9 +308,21 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Get version from pubspec
+        id: version
+        run: |
+          VERSION=$(grep "version:" pubspec.yaml | awk '{print $2}')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+
       - name: Setup Firebase configuration
         run: |
           echo "Setting up Firebase configuration..."
+
+      - name: Install CocoaPods
+        run: |
+          cd ios
+          pod install
 
       - name: Install Fastlane
         run: |
@@ -303,16 +332,26 @@ jobs:
       # Setup API Key from secrets
       - name: Setup API Key
         run: |
-          cd ios
           if [ -n "${{ secrets.APP_STORE_CONNECT_API_KEY }}" ]; then
             echo "Setting up App Store Connect API key..."
-            echo "${{ secrets.APP_STORE_CONNECT_API_KEY }}" > AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID || 'T793NZB3B5' }}.p8
-            echo "API key configured"
+            API_KEY_ID="${{ secrets.APP_STORE_CONNECT_API_KEY_ID || 'T793NZB3B5' }}"
+            echo "${{ secrets.APP_STORE_CONNECT_API_KEY }}" > ios/AuthKey_${API_KEY_ID}.p8
+            echo "API key configured at ios/AuthKey_${API_KEY_ID}.p8"
+            ls -la ios/AuthKey_*.p8
           else
             echo "No API key provided, will skip deployment"
           fi
 
-      - name: Build and Deploy iOS
+      - name: Build iOS App
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          flutter build ios --release \
+            --build-name="${VERSION}" \
+            --build-number=${{ github.run_number }} \
+            --no-codesign
+
+      - name: Deploy to App Store
+        if: success() && secrets.APP_STORE_CONNECT_API_KEY != ''
         env:
           BUNDLE_ID_IOS: ${{ env.BUNDLE_ID_IOS }}
           APPLE_ID: ${{ secrets.APPLE_ID || 'suleymansurucu95@icloud.com' }}
@@ -320,19 +359,25 @@ jobs:
           APP_STORE_CONNECT_TEAM_ID: ${{ secrets.APP_STORE_CONNECT_TEAM_ID || '3588AF9993' }}
           APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID || 'T793NZB3B5' }}
           APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID || 'bd3d7716-83ab-4e9a-9a30-a77ec9bc8b9f' }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
         run: |
           cd ios
           if [ -f "AuthKey_*.p8" ]; then
+            echo "Deploying to App Store..."
             bundle exec fastlane release
           else
             echo "No API key found, skipping deployment"
           fi
 
       - name: Upload iOS Build Artifact
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ios-production-build-${{ github.sha }}
-          path: ios/build/
+          path: |
+            ios/build/
+            ios/*.ipa
           retention-days: 30
 
   # iOS development build for develop branch
@@ -361,11 +406,15 @@ jobs:
         run: |
           echo "Setting up Firebase configuration..."
 
-      - name: Build iOS Development
+      - name: Install CocoaPods
         run: |
           cd ios
+          pod install
+
+      - name: Build iOS Development
+        run: |
           flutter build ios --debug --no-codesign \
-            --build-name=dev-${{ github.event.head_commit.id }} \
+            --build-name=1.2.0-dev+${{ github.run_number }} \
             --build-number=${{ github.run_number }}
 
       - name: Upload iOS Development Build
@@ -410,158 +459,64 @@ jobs:
   deploy-android:
     needs: [build-android]
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON != ''
 
     steps:
+      - uses: actions/checkout@v4
+      
       - name: Download App Bundle
         uses: actions/download-artifact@v4
         with:
           name: android-app-bundle-${{ github.sha }}
-          path: .
+          path: ./artifacts
+
+      - name: List downloaded artifacts
+        run: |
+          echo "Contents of artifacts directory:"
+          ls -la ./artifacts/
+          find ./artifacts -name "*.aab"
 
       - name: Generate Release Notes
         run: |
           echo "Generating release notes in 11 languages..."
           
           # Create release notes directory
-          mkdir -p release_notes
+          mkdir -p fastlane/metadata/android
           
           # English
-          echo "🚀 New Features and Improvements
+          mkdir -p fastlane/metadata/android/en-US
+          cat > fastlane/metadata/android/en-US/changelogs/default.txt << 'EOF'
+🚀 New Features and Improvements
+
+✨ Enhanced user experience with new features
+🔧 Performance optimizations and bug fixes
+🎨 Updated UI/UX design
+📱 Better compatibility with latest devices
+🔒 Improved security and privacy
+
+Thank you for using Sara Baby Tracker! 👶
+EOF
           
-          ✨ Enhanced user experience with new features
-          🔧 Performance optimizations and bug fixes
-          🎨 Updated UI/UX design
-          📱 Better compatibility with latest devices
-          🔒 Improved security and privacy
           
-          Thank you for using Sara Baby Tracker! 👶" > release_notes/en-US.txt
-          
-          # Turkish
-          echo "🚀 Yeni Özellikler ve İyileştirmeler
-          
-          ✨ Yeni özelliklerle gelişmiş kullanıcı deneyimi
-          🔧 Performans optimizasyonları ve hata düzeltmeleri
-          🎨 Güncellenmiş UI/UX tasarımı
-          📱 En son cihazlarla daha iyi uyumluluk
-          🔒 Gelişmiş güvenlik ve gizlilik
-          
-          Sara Baby Tracker'ı kullandığınız için teşekkürler! 👶" > release_notes/tr-TR.txt
-          
-          # Arabic
-          echo "🚀 ميزات جديدة وتحسينات
-          
-          ✨ تجربة مستخدم محسنة بميزات جديدة
-          🔧 تحسينات الأداء وإصلاح الأخطاء
-          🎨 تصميم واجهة مستخدم محدث
-          📱 توافق أفضل مع أحدث الأجهزة
-          🔒 أمان وخصوصية محسنة
-          
-          شكراً لاستخدام Sara Baby Tracker! 👶" > release_notes/ar-SA.txt
-          
-          # German
-          echo "🚀 Neue Funktionen und Verbesserungen
-          
-          ✨ Verbesserte Benutzererfahrung mit neuen Funktionen
-          🔧 Leistungsoptimierungen und Fehlerbehebungen
-          🎨 Aktualisiertes UI/UX-Design
-          📱 Bessere Kompatibilität mit neuesten Geräten
-          🔒 Verbesserte Sicherheit und Privatsphäre
-          
-          Vielen Dank für die Nutzung von Sara Baby Tracker! 👶" > release_notes/de-DE.txt
-          
-          # Spanish
-          echo "🚀 Nuevas Características y Mejoras
-          
-          ✨ Experiencia de usuario mejorada con nuevas características
-          🔧 Optimizaciones de rendimiento y corrección de errores
-          🎨 Diseño UI/UX actualizado
-          📱 Mejor compatibilidad con dispositivos más recientes
-          🔒 Seguridad y privacidad mejoradas
-          
-          ¡Gracias por usar Sara Baby Tracker! 👶" > release_notes/es-ES.txt
-          
-          # French
-          echo "🚀 Nouvelles Fonctionnalités et Améliorations
-          
-          ✨ Expérience utilisateur améliorée avec de nouvelles fonctionnalités
-          🔧 Optimisations de performance et corrections de bugs
-          🎨 Design UI/UX mis à jour
-          📱 Meilleure compatibilité avec les derniers appareils
-          🔒 Sécurité et confidentialité améliorées
-          
-          Merci d'utiliser Sara Baby Tracker! 👶" > release_notes/fr-FR.txt
-          
-          # Indonesian
-          echo "🚀 Fitur Baru dan Peningkatan
-          
-          ✨ Pengalaman pengguna yang ditingkatkan dengan fitur baru
-          🔧 Optimasi performa dan perbaikan bug
-          🎨 Desain UI/UX yang diperbarui
-          📱 Kompatibilitas yang lebih baik dengan perangkat terbaru
-          🔒 Keamanan dan privasi yang ditingkatkan
-          
-          Terima kasih telah menggunakan Sara Baby Tracker! 👶" > release_notes/id-ID.txt
-          
-          # Korean
-          echo "🚀 새로운 기능 및 개선사항
-          
-          ✨ 새로운 기능으로 향상된 사용자 경험
-          🔧 성능 최적화 및 버그 수정
-          🎨 업데이트된 UI/UX 디자인
-          📱 최신 기기와의 더 나은 호환성
-          🔒 향상된 보안 및 개인정보 보호
-          
-          Sara Baby Tracker를 사용해 주셔서 감사합니다! 👶" > release_notes/ko-KR.txt
-          
-          # Dutch
-          echo "🚀 Nieuwe Functies en Verbeteringen
-          
-          ✨ Verbeterde gebruikerservaring met nieuwe functies
-          🔧 Prestatie-optimalisaties en bugfixes
-          🎨 Bijgewerkt UI/UX-ontwerp
-          📱 Betere compatibiliteit met nieuwste apparaten
-          🔒 Verbeterde beveiliging en privacy
-          
-          Bedankt voor het gebruik van Sara Baby Tracker! 👶" > release_notes/nl-NL.txt
-          
-          # Russian
-          echo "🚀 Новые Функции и Улучшения
-          
-          ✨ Улучшенный пользовательский опыт с новыми функциями
-          🔧 Оптимизация производительности и исправление ошибок
-          🎨 Обновленный дизайн UI/UX
-          📱 Лучшая совместимость с новейшими устройствами
-          🔒 Улучшенная безопасность и конфиденциальность
-          
-          Спасибо за использование Sara Baby Tracker! 👶" > release_notes/ru-RU.txt
-          
-          # Chinese Traditional
-          echo "🚀 新功能和改進
-          
-          ✨ 新功能帶來的增強用戶體驗
-          🔧 性能優化和錯誤修復
-          🎨 更新的UI/UX設計
-          📱 與最新設備更好的兼容性
-          🔒 改進的安全性和隱私
-          
-          感謝您使用Sara Baby Tracker！👶" > release_notes/zh-TW.txt
-          
-          echo "Release notes generated in 11 languages!"
+          echo "Release notes generated!"
+
+      - name: Find AAB file
+        id: find_aab
+        run: |
+          AAB_FILE=$(find ./artifacts -name "*.aab" | head -n 1)
+          echo "aab_path=$AAB_FILE" >> $GITHUB_OUTPUT
+          echo "Found AAB file: $AAB_FILE"
 
       - name: Deploy to Google Play
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: ${{ env.BUNDLE_ID_ANDROID }}
-          releaseFiles: app-*.aab
+          releaseFiles: ${{ steps.find_aab.outputs.aab_path }}
           track: production
           status: completed
           inAppUpdatePriority: 2
-          releaseNotes: |
-            New version with improvements and bug fixes
-            Enhanced user experience
-            Performance optimizations
+          whatsNewDirectory: fastlane/metadata/android
 
   # Create GitHub Release
   create-release:

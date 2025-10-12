@@ -1,0 +1,41 @@
+# Matchfile
+# For more information about the Matchfile, see:
+# https://docs.fastlane.tools/actions/match/
+
+git_url(ENV["MATCH_GIT_URL"] || "https://github.com/yourusername/certificates") # Git repo for storing certificates
+git_basic_authorization(ENV["MATCH_GIT_BASIC_AUTHORIZATION"]) # Base64 encoded git credentials
+
+storage_mode("git")
+
+type("appstore") # Can be appstore, adhoc, development, or enterprise
+
+app_identifier(ENV["BUNDLE_ID_IOS"] || "com.suleymansurucu.babysara")
+username(ENV["APPLE_ID"] || "suleymansurucu95@icloud.com")
+team_id(ENV["APPLE_TEAM_ID"] || "3588AF9993")
+
+# Use API Key authentication instead of username/password
+api_key_path(ENV["APP_STORE_CONNECT_API_KEY_PATH"])
+api_key({
+  key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
+  issuer_id: ENV["APP_STORE_CONNECT_ISSUER_ID"],
+  key_filepath: ENV["APP_STORE_CONNECT_API_KEY_PATH"]
+}) if ENV["APP_STORE_CONNECT_API_KEY_PATH"]
+
+# Only set password if provided
+keychain_password(ENV["MATCH_PASSWORD"]) if ENV["MATCH_PASSWORD"]
+
+# Skip documentation for cleaner output
+skip_docs(true)
+
+# Force for cert renewal (use with caution)
+force(false)
+
+# Readonly mode for CI (don't create new certificates)
+readonly(ENV["CI"] == "true")
+
+# Don't clone the entire repo history
+shallow_clone(true)
+
+# Verbose output for debugging
+verbose(false)
+
