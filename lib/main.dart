@@ -34,7 +34,7 @@ import 'package:open_baby_sara/data/services/review_service.dart';
 import 'package:open_baby_sara/views/onboarding/welcome_page.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'package:open_baby_sara/firebase_options.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

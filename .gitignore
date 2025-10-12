@@ -5,9 +5,11 @@
 *.swp
 .DS_Store
 .atom/
+.build/
 .buildlog/
 .history
 .svn/
+.swiftpm/
 migrate_working_dir/
 
 # IntelliJ related
@@ -108,8 +110,8 @@ ios/.symlinks/
 ios/Flutter/ephemeral/
 ios/Runner/GoogleService-Info.plist
 
-# Generated files
-lib/firebase_options.dart
+# Generated files (keep firebase_options.dart for CI/CD)
+# lib/firebase_options.dart
 
 # Development tools
 devtools_options.yaml
@@ -345,3 +347,29 @@ ios/*.app
 ios/*.ipa
 ios/*.dSYM.zip
 ios/*.dSYM
+
+# CI/CD and Security
+# Backup CI/CD files with hardcoded data
+.github/workflows/ci_cd_with_hardcoded.yml
+.github/workflows/ci_cd_backup.yml
+
+# API Keys and certificates (should never be committed)
+*.p8
+AuthKey_*.p8
+*.p12
+*.mobileprovision
+*.cer
+
+# Environment files with secrets
+.env
+.env.local
+.env.production
+.env.staging
+
+# Fastlane API keys
+ios/fastlane/AuthKey_*.p8
+
+# Android signing
+android/app/keystore.jks
+android/keystore.jks
+android/app/*.jks
