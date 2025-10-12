@@ -199,18 +199,19 @@ jobs:
             echo "splash.png copied to drawable-v21"
           fi
 
-      - name: Decode keystore
-        if: ${{ secrets.KEYSTORE_BASE64 }}
+      - name: Setup Android Signing
         run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/keystore.jks
-
-      - name: Create key.properties
-        if: ${{ secrets.KEYSTORE_BASE64 }}
-        run: |
-          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" >> android/key.properties
-          echo "keyPassword=${{ secrets.KEYSTORE_PASSWORD }}" >> android/key.properties
-          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
-          echo "storeFile=keystore.jks" >> android/key.properties
+          if [ -n "${{ secrets.KEYSTORE_BASE64 }}" ]; then
+            echo "Setting up Android signing..."
+            echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/keystore.jks
+            echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" >> android/key.properties
+            echo "keyPassword=${{ secrets.KEYSTORE_PASSWORD }}" >> android/key.properties
+            echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
+            echo "storeFile=keystore.jks" >> android/key.properties
+            echo "Android signing configured"
+          else
+            echo "No keystore provided, will build debug version"
+          fi
 
       - name: Build App Bundle
         run: |
@@ -289,10 +290,15 @@ jobs:
 
       # Setup API Key from secrets
       - name: Setup API Key
-        if: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
         run: |
           cd ios
-          echo "${{ secrets.APP_STORE_CONNECT_API_KEY }}" > AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID || 'T793NZB3B5' }}.p8
+          if [ -n "${{ secrets.APP_STORE_CONNECT_API_KEY }}" ]; then
+            echo "Setting up App Store Connect API key..."
+            echo "${{ secrets.APP_STORE_CONNECT_API_KEY }}" > AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID || 'T793NZB3B5' }}.p8
+            echo "API key configured"
+          else
+            echo "No API key provided, will skip deployment"
+          fi
 
       - name: Build and Deploy iOS
         env:
