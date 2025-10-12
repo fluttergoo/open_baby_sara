@@ -351,7 +351,7 @@ jobs:
             --no-codesign
 
       - name: Deploy to App Store
-        if: success() && secrets.APP_STORE_CONNECT_API_KEY != ''
+        if: success()
         env:
           BUNDLE_ID_IOS: ${{ env.BUNDLE_ID_IOS }}
           APPLE_ID: ${{ secrets.APPLE_ID || 'suleymansurucu95@icloud.com' }}
@@ -459,7 +459,7 @@ jobs:
   deploy-android:
     needs: [build-android]
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON != ''
+    if: github.ref == 'refs/heads/main'
 
     steps:
       - uses: actions/checkout@v4
