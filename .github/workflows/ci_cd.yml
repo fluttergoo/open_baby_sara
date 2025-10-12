@@ -40,7 +40,11 @@ jobs:
       - name: Clean project
         run: |
           flutter clean
-          cd android && ./gradlew clean
+          if [ -f "android/gradlew" ]; then
+            cd android && ./gradlew clean
+          else
+            echo "gradlew not found, skipping gradle clean"
+          fi
 
       - name: Install dependencies
         run: flutter pub get
@@ -106,7 +110,11 @@ jobs:
       - name: Clean project
         run: |
           flutter clean
-          cd android && ./gradlew clean
+          if [ -f "android/gradlew" ]; then
+            cd android && ./gradlew clean
+          else
+            echo "gradlew not found, skipping gradle clean"
+          fi
 
       - name: Install dependencies
         run: flutter pub get
@@ -178,7 +186,11 @@ jobs:
       - name: Clean project
         run: |
           flutter clean
-          cd android && ./gradlew clean
+          if [ -f "android/gradlew" ]; then
+            cd android && ./gradlew clean
+          else
+            echo "gradlew not found, skipping gradle clean"
+          fi
 
       - name: Install dependencies
         run: flutter pub get
