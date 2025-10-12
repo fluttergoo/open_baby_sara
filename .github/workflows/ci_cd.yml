@@ -486,16 +486,16 @@ jobs:
           # English
           mkdir -p fastlane/metadata/android/en-US
           cat > fastlane/metadata/android/en-US/changelogs/default.txt << 'EOF'
-🚀 New Features and Improvements
-
-✨ Enhanced user experience with new features
-🔧 Performance optimizations and bug fixes
-🎨 Updated UI/UX design
-📱 Better compatibility with latest devices
-🔒 Improved security and privacy
-
-Thank you for using Sara Baby Tracker! 👶
-EOF
+          New Features and Improvements
+          
+          Enhanced user experience with new features
+          Performance optimizations and bug fixes
+          Updated UI/UX design
+          Better compatibility with latest devices
+          Improved security and privacy
+          
+          Thank you for using Sara Baby Tracker!
+          EOF
           
           
           echo "Release notes generated!"
@@ -545,22 +545,22 @@ EOF
           tag_name: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
           body: |
-            ## 🚀 New Release ${{ github.ref_name }}
+            ## New Release ${{ github.ref_name }}
             
-            ### ✨ Features
+            ### Features
             - Enhanced user experience
             - Performance optimizations
             - Bug fixes and improvements
             
-            ### 📱 Downloads
+            ### Downloads
             - **Android APK**: Available in Google Play Store
             - **iOS App**: Available in App Store
             
-            ### 🌍 Supported Languages
+            ### Supported Languages
             - English, Turkish, Arabic, German, Spanish, French
             - Indonesian, Korean, Dutch, Russian, Chinese Traditional
             
-            ### 🔧 Technical Details
+            ### Technical Details
             - Flutter Version: ${{ env.FLUTTER_VERSION }}
             - Build Number: ${{ github.run_number }}
             - Commit: ${{ github.sha }}
