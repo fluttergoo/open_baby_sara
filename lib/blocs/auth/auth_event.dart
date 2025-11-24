@@ -22,6 +22,8 @@ class SignInWithEmailAndPassword extends AuthEvent {
   SignInWithEmailAndPassword({required this.email, required this.password});
 }
 
+class SignInWithGoogle extends AuthEvent {}
+
 class AppStarted extends AuthEvent {}
 
 class GetUserModel extends AuthEvent {}
