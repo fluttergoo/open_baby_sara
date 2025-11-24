@@ -67,6 +67,55 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthFailure('Error ${e.toString()}'));
       }
     });
+    on<SignInWithGoogle>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        debugPrint('AuthBloc: Starting Google Sign-In...');
+        final user = await _authService.signInWithGoogle();
+        if (user == null) {
+          // User cancelled Google Sign-In, return to unauthenticated state
+          debugPrint('AuthBloc: Google Sign-In cancelled by user');
+          emit(Unauthenticated());
+          return;
+        }
+
+        debugPrint('AuthBloc: Google Sign-In successful, user ID: ${user.uid}');
+        await Future.delayed(Duration(milliseconds: 300));
+        
+        // Check if user exists in Firestore
+        var userModel = await _userRepository.getCurrentUser();
+        
+        // If user doesn't exist in Firestore, create new user
+        if (userModel == null) {
+          debugPrint('AuthBloc: User not found in Firestore, creating new user...');
+          final displayName = user.displayName ?? 'User';
+          final firstName = displayName.split(' ').first;
+          
+          userModel = UserModel(
+            userID: user.uid,
+            email: user.email ?? '',
+            parentID: Uuid().v4(),
+            firstName: firstName,
+            caregivers: [],
+            createdAt: DateTime.now(),
+          );
+          await _userRepository.createUserInFireStore(userModel);
+          debugPrint('AuthBloc: New user created in Firestore');
+        } else {
+          debugPrint('AuthBloc: Existing user found in Firestore');
+        }
+        
+        emit(Authenticated(userModel: userModel));
+        debugPrint('AuthBloc: Authentication successful');
+      } on FirebaseAuthException catch (e) {
+        debugPrint('AuthBloc: FirebaseAuthException: ${e.code} - ${e.message}');
+        final errorMessage = getFirebaseAuthErrorMessage(e.code);
+        emit(AuthFailure(errorMessage));
+      } catch (e) {
+        debugPrint('AuthBloc: Google Sign-In Error: ${e.toString()}');
+        emit(AuthFailure('Google Sign-In Error: ${e.toString()}'));
+      }
+    });
     on<AppStarted>((event, emit) async {
       final user = await _userRepository.getCurrentUser();
       if (user != null) {
