@@ -178,7 +178,7 @@ class SignInOptionsPage extends StatelessWidget {
               ),
             ),
 
-            // Alt logo
+            // Bottom logo
             Positioned(
               bottom: 0,
               left: 0,
