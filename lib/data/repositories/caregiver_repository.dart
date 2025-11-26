@@ -7,6 +7,10 @@ abstract class CaregiverRepository {
     String email,
     String password,
   );
+  Future<void> signUpCaregiverWithGoogle(
+    String firstName,
+    String email,
+  );
   Future<List<InviteModel>?> getCaregiverList();
   Future<void> deleteCaregiver(String caregiverID);
 }

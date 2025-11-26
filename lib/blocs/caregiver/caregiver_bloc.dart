@@ -6,6 +6,7 @@ import 'package:open_baby_sara/data/repositories/locator.dart';
 import 'package:open_baby_sara/data/models/invite_model.dart';
 import 'package:open_baby_sara/data/repositories/caregiver_repository.dart';
 import 'package:open_baby_sara/data/repositories/user_repository.dart';
+import 'package:open_baby_sara/data/services/firebase/auth_service.dart';
 import 'package:meta/meta.dart';
 import 'package:uuid/uuid.dart';
 
@@ -16,6 +17,7 @@ part 'caregiver_state.dart';
 class CaregiverBloc extends Bloc<CaregiverEvent, CaregiverState> {
   final CaregiverRepository _caregiverRepository = getIt<CaregiverRepository>();
   final UserRepository _userRepository = getIt<UserRepository>();
+  final AuthService _authService = getIt<AuthService>();
 
   CaregiverBloc() : super(CaregiverInitial()) {
     on<CreateCaregiver>((event, emit) async {
@@ -53,6 +55,27 @@ class CaregiverBloc extends Bloc<CaregiverEvent, CaregiverState> {
           event.firstName,
           event.email,
           event.password,
+        );
+        emit(CaregiverSignedUp());
+      } catch (e) {
+        emit(CaregiverError(e.toString()));
+      }
+    });
+    on<CaregiverSignUpWithGoogle>((event, emit) async {
+      emit(CaregiverLoading());
+      try {
+        // First, perform Google Sign-In
+        final user = await _authService.signInWithGoogle();
+        if (user == null) {
+          // User cancelled Google Sign-In, return to initial state
+          emit(CaregiverInitial());
+          return;
+        }
+
+        // Email kontrolü ve Firestore işlemlerini yap
+        await _caregiverRepository.signUpCaregiverWithGoogle(
+          event.firstName,
+          event.email,
         );
         emit(CaregiverSignedUp());
       } catch (e) {
