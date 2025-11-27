@@ -55,12 +55,12 @@ class _CustomDateTimePickerState extends State<CustomDateTimePicker> {
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: widget.enabled ? () {
-        // currentTime'ı belirle - minDate varsa ve currentTime minDate'den önceyse, minDate'i kullan
+        // Determine currentTime - if minDate exists and currentTime is before minDate, use minDate
         DateTime currentTime = selectedDateTime ?? DateTime.now();
         if (widget.minDate != null && currentTime.isBefore(widget.minDate!)) {
           currentTime = widget.minDate!;
         }
-        // maxDate varsa ve currentTime maxDate'den sonraysa, maxDate'i kullan
+        // If maxDate exists and currentTime is after maxDate, use maxDate
         if (widget.maxDate != null && currentTime.isAfter(widget.maxDate!)) {
           currentTime = widget.maxDate!;
         }
