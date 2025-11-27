@@ -649,6 +649,7 @@
   "end_time_before_start": "End time cannot be before start time.",
   "end_time_in_future": "End time cannot be in the future.",
   "sleep_duration_exceeds_one_day": "Sleep duration cannot exceed 24 hours.",
+  "cannot_start_timer_past_date": "Cannot start timer with a past date. Please select today's date for start time.",
   "tap_to_start_only": "Tap to start",
   "mixed": "Mixed",
   "wet": "Wet",

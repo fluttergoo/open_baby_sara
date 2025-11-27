@@ -646,6 +646,7 @@
   "your_baby_is_now_sleeping": "Ihr Baby \nschläft jetzt.",
   "end_time_before_start": "Endzeit kann nicht vor der Startzeit liegen.",
   "end_time_in_future": "Endzeit kann nicht in der Zukunft liegen.",
+  "cannot_start_timer_past_date": "Timer kann nicht mit einem vergangenen Datum gestartet werden. Bitte wählen Sie das heutige Datum für die Startzeit.",
   "tap_to_start_only": "Zum Starten tippen",
   "mixed": "Gemischt",
   "wet": "Nass",

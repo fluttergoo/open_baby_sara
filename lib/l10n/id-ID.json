@@ -647,6 +647,7 @@
   "your_baby_is_now_sleeping": "Bayi Anda \nsekarang tidur.",
   "end_time_before_start": "Waktu akhir tidak bisa sebelum waktu mulai.",
   "end_time_in_future": "Waktu akhir tidak bisa di masa depan.",
+  "cannot_start_timer_past_date": "Tidak dapat memulai timer dengan tanggal yang sudah lewat. Silakan pilih tanggal hari ini untuk waktu mulai.",
   "tap_to_start_only": "Ketuk untuk memulai",
   "mixed": "Campur aduk",
   "wet": "Basah",

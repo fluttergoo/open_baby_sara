@@ -646,6 +646,7 @@
   "your_baby_is_now_sleeping": "Je baby \nslaapt nu.",
   "end_time_before_start": "Eindtijd kan niet voor starttijd zijn.",
   "end_time_in_future": "Eindtijd kan niet in de toekomst zijn.",
+  "cannot_start_timer_past_date": "Timer kan niet worden gestart met een verleden datum. Selecteer de datum van vandaag voor de starttijd.",
   "tap_to_start_only": "Tik om te starten",
   "mixed": "Gemengd",
   "wet": "Nat",

@@ -646,6 +646,7 @@
   "your_baby_is_now_sleeping": "Votre bébé \ndort maintenant.",
   "end_time_before_start": "L'heure de fin ne peut pas être avant l'heure de début.",
   "end_time_in_future": "L'heure de fin ne peut pas être dans le futur.",
+  "cannot_start_timer_past_date": "Impossible de démarrer le minuteur avec une date passée. Veuillez sélectionner la date d'aujourd'hui pour l'heure de début.",
   "tap_to_start_only": "Appuyez pour démarrer",
   "mixed": "Mixte",
   "wet": "Mouillé",

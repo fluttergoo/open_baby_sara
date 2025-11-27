@@ -646,6 +646,7 @@
   "your_baby_is_now_sleeping": "Tu bebé \nahora está durmiendo.",
   "end_time_before_start": "La hora de finalización no puede ser anterior a la de inicio.",
   "end_time_in_future": "La hora de finalización no puede ser en el futuro.",
+  "cannot_start_timer_past_date": "No se puede iniciar el temporizador con una fecha pasada. Por favor, seleccione la fecha de hoy para la hora de inicio.",
   "tap_to_start_only": "Toca para comenzar",
   "mixed": "Mixto",
   "wet": "Mojado",
