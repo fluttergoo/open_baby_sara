@@ -1,4 +1,5 @@
 # ios/fastlane/Appfile
+# Environment variables kullanarak güvenli hale getirildi
 app_identifier(ENV['BUNDLE_ID_IOS'] || 'com.suleymansurucu.babysara')
 apple_id(ENV['APPLE_ID'] || 'suleymansurucu95@icloud.com')
 itc_team_id(ENV['APP_STORE_CONNECT_TEAM_ID'] || '3588AF9993')
