@@ -82,6 +82,21 @@ class _SignUpPageState extends State<SignUpPage> {
             Navigator.of(
               context,
             ).push(MaterialPageRoute(builder: (context) => BabySignUpPage()));
+          } else if (state is UserAlreadyExists) {
+            // User already exists, redirect to sign in page
+            showCustomFlushbar(
+              context,
+              context.tr('account_already_exists'),
+              context.tr('account_already_exists_message'),
+              Icons.info_outline,
+            );
+            
+            // Navigate to sign in page after a short delay
+            Future.delayed(Duration(milliseconds: 500), () {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => const SignInPage()),
+              );
+            });
           } else if (state is AuthFailure) {
             showCustomFlushbar(
               context,
@@ -168,9 +183,9 @@ class _SignUpPageState extends State<SignUpPage> {
                                     onPressed: state is AuthLoading
                                         ? null
                                         : () {
-                                            debugPrint('Google Sign-In button pressed');
+                                            debugPrint('Google Sign-In button pressed (Sign Up)');
                                             context.read<AuthBloc>().add(
-                                                  SignInWithGoogle(),
+                                                  SignInWithGoogle(isSignUp: true),
                                                 );
                                           },
                                     style: ElevatedButton.styleFrom(

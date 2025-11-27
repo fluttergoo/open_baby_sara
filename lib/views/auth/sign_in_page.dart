@@ -64,6 +64,10 @@ class _SignInPageState extends State<SignInPage> {
               state.message,
               Icons.warning_outlined,
             );
+          } else if (state is Unauthenticated) {
+            // User cancelled or returned to unauthenticated state
+            // No need to show error, just stay on the page
+            debugPrint('SignInPage: User is unauthenticated');
           }
         },
         builder: (context, state) {
@@ -148,7 +152,7 @@ class _SignInPageState extends State<SignInPage> {
                                               ? null
                                               : () {
                                                   context.read<AuthBloc>().add(
-                                                        SignInWithGoogle(),
+                                                        SignInWithGoogle(isSignUp: false),
                                                       );
                                                 },
                                           style: ElevatedButton.styleFrom(
