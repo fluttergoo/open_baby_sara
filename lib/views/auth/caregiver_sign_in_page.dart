@@ -5,6 +5,8 @@ import 'package:open_baby_sara/widgets/custom_show_flush_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:open_baby_sara/app/routes/navigation_wrapper.dart';
 import 'package:open_baby_sara/blocs/caregiver/caregiver_bloc.dart';
+import 'package:open_baby_sara/data/repositories/locator.dart';
+import 'package:open_baby_sara/data/services/firebase/auth_service.dart';
 import 'package:open_baby_sara/views/auth/sign_in_page.dart';
 import 'package:open_baby_sara/widgets/build_custom_snack_bar.dart';
 import 'package:open_baby_sara/widgets/custom_text_form_field.dart';
@@ -129,6 +131,105 @@ class _CaregiverSignInPageState extends State<CaregiverSignInPage> {
                               ),
                               SizedBox(height: 24.h),
 
+                              // Google Sign-In Button
+                              SizedBox(
+                                width: double.infinity,
+                                height: 50.h,
+                                child: ElevatedButton(
+                                  onPressed: () async {
+                                    try {
+                                      final authService = getIt<AuthService>();
+                                      final user = await authService.signInWithGoogle();
+                                      if (user != null) {
+                                        final email = user.email ?? '';
+                                        final displayName = user.displayName ?? 'User';
+                                        final firstName = displayName.split(' ').first;
+                                        
+                                        context.read<CaregiverBloc>().add(
+                                              CaregiverSignUpWithGoogle(
+                                                firstName: firstName,
+                                                email: email,
+                                              ),
+                                            );
+                                      }
+                                      // If user is null, Google Sign-In was cancelled - no error needed
+                                    } catch (e) {
+                                      // Only show error for actual exceptions, not cancellations
+                                      showCustomFlushbar(
+                                        context,
+                                        context.tr('error'),
+                                        e.toString(),
+                                        Icons.warning_outlined,
+                                      );
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12.r),
+                                      side: const BorderSide(
+                                        color: Colors.black12,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    elevation: 0,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                        'assets/images/google.png',
+                                        width: 24.sp,
+                                        height: 24.sp,
+                                      ),
+                                      SizedBox(width: 12.w),
+                                      Text(
+                                        context.tr("continue_with_google") ??
+                                            'Continue with Google',
+                                        style: TextStyle(
+                                          color: Colors.black87,
+                                          fontSize: 16.sp,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 20.h),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Divider(
+                                      thickness: 1,
+                                      color: Colors.grey.shade300,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 12.w,
+                                    ),
+                                    child: Text(
+                                      context.tr("or"),
+                                      style:
+                                          Theme.of(
+                                            context,
+                                          ).textTheme.titleMedium?.copyWith(
+                                            color: Colors.grey.shade600,
+                                            fontSize: 14.sp,
+                                          ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Divider(
+                                      thickness: 1,
+                                      color: Colors.grey.shade300,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 20.h),
+
                               // Form Fields
                               CustomTextFormField(
                                 hintText: context.tr("first_name"),
@@ -214,7 +315,7 @@ class _CaregiverSignInPageState extends State<CaregiverSignInPage> {
                         ),
                       ),
 
-                      // Üst ikon (stroller)
+                      // Top icon (stroller)
                       Positioned(
                         top: -90,
                         right: -40,
@@ -229,7 +330,7 @@ class _CaregiverSignInPageState extends State<CaregiverSignInPage> {
                 ),
               ),
 
-              // Alt logo
+              // Bottom logo
               Positioned(
                 bottom: 0,
                 left: 0,

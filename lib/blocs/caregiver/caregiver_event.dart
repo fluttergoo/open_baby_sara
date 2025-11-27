@@ -34,4 +34,14 @@ class CaregiverSignUp extends CaregiverEvent {
   });
 }
 
+class CaregiverSignUpWithGoogle extends CaregiverEvent {
+  final String firstName;
+  final String email;
+
+  CaregiverSignUpWithGoogle({
+    required this.firstName,
+    required this.email,
+  });
+}
+
 class GetCaregivers extends CaregiverEvent {}

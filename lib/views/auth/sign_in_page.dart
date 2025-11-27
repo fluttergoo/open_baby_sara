@@ -139,70 +139,87 @@ class _SignInPageState extends State<SignInPage> {
                                       ),
                                       SizedBox(height: 20.h),
 
-                                      // TODO: sign in with Google...
-                                      /*ElevatedButton(
-                                        onPressed: () {},
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.white,
-                                          minimumSize: Size(
-                                            double.infinity,
-                                            50,
-                                          ),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              12.r,
-                                            ),
-                                          ),
-                                        ),*/
-                                      /*child: Row(
-                                          children: [
-                                            Image.asset(
-                                              'assets/images/google.png',
-                                              width: 24.sp,
-                                              height: 24.sp,
-                                            ),
-                                            SizedBox(width: 70.w),
-                                            Text(
-                                              'Google',
-                                              style: TextStyle(
-                                                color: Colors.black87,
-                                                fontSize: 16.sp,
-                                                fontWeight: FontWeight.w400,
+                                      // Google Sign-In Button
+                                      SizedBox(
+                                        width: double.infinity,
+                                        height: 50.h,
+                                        child: ElevatedButton(
+                                          onPressed: state is AuthLoading
+                                              ? null
+                                              : () {
+                                                  context.read<AuthBloc>().add(
+                                                        SignInWithGoogle(),
+                                                      );
+                                                },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.white,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(
+                                                12.r,
+                                              ),
+                                              side: const BorderSide(
+                                                color: Colors.black12,
+                                                width: 1,
                                               ),
                                             ),
-                                          ],
+                                            elevation: 0,
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Image.asset(
+                                                'assets/images/google.png',
+                                                width: 24.sp,
+                                                height: 24.sp,
+                                              ),
+                                              SizedBox(width: 12.w),
+                                              Text(
+                                                context.tr("continue_with_google") ??
+                                                    'Continue with Google',
+                                                style: TextStyle(
+                                                  color: Colors.black87,
+                                                  fontSize: 16.sp,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),*/
-                                      /*  SizedBox(height: 10.h),
+                                      ),
+                                      SizedBox(height: 20.h),
                                       Row(
                                         children: [
                                           Expanded(
                                             child: Divider(
                                               thickness: 1,
-                                              color: Colors.grey,
+                                              color: Colors.grey.shade300,
                                             ),
                                           ),
                                           Padding(
                                             padding: EdgeInsets.symmetric(
-                                              horizontal: 8.w,
+                                              horizontal: 12.w,
                                             ),
                                             child: Text(
                                               context.tr("or"),
                                               style:
                                                   Theme.of(
                                                     context,
-                                                  ).textTheme.titleMedium,
+                                                  ).textTheme.titleMedium?.copyWith(
+                                                    color: Colors.grey.shade600,
+                                                    fontSize: 14.sp,
+                                                  ),
                                             ),
                                           ),
                                           Expanded(
                                             child: Divider(
                                               thickness: 1,
-                                              color: Colors.grey,
+                                              color: Colors.grey.shade300,
                                             ),
                                           ),
                                         ],
                                       ),
-                                      SizedBox(height: 10.h),*/
+                                      SizedBox(height: 20.h),
                                       Form(
                                         key: _formKey,
                                         child: Column(

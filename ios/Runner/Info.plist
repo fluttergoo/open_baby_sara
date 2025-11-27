@@ -62,7 +62,18 @@
 		</array>
 		<key>NSLocalNetworkUsageDescription</key>
 		<string>This app requires access to the local network to support debugging and communication features.</string>
-		<key>UIStatusBarHidden</key>
-		<false/>
-	</dict>
+	<key>UIStatusBarHidden</key>
+	<false/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.880549897239-82h5fcdncg3ntr6tq4l30vtpc0anse38</string>
+			</array>
+		</dict>
+	</array>
+</dict>
 </plist>

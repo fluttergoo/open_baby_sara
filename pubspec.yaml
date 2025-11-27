@@ -71,6 +71,7 @@ dependencies:
   flutter_native_splash: ^2.4.6
   share_plus: ^11.0.0
   in_app_review: ^2.0.10
+  google_sign_in: ^6.2.1
 
 
 

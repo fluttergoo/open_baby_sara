@@ -6,6 +6,7 @@ import 'package:open_baby_sara/data/services/firebase/analytics_service.dart';
 import 'package:open_baby_sara/widgets/custom_show_flush_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:open_baby_sara/blocs/auth/auth_bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:open_baby_sara/views/auth/baby_sign_up_page.dart';
 import 'package:open_baby_sara/views/auth/sign_in_page.dart';
 import 'package:open_baby_sara/widgets/custom_text_form_field.dart';
@@ -69,7 +70,7 @@ class _SignUpPageState extends State<SignUpPage> {
       resizeToAvoidBottomInset: true,
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
-          /// if User registered successfully account
+          /// If user registered successfully
           if (state is Authenticated) {
             showCustomFlushbar(
               context,
@@ -156,6 +157,88 @@ class _SignUpPageState extends State<SignUpPage> {
                                   context.tr("lets_sign_up"),
                                   style:
                                       Theme.of(context).textTheme.titleMedium,
+                                ),
+                                SizedBox(height: 20.h),
+
+                                // Google Sign-In Button
+                                SizedBox(
+                                  width: double.infinity,
+                                  height: 50.h,
+                                  child: ElevatedButton(
+                                    onPressed: state is AuthLoading
+                                        ? null
+                                        : () {
+                                            debugPrint('Google Sign-In button pressed');
+                                            context.read<AuthBloc>().add(
+                                                  SignInWithGoogle(),
+                                                );
+                                          },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          12.r,
+                                        ),
+                                        side: const BorderSide(
+                                          color: Colors.black12,
+                                          width: 1,
+                                        ),
+                                      ),
+                                      elevation: 0,
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Image.asset(
+                                          'assets/images/google.png',
+                                          width: 24.sp,
+                                          height: 24.sp,
+                                        ),
+                                        SizedBox(width: 12.w),
+                                        Text(
+                                          context.tr("continue_with_google") ??
+                                              'Continue with Google',
+                                          style: TextStyle(
+                                            color: Colors.black87,
+                                            fontSize: 16.sp,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 20.h),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Divider(
+                                        thickness: 1,
+                                        color: Colors.grey.shade300,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 12.w,
+                                      ),
+                                      child: Text(
+                                        context.tr("or"),
+                                        style:
+                                            Theme.of(
+                                              context,
+                                            ).textTheme.titleMedium?.copyWith(
+                                              color: Colors.grey.shade600,
+                                              fontSize: 14.sp,
+                                            ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Divider(
+                                        thickness: 1,
+                                        color: Colors.grey.shade300,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 SizedBox(height: 20.h),
                                 CustomTextFormField(
