@@ -70,7 +70,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<SignInWithGoogle>((event, emit) async {
       emit(AuthLoading());
       try {
-        debugPrint('AuthBloc: Starting Google Sign-In...');
+        debugPrint('AuthBloc: Starting Google Sign-In... (isSignUp: ${event.isSignUp})');
         final user = await _authService.signInWithGoogle();
         if (user == null) {
           // User cancelled Google Sign-In, return to unauthenticated state
@@ -85,7 +85,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         // Check if user exists in Firestore
         var userModel = await _userRepository.getCurrentUser();
         
-        // If user doesn't exist in Firestore, create new user
+        // If this is a sign up flow and user already exists, emit UserAlreadyExists
+        if (event.isSignUp && userModel != null) {
+          debugPrint('AuthBloc: User already exists during sign up flow');
+          emit(UserAlreadyExists());
+          return;
+        }
+        
+        // If this is a sign in flow and user doesn't exist, emit error
+        if (!event.isSignUp && userModel == null) {
+          debugPrint('AuthBloc: User not found during sign in flow');
+          emit(AuthFailure('No account found with this email. Please sign up first.'));
+          return;
+        }
+        
+        // If user doesn't exist in Firestore, create new user (only for sign up flow)
         if (userModel == null) {
           debugPrint('AuthBloc: User not found in Firestore, creating new user...');
           final displayName = user.displayName ?? 'User';
@@ -109,11 +123,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         debugPrint('AuthBloc: Authentication successful');
       } on FirebaseAuthException catch (e) {
         debugPrint('AuthBloc: FirebaseAuthException: ${e.code} - ${e.message}');
+        debugPrint('AuthBloc: Stack trace: ${e.stackTrace}');
         final errorMessage = getFirebaseAuthErrorMessage(e.code);
         emit(AuthFailure(errorMessage));
-      } catch (e) {
+      } catch (e, stackTrace) {
         debugPrint('AuthBloc: Google Sign-In Error: ${e.toString()}');
-        emit(AuthFailure('Google Sign-In Error: ${e.toString()}'));
+        debugPrint('AuthBloc: Stack trace: $stackTrace');
+        // Provide a more user-friendly error message
+        String errorMessage = 'Google Sign-In Error: ${e.toString()}';
+        if (e.toString().contains('network') || e.toString().contains('connection')) {
+          errorMessage = 'Network error. Please check your internet connection and try again.';
+        } else if (e.toString().contains('cancelled') || e.toString().contains('cancel')) {
+          errorMessage = 'Sign-in was cancelled.';
+          emit(Unauthenticated());
+          return;
+        }
+        emit(AuthFailure(errorMessage));
       }
     });
     on<AppStarted>((event, emit) async {
