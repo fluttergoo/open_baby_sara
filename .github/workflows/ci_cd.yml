@@ -1,11 +1,14 @@
 name: CI/CD Pipeline
 
+# CI/CD is currently disabled - workflow will only run manually
+# To re-enable, uncomment the 'on:' section below
 on:
-  push:
-    branches: [ main, develop ]
-    tags: [ 'v*' ]
-  pull_request:
-    branches: [ main, develop ]
+  workflow_dispatch:  # Only manual trigger - CI/CD is disabled
+  # push:
+  #   branches: [ main, develop ]
+  #   tags: [ 'v*' ]
+  # pull_request:
+  #   branches: [ main, develop ]
 
 env:
   FLUTTER_VERSION: '3.27.1'
