@@ -25,10 +25,14 @@ class SetStartTimeTimer extends BreastfeedRightSideTimerEvent {
 
 class SetEndTimeTimer extends BreastfeedRightSideTimerEvent {
   final DateTime endTime;
-
+  final DateTime? startTime; // Also send start time so bloc state is correct
   final String activityType;
 
-  SetEndTimeTimer({required this.endTime, required this.activityType});
+  SetEndTimeTimer({
+    required this.endTime,
+    this.startTime,
+    required this.activityType,
+  });
 }
 
 class SetDurationTimer extends BreastfeedRightSideTimerEvent {
