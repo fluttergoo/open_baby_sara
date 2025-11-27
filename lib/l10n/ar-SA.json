@@ -22,6 +22,8 @@
   "confirm_password": "تأكيد كلمة المرور",
   "sign_up": "التسجيل",
   "already_have_an_account_sign_in": "لديك حساب بالفعل؟ سجل الدخول",
+  "account_already_exists": "الحساب موجود بالفعل",
+  "account_already_exists_message": "هذا الحساب موجود بالفعل. يرجى تسجيل الدخول بدلاً من ذلك.",
   "you_are_almost_there": "أنتِ على وشك الوصول!",
   "lets_fill_in_your_baby_information": "لنملأ معلومات طفلكِ",
   "baby": "الطفل",
