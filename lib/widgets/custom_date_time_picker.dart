@@ -6,11 +6,15 @@ import 'package:intl/intl.dart';
 class CustomDateTimePicker extends StatefulWidget {
   final String initialText;
   final Function(DateTime) onDateTimeSelected;
+  final DateTime? initialDateTime;
+  final bool enabled;
 
   const CustomDateTimePicker({
     super.key,
     required this.initialText,
     required this.onDateTimeSelected,
+    this.initialDateTime,
+    this.enabled = true,
   });
 
   @override
@@ -19,19 +23,34 @@ class CustomDateTimePicker extends StatefulWidget {
 
 class _CustomDateTimePickerState extends State<CustomDateTimePicker> {
   DateTime? selectedDateTime;
-  late String displayText;
+  String? displayText;
 
   @override
   void initState() {
     super.initState();
-    selectedDateTime = DateTime.now();
-    displayText = formatDateTime(selectedDateTime!);
+    selectedDateTime = widget.initialDateTime ?? DateTime.now();
+    displayText = selectedDateTime != null
+        ? formatDateTime(selectedDateTime!)
+        : null;
+  }
+
+  @override
+  void didUpdateWidget(CustomDateTimePicker oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialDateTime != oldWidget.initialDateTime) {
+      setState(() {
+        selectedDateTime = widget.initialDateTime ?? DateTime.now();
+        displayText = selectedDateTime != null
+            ? formatDateTime(selectedDateTime!)
+            : null;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: () {
+      onPressed: widget.enabled ? () {
         DatePicker.showDateTimePicker(
           context,
           showTitleActions: true,
@@ -43,13 +62,15 @@ class _CustomDateTimePickerState extends State<CustomDateTimePicker> {
 
             widget.onDateTimeSelected(date);
           },
-          currentTime: selectedDateTime,
+          currentTime: selectedDateTime ?? DateTime.now(),
         );
-      },
+      } : null,
       child: Text(
-        displayText,
+        displayText ?? 'Add',
         style: Theme.of(context).textTheme.titleSmall!.copyWith(
-          color: Theme.of(context).primaryColor,
+          color: widget.enabled 
+              ? Theme.of(context).primaryColor 
+              : Colors.grey,
           fontWeight: FontWeight.bold,
         ),
       ),

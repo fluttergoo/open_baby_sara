@@ -24,17 +24,23 @@ class SleepTimerBloc extends Bloc<SleepTimerEvent, SleepTimerState> {
     });
     on<StartTimer>((event, emit) {
       _timer?.cancel();
-      _startTime ??= DateTime.now();
-      final now = DateTime.now();
-      final dateTime = DateTime(
-        now.year,
-        now.month,
-        now.day,
-        _startTime!.hour,
-        _startTime!.minute,
-        _startTime!.second,
-      );
-      _timerRepository.saveTimerStart(dateTime, event.activityType);
+      
+      // Eğer event'te timerStart varsa onu kullan, yoksa _startTime varsa onu kullan, yoksa şu anki zamanı kullan
+      if (event.timerStart != null) {
+        _startTime = event.timerStart;
+      } else {
+        _startTime ??= DateTime.now();
+      }
+      
+      // Timer repository'ye kaydet
+      _timerRepository.saveTimerStart(_startTime!, event.activityType);
+
+      // Duration'ı başlat - eğer endTime varsa hesapla, yoksa sıfırdan başla
+      if (_startTime != null && _endTime != null) {
+        _duration = _calculateDuration(_startTime!, _endTime!);
+      } else {
+        _duration = Duration.zero;
+      }
 
       _timer = Timer.periodic(Duration(seconds: 1), (_) {
         if (!isClosed) {
@@ -42,9 +48,6 @@ class SleepTimerBloc extends Bloc<SleepTimerEvent, SleepTimerState> {
         }
       });
 
-      if (_startTime != null && _endTime != null) {
-        _duration = _calculateDuration(_startTime!, _endTime!);
-      }
       emit(
         TimerRunning(
           duration: _duration,
@@ -66,30 +69,29 @@ class SleepTimerBloc extends Bloc<SleepTimerEvent, SleepTimerState> {
     });
 
     on<SetStartTimeTimer>((event, emit) {
+      // Timer çalışıyorsa durdur
+      _timer?.cancel();
+      
       _startTime = event.startTime;
 
       if (_startTime != null) {
-        final now = DateTime.now();
-        final selectedStart = DateTime(
-          now.year,
-          now.month,
-          now.day,
-          _startTime!.hour,
-          _startTime!.minute,
-          _startTime!.second,
-        );
-        final current = DateTime.now();
-
-        if (selectedStart.isBefore(current)) {
-          _duration = current.difference(selectedStart);
-          _timerRepository.saveTimerStart(selectedStart, event.activityType);
+        // Eğer endTime varsa, duration'ı hesapla
+        if (_endTime != null) {
+          _duration = _calculateDuration(_startTime!, _endTime!);
         } else {
-          _duration = Duration.zero;
+          // EndTime yoksa ve startTime geçmişteyse, şu anki zamana kadar olan süreyi hesapla
+          final current = DateTime.now();
+          if (_startTime!.isBefore(current)) {
+            _duration = current.difference(_startTime!);
+          } else {
+            _duration = Duration.zero;
+          }
         }
       } else {
         _duration = Duration.zero;
       }
 
+      // EndTime yoksa şu anki zamanı kullan
       _endTime ??= DateTime.now();
 
       emit(
@@ -121,28 +123,45 @@ class SleepTimerBloc extends Bloc<SleepTimerEvent, SleepTimerState> {
       );
     });
     on<SetEndTimeTimer>((event, emit) {
+      // Timer çalışıyorsa durdur
+      _timer?.cancel();
+      
       _endTime = event.endTime;
 
       if (_startTime != null && _endTime != null) {
         _duration = _calculateDuration(_startTime!, _endTime!);
+      } else {
+        _duration = Duration.zero;
       }
 
       emit(
         TimerStopped(
           duration: _duration,
           endTime: _endTime,
+          startTime: _startTime,
           activityType: event.activityType,
         ),
       );
     });
     on<SetDurationTimer>((event, emit) {
-      _endTime = DateTime.now();
+      // Timer çalışıyorsa durdur
+      _timer?.cancel();
+      
+      // Eğer endTime zaten varsa onu kullan, yoksa şu anki zamanı kullan
+      _endTime ??= DateTime.now();
 
-      _startTime = _calculateStartTime(_endTime!, event.duration);
+      // StartTime'ı endTime'dan duration çıkararak hesapla
+      if (_endTime != null) {
+        _startTime = _endTime!.subtract(event.duration);
+      } else {
+        _startTime = null;
+      }
+
+      _duration = event.duration;
 
       emit(
         TimerStopped(
-          duration: event.duration,
+          duration: _duration,
           activityType: event.activityType,
           endTime: _endTime,
           startTime: _startTime,
@@ -167,21 +186,18 @@ class SleepTimerBloc extends Bloc<SleepTimerEvent, SleepTimerState> {
 
       final data = await _timerRepository.loadTimer(event.activityType);
       if (data != null && data['isRunning'] == 1) {
+        // Tarihli DateTime'ı direkt kullan
         final getTime = DateTime.parse(data['startTime']);
-
-        _startTime = DateTime(
-          getTime.year,
-          getTime.month,
-          getTime.day,
-          getTime.hour,
-          getTime.minute,
-          getTime.second,
-        );
+        _startTime = getTime;
         _endTime = null;
+        
+        // Duration'ı şu anki zamandan başlangıç zamanına kadar hesapla
         _duration = DateTime.now().difference(getTime);
 
         _timer = Timer.periodic(Duration(seconds: 1), (_) {
-          add(Tick(activityType: event.activityType));
+          if (!isClosed) {
+            add(Tick(activityType: event.activityType));
+          }
         });
         emit(
           TimerRunning(
@@ -197,29 +213,14 @@ class SleepTimerBloc extends Bloc<SleepTimerEvent, SleepTimerState> {
   }
 
   Duration _calculateDuration(DateTime start, DateTime end) {
-    final now = DateTime.now();
-    final startDateTime = DateTime(
-      now.year,
-      now.month,
-      now.day,
-      start.hour,
-      start.minute,
-      start.second,
-    );
-    var endDateTime = DateTime(
-      now.year,
-      now.month,
-      now.day,
-      end.hour,
-      end.minute,
-      end.second,
-    );
-
-    if (endDateTime.isBefore(startDateTime)) {
-      endDateTime = endDateTime.add(const Duration(days: 1)); // Night spillover
+    // Artık tam tarihli DateTime'lar kullanıldığı için direkt farkı hesapla
+    // Eğer end start'tan önceyse (gece yarısını geçmişse), bir gün ekle
+    if (end.isBefore(start)) {
+      // Gece yarısını geçmiş durum - end'e bir gün ekle
+      return end.add(const Duration(days: 1)).difference(start);
     }
-
-    return endDateTime.difference(startDateTime);
+    
+    return end.difference(start);
   }
 
   @override
@@ -229,26 +230,7 @@ class SleepTimerBloc extends Bloc<SleepTimerEvent, SleepTimerState> {
   }
 
   DateTime? _calculateStartTime(DateTime endTime, Duration duration) {
-    final now = DateTime.now();
-
-    final endDateTime = DateTime(
-      now.year,
-      now.month,
-      now.day,
-      endTime.hour,
-      endTime.minute,
-      endTime.second,
-    );
-
-    final startDateTime = endDateTime.subtract(duration);
-
-    return DateTime(
-      startDateTime.year,
-      startDateTime.month,
-      startDateTime.day,
-      startDateTime.hour,
-      startDateTime.minute,
-      startDateTime.second,
-    );
+    // Artık tam tarihli DateTime kullanıldığı için direkt çıkar
+    return endTime.subtract(duration);
   }
 }
