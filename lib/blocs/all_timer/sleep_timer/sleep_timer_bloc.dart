@@ -79,20 +79,16 @@ class SleepTimerBloc extends Bloc<SleepTimerEvent, SleepTimerState> {
         if (_endTime != null) {
           _duration = _calculateDuration(_startTime!, _endTime!);
         } else {
-          // EndTime yoksa ve startTime geçmişteyse, şu anki zamana kadar olan süreyi hesapla
-          final current = DateTime.now();
-          if (_startTime!.isBefore(current)) {
-            _duration = current.difference(_startTime!);
-          } else {
-            _duration = Duration.zero;
-          }
+          // EndTime yoksa duration sıfır olmalı
+          // Kullanıcı manuel olarak end time seçene kadar duration hesaplanmamalı
+          _duration = Duration.zero;
         }
       } else {
         _duration = Duration.zero;
       }
 
-      // EndTime yoksa şu anki zamanı kullan
-      _endTime ??= DateTime.now();
+      // EndTime'ı değiştirme - kullanıcı manuel olarak seçmeli
+      // EndTime null kalabilir, otomatik olarak DateTime.now() yapma
 
       emit(
         TimerStopped(
@@ -117,6 +113,7 @@ class SleepTimerBloc extends Bloc<SleepTimerEvent, SleepTimerState> {
       emit(
         TimerStopped(
           duration: _duration,
+          startTime: _startTime, // Start time'ı da emit et
           endTime: _endTime,
           activityType: event.activityType,
         ),
@@ -127,6 +124,12 @@ class SleepTimerBloc extends Bloc<SleepTimerEvent, SleepTimerState> {
       _timer?.cancel();
       
       _endTime = event.endTime;
+      
+      // Eğer event'te start time varsa, onu kullan (kullanıcı manuel seçtiyse)
+      // Aksi halde mevcut start time'ı koru
+      if (event.startTime != null) {
+        _startTime = event.startTime;
+      }
 
       if (_startTime != null && _endTime != null) {
         _duration = _calculateDuration(_startTime!, _endTime!);

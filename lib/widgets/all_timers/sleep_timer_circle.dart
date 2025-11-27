@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_baby_sara/blocs/all_timer/sleep_timer/sleep_timer_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:open_baby_sara/widgets/custom_show_flush_bar.dart';
 
 class SleepTimerCircle extends StatefulWidget {
   final double size;
@@ -49,6 +50,35 @@ class _SleepTimerCircleState extends State<SleepTimerCircle>
   }
 
   void _startTimer() {
+    // Start time bir gün öncesi seçilmişse timer başlatılamaz
+    final currentState = context.read<SleepTimerBloc>().state;
+    DateTime? startTime;
+    
+    if (currentState is TimerStopped && currentState.activityType == widget.activityType) {
+      startTime = currentState.startTime;
+    } else if (currentState is TimerRunning && currentState.activityType == widget.activityType) {
+      startTime = currentState.startTime;
+    }
+    
+    // Eğer start time varsa ve bir gün öncesi ise, timer başlatılamaz
+    if (startTime != null) {
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      final startDate = DateTime(startTime.year, startTime.month, startTime.day);
+      
+      // Start time bugünden önceki bir tarihse (bir gün öncesi veya daha eski)
+      if (startDate.isBefore(today)) {
+        showCustomFlushbar(
+          context,
+          context.tr("warning"),
+          context.tr("cannot_start_timer_past_date") ?? 
+              "Cannot start timer with a past date. Please select today's date for start time.",
+          Icons.warning,
+        );
+        return;
+      }
+    }
+    
     context.read<SleepTimerBloc>().add(
       StartTimer(activityType: widget.activityType),
     );

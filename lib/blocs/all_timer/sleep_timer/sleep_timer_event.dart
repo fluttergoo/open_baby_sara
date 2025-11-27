@@ -25,10 +25,14 @@ class SetStartTimeTimer extends SleepTimerEvent {
 
 class SetEndTimeTimer extends SleepTimerEvent {
   final DateTime endTime;
-
+  final DateTime? startTime; // Start time'ı da gönder ki bloc state'i doğru olsun
   final String activityType;
 
-  SetEndTimeTimer({required this.endTime, required this.activityType});
+  SetEndTimeTimer({
+    required this.endTime, 
+    this.startTime,
+    required this.activityType,
+  });
 }
 
 class SetDurationTimer extends SleepTimerEvent {

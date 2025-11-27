@@ -8,6 +8,8 @@ class CustomDateTimePicker extends StatefulWidget {
   final Function(DateTime) onDateTimeSelected;
   final DateTime? initialDateTime;
   final bool enabled;
+  final DateTime? maxDate;
+  final DateTime? minDate;
 
   const CustomDateTimePicker({
     super.key,
@@ -15,6 +17,8 @@ class CustomDateTimePicker extends StatefulWidget {
     required this.onDateTimeSelected,
     this.initialDateTime,
     this.enabled = true,
+    this.maxDate,
+    this.minDate,
   });
 
   @override
@@ -28,7 +32,7 @@ class _CustomDateTimePickerState extends State<CustomDateTimePicker> {
   @override
   void initState() {
     super.initState();
-    selectedDateTime = widget.initialDateTime ?? DateTime.now();
+    selectedDateTime = widget.initialDateTime;
     displayText = selectedDateTime != null
         ? formatDateTime(selectedDateTime!)
         : null;
@@ -39,7 +43,7 @@ class _CustomDateTimePickerState extends State<CustomDateTimePicker> {
     super.didUpdateWidget(oldWidget);
     if (widget.initialDateTime != oldWidget.initialDateTime) {
       setState(() {
-        selectedDateTime = widget.initialDateTime ?? DateTime.now();
+        selectedDateTime = widget.initialDateTime;
         displayText = selectedDateTime != null
             ? formatDateTime(selectedDateTime!)
             : null;
@@ -51,6 +55,16 @@ class _CustomDateTimePickerState extends State<CustomDateTimePicker> {
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: widget.enabled ? () {
+        // currentTime'ı belirle - minDate varsa ve currentTime minDate'den önceyse, minDate'i kullan
+        DateTime currentTime = selectedDateTime ?? DateTime.now();
+        if (widget.minDate != null && currentTime.isBefore(widget.minDate!)) {
+          currentTime = widget.minDate!;
+        }
+        // maxDate varsa ve currentTime maxDate'den sonraysa, maxDate'i kullan
+        if (widget.maxDate != null && currentTime.isAfter(widget.maxDate!)) {
+          currentTime = widget.maxDate!;
+        }
+        
         DatePicker.showDateTimePicker(
           context,
           showTitleActions: true,
@@ -62,7 +76,9 @@ class _CustomDateTimePickerState extends State<CustomDateTimePicker> {
 
             widget.onDateTimeSelected(date);
           },
-          currentTime: selectedDateTime ?? DateTime.now(),
+          currentTime: currentTime,
+          maxTime: widget.maxDate,
+          minTime: widget.minDate,
         );
       } : null,
       child: Text(
