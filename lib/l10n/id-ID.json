@@ -22,6 +22,8 @@
   "confirm_password": "Konfirmasi Kata Sandi",
   "sign_up": "Mendaftar",
   "already_have_an_account_sign_in": "Sudah punya akun? Masuk",
+  "account_already_exists": "Akun Sudah Ada",
+  "account_already_exists_message": "Akun ini sudah ada. Silakan masuk sebagai gantinya.",
   "you_are_almost_there": "Anda hampir sampai!",
   "lets_fill_in_your_baby_information": "Mari kita isi informasi bayi Anda",
   "baby": "Bayi",

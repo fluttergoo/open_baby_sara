@@ -22,6 +22,8 @@
   "confirm_password": "Confirmer le mot de passe",
   "sign_up": "S'inscrire",
   "already_have_an_account_sign_in": "Déjà un compte ? Se connecter",
+  "account_already_exists": "Le compte existe déjà",
+  "account_already_exists_message": "Ce compte existe déjà. Veuillez vous connecter à la place.",
   "you_are_almost_there": "Vous y êtes presque !",
   "lets_fill_in_your_baby_information": "Remplissez les informations de votre bébé",
   "baby": "Bébé",

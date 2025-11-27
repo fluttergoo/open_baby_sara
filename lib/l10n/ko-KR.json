@@ -22,6 +22,8 @@
   "confirm_password": "비밀번호 확인",
   "sign_up": "가입하기",
   "already_have_an_account_sign_in": "이미 계정이 있으신가요? 로그인",
+  "account_already_exists": "계정이 이미 존재합니다",
+  "account_already_exists_message": "이 계정은 이미 존재합니다. 대신 로그인해 주세요.",
   "you_are_almost_there": "거의 다 되었습니다!",
   "lets_fill_in_your_baby_information": "아기 정보를 입력해주세요",
   "baby": "아기",

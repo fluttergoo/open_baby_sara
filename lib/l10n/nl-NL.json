@@ -22,6 +22,8 @@
   "confirm_password": "Bevestig Wachtwoord",
   "sign_up": "Registreer",
   "already_have_an_account_sign_in": "Heb je al een account? Log in",
+  "account_already_exists": "Account bestaat al",
+  "account_already_exists_message": "Dit account bestaat al. Log in plaats daarvan in.",
   "you_are_almost_there": "Je bent er bijna!",
   "lets_fill_in_your_baby_information": "Laten we de gegevens van je baby invullen",
   "baby": "Baby",

@@ -23,6 +23,8 @@
   "confirm_password": "Şifreyi Onayla",
   "sign_up": "Kayıt Ol",
   "already_have_an_account_sign_in": "Zaten hesabınız var mı? Giriş Yap",
+  "account_already_exists": "Hesap Zaten Mevcut",
+  "account_already_exists_message": "Bu hesap zaten mevcut. Lütfen giriş yapın.",
   "you_are_almost_there": "Neredeyse Tamamlandı!",
   "lets_fill_in_your_baby_information": "Bebeğinizin Bilgilerini Dolduralım",
   "baby": "Bebek",

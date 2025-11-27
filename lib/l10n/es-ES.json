@@ -22,6 +22,8 @@
   "confirm_password": "Confirmar Contraseña",
   "sign_up": "Registrarse",
   "already_have_an_account_sign_in": "¿Ya tienes cuenta? Inicia Sesión",
+  "account_already_exists": "La cuenta ya existe",
+  "account_already_exists_message": "Esta cuenta ya existe. Por favor, inicia sesión en su lugar.",
   "you_are_almost_there": "¡Estás casi lista!",
   "lets_fill_in_your_baby_information": "Completa la información de tu bebé",
   "baby": "Bebé",

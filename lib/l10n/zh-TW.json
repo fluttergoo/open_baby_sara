@@ -22,6 +22,8 @@
   "confirm_password": "确认密码",
   "sign_up": "注册",
   "already_have_an_account_sign_in": "已有账号？登录",
+  "account_already_exists": "帳號已存在",
+  "account_already_exists_message": "此帳號已存在。請改為登入。",
   "you_are_almost_there": "即将完成！",
   "lets_fill_in_your_baby_information": "填写宝宝信息",
   "baby": "宝宝",

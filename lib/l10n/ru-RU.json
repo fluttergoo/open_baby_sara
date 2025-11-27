@@ -22,6 +22,8 @@
   "confirm_password": "Подтвердите пароль",
   "sign_up": "Зарегистрироваться",
   "already_have_an_account_sign_in": "Уже есть аккаунт? Войти",
+  "account_already_exists": "Аккаунт уже существует",
+  "account_already_exists_message": "Этот аккаунт уже существует. Пожалуйста, войдите вместо этого.",
   "you_are_almost_there": "Вы почти на месте!",
   "lets_fill_in_your_baby_information": "Давайте заполним информацию о вашем малыше",
   "baby": "Малыш",

@@ -23,6 +23,8 @@
   "confirm_password": "Confirm Password",
   "sign_up": "Sign Up",
   "already_have_an_account_sign_in": "Already have an account? Sign In",
+  "account_already_exists": "Account Already Exists",
+  "account_already_exists_message": "This account already exists. Please sign in instead.",
   "you_are_almost_there": "You’re Almost There!",
   "lets_fill_in_your_baby_information": "Let’s Fill in Your Baby’s Information",
   "baby": "Baby",
