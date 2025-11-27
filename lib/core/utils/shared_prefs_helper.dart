@@ -25,4 +25,34 @@ class SharedPrefsHelper {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('sleep_tracker_notes_$babyID');
   }
+
+  static Future<void> saveFeedTrackerNotes(String babyID, String notes) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('feed_tracker_notes_$babyID', notes);
+  }
+
+  static Future<String?> getFeedTrackerNotes(String babyID) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('feed_tracker_notes_$babyID');
+  }
+
+  static Future<void> clearFeedTrackerNotes(String babyID) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('feed_tracker_notes_$babyID');
+  }
+
+  static Future<void> saveDiaperTrackerNotes(String babyID, String notes) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('diaper_tracker_notes_$babyID', notes);
+  }
+
+  static Future<String?> getDiaperTrackerNotes(String babyID) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('diaper_tracker_notes_$babyID');
+  }
+
+  static Future<void> clearDiaperTrackerNotes(String babyID) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('diaper_tracker_notes_$babyID');
+  }
 }

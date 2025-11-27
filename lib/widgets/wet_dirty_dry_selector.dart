@@ -4,15 +4,26 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class WetDirtyDrySelector extends StatefulWidget {
   final void Function(List<String> selectedValues) onChanged;
+  final List<String>? initialValues;
 
-  const WetDirtyDrySelector({super.key, required this.onChanged});
+  const WetDirtyDrySelector({
+    super.key, 
+    required this.onChanged,
+    this.initialValues,
+  });
 
   @override
   State<WetDirtyDrySelector> createState() => _WetDirtyDrySelectorState();
 }
 
 class _WetDirtyDrySelectorState extends State<WetDirtyDrySelector> {
-  List<String> selected = [];
+  late List<String> selected;
+  
+  @override
+  void initState() {
+    super.initState();
+    selected = List<String>.from(widget.initialValues ?? []);
+  }
 
   @override
   Widget build(BuildContext context) {

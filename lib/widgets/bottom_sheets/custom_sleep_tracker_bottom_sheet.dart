@@ -482,28 +482,28 @@ class _CustomSleepTrackerBottomSheetState
                                           }
                                           
                                           if (start != null) {
-                                            // Senaryo 2.3, 7.3: Gece yarısını geçen uyku kayıtları için
-                                            // End time start time'dan önce olamaz (tam tarihli DateTime kontrolü)
-                                            // Tam tarihli DateTime'lar kullanıldığı için isBefore() doğru çalışır
-                                            // Örnek: Nov 22, 22:06 < Nov 23, 14:06 = true (doğru)
+                                            // Scenario 2.3, 7.3: For sleep records crossing midnight
+                                            // End time cannot be before start time (full DateTime check)
+                                            // isBefore() works correctly because full DateTime objects are used
+                                            // Example: Nov 22, 22:06 < Nov 23, 14:06 = true (correct)
                                             if (selected.isBefore(start!)) {
                                               _showError(context.tr("end_time_before_start"));
                                               return;
                                             }
-                                            // Start ve end time aynı olamaz
+                                            // Start and end time cannot be the same
                                             if (selected.isAtSameMomentAs(start!)) {
                                               _showError(context.tr("start_end_time_same") ?? 
                                                   "Start and end time cannot be the same");
                                               return;
                                             }
-                                            // 24 saat limitini kontrol et (tam tarihli DateTime'lar için)
+                                            // Check 24 hour limit (for full DateTime objects)
                                             if (!_validate24HourLimit(start, selected, null)) {
                                               return;
                                             }
-                                            // Duration'ı hesapla (sadece local state için, bloc'a bildirme)
-                                            // Bloc SetEndTimeTimer event'i ile duration'ı zaten hesaplayacak
-                                            // Tam tarihli DateTime'lar kullanıldığı için difference() otomatik olarak
-                                            // gece yarısını geçen durumları doğru hesaplar
+                                            // Calculate duration (only for local state, don't notify bloc)
+                                            // Bloc will calculate duration with SetEndTimeTimer event
+                                            // difference() automatically handles midnight crossing correctly
+                                            // because full DateTime objects are used
                                             final calculatedDuration = selected.difference(start!);
                                             widget.duration = calculatedDuration;
                                             totalSleepTime = formatDuration(calculatedDuration);
@@ -514,14 +514,14 @@ class _CustomSleepTrackerBottomSheetState
                                             selectedDatetime = selected;
                                           });
                                           
-                                          // SetEndTimeTimer event'i timer'ı durduracak (manuel moda geçiş)
-                                          // Bloc bu event ile duration'ı otomatik hesaplayacak
-                                          // Start time'ı da gönder ki bloc state'i doğru olsun
+                                          // SetEndTimeTimer event will stop timer (switch to manual mode)
+                                          // Bloc will automatically calculate duration with this event
+                                          // Also send start time so bloc state is correct
                                           context.read<SleepTimerBloc>().add(
                                             SetEndTimeTimer(
                                               activityType: 'sleepTimer',
-                                              endTime: selected, // endTime! yerine selected kullan
-                                              startTime: start, // Mevcut start time'ı gönder
+                                              endTime: selected, // Use selected instead of endTime!
+                                              startTime: start, // Send current start time
                                             ),
                                           );
                                         },
@@ -616,34 +616,34 @@ class _CustomSleepTrackerBottomSheetState
     showCustomFlushbar(context, context.tr("warning"), message, Icons.warning);
   }
 
-  /// 24 saat limitini kontrol eder
+  /// Checks 24 hour limit
   /// Returns: true if valid, false if exceeds 24 hours
-  /// Senaryo 4.2, 7.2, 7.5: 24 saat limiti kontrolü (tam 24 saat = 86400 saniye)
+  /// Scenario 4.2, 7.2, 7.5: 24 hour limit check (exactly 24 hours = 86400 seconds)
   bool _validate24HourLimit(DateTime? start, DateTime? end, Duration? duration) {
-    // Eğer start ve end time varsa, aralarındaki farkı kontrol et
-    // Tam tarihli DateTime'lar kullanıldığı için difference() otomatik olarak tarihleri hesaba katar
+    // If start and end time exist, check the difference between them
+    // difference() automatically accounts for dates because full DateTime objects are used
     if (start != null && end != null) {
       final difference = end.difference(start);
       
-      // Negatif fark kontrolü (end start'tan önce olamaz)
-      // Senaryo 4.1: End time start time'dan önce olamaz
+      // Negative difference check (end cannot be before start)
+      // Scenario 4.1: End time cannot be before start time
       if (difference.isNegative) {
         _showError(context.tr("end_time_before_start"));
         return false;
       }
       
-      // Senaryo 4.5: Start ve end time aynı olamaz (duration 0 olamaz)
+      // Scenario 4.5: Start and end time cannot be the same (duration cannot be 0)
       if (difference.inSeconds == 0) {
         _showError(context.tr("start_end_time_same") ?? 
             "Start and end time cannot be the same");
         return false;
       }
       
-      // 24 saat limiti kontrolü (24 saatten fazla olamaz)
-      // Senaryo 7.2: Tam 24 saat = 86400 saniye kontrolü
-      // Senaryo 7.5: 23 saat 59 dakika kabul edilmeli
-      // Tam tarihli DateTime'lar kullanıldığı için difference() otomatik olarak tarihleri hesaba katar
-      // 24 saat = 86400 saniye (tam 24 saat dahil edilmez, sadece 24 saatten az olmalı)
+      // 24 hour limit check (cannot exceed 24 hours)
+      // Scenario 7.2: Exactly 24 hours = 86400 seconds check
+      // Scenario 7.5: 23 hours 59 minutes should be accepted
+      // difference() automatically accounts for dates because full DateTime objects are used
+      // 24 hours = 86400 seconds (exactly 24 hours is not included, must be less than 24 hours)
       if (difference.inSeconds >= 86400) {
         _showError(context.tr("sleep_duration_exceeds_one_day") ?? 
             "Sleep duration cannot exceed 24 hours");
@@ -651,9 +651,9 @@ class _CustomSleepTrackerBottomSheetState
       }
     }
     
-    // Eğer duration varsa, 24 saati geçmemeli
-    // Senaryo 4.2: 24 saati aşan uyku kaydı engellenmeli
-    // 24 saat = 86400 saniye (tam 24 saat dahil edilmez)
+    // If duration exists, it should not exceed 24 hours
+    // Scenario 4.2: Sleep records exceeding 24 hours should be prevented
+    // 24 hours = 86400 seconds (exactly 24 hours is not included)
     if (duration != null) {
       if (duration.inSeconds >= 86400) {
         _showError(context.tr("sleep_duration_exceeds_one_day") ?? 
@@ -661,7 +661,7 @@ class _CustomSleepTrackerBottomSheetState
         return false;
       }
       
-      // Senaryo 4.5: Duration 0 olamaz
+      // Scenario 4.5: Duration cannot be 0
       if (duration.inSeconds == 0) {
         _showError(context.tr("start_end_time_same") ?? 
             "Sleep duration cannot be zero");
@@ -672,27 +672,27 @@ class _CustomSleepTrackerBottomSheetState
     return true;
   }
 
-  /// Senaryo 2.3, 7.3: Gece yarısını geçen uyku kayıtları için duration hesaplama
-  /// Tam tarihli DateTime'lar kullanıldığı için difference() otomatik olarak tarihleri hesaba katar
+  /// Scenario 2.3, 7.3: Duration calculation for sleep records crossing midnight
+  /// difference() automatically accounts for dates because full DateTime objects are used
   void _calculateAndUpdateTotalSleepTime(DateTime startTime, DateTime endTime) {
-    // Timer çalışıyorsa bu hesaplamayı yapma - timer kendi duration'ını yönetiyor
+    // Don't do this calculation if timer is running - timer manages its own duration
     final currentState = context.read<SleepTimerBloc>().state;
     if (currentState is TimerRunning) {
       return;
     }
     
-    // Tam tarihli DateTime'lar kullanıldığı için difference() otomatik olarak tarihleri hesaba katar
-    // Gece yarısını geçen durumlar için (örn: 22:00 - 07:00) difference() doğru hesaplar
+    // difference() automatically accounts for dates because full DateTime objects are used
+    // For cases crossing midnight (e.g., 22:00 - 07:00) difference() calculates correctly
     final difference = endTime.difference(startTime);
     
-    // Negatif fark kontrolü (gece yarısını geçen durumlar için normal olabilir ama burada kontrol edelim)
+    // Negative difference check (may be normal for midnight crossing cases but let's check here)
     if (difference.isNegative) {
-      // Bu durumda end time start time'dan önce, bu bir hata
+      // In this case end time is before start time, this is an error
       _showError(context.tr("end_time_before_start"));
       return;
     }
     
-    // 24 saat limitini kontrol et
+    // Check 24 hour limit
     if (!_validate24HourLimit(startTime, endTime, difference)) {
       return;
     }
@@ -700,7 +700,7 @@ class _CustomSleepTrackerBottomSheetState
     widget.duration = difference;
     totalSleepTime = formatDuration(difference);
     
-    // Bloc'a da bildir - sadece timer durmuşsa
+    // Also notify bloc - only if timer is stopped
     context.read<SleepTimerBloc>().add(
       SetDurationTimer(
         duration: difference,
@@ -721,7 +721,7 @@ class _CustomSleepTrackerBottomSheetState
       selectedDatetime = DateTime.now();
     });
 
-    // Geçici notes'u da temizle
+    // Also clear temporary notes
     if (!widget.isEdit) {
       SharedPrefsHelper.clearSleepTrackerNotes(widget.babyID);
     }
@@ -743,14 +743,14 @@ class _CustomSleepTrackerBottomSheetState
     final isTimerRunning = currentState is TimerRunning && 
                            currentState.activityType == 'sleepTimer';
 
-    // Eğer timer çalışıyorsa, timer'ı durdur ve end time'ı şu anki zaman olarak ayarla
+    // If timer is running, stop timer and set end time to current time
     if (isTimerRunning) {
       sleepBloc.add(StopTimer(activityType: 'sleepTimer'));
       
-      // Timer durduktan sonra state'i bekle
+      // Wait for state after timer stops
       await Future.delayed(Duration(milliseconds: 100));
       
-      // State'ten güncel değerleri al
+      // Get current values from state
       final stoppedState = sleepBloc.state;
       if (stoppedState is TimerStopped && stoppedState.activityType == 'sleepTimer') {
         if (stoppedState.startTime != null) {
@@ -766,7 +766,7 @@ class _CustomSleepTrackerBottomSheetState
       }
     }
 
-    // Senaryo 4.4: Validation kontrolleri - Eksik alanlar
+    // Scenario 4.4: Validation checks - Missing fields
     if (start == null) {
       _showError(context.tr("please_complete_all_fields"));
       return;
@@ -782,20 +782,20 @@ class _CustomSleepTrackerBottomSheetState
       return;
     }
 
-    // Senaryo 4.1: Start time end time'dan sonra olamaz (tarihler dahil)
+    // Scenario 4.1: Start time cannot be after end time (including dates)
     if (start!.isAfter(endTime!)) {
       _showError(context.tr("end_time_before_start"));
       return;
     }
 
-    // Senaryo 4.5: Start ve end time aynı olamaz
+    // Scenario 4.5: Start and end time cannot be the same
     if (start!.isAtSameMomentAs(endTime!)) {
       _showError(context.tr("start_end_time_same") ?? 
           "Start and end time cannot be the same");
       return;
     }
 
-    // Senaryo 4.3: Gelecekteki tarih kontrolü - start ve end time gelecekte olamaz
+    // Scenario 4.3: Future date check - start and end time cannot be in the future
     final now = DateTime.now();
     if (start!.isAfter(now) || endTime!.isAfter(now)) {
       _showError(context.tr("date_in_future") ?? 
@@ -803,7 +803,7 @@ class _CustomSleepTrackerBottomSheetState
       return;
     }
 
-    // Senaryo 7.1: Çok eski tarih kontrolü (1 yıl öncesi)
+    // Scenario 7.1: Too old date check (1 year ago)
     final oneYearAgo = now.subtract(const Duration(days: 365));
     if (start!.isBefore(oneYearAgo) || endTime!.isBefore(oneYearAgo)) {
       _showError(context.tr("date_too_old") ?? 
@@ -811,23 +811,22 @@ class _CustomSleepTrackerBottomSheetState
       return;
     }
 
-    // Senaryo 4.2, 7.2, 7.5: 24 saat limitini kontrol et (tarihler dahil)
+    // Scenario 4.2, 7.2, 7.5: Check 24 hour limit (including dates)
     if (!_validate24HourLimit(start, endTime, widget.duration)) {
       return;
     }
 
-    // Senaryo 4.6: Duration ile start-end aralığı uyumlu olmalı (1 dakika tolerans)
-    // Senaryo 2.3, 7.3: Gece yarısını geçen durumlar için tam tarihli DateTime'lar kullanıldığı için 
-    // difference() otomatik olarak tarihleri hesaba katar
+    // Scenario 4.6: Duration must match start-end range (1 minute tolerance)
+    // Scenario 2.3, 7.3: For cases crossing midnight, difference() automatically accounts for dates
+    // because full DateTime objects are used
     final calculatedDuration = endTime!.difference(start!);
     if (calculatedDuration.isNegative) {
       _showError(context.tr("end_time_before_start"));
       return;
     }
     
-    // Duration ile calculated duration arasında 1 dakika tolerans (60000 ms)
-    // Bu tolerans, kullanıcının manuel olarak seçtiği değerler ile hesaplanan değerler arasındaki 
-    // küçük farkları kabul etmek için
+    // 1 minute tolerance (60000 ms) between duration and calculated duration
+    // This tolerance accepts small differences between manually selected values and calculated values
     if ((widget.duration!.inMilliseconds - calculatedDuration.inMilliseconds).abs() > 60000) {
       _showError(context.tr("sleep_duration_mismatch") ?? 
           "Duration does not match the time difference between start and end time");
@@ -835,8 +834,8 @@ class _CustomSleepTrackerBottomSheetState
     }
 
     try {
-      // Yeni format: Tam tarihli DateTime'ları ISO string olarak kaydet
-      // Eski format ile uyumluluk için saat/dakika bilgilerini de kaydet
+      // New format: Save full DateTime objects as ISO string
+      // Also save hour/minute info for backward compatibility with old format
       final activityModel = ActivityModel(
         activityID:
             widget.isEdit
@@ -848,10 +847,10 @@ class _CustomSleepTrackerBottomSheetState
         updatedAt: DateTime.now(),
         activityDateTime: selectedDatetime!,
         data: {
-          // Yeni format: Tam tarihli DateTime'lar
+          // New format: Full DateTime objects
           'startTimeDate': start!.toIso8601String(),
           'endTimeDate': endTime!.toIso8601String(),
-          // Eski format ile uyumluluk: Saat/dakika bilgileri
+          // Backward compatibility: Hour/minute info
           'startTimeHour': start?.hour,
           'startTimeMin': start?.minute,
           'endTimeHour': endTime?.hour,
@@ -874,17 +873,17 @@ class _CustomSleepTrackerBottomSheetState
         );
       }
 
-      // Kayıt başarılı olduğunda tüm geçici verileri temizle
+      // Clear all temporary data when save is successful
       if (!widget.isEdit) {
         await SharedPrefsHelper.clearSleepTrackerNotes(widget.babyID);
       }
 
-      // Timer state'ini resetle
+      // Reset timer state
       context.read<SleepTimerBloc>().add(
         ResetTimer(activityType: 'sleepTimer'),
       );
 
-      // Local state'i temizle
+      // Clear local state
       setState(() {
         start = null;
         endTime = null;
@@ -894,7 +893,7 @@ class _CustomSleepTrackerBottomSheetState
         selectedDatetime = DateTime.now();
       });
 
-      // Sayfayı kapat ve ana sayfaya dön
+      // Close page and return to main page
       Navigator.of(
         context,
       ).pushReplacement(MaterialPageRoute(builder: (_) => NavigationWrapper()));
@@ -914,7 +913,7 @@ class _CustomSleepTrackerBottomSheetState
     }
   }
 
-  /// Senaryo 5.2: Duration picker'dan süre seçildiğinde start/end time otomatik hesaplama
+  /// Scenario 5.2: Automatic start/end time calculation when duration is selected from duration picker
   void _onPressedShowDurationSet(BuildContext context) async {
     final setDuration = await showDurationPicker(
       context: context,
@@ -926,24 +925,24 @@ class _CustomSleepTrackerBottomSheetState
       ),
     );
     if (setDuration != null) {
-      // Senaryo 4.2: 24 saat limitini kontrol et
+      // Scenario 4.2: Check 24 hour limit
       if (!_validate24HourLimit(start, endTime, setDuration)) {
         return;
       }
       
-      // Senaryo 5.2: Duration seçildiğinde start ve end time'ı otomatik hesapla
-      // Eğer end time varsa, start time'ı end time'dan duration çıkararak hesapla
-      // Eğer start time varsa, end time'ı start time'a duration ekleyerek hesapla
-      // Eğer ikisi de varsa, end time'ı start time'a duration ekleyerek güncelle
-      // Eğer ikisi de yoksa, end time'ı şu anki zaman olarak ayarla ve start time'ı hesapla
+      // Scenario 5.2: Automatically calculate start and end time when duration is selected
+      // If end time exists, calculate start time by subtracting duration from end time
+      // If start time exists, calculate end time by adding duration to start time
+      // If both exist, update end time by adding duration to start time
+      // If neither exists, set end time to current time and calculate start time
       DateTime? newStart = start;
       DateTime? newEnd = endTime;
       
       if (newEnd != null) {
-        // End time varsa, start time'ı hesapla
+        // If end time exists, calculate start time
         newStart = newEnd.subtract(setDuration);
         
-        // Gelecekteki tarih kontrolü
+        // Future date check
         final now = DateTime.now();
         if (newStart.isAfter(now)) {
           _showError(context.tr("date_in_future") ?? 
@@ -951,7 +950,7 @@ class _CustomSleepTrackerBottomSheetState
           return;
         }
         
-        // Çok eski tarih kontrolü
+        // Too old date check
         final oneYearAgo = now.subtract(const Duration(days: 365));
         if (newStart.isBefore(oneYearAgo)) {
           _showError(context.tr("date_too_old") ?? 
@@ -959,10 +958,10 @@ class _CustomSleepTrackerBottomSheetState
           return;
         }
       } else if (newStart != null) {
-        // Start time varsa, end time'ı hesapla
+        // If start time exists, calculate end time
         newEnd = newStart.add(setDuration);
         
-        // Gelecekteki tarih kontrolü
+        // Future date check
         final now = DateTime.now();
         if (newEnd.isAfter(now)) {
           _showError(context.tr("date_in_future") ?? 
@@ -970,12 +969,12 @@ class _CustomSleepTrackerBottomSheetState
           return;
         }
       } else {
-        // İkisi de yoksa, end time'ı şu anki zaman olarak ayarla ve start time'ı hesapla
+        // If neither exists, set end time to current time and calculate start time
         final now = DateTime.now();
         newEnd = now;
         newStart = now.subtract(setDuration);
         
-        // Çok eski tarih kontrolü
+        // Too old date check
         final oneYearAgo = now.subtract(const Duration(days: 365));
         if (newStart.isBefore(oneYearAgo)) {
           _showError(context.tr("date_too_old") ?? 
@@ -984,7 +983,7 @@ class _CustomSleepTrackerBottomSheetState
         }
       }
       
-      // Duration'ı ve time'ları güncelle
+      // Update duration and times
       final oldStart = start;
       final oldEnd = endTime;
       
@@ -996,12 +995,12 @@ class _CustomSleepTrackerBottomSheetState
         selectedDatetime = newEnd;
       });
       
-      // Bloc'a bildir - önce duration, sonra time'lar
+      // Notify bloc - first duration, then times
       context.read<SleepTimerBloc>().add(
         SetDurationTimer(duration: setDuration, activityType: 'sleepTimer'),
       );
       
-      // Eğer start time değiştiyse, bloc'a bildir
+      // If start time changed, notify bloc
       if (newStart != null && newStart != oldStart) {
         context.read<SleepTimerBloc>().add(
           SetStartTimeTimer(
@@ -1011,7 +1010,7 @@ class _CustomSleepTrackerBottomSheetState
         );
       }
       
-      // Eğer end time değiştiyse, bloc'a bildir
+      // If end time changed, notify bloc
       if (newEnd != null && newEnd != oldEnd) {
         context.read<SleepTimerBloc>().add(
           SetEndTimeTimer(

@@ -50,7 +50,7 @@ class _SleepTimerCircleState extends State<SleepTimerCircle>
   }
 
   void _startTimer() {
-    // Start time bir gün öncesi seçilmişse timer başlatılamaz
+    // Cannot start timer if start time is selected as one day ago
     final currentState = context.read<SleepTimerBloc>().state;
     DateTime? startTime;
     
@@ -60,13 +60,13 @@ class _SleepTimerCircleState extends State<SleepTimerCircle>
       startTime = currentState.startTime;
     }
     
-    // Eğer start time varsa ve bir gün öncesi ise, timer başlatılamaz
+    // If start time exists and is one day ago, cannot start timer
     if (startTime != null) {
       final now = DateTime.now();
       final today = DateTime(now.year, now.month, now.day);
       final startDate = DateTime(startTime.year, startTime.month, startTime.day);
       
-      // Start time bugünden önceki bir tarihse (bir gün öncesi veya daha eski)
+      // If start time is a date before today (one day ago or older)
       if (startDate.isBefore(today)) {
         showCustomFlushbar(
           context,

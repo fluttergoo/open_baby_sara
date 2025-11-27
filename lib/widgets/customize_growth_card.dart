@@ -35,6 +35,10 @@ class _CustomizeGrowthCardState extends State<CustomizeGrowthCard> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ActivityBloc, ActivityState>(
+      buildWhen: (previous, current) {
+        // Sadece ActivitiesWithDateLoaded veya ActivityLoading state'lerinde rebuild ol
+        return current is ActivitiesWithDateLoaded || current is ActivityLoading;
+      },
       builder: (context, state) {
         if (state is ActivitiesWithDateLoaded) {
           growthActivities = state.growthActivities;

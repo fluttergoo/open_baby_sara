@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_baby_sara/app/routes/navigation_wrapper.dart';
 import 'package:open_baby_sara/blocs/activity/activity_bloc.dart';
 import 'package:open_baby_sara/core/app_colors.dart';
+import 'package:open_baby_sara/core/utils/shared_prefs_helper.dart';
 import 'package:open_baby_sara/data/models/activity_model.dart';
 import 'package:open_baby_sara/data/repositories/locator.dart';
 import 'package:open_baby_sara/data/services/firebase/analytics_service.dart';
@@ -62,8 +63,36 @@ class _CustomDiaperTrackerBottomSheetState
       isBlowout = data['isBlowout'] ?? false;
       isDiaperRush = data['isDiaperRush'] ?? false;
       isBloodInStool = data['isBloodInStool'] ?? false;
+    } else {
+      // New record mode - load temporarily saved notes
+      Future.microtask(() async {
+        final savedNotes = await SharedPrefsHelper.getDiaperTrackerNotes(widget.babyID);
+        if (savedNotes != null && savedNotes.isNotEmpty) {
+          notesController.text = savedNotes;
+        }
+      });
     }
+
+    // Listen to notes changes and save
+    notesController.addListener(_onNotesChanged);
+
     getIt<AnalyticsService>().logScreenView('DiaperActivityTracker');
+  }
+
+  void _onNotesChanged() {
+    if (!widget.isEdit) {
+      // Only save temporarily in new record mode
+      SharedPrefsHelper.saveDiaperTrackerNotes(widget.babyID, notesController.text);
+    }
+  }
+
+  @override
+  void dispose() {
+    // Remove notes listener
+    notesController.removeListener(_onNotesChanged);
+    // Dispose controller
+    notesController.dispose();
+    super.dispose();
   }
 
   @override
@@ -117,9 +146,31 @@ class _CustomDiaperTrackerBottomSheetState
                         children: [
                           Text(context.tr("time")),
                           CustomDateTimePicker(
+                            key: ValueKey('time_${selectedDatetime?.millisecondsSinceEpoch}'),
                             initialText: 'initialText',
+                            initialDateTime: selectedDatetime,
+                            maxDate: DateTime.now(), // Prevent future dates
+                            minDate: DateTime.now().subtract(const Duration(days: 365)), // 1 year ago limit
                             onDateTimeSelected: (selected) {
-                              selectedDatetime = selected;
+                              // Future date check
+                              final now = DateTime.now();
+                              if (selected.isAfter(now)) {
+                                _showError(context.tr("date_in_future") ?? 
+                                    "Date cannot be in the future");
+                                return;
+                              }
+                              
+                              // Too old date check (1 year ago)
+                              final oneYearAgo = now.subtract(const Duration(days: 365));
+                              if (selected.isBefore(oneYearAgo)) {
+                                _showError(context.tr("date_too_old") ?? 
+                                    "Date cannot be more than 1 year ago");
+                                return;
+                              }
+                              
+                              setState(() {
+                                selectedDatetime = selected;
+                              });
                             },
                           ),
                         ],
@@ -128,9 +179,15 @@ class _CustomDiaperTrackerBottomSheetState
                       Text(context.tr("select_diaper_condition")),
                       SizedBox(height: 10.h),
                       WetDirtyDrySelector(
+                        initialValues: selectedMain,
                         onChanged: (selectedValue) {
                           setState(() {
                             selectedMain = selectedValue;
+                            // If Dirty is removed, clear texture and color selections
+                            if (!selectedValue.contains('Dirty')) {
+                              selectedTextures.clear();
+                              selectedColors.clear();
+                            }
                           });
                         },
                       ),
@@ -140,12 +197,16 @@ class _CustomDiaperTrackerBottomSheetState
                         Divider(color: Colors.grey.shade300),
                       if (selectedMain.contains('Dirty'))
                         DirtyDetailOptions(
+                          initialTextures: selectedTextures,
+                          initialColors: selectedColors,
                           onChanged: ({
                             required List<String> selectedTextures,
                             required List<String> selectedColors,
                           }) {
-                            this.selectedTextures = selectedTextures;
-                            this.selectedColors = selectedColors;
+                            setState(() {
+                              this.selectedTextures = selectedTextures;
+                              this.selectedColors = selectedColors;
+                            });
                           },
                         ),
 
@@ -223,46 +284,74 @@ class _CustomDiaperTrackerBottomSheetState
     );
   }
 
-  void onPressedSave() {
+  void _showError(String message) {
+    showCustomFlushbar(context, context.tr("warning"), message, Icons.warning);
+  }
+
+  void onPressedSave() async {
     final activityName = ActivityType.diaper.name;
 
+    // Validation: Diaper condition must be selected
     if (selectedMain.isEmpty) {
-      showCustomFlushbar(
-        context,
-        context.tr("warning"),
-        context.tr("please_choose_diaper_condition"),
-        Icons.warning_outlined,
-      );
+      _showError(context.tr("please_choose_diaper_condition"));
       return;
     }
 
-    final activityModel = ActivityModel(
-      activityID:
-          widget.isEdit
-              ? widget.existingActivity!.activityID
-              : const Uuid().v4(),
-      activityType: activityName,
-      createdAt:
-          widget.isEdit ? widget.existingActivity!.createdAt : DateTime.now(),
-      updatedAt: DateTime.now(),
-      activityDateTime: selectedDatetime!,
-      data: {
-        'startTimeHour': selectedDatetime?.hour,
-        'startTimeMin': selectedDatetime?.minute,
-        'notes': notesController.text,
-        'mainSelection': selectedMain,
-        'textures': selectedTextures,
-        'colors': selectedColors,
-        'isBlowout': isBlowout,
-        'isDiaperRush': isDiaperRush,
-        'isBloodInStool': isBloodInStool,
-      },
-      isSynced: false,
-      createdBy: widget.firstName,
-      babyID: widget.babyID,
-    );
+    // Validation: DateTime must be selected
+    if (selectedDatetime == null) {
+      _showError(context.tr("please_complete_all_fields") ?? 
+          "Please complete all fields");
+      return;
+    }
+
+    // Validation: Future date check
+    final now = DateTime.now();
+    if (selectedDatetime!.isAfter(now)) {
+      _showError(context.tr("date_in_future") ?? 
+          "Date cannot be in the future");
+      return;
+    }
+
+    // Validation: Too old date check (1 year ago)
+    final oneYearAgo = now.subtract(const Duration(days: 365));
+    if (selectedDatetime!.isBefore(oneYearAgo)) {
+      _showError(context.tr("date_too_old") ?? 
+          "Date cannot be more than 1 year ago");
+      return;
+    }
 
     try {
+      // New format: Save full DateTime objects as ISO string
+      // Also save hour/minute info for backward compatibility with old format
+      final activityModel = ActivityModel(
+        activityID:
+            widget.isEdit
+                ? widget.existingActivity!.activityID
+                : const Uuid().v4(),
+        activityType: activityName,
+        createdAt:
+            widget.isEdit ? widget.existingActivity!.createdAt : DateTime.now(),
+        updatedAt: DateTime.now(),
+        activityDateTime: selectedDatetime!,
+        data: {
+          // New format: Full DateTime object
+          'activityDateTime': selectedDatetime!.toIso8601String(),
+          // Backward compatibility: Hour/minute info
+          'startTimeHour': selectedDatetime?.hour,
+          'startTimeMin': selectedDatetime?.minute,
+          'notes': notesController.text,
+          'mainSelection': selectedMain,
+          'textures': selectedTextures,
+          'colors': selectedColors,
+          'isBlowout': isBlowout,
+          'isDiaperRush': isDiaperRush,
+          'isBloodInStool': isBloodInStool,
+        },
+        isSynced: false,
+        createdBy: widget.firstName,
+        babyID: widget.babyID,
+      );
+
       if (widget.isEdit) {
         context.read<ActivityBloc>().add(
           UpdateActivity(activityModel: activityModel),
@@ -273,16 +362,30 @@ class _CustomDiaperTrackerBottomSheetState
         );
       }
 
+      // Clear all temporary data when save is successful
+      if (!widget.isEdit) {
+        await SharedPrefsHelper.clearDiaperTrackerNotes(widget.babyID);
+      }
+
+      // Clear local state
+      setState(() {
+        selectedDatetime = DateTime.now();
+        selectedMain.clear();
+        selectedTextures.clear();
+        selectedColors.clear();
+        isBlowout = false;
+        isDiaperRush = false;
+        isBloodInStool = false;
+        notesController.clear();
+      });
+
+      // Close page and return to main page
       Navigator.of(
         context,
       ).pushReplacement(MaterialPageRoute(builder: (_) => NavigationWrapper()));
-    } catch (e) {
-      showCustomFlushbar(
-        context,
-        context.tr("warning"),
-        'Error ${e.toString()}',
-        Icons.warning_outlined,
-      );
+    } catch (e, stack) {
+      print(stack);
+      _showError('Error ${e.toString()}');
     }
   }
 
@@ -297,6 +400,11 @@ class _CustomDiaperTrackerBottomSheetState
       isBloodInStool = false;
       notesController.clear();
     });
+
+    // Also clear temporary notes
+    if (!widget.isEdit) {
+      SharedPrefsHelper.clearDiaperTrackerNotes(widget.babyID);
+    }
 
     showCustomFlushbar(
       context,

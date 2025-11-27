@@ -25,7 +25,7 @@ class SetStartTimeTimer extends SleepTimerEvent {
 
 class SetEndTimeTimer extends SleepTimerEvent {
   final DateTime endTime;
-  final DateTime? startTime; // Start time'ı da gönder ki bloc state'i doğru olsun
+  final DateTime? startTime; // Also send start time so bloc state is correct
   final String activityType;
 
   SetEndTimeTimer({

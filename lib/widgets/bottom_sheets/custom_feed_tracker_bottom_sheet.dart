@@ -9,6 +9,7 @@ import 'package:open_baby_sara/blocs/all_timer/breasfeed_left_side_timer/breasfe
 import 'package:open_baby_sara/blocs/all_timer/breastfeed_right_side_timer/breastfeed_right_side_timer_bloc.dart'
     as rightBreastfeed;
 import 'package:open_baby_sara/core/app_colors.dart';
+import 'package:open_baby_sara/core/utils/shared_prefs_helper.dart';
 import 'package:open_baby_sara/data/models/activity_model.dart';
 import 'package:open_baby_sara/data/repositories/locator.dart';
 import 'package:open_baby_sara/data/services/firebase/analytics_service.dart';
@@ -68,6 +69,10 @@ class _CustomFeedTrackerBottomSheetState
 
   @override
   void dispose() {
+    // Remove notes listeners
+    notesBottleFeedController.removeListener(_onBottleFeedNotesChanged);
+    notesController.removeListener(_onBreastfeedNotesChanged);
+    // Dispose controllers
     notesBottleFeedController.dispose();
     notesController.dispose();
     _tabController.dispose();
@@ -77,6 +82,9 @@ class _CustomFeedTrackerBottomSheetState
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(() {
+      setState(() {}); // Update UI when tab changes
+    });
 
     if (widget.isEdit && widget.existingActivity != null) {
       selectedDatetime = widget.existingActivity!.activityDateTime;
@@ -88,44 +96,164 @@ class _CustomFeedTrackerBottomSheetState
         feedUnit = data['totalUnit'];
         notesBottleFeedController.text = data['notes'] ?? '';
         _tabController.index = 1;
+        
+        // Backward compatibility: use feedingTimeDate if available, otherwise use activityDateTime
+        if (data['feedingTimeDate'] != null) {
+          selectedDatetime = DateTime.parse(data['feedingTimeDate']);
+        } else {
+          selectedDatetime = widget.existingActivity!.activityDateTime;
+        }
       } else if (widget.existingActivity!.activityType ==
           ActivityType.breastFeed.name) {
-        leftSideStartTime = _buildTime(
-          data,
-          'leftSideStartTimeHour',
-          'leftSideStartTimeMin',
-        );
-        leftSideEndTime = _buildTime(
-          data,
-          'leftSideEndTimeHour',
-          'leftSideEndTimeMin',
-        );
+        // Backward compatibility: use startTimeDate and endTimeDate if available, otherwise get date from activityDateTime
+        if (data['leftSideStartTimeDate'] != null) {
+          leftSideStartTime = DateTime.parse(data['leftSideStartTimeDate']);
+        } else {
+          leftSideStartTime = _buildTime(
+            data,
+            'leftSideStartTimeHour',
+            'leftSideStartTimeMin',
+          );
+        }
+        
+        if (data['leftSideEndTimeDate'] != null) {
+          leftSideEndTime = DateTime.parse(data['leftSideEndTimeDate']);
+        } else {
+          leftSideEndTime = _buildTime(
+            data,
+            'leftSideEndTimeHour',
+            'leftSideEndTimeMin',
+          );
+        }
+        
         leftSideTotalTime = Duration(
           milliseconds: data['leftSideTotalTime'] ?? 0,
         );
         leftSideAmout = (data['leftSideAmount'] ?? 0).toDouble();
         leftSideUnit = data['leftSideUnit'];
 
-        rightSideStartTime = _buildTime(
-          data,
-          'rightSideStartTimeHour',
-          'rightSideStartTimeMin',
-        );
-        rightSideEndTime = _buildTime(
-          data,
-          'rightSideEndTimeHour',
-          'rightSideEndTimeMin',
-        );
+        if (data['rightSideStartTimeDate'] != null) {
+          rightSideStartTime = DateTime.parse(data['rightSideStartTimeDate']);
+        } else {
+          rightSideStartTime = _buildTime(
+            data,
+            'rightSideStartTimeHour',
+            'rightSideStartTimeMin',
+          );
+        }
+        
+        if (data['rightSideEndTimeDate'] != null) {
+          rightSideEndTime = DateTime.parse(data['rightSideEndTimeDate']);
+        } else {
+          rightSideEndTime = _buildTime(
+            data,
+            'rightSideEndTimeHour',
+            'rightSideEndTimeMin',
+          );
+        }
+        
         rightSideTotalTime = Duration(
           milliseconds: data['rightSideTotalTime'] ?? 0,
         );
         rightSideAmout = (data['rightSideAmount'] ?? 0).toDouble();
         rightSideUnit = data['rightSideUnit'];
+        notesController.text = data['notes'] ?? '';
       }
+    } else {
+      // New record mode - check timer state and load temporarily saved notes
+      Future.microtask(() async {
+        // Load temporarily saved notes for bottle feed
+        final savedBottleFeedNotes = await SharedPrefsHelper.getFeedTrackerNotes('${widget.babyID}_bottle');
+        if (savedBottleFeedNotes != null && savedBottleFeedNotes.isNotEmpty) {
+          notesBottleFeedController.text = savedBottleFeedNotes;
+        }
+        
+        // Load temporarily saved notes for breastfeed
+        final savedBreastfeedNotes = await SharedPrefsHelper.getFeedTrackerNotes('${widget.babyID}_breastfeed');
+        if (savedBreastfeedNotes != null && savedBreastfeedNotes.isNotEmpty) {
+          notesController.text = savedBreastfeedNotes;
+        }
+        
+        // Check timer states for breastfeed
+        final leftBloc = context.read<leftBreastfeed.BreasfeedLeftSideTimerBloc>();
+        final rightBloc = context.read<rightBreastfeed.BreastfeedRightSideTimerBloc>();
+        final leftState = leftBloc.state;
+        final rightState = rightBloc.state;
+        
+        if (leftState is leftBreastfeed.TimerRunning && leftState.activityType == 'leftPumpTimer') {
+          if (leftState.startTime != null) {
+            setState(() {
+              leftSideStartTime = leftState.startTime;
+              leftSideTotalTime = leftState.duration;
+              leftSideEndTime = null;
+            });
+          }
+        } else if (leftState is leftBreastfeed.TimerStopped && leftState.activityType == 'leftPumpTimer') {
+          if (leftState.startTime != null) {
+            setState(() {
+              leftSideStartTime = leftState.startTime;
+            });
+          }
+          if (leftState.endTime != null) {
+            setState(() {
+              leftSideEndTime = leftState.endTime;
+            });
+          }
+          if (leftState.duration != Duration.zero) {
+            setState(() {
+              leftSideTotalTime = leftState.duration;
+            });
+          }
+        }
+        
+        if (rightState is rightBreastfeed.TimerRunning && rightState.activityType == 'rightPumpTimer') {
+          if (rightState.startTime != null) {
+            setState(() {
+              rightSideStartTime = rightState.startTime;
+              rightSideTotalTime = rightState.duration;
+              rightSideEndTime = null;
+            });
+          }
+        } else if (rightState is rightBreastfeed.TimerStopped && rightState.activityType == 'rightPumpTimer') {
+          if (rightState.startTime != null) {
+            setState(() {
+              rightSideStartTime = rightState.startTime;
+            });
+          }
+          if (rightState.endTime != null) {
+            setState(() {
+              rightSideEndTime = rightState.endTime;
+            });
+          }
+          if (rightState.duration != Duration.zero) {
+            setState(() {
+              rightSideTotalTime = rightState.duration;
+            });
+          }
+        }
+      });
     }
+
+    // Listen to notes changes and save
+    notesBottleFeedController.addListener(_onBottleFeedNotesChanged);
+    notesController.addListener(_onBreastfeedNotesChanged);
 
     super.initState();
     getIt<AnalyticsService>().logScreenView('FeedActivityTracker');
+  }
+
+  void _onBottleFeedNotesChanged() {
+    if (!widget.isEdit) {
+      // Only save temporarily in new record mode
+      SharedPrefsHelper.saveFeedTrackerNotes('${widget.babyID}_bottle', notesBottleFeedController.text);
+    }
+  }
+
+  void _onBreastfeedNotesChanged() {
+    if (!widget.isEdit) {
+      // Only save temporarily in new record mode
+      SharedPrefsHelper.saveFeedTrackerNotes('${widget.babyID}_breastfeed', notesController.text);
+    }
   }
 
   DateTime _buildTime(
@@ -133,11 +261,12 @@ class _CustomFeedTrackerBottomSheetState
     String hourKey,
     String minKey,
   ) {
-    final now = DateTime.now();
+    // Backward compatibility: use activityDateTime date if available
+    final dateTime = widget.existingActivity?.activityDateTime ?? DateTime.now();
     return DateTime(
-      now.year,
-      now.month,
-      now.day,
+      dateTime.year,
+      dateTime.month,
+      dateTime.day,
       data[hourKey] ?? 0,
       data[minKey] ?? 0,
     );
@@ -180,29 +309,22 @@ class _CustomFeedTrackerBottomSheetState
                       widget.isEdit ? context.tr('update') : context.tr('save'),
                   backgroundColor: AppColors.feedColor,
                 ),
-                // Rounded Tab Bar
+                // Simple and Elegant Tab Bar
                 Container(
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF0F0F0),
-                    borderRadius: BorderRadius.circular(12.r),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.shade50,
-                        blurRadius: 4,
-                        offset: Offset(0, 1),
-                      ),
-                    ],
+                    color: Colors.grey.shade100,
+                    borderRadius: BorderRadius.circular(10.r),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
-                  margin: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+                  padding: EdgeInsets.all(3.w),
+                  margin: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                   child: TabBar(
                     controller: _tabController,
                     indicator: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(12.r),
+                      borderRadius: BorderRadius.circular(8.r),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.01),
+                          color: Colors.black.withOpacity(0.05),
                           blurRadius: 2,
                           offset: Offset(0, 1),
                         ),
@@ -210,9 +332,9 @@ class _CustomFeedTrackerBottomSheetState
                     ),
                     dividerColor: Colors.transparent,
                     indicatorSize: TabBarIndicatorSize.tab,
-                    labelPadding: EdgeInsets.zero,
-                    labelColor: Colors.purple[700],
-                    unselectedLabelColor: Colors.grey[600],
+                    labelPadding: EdgeInsets.symmetric(horizontal: 4.w),
+                    labelColor: Colors.purple.shade600,
+                    unselectedLabelColor: Colors.grey.shade600,
                     labelStyle: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 12.sp,
@@ -223,19 +345,19 @@ class _CustomFeedTrackerBottomSheetState
                     ),
                     tabs: [
                       Tab(
-                        height: 36,
+                        height: 38,
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.accessibility_new_rounded, size: 16),
+                            Icon(Icons.favorite_rounded, size: 16),
                             SizedBox(width: 4.w),
                             Text(context.tr("breastfeed")),
                           ],
                         ),
                       ),
                       Tab(
-                        height: 36,
+                        height: 38,
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -268,7 +390,7 @@ class _CustomFeedTrackerBottomSheetState
     );
   }
 
-  void onPressedSave() {
+  void onPressedSave() async {
     final String activityID =
         widget.isEdit ? widget.existingActivity!.activityID : const Uuid().v4();
 
@@ -277,9 +399,113 @@ class _CustomFeedTrackerBottomSheetState
             ? ActivityType.bottleFeed.name
             : ActivityType.breastFeed.name;
 
+    // Validation for bottle feed
+    if (_tabController.index == 1) {
+      // Scenario 4.3: Eksik Alanlar (Bottle Feed)
+      if (selectedMainActivity == null || selectedMainActivity!.isEmpty) {
+        _showError(context.tr("please_complete_all_fields"));
+        return;
+      }
+      
+      if (feedAmout == null || feedAmout == 0) {
+        _showError(context.tr("please_complete_all_fields"));
+        return;
+      }
+      
+      if (feedUnit == null || feedUnit!.isEmpty) {
+        _showError(context.tr("please_complete_all_fields"));
+        return;
+      }
+      
+      // Scenario 4.2: Future date check
+      final now = DateTime.now();
+      if (selectedDatetime.isAfter(now)) {
+        _showError(context.tr("date_in_future") ?? 
+            "Feeding time cannot be in the future");
+        return;
+      }
+      
+      // Scenario 4.6: Too old date check (1 year ago)
+      final oneYearAgo = now.subtract(const Duration(days: 365));
+      if (selectedDatetime.isBefore(oneYearAgo)) {
+        _showError(context.tr("date_too_old") ?? 
+            "Date cannot be more than 1 year ago");
+        return;
+      }
+    } else {
+      // Validation for breastfeed
+      // At least one side must have start and end time
+      final hasLeftSide = leftSideStartTime != null && leftSideEndTime != null;
+      final hasRightSide = rightSideStartTime != null && rightSideEndTime != null;
+      
+      if (!hasLeftSide && !hasRightSide) {
+        _showError(context.tr("please_complete_all_fields"));
+        return;
+      }
+      
+      // Validate left side if exists
+      if (hasLeftSide) {
+        if (leftSideStartTime!.isAfter(leftSideEndTime!)) {
+          _showError(context.tr("end_time_before_start"));
+          return;
+        }
+        
+        if (leftSideStartTime!.isAtSameMomentAs(leftSideEndTime!)) {
+          _showError(context.tr("start_end_time_same") ?? 
+              "Start and end time cannot be the same");
+          return;
+        }
+        
+        final now = DateTime.now();
+        if (leftSideStartTime!.isAfter(now) || leftSideEndTime!.isAfter(now)) {
+          _showError(context.tr("date_in_future") ?? 
+              "Start and end time cannot be in the future");
+          return;
+        }
+        
+        final oneYearAgo = now.subtract(const Duration(days: 365));
+        if (leftSideStartTime!.isBefore(oneYearAgo) || leftSideEndTime!.isBefore(oneYearAgo)) {
+          _showError(context.tr("date_too_old") ?? 
+              "Date cannot be more than 1 year ago");
+          return;
+        }
+      }
+      
+      // Validate right side if exists
+      if (hasRightSide) {
+        if (rightSideStartTime!.isAfter(rightSideEndTime!)) {
+          _showError(context.tr("end_time_before_start"));
+          return;
+        }
+        
+        if (rightSideStartTime!.isAtSameMomentAs(rightSideEndTime!)) {
+          _showError(context.tr("start_end_time_same") ?? 
+              "Start and end time cannot be the same");
+          return;
+        }
+        
+        final now = DateTime.now();
+        if (rightSideStartTime!.isAfter(now) || rightSideEndTime!.isAfter(now)) {
+          _showError(context.tr("date_in_future") ?? 
+              "Start and end time cannot be in the future");
+          return;
+        }
+        
+        final oneYearAgo = now.subtract(const Duration(days: 365));
+        if (rightSideStartTime!.isBefore(oneYearAgo) || rightSideEndTime!.isBefore(oneYearAgo)) {
+          _showError(context.tr("date_too_old") ?? 
+              "Date cannot be more than 1 year ago");
+          return;
+        }
+      }
+    }
+
     final data =
         _tabController.index == 1
             ? {
+              // New format: Full DateTime objects
+              'feedingTimeDate': selectedDatetime.toIso8601String(),
+              // Backward compatibility: Hour/minute info
               'startTimeHour': selectedDatetime.hour,
               'startTimeMin': selectedDatetime.minute,
               'notes': notesBottleFeedController.text,
@@ -288,6 +514,10 @@ class _CustomFeedTrackerBottomSheetState
               'totalUnit': feedUnit,
             }
             : {
+              // New format: Full DateTime objects
+              if (leftSideStartTime != null) 'leftSideStartTimeDate': leftSideStartTime!.toIso8601String(),
+              if (leftSideEndTime != null) 'leftSideEndTimeDate': leftSideEndTime!.toIso8601String(),
+              // Backward compatibility: Hour/minute info
               'leftSideStartTimeHour': leftSideStartTime?.hour ?? 0,
               'leftSideStartTimeMin': leftSideStartTime?.minute ?? 0,
               'leftSideEndTimeHour': leftSideEndTime?.hour ?? 0,
@@ -295,6 +525,10 @@ class _CustomFeedTrackerBottomSheetState
               'leftSideTotalTime': leftSideTotalTime?.inMilliseconds ?? 0,
               'leftSideAmount': leftSideAmout ?? 0,
               'leftSideUnit': leftSideUnit ?? '',
+              // New format: Full DateTime objects
+              if (rightSideStartTime != null) 'rightSideStartTimeDate': rightSideStartTime!.toIso8601String(),
+              if (rightSideEndTime != null) 'rightSideEndTimeDate': rightSideEndTime!.toIso8601String(),
+              // Backward compatibility: Hour/minute info
               'rightSideStartTimeHour': rightSideStartTime?.hour ?? 0,
               'rightSideStartTimeMin': rightSideStartTime?.minute ?? 0,
               'rightSideEndTimeHour': rightSideEndTime?.hour ?? 0,
@@ -333,6 +567,21 @@ class _CustomFeedTrackerBottomSheetState
           AddActivity(activityModel: activityModel),
         );
       }
+      
+      // Clear all temporary data when save is successful
+      if (!widget.isEdit) {
+        await SharedPrefsHelper.clearFeedTrackerNotes('${widget.babyID}_bottle');
+        await SharedPrefsHelper.clearFeedTrackerNotes('${widget.babyID}_breastfeed');
+      }
+      
+      // Reset timer states
+      context.read<leftBreastfeed.BreasfeedLeftSideTimerBloc>().add(
+        leftBreastfeed.ResetTimer(activityType: 'leftPumpTimer'),
+      );
+      context.read<rightBreastfeed.BreastfeedRightSideTimerBloc>().add(
+        rightBreastfeed.ResetTimer(activityType: 'rightPumpTimer'),
+      );
+      
       Navigator.of(
         context,
       ).pushReplacement(MaterialPageRoute(builder: (_) => NavigationWrapper()));
@@ -353,6 +602,7 @@ class _CustomFeedTrackerBottomSheetState
       feedAmout = null;
       feedUnit = null;
       notesBottleFeedController.clear();
+      selectedDatetime = DateTime.now();
 
       // Breast Feed
       leftSideStartTime = null;
@@ -368,6 +618,12 @@ class _CustomFeedTrackerBottomSheetState
       rightSideUnit = null;
       notesController.clear();
     });
+
+    // Clear temporary notes
+    if (!widget.isEdit) {
+      await SharedPrefsHelper.clearFeedTrackerNotes('${widget.babyID}_bottle');
+      await SharedPrefsHelper.clearFeedTrackerNotes('${widget.babyID}_breastfeed');
+    }
 
     context.read<leftBreastfeed.BreasfeedLeftSideTimerBloc>().add(
       leftBreastfeed.ResetTimer(activityType: 'leftPumpTimer'),
@@ -386,6 +642,10 @@ class _CustomFeedTrackerBottomSheetState
     );
   }
 
+  void _showError(String message) {
+    showCustomFlushbar(context, context.tr("warning"), message, Icons.warning);
+  }
+
   Widget customBottlerFeedTracker() {
     return SingleChildScrollView(
       padding: EdgeInsets.only(
@@ -402,9 +662,31 @@ class _CustomFeedTrackerBottomSheetState
             children: [
               Text(context.tr("time")),
               CustomDateTimePicker(
+                key: ValueKey('feeding_time_${selectedDatetime.millisecondsSinceEpoch}'),
                 initialText: 'initialText',
+                initialDateTime: selectedDatetime,
+                maxDate: DateTime.now(), // Prevent future dates
+                minDate: DateTime.now().subtract(const Duration(days: 365)), // 1 year ago limit
                 onDateTimeSelected: (selected) {
-                  selectedDatetime = selected;
+                  // Future date check
+                  final now = DateTime.now();
+                  if (selected.isAfter(now)) {
+                    _showError(context.tr("date_in_future") ?? 
+                        "Feeding time cannot be in the future");
+                    return;
+                  }
+                  
+                  // Too old date check (1 year ago)
+                  final oneYearAgo = now.subtract(const Duration(days: 365));
+                  if (selected.isBefore(oneYearAgo)) {
+                    _showError(context.tr("date_too_old") ?? 
+                        "Date cannot be more than 1 year ago");
+                    return;
+                  }
+                  
+                  setState(() {
+                    selectedDatetime = selected;
+                  });
                 },
               ),
             ],
@@ -470,7 +752,21 @@ class _CustomFeedTrackerBottomSheetState
     );
   }
 
-  Widget buildTimeInfo(String label, String value, VoidCallback onPressed) {
+  Widget buildTimeInfo(String label, DateTime? dateTime, bool isStartTime, String side, bool isEnabled) {
+    String displayText;
+    if (dateTime != null) {
+      final now = DateTime.now();
+      if (dateTime.year == now.year && dateTime.month == now.month && dateTime.day == now.day) {
+        // Today - show only time
+        displayText = DateFormat('HH:mm').format(dateTime);
+      } else {
+        // Different day - show date and time
+        displayText = DateFormat('MMM d, HH:mm').format(dateTime);
+      }
+    } else {
+      displayText = context.tr("add");
+    }
+    
     return Column(
       children: [
         Divider(color: Colors.grey.shade300),
@@ -478,11 +774,232 @@ class _CustomFeedTrackerBottomSheetState
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(label),
-            TextButton(onPressed: onPressed, child: Text(value)),
+            CustomDateTimePicker(
+              key: ValueKey('${side}_${isStartTime ? "start" : "end"}_${dateTime?.millisecondsSinceEpoch ?? 0}_${isEnabled}'),
+              initialText: 'initialText',
+              initialDateTime: dateTime,
+              enabled: isEnabled,
+              maxDate: DateTime.now(), // Prevent future dates
+              minDate: isStartTime 
+                  ? DateTime.now().subtract(const Duration(days: 365)) // 1 year ago limit
+                  : (side == 'left' 
+                      ? (leftSideStartTime ?? DateTime.now().subtract(const Duration(days: 365)))
+                      : (rightSideStartTime ?? DateTime.now().subtract(const Duration(days: 365)))),
+              onDateTimeSelected: (selected) {
+                if (isStartTime) {
+                  _onStartTimeSelected(selected, side);
+                } else {
+                  _onEndTimeSelected(selected, side);
+                }
+              },
+            ),
           ],
         ),
       ],
     );
+  }
+
+  void _onStartTimeSelected(DateTime selected, String side) {
+    // Future date check
+    final now = DateTime.now();
+    if (selected.isAfter(now)) {
+      _showError(context.tr("date_in_future") ?? 
+          "Start time cannot be in the future");
+      return;
+    }
+    
+    // Too old date check (1 year ago)
+    final oneYearAgo = now.subtract(const Duration(days: 365));
+    if (selected.isBefore(oneYearAgo)) {
+      _showError(context.tr("date_too_old") ?? 
+          "Date cannot be more than 1 year ago");
+      return;
+    }
+    
+    if (side == 'left') {
+      // Check if end time exists
+      if (leftSideEndTime != null) {
+        // Start time cannot be after end time
+        if (selected.isAfter(leftSideEndTime!)) {
+          _showError(context.tr("end_time_before_start"));
+          return;
+        }
+        // Start and end time cannot be the same
+        if (selected.isAtSameMomentAs(leftSideEndTime!)) {
+          _showError(context.tr("start_end_time_same") ?? 
+              "Start and end time cannot be the same");
+          return;
+        }
+        // Calculate duration
+        final calculatedDuration = leftSideEndTime!.difference(selected);
+        leftSideTotalTime = calculatedDuration;
+      }
+      
+      setState(() {
+        leftSideStartTime = selected;
+      });
+      
+      // If timer is running, switch to manual mode (stop timer)
+      final currentState = context.read<leftBreastfeed.BreasfeedLeftSideTimerBloc>().state;
+      final isTimerRunning = currentState is leftBreastfeed.TimerRunning && 
+                             currentState.activityType == 'leftPumpTimer';
+      
+      if (isTimerRunning) {
+        context.read<leftBreastfeed.BreasfeedLeftSideTimerBloc>().add(
+          leftBreastfeed.StopTimer(activityType: 'leftPumpTimer'),
+        );
+      }
+      
+      // SetStartTimeTimer event will stop timer (switch to manual mode)
+      context.read<leftBreastfeed.BreasfeedLeftSideTimerBloc>().add(
+        leftBreastfeed.SetStartTimeTimer(
+          startTime: selected,
+          activityType: 'leftPumpTimer',
+        ),
+      );
+    } else if (side == 'right') {
+      // Check if end time exists
+      if (rightSideEndTime != null) {
+        // Start time cannot be after end time
+        if (selected.isAfter(rightSideEndTime!)) {
+          _showError(context.tr("end_time_before_start"));
+          return;
+        }
+        // Start and end time cannot be the same
+        if (selected.isAtSameMomentAs(rightSideEndTime!)) {
+          _showError(context.tr("start_end_time_same") ?? 
+              "Start and end time cannot be the same");
+          return;
+        }
+        // Calculate duration
+        final calculatedDuration = rightSideEndTime!.difference(selected);
+        rightSideTotalTime = calculatedDuration;
+      }
+      
+      setState(() {
+        rightSideStartTime = selected;
+      });
+      
+      // If timer is running, switch to manual mode (stop timer)
+      final currentState = context.read<rightBreastfeed.BreastfeedRightSideTimerBloc>().state;
+      final isTimerRunning = currentState is rightBreastfeed.TimerRunning && 
+                             currentState.activityType == 'rightPumpTimer';
+      
+      if (isTimerRunning) {
+        context.read<rightBreastfeed.BreastfeedRightSideTimerBloc>().add(
+          rightBreastfeed.StopTimer(activityType: 'rightPumpTimer'),
+        );
+      }
+      
+      // SetStartTimeTimer event will stop timer (switch to manual mode)
+      context.read<rightBreastfeed.BreastfeedRightSideTimerBloc>().add(
+        rightBreastfeed.SetStartTimeTimer(
+          startTime: selected,
+          activityType: 'rightPumpTimer',
+        ),
+      );
+    }
+  }
+
+  void _onEndTimeSelected(DateTime selected, String side) {
+    // If timer is running, cannot select end time
+    if (side == 'left') {
+      final currentState = context.read<leftBreastfeed.BreasfeedLeftSideTimerBloc>().state;
+      final isRunning = currentState is leftBreastfeed.TimerRunning && 
+                         currentState.activityType == 'leftPumpTimer';
+      
+      if (isRunning) {
+        // Cannot select end time while timer is running
+        return;
+      }
+    } else {
+      final currentState = context.read<rightBreastfeed.BreastfeedRightSideTimerBloc>().state;
+      final isRunning = currentState is rightBreastfeed.TimerRunning && 
+                         currentState.activityType == 'rightPumpTimer';
+      
+      if (isRunning) {
+        // Cannot select end time while timer is running
+        return;
+      }
+    }
+    
+    // Future date check
+    final now = DateTime.now();
+    if (selected.isAfter(now)) {
+      _showError(context.tr("date_in_future") ?? 
+          "End time cannot be in the future");
+      return;
+    }
+    
+    // Too old date check (1 year ago)
+    final oneYearAgo = now.subtract(const Duration(days: 365));
+    if (selected.isBefore(oneYearAgo)) {
+      _showError(context.tr("date_too_old") ?? 
+          "Date cannot be more than 1 year ago");
+      return;
+    }
+    
+    if (side == 'left') {
+      if (leftSideStartTime != null) {
+        // End time cannot be before start time
+        if (selected.isBefore(leftSideStartTime!)) {
+          _showError(context.tr("end_time_before_start"));
+          return;
+        }
+        // Start and end time cannot be the same
+        if (selected.isAtSameMomentAs(leftSideStartTime!)) {
+          _showError(context.tr("start_end_time_same") ?? 
+              "Start and end time cannot be the same");
+          return;
+        }
+        // Calculate duration
+        final calculatedDuration = selected.difference(leftSideStartTime!);
+        leftSideTotalTime = calculatedDuration;
+      }
+      
+      setState(() {
+        leftSideEndTime = selected;
+      });
+      
+      // SetEndTimeTimer event will stop timer (switch to manual mode)
+      context.read<leftBreastfeed.BreasfeedLeftSideTimerBloc>().add(
+        leftBreastfeed.SetEndTimeTimer(
+          activityType: 'leftPumpTimer',
+          endTime: selected,
+          startTime: leftSideStartTime, // Send current start time
+        ),
+      );
+    } else if (side == 'right') {
+      if (rightSideStartTime != null) {
+        // End time cannot be before start time
+        if (selected.isBefore(rightSideStartTime!)) {
+          _showError(context.tr("end_time_before_start"));
+          return;
+        }
+        // Start and end time cannot be the same
+        if (selected.isAtSameMomentAs(rightSideStartTime!)) {
+          _showError(context.tr("start_end_time_same") ?? 
+              "Start and end time cannot be the same");
+          return;
+        }
+        // Calculate duration
+        final calculatedDuration = selected.difference(rightSideStartTime!);
+        rightSideTotalTime = calculatedDuration;
+      }
+      
+      setState(() {
+        rightSideEndTime = selected;
+      });
+      
+      // SetEndTimeTimer event will stop timer (switch to manual mode)
+      context.read<rightBreastfeed.BreastfeedRightSideTimerBloc>().add(
+        rightBreastfeed.SetEndTimeTimer(
+          activityType: 'rightPumpTimer',
+          endTime: selected,
+          startTime: rightSideStartTime, // Send current start time
+        ),
+      );
+    }
   }
 
   String formatDuration(Duration duration) {
@@ -496,117 +1013,11 @@ class _CustomFeedTrackerBottomSheetState
     }
   }
 
-  void _onPressedShowTimePicker(BuildContext context, String side) async {
-    if (side == 'left') {
-      final pickedTime = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.fromDateTime(DateTime.now()),
-      );
-      if (pickedTime != null) {
-        final now = DateTime.now();
-        leftSideStartTime = DateTime(
-          now.year,
-          now.month,
-          now.day,
-          pickedTime.hour,
-          pickedTime.minute,
-          0,
-        );
-        if (leftSideStartTime != null) {
-          context.read<leftBreastfeed.BreasfeedLeftSideTimerBloc>().add(
-            leftBreastfeed.SetStartTimeTimer(
-              startTime: leftSideStartTime,
-              activityType: 'leftPumpTimer',
-            ),
-          );
-        }
-      }
-    } else if (side == 'right') {
-      final pickedTime = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.fromDateTime(DateTime.now()),
-      );
-      if (pickedTime != null) {
-        final now = DateTime.now();
-        rightSideStartTime = DateTime(
-          now.year,
-          now.month,
-          now.day,
-          pickedTime.hour,
-          pickedTime.minute,
-          0,
-        );
-
-        if (rightSideStartTime != null) {
-          context.read<rightBreastfeed.BreastfeedRightSideTimerBloc>().add(
-            rightBreastfeed.SetStartTimeTimer(
-              startTime: rightSideStartTime,
-              activityType: 'rightPumpTimer',
-            ),
-          );
-        }
-      }
-    }
-  }
-
-  void _onPressedEndTimeShowPicker(BuildContext context, String side) async {
-    if (side == 'left') {
-      final pickedTime = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.fromDateTime(DateTime.now()),
-      );
-
-      if (pickedTime != null) {
-        final now = DateTime.now();
-        leftSideEndTime = DateTime(
-          now.year,
-          now.month,
-          now.day,
-          pickedTime.hour,
-          pickedTime.minute,
-          0,
-        );
-      }
-      if (leftSideEndTime != null) {
-        context.read<leftBreastfeed.BreasfeedLeftSideTimerBloc>().add(
-          leftBreastfeed.SetEndTimeTimer(
-            endTime: leftSideEndTime!,
-            activityType: 'leftPumpTimer',
-          ),
-        );
-      }
-    } else if (side == 'right') {
-      final pickedTime = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.fromDateTime(DateTime.now()),
-      );
-
-      if (pickedTime != null) {
-        final now = DateTime.now();
-        rightSideEndTime = DateTime(
-          now.year,
-          now.month,
-          now.day,
-          pickedTime.hour,
-          pickedTime.minute,
-          0,
-        );
-      }
-      if (rightSideEndTime != null) {
-        context.read<rightBreastfeed.BreastfeedRightSideTimerBloc>().add(
-          rightBreastfeed.SetEndTimeTimer(
-            endTime: rightSideEndTime!,
-            activityType: 'rightPumpTimer',
-          ),
-        );
-      }
-    }
-  }
-
   void _onPressedShowDurationSet(BuildContext context, String side) async {
+    final currentDuration = side == 'left' ? leftSideTotalTime : rightSideTotalTime;
     final setDuration = await showDurationPicker(
       context: context,
-      initialTime: Duration(hours: 0, minutes: 0),
+      initialTime: currentDuration ?? Duration(hours: 0, minutes: 0),
       baseUnit: BaseUnit.minute, // minute / hour / second
       decoration: BoxDecoration(
         color: Colors.white,
@@ -614,20 +1025,179 @@ class _CustomFeedTrackerBottomSheetState
       ),
     );
     if (setDuration != null) {
+      DateTime? newStart;
+      DateTime? newEnd;
+      
       if (side == 'left') {
+        final oldStart = leftSideStartTime;
+        final oldEnd = leftSideEndTime;
+        
+        if (oldEnd != null) {
+          // If end time exists, calculate start time
+          newEnd = oldEnd;
+          newStart = oldEnd.subtract(setDuration);
+          
+          // Future date check
+          final now = DateTime.now();
+          if (newStart.isAfter(now)) {
+            _showError(context.tr("date_in_future") ?? 
+                "Calculated start time cannot be in the future");
+            return;
+          }
+          
+          // Too old date check
+          final oneYearAgo = now.subtract(const Duration(days: 365));
+          if (newStart.isBefore(oneYearAgo)) {
+            _showError(context.tr("date_too_old") ?? 
+                "Calculated start time cannot be more than 1 year ago");
+            return;
+          }
+        } else if (oldStart != null) {
+          // If start time exists, calculate end time
+          newStart = oldStart;
+          newEnd = oldStart.add(setDuration);
+          
+          // Future date check
+          final now = DateTime.now();
+          if (newEnd.isAfter(now)) {
+            _showError(context.tr("date_in_future") ?? 
+                "Calculated end time cannot be in the future");
+            return;
+          }
+        } else {
+          // If neither exists, set end time to current time and calculate start time
+          final now = DateTime.now();
+          newEnd = now;
+          newStart = now.subtract(setDuration);
+          
+          // Too old date check
+          final oneYearAgo = now.subtract(const Duration(days: 365));
+          if (newStart.isBefore(oneYearAgo)) {
+            _showError(context.tr("date_too_old") ?? 
+                "Calculated start time cannot be more than 1 year ago");
+            return;
+          }
+        }
+        
+        setState(() {
+          leftSideTotalTime = setDuration;
+          leftSideStartTime = newStart;
+          leftSideEndTime = newEnd;
+        });
+        
+        // Notify bloc - first duration, then times
         context.read<leftBreastfeed.BreasfeedLeftSideTimerBloc>().add(
           leftBreastfeed.SetDurationTimer(
             duration: setDuration,
             activityType: 'leftPumpTimer',
           ),
         );
+        
+        // If start time changed, notify bloc
+        if (newStart != null && newStart != oldStart) {
+          context.read<leftBreastfeed.BreasfeedLeftSideTimerBloc>().add(
+            leftBreastfeed.SetStartTimeTimer(
+              startTime: newStart,
+              activityType: 'leftPumpTimer',
+            ),
+          );
+        }
+        
+        // If end time changed, notify bloc
+        if (newEnd != null && newEnd != oldEnd) {
+          context.read<leftBreastfeed.BreasfeedLeftSideTimerBloc>().add(
+            leftBreastfeed.SetEndTimeTimer(
+              activityType: 'leftPumpTimer',
+              endTime: newEnd,
+              startTime: newStart,
+            ),
+          );
+        }
       } else if (side == 'right') {
+        final oldStart = rightSideStartTime;
+        final oldEnd = rightSideEndTime;
+        
+        if (oldEnd != null) {
+          // If end time exists, calculate start time
+          newEnd = oldEnd;
+          newStart = oldEnd.subtract(setDuration);
+          
+          // Future date check
+          final now = DateTime.now();
+          if (newStart.isAfter(now)) {
+            _showError(context.tr("date_in_future") ?? 
+                "Calculated start time cannot be in the future");
+            return;
+          }
+          
+          // Too old date check
+          final oneYearAgo = now.subtract(const Duration(days: 365));
+          if (newStart.isBefore(oneYearAgo)) {
+            _showError(context.tr("date_too_old") ?? 
+                "Calculated start time cannot be more than 1 year ago");
+            return;
+          }
+        } else if (oldStart != null) {
+          // If start time exists, calculate end time
+          newStart = oldStart;
+          newEnd = oldStart.add(setDuration);
+          
+          // Future date check
+          final now = DateTime.now();
+          if (newEnd.isAfter(now)) {
+            _showError(context.tr("date_in_future") ?? 
+                "Calculated end time cannot be in the future");
+            return;
+          }
+        } else {
+          // If neither exists, set end time to current time and calculate start time
+          final now = DateTime.now();
+          newEnd = now;
+          newStart = now.subtract(setDuration);
+          
+          // Too old date check
+          final oneYearAgo = now.subtract(const Duration(days: 365));
+          if (newStart.isBefore(oneYearAgo)) {
+            _showError(context.tr("date_too_old") ?? 
+                "Calculated start time cannot be more than 1 year ago");
+            return;
+          }
+        }
+        
+        setState(() {
+          rightSideTotalTime = setDuration;
+          rightSideStartTime = newStart;
+          rightSideEndTime = newEnd;
+        });
+        
+        // Notify bloc - first duration, then times
         context.read<rightBreastfeed.BreastfeedRightSideTimerBloc>().add(
           rightBreastfeed.SetDurationTimer(
             duration: setDuration,
             activityType: 'rightPumpTimer',
           ),
         );
+        
+        // If start time changed, notify bloc
+        if (newStart != null && newStart != oldStart) {
+          context.read<rightBreastfeed.BreastfeedRightSideTimerBloc>().add(
+            rightBreastfeed.SetStartTimeTimer(
+              startTime: newStart,
+              activityType: 'rightPumpTimer',
+            ),
+          );
+        }
+        
+        // If end time changed, notify bloc
+        if (newEnd != null && newEnd != oldEnd) {
+          context.read<rightBreastfeed.BreastfeedRightSideTimerBloc>().add(
+            rightBreastfeed.SetEndTimeTimer(
+              activityType: 'rightPumpTimer',
+              endTime: newEnd,
+              startTime: newStart,
+            ),
+          );
+        }
       }
     }
   }
@@ -726,41 +1296,43 @@ class _CustomFeedTrackerBottomSheetState
                       leftSideStartTime = null;
                       leftSideTotalTime = null;
                     }
+                    final isLeftTimerRunning = state is leftBreastfeed.TimerRunning && 
+                                                 state.activityType == 'leftPumpTimer';
+                    
                     return Expanded(
                       child: Column(
                         children: [
                           SizedBox(height: 16.h),
                           buildTimeInfo(
                             context.tr("start_time"),
-                            leftSideStartTime != null
-                                ? DateFormat(
-                                  'HH:mm:ss',
-                                ).format(leftSideStartTime!)
-                                : context.tr("add"),
-                            () {
-                              _onPressedShowTimePicker(context, 'left');
-                            },
+                            leftSideStartTime,
+                            true, // isStartTime
+                            'left',
+                            true, // enabled
                           ),
                           buildTimeInfo(
                             context.tr("end_time"),
-
-                            leftSideEndTime != null
-                                ? DateFormat(
-                                  'HH:mm:ss',
-                                ).format(leftSideEndTime!)
-                                : context.tr("add"),
-                            () {
-                              _onPressedEndTimeShowPicker(context, 'left');
-                            },
+                            leftSideEndTime,
+                            false, // isStartTime
+                            'left',
+                            !isLeftTimerRunning, // disabled while timer is running
                           ),
-                          buildTimeInfo(
-                            context.tr("total_time"),
-                            leftSideTotalTime != null
-                                ? formatDuration(leftSideTotalTime!)
-                                : '00:00',
-                            () {
-                              _onPressedShowDurationSet(context, 'left');
-                            },
+                          Divider(color: Colors.grey.shade300),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(context.tr("total_time")),
+                              TextButton(
+                                onPressed: () {
+                                  _onPressedShowDurationSet(context, 'left');
+                                },
+                                child: Text(
+                                  leftSideTotalTime != null
+                                      ? formatDuration(leftSideTotalTime!)
+                                      : '00:00',
+                                ),
+                              ),
+                            ],
                           ),
                           Divider(color: Colors.grey.shade300),
 
@@ -805,34 +1377,43 @@ class _CustomFeedTrackerBottomSheetState
                       rightSideUnit = null;
                     }
 
+                    final isRightTimerRunning = state is rightBreastfeed.TimerRunning && 
+                                                  state.activityType == 'rightPumpTimer';
+                    
                     return Expanded(
                       child: Column(
                         children: [
                           SizedBox(height: 16.h),
                           buildTimeInfo(
                             context.tr("start_time"),
-                            rightSideStartTime != null
-                                ? DateFormat(
-                                  'HH:mm:ss',
-                                ).format(rightSideStartTime!)
-                                : context.tr("add"),
-                            () => _onPressedShowTimePicker(context, 'right'),
+                            rightSideStartTime,
+                            true, // isStartTime
+                            'right',
+                            true, // enabled
                           ),
                           buildTimeInfo(
                             context.tr("end_time"),
-                            rightSideEndTime != null
-                                ? DateFormat(
-                                  'HH:mm:ss',
-                                ).format(rightSideEndTime!)
-                                : context.tr("add"),
-                            () => _onPressedEndTimeShowPicker(context, 'right'),
+                            rightSideEndTime,
+                            false, // isStartTime
+                            'right',
+                            !isRightTimerRunning, // disabled while timer is running
                           ),
-                          buildTimeInfo(
-                            context.tr("total_time"),
-                            rightSideTotalTime != null
-                                ? formatDuration(rightSideTotalTime!)
-                                : '00:00',
-                            () => _onPressedShowDurationSet(context, 'right'),
+                          Divider(color: Colors.grey.shade300),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(context.tr("total_time")),
+                              TextButton(
+                                onPressed: () {
+                                  _onPressedShowDurationSet(context, 'right');
+                                },
+                                child: Text(
+                                  rightSideTotalTime != null
+                                      ? formatDuration(rightSideTotalTime!)
+                                      : '00:00',
+                                ),
+                              ),
+                            ],
                           ),
                           Divider(color: Colors.grey.shade300),
                           UnitInputFieldWithToggle(

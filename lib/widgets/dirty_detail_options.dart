@@ -7,7 +7,15 @@ class DirtyDetailOptions extends StatefulWidget {
     required List<String> selectedColors,
   })
   onChanged;
-  const DirtyDetailOptions({super.key, required this.onChanged});
+  final List<String>? initialTextures;
+  final List<String>? initialColors;
+  
+  const DirtyDetailOptions({
+    super.key, 
+    required this.onChanged,
+    this.initialTextures,
+    this.initialColors,
+  });
 
   @override
   State<DirtyDetailOptions> createState() => _DirtyDetailOptionsState();
@@ -23,8 +31,15 @@ class _DirtyDetailOptionsState extends State<DirtyDetailOptions> {
   ];
   final List<String> colors = ['Black', 'Green', 'Yellow', 'Brown', 'Red'];
 
-  List<String> selectedTextures = [];
-  List<String> selectedColors = [];
+  late List<String> selectedTextures;
+  late List<String> selectedColors;
+  
+  @override
+  void initState() {
+    super.initState();
+    selectedTextures = List<String>.from(widget.initialTextures ?? []);
+    selectedColors = List<String>.from(widget.initialColors ?? []);
+  }
   @override
   Widget build(BuildContext context) {
     return Column(
