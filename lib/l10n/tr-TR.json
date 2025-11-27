@@ -647,6 +647,7 @@
   "your_baby_is_now_sleeping": "Bebeğiniz\nşimdi uyuyor.",
   "end_time_before_start": "Bitiş zamanı başlangıçtan önce olamaz.",
   "end_time_in_future": "Bitiş zamanı gelecekte olamaz.",
+  "sleep_duration_exceeds_one_day": "Uyku süresi 24 saati geçemez.",
   "tap_to_start_only": "Başlamak için dokun",
   "mixed": "Karışık",
   "wet": "Islak",
