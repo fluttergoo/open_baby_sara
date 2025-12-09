@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_baby_sara/app/routes/navigation_wrapper.dart';
 import 'package:open_baby_sara/blocs/activity/activity_bloc.dart';
 import 'package:open_baby_sara/core/app_colors.dart';
+import 'package:open_baby_sara/core/utils/shared_prefs_helper.dart';
 import 'package:open_baby_sara/data/models/activity_model.dart';
 import 'package:open_baby_sara/data/repositories/locator.dart';
 import 'package:open_baby_sara/data/services/firebase/analytics_service.dart';
@@ -47,9 +48,18 @@ class _CustomGrowthDevelopmentState
 
   @override
   void initState() {
+    super.initState();
+    
     if (widget.isEdit && widget.existingActivity != null) {
       final data = widget.existingActivity!.data;
-      selectedDatetime = widget.existingActivity!.activityDateTime;
+      
+      // Backward compatibility: use measurementTimeDate if available, otherwise use activityDateTime
+      if (data['measurementTimeDate'] != null) {
+        selectedDatetime = DateTime.parse(data['measurementTimeDate']);
+      } else {
+        selectedDatetime = widget.existingActivity!.activityDateTime;
+      }
+      
       notesController.text = data['notes'] ?? '';
       weight = (data['weight'] as num?)?.toDouble();
       weightUnit = data['weightUnit'];
@@ -58,11 +68,38 @@ class _CustomGrowthDevelopmentState
       headSize = (data['headSize'] as num?)?.toDouble();
       headSizeUnit = data['headSizeUnit'];
     } else {
+      // New record mode - load temporarily saved notes
       selectedDatetime = DateTime.now();
+      Future.microtask(() async {
+        final savedNotes = await SharedPrefsHelper.getGrowthTrackerNotes(widget.babyID);
+        if (savedNotes != null && savedNotes.isNotEmpty) {
+          setState(() {
+            notesController.text = savedNotes;
+          });
+        }
+      });
     }
+    
+    // Listen to notes changes and save
+    notesController.addListener(_onNotesChanged);
+    
     getIt<AnalyticsService>().logScreenView('GrowthDevelopmentActivityTracker');
+  }
 
-    super.initState();
+  void _onNotesChanged() {
+    if (!widget.isEdit) {
+      // Only save temporarily in new record mode
+      SharedPrefsHelper.saveGrowthTrackerNotes(widget.babyID, notesController.text);
+    }
+  }
+
+  @override
+  void dispose() {
+    // Remove notes listener
+    notesController.removeListener(_onNotesChanged);
+    // Dispose controller
+    notesController.dispose();
+    super.dispose();
   }
 
   @override
@@ -141,9 +178,31 @@ class _CustomGrowthDevelopmentState
                           children: [
                             Text(context.tr('time')),
                             CustomDateTimePicker(
+                              key: ValueKey('growth_time_${selectedDatetime?.millisecondsSinceEpoch}'),
                               initialText: 'initialText',
+                              initialDateTime: selectedDatetime,
+                              maxDate: DateTime.now(), // Prevent future dates
+                              minDate: DateTime.now().subtract(const Duration(days: 365)), // 1 year ago limit
                               onDateTimeSelected: (selected) {
-                                selectedDatetime = selected;
+                                // Future date check
+                                final now = DateTime.now();
+                                if (selected.isAfter(now)) {
+                                  _showError(context.tr("date_in_future") ?? 
+                                      "Date cannot be in the future");
+                                  return;
+                                }
+                                
+                                // Too old date check (1 year ago)
+                                final oneYearAgo = now.subtract(const Duration(days: 365));
+                                if (selected.isBefore(oneYearAgo)) {
+                                  _showError(context.tr("date_too_old") ?? 
+                                      "Date cannot be more than 1 year ago");
+                                  return;
+                                }
+                                
+                                setState(() {
+                                  selectedDatetime = selected;
+                                });
                               },
                             ),
                           ],
@@ -233,16 +292,33 @@ class _CustomGrowthDevelopmentState
     );
   }
 
-  void onPressedSave() {
+  void _showError(String message) {
+    showCustomFlushbar(context, context.tr("warning"), message, Icons.warning);
+  }
+
+  void onPressedSave() async {
     final activityName = ActivityType.growth.name;
 
+    // Scenario 3.1: At least one measurement required
     if (weight == null && height == null && headSize == null) {
-      showCustomFlushbar(
-        context,
-        'Warning',
-        'Please enter growth information',
-        Icons.warning_outlined,
-      );
+      _showError(context.tr("please_enter_growth_information") ?? 
+          "Please enter growth information");
+      return;
+    }
+
+    // Scenario 3.2: Future date check
+    final now = DateTime.now();
+    if (selectedDatetime == null || selectedDatetime!.isAfter(now)) {
+      _showError(context.tr("date_in_future") ?? 
+          "Date cannot be in the future");
+      return;
+    }
+
+    // Scenario 3.3: Too old date check (1 year ago)
+    final oneYearAgo = now.subtract(const Duration(days: 365));
+    if (selectedDatetime!.isBefore(oneYearAgo)) {
+      _showError(context.tr("date_too_old") ?? 
+          "Date cannot be more than 1 year ago");
       return;
     }
 
@@ -257,6 +333,9 @@ class _CustomGrowthDevelopmentState
       updatedAt: DateTime.now(),
       activityDateTime: selectedDatetime!,
       data: {
+        // New format: Full DateTime objects
+        'measurementTimeDate': selectedDatetime!.toIso8601String(),
+        // Backward compatibility: Hour/minute info
         'startTimeHour': selectedDatetime?.hour,
         'startTimeMin': selectedDatetime?.minute,
         'notes': notesController.text,
@@ -283,6 +362,11 @@ class _CustomGrowthDevelopmentState
         );
       }
 
+      // Clear all temporary data when save is successful
+      if (!widget.isEdit) {
+        await SharedPrefsHelper.clearGrowthTrackerNotes(widget.babyID);
+      }
+
       // BlocListener will handle closing the bottom sheet after state is emitted
     } catch (e) {
       showCustomFlushbar(
@@ -294,7 +378,7 @@ class _CustomGrowthDevelopmentState
     }
   }
 
-  _onPressedDelete(BuildContext context) {
+  _onPressedDelete(BuildContext context) async {
     setState(() {
       weight = null;
       weightUnit = null;
@@ -305,6 +389,11 @@ class _CustomGrowthDevelopmentState
       notesController.clear();
       selectedDatetime = DateTime.now();
     });
+
+    // Clear temporary notes
+    if (!widget.isEdit) {
+      await SharedPrefsHelper.clearGrowthTrackerNotes(widget.babyID);
+    }
 
     showCustomFlushbar(
       context,

@@ -118,16 +118,29 @@ class PumpLeftSideTimerBloc
       );
     });
     on<SetEndTimeTimer>((event, emit) {
+      // Stop timer if running
+      _timer?.cancel();
+      
       _endTime = event.endTime;
+      
+      // If start time exists in event, use it (user manually selected it)
+      // Otherwise keep current start time
+      if (event.startTime != null) {
+        _startTime = event.startTime;
+      }
 
       if (_startTime != null && _endTime != null) {
-        _duration = _calculateDuration(_startTime!, _endTime!);
+        // Use full DateTime difference calculation (handles midnight crossing)
+        _duration = _endTime!.difference(_startTime!);
+      } else {
+        _duration = Duration.zero;
       }
 
       emit(
         TimerStopped(
           duration: _duration,
           endTime: _endTime,
+          startTime: _startTime,
           activityType: event.activityType,
         ),
       );
