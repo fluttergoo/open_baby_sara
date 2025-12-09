@@ -5,6 +5,7 @@ import 'package:open_baby_sara/app/routes/navigation_wrapper.dart';
 import 'package:open_baby_sara/blocs/activity/activity_bloc.dart';
 import 'package:open_baby_sara/blocs/medication/medication_bloc.dart';
 import 'package:open_baby_sara/core/app_colors.dart';
+import 'package:open_baby_sara/core/utils/shared_prefs_helper.dart';
 import 'package:open_baby_sara/data/models/activity_model.dart';
 import 'package:open_baby_sara/data/models/medication_model.dart';
 import 'package:open_baby_sara/data/repositories/locator.dart';
@@ -45,8 +46,9 @@ class _CustomMedicalTrackerBottomSheetState
 
   @override
   void initState() {
-    context.read<MedicationBloc>().add(FetchMedications());
     super.initState();
+    context.read<MedicationBloc>().add(FetchMedications());
+    
     if (widget.isEdit && widget.existingActivity != null) {
       final data = widget.existingActivity!.data;
       selectedDatetime = widget.existingActivity!.activityDateTime;
@@ -55,16 +57,62 @@ class _CustomMedicalTrackerBottomSheetState
         selectedMedications =
             (data['medications'] as List)
                 .map(
-                  (e) => MedicationModel(
-                    name: e['name'] ?? '',
-                    amount: e['amount'] ?? '',
-                    unit: e['unit'] ?? 'none',
-                  ),
+                  (e) {
+                    final med = MedicationModel(
+                      name: e['name'] ?? '',
+                      amount: e['amount'] ?? '',
+                      unit: e['unit'] ?? 'mg',
+                    );
+                    // Initialize controller for existing medications
+                    med.controller = TextEditingController(text: med.amount);
+                    return med;
+                  },
                 )
                 .toList();
       }
+    } else {
+      // New record mode - load temporarily saved notes
+      Future.microtask(() async {
+        final savedNotes = await SharedPrefsHelper.getMedicalTrackerNotes(widget.babyID);
+        if (savedNotes != null && savedNotes.isNotEmpty) {
+          notesController.text = savedNotes;
+        }
+      });
     }
+    
+    // Listen to notes changes and save temporarily
+    notesController.addListener(_onNotesChanged);
+    
     getIt<AnalyticsService>().logScreenView('MedicalActivityTracker');
+  }
+
+  void _onNotesChanged() {
+    if (!widget.isEdit) {
+      // Only save temporarily in new record mode
+      SharedPrefsHelper.saveMedicalTrackerNotes(widget.babyID, notesController.text);
+    }
+  }
+
+  @override
+  void dispose() {
+    // Remove notes listener
+    notesController.removeListener(_onNotesChanged);
+    // Dispose controllers
+    notesController.dispose();
+    // Dispose medication controllers
+    for (var med in selectedMedications) {
+      med.controller?.dispose();
+    }
+    super.dispose();
+  }
+
+  void _showError(String message) {
+    showCustomFlushbar(
+      context,
+      context.tr('warning') ?? 'Warning',
+      message,
+      Icons.warning_outlined,
+    );
   }
 
   @override
@@ -73,6 +121,11 @@ class _CustomMedicalTrackerBottomSheetState
       listenWhen: (previous, current) => 
           current is ActivityAdded || current is ActivityUpdated,
       listener: (context, state) {
+        // Clear notes cache on successful save
+        if (!widget.isEdit) {
+          SharedPrefsHelper.clearMedicalTrackerNotes(widget.babyID);
+        }
+        
         // Get root navigator context for showing flushbar
         final rootNavigator = Navigator.of(context, rootNavigator: true);
         final rootContext = rootNavigator.context;
@@ -143,9 +196,31 @@ class _CustomMedicalTrackerBottomSheetState
                           children: [
                             Text(context.tr('time')),
                             CustomDateTimePicker(
+                              key: ValueKey('medical_time_${selectedDatetime?.millisecondsSinceEpoch}'),
                               initialText: 'initialText',
+                              initialDateTime: selectedDatetime,
+                              maxDate: DateTime.now(), // Prevent future dates
+                              minDate: DateTime.now().subtract(const Duration(days: 365)), // 1 year ago limit
                               onDateTimeSelected: (selected) {
-                                selectedDatetime = selected;
+                                // Future date check
+                                final now = DateTime.now();
+                                if (selected.isAfter(now)) {
+                                  _showError(context.tr("date_in_future") ?? 
+                                      "Date cannot be in the future");
+                                  return;
+                                }
+                                
+                                // Too old date check (1 year ago)
+                                final oneYearAgo = now.subtract(const Duration(days: 365));
+                                if (selected.isBefore(oneYearAgo)) {
+                                  _showError(context.tr("date_too_old") ?? 
+                                      "Date cannot be more than 1 year ago");
+                                  return;
+                                }
+                                
+                                setState(() {
+                                  selectedDatetime = selected;
+                                });
                               },
                             ),
                           ],
@@ -160,8 +235,17 @@ class _CustomMedicalTrackerBottomSheetState
                                 showMedicationDialog(
                                   buildContext: context,
                                   onAdd: (selectedList) {
-                                    selectedMedications = selectedList!;
-                                    setState(() {});
+                                    if (selectedList != null && selectedList.isNotEmpty) {
+                                      setState(() {
+                                        // Initialize controllers for new medications
+                                        for (var med in selectedList) {
+                                          if (med.controller == null) {
+                                            med.controller = TextEditingController();
+                                          }
+                                        }
+                                        selectedMedications = selectedList;
+                                      });
+                                    }
                                   },
                                 );
                               },
@@ -177,6 +261,11 @@ class _CustomMedicalTrackerBottomSheetState
                           Divider(color: Colors.grey.shade300),
 
                           ...selectedMedications.map((med) {
+                            // Ensure controller exists
+                            if (med.controller == null) {
+                              med.controller = TextEditingController(text: med.amount);
+                            }
+                            
                             return Padding(
                               padding: EdgeInsets.symmetric(vertical: 4.h),
                               child: Column(
@@ -191,6 +280,7 @@ class _CustomMedicalTrackerBottomSheetState
                                         ),
                                         onPressed: () {
                                           setState(() {
+                                            med.controller?.dispose();
                                             selectedMedications.remove(med);
                                           });
                                         },
@@ -205,8 +295,10 @@ class _CustomMedicalTrackerBottomSheetState
                                         child: CustomTextFormField(
                                           hintText: context.tr('amount'),
                                           controller: med.controller,
-                                          keyboardType: TextInputType.number,
-                                          onChanged: (val) => med.amount = val,
+                                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                          onChanged: (val) {
+                                            med.amount = val;
+                                          },
                                         ),
                                       ),
 
@@ -214,7 +306,7 @@ class _CustomMedicalTrackerBottomSheetState
 
                                       // Unit dropdown
                                       DropdownButton<String>(
-                                        value: med.unit,
+                                        value: med.unit.isEmpty ? 'mg' : med.unit,
                                         items:
                                             [
                                                   'drops',
@@ -239,7 +331,7 @@ class _CustomMedicalTrackerBottomSheetState
                                                 .toList(),
                                         onChanged: (val) {
                                           setState(() {
-                                            med.unit = val!;
+                                            med.unit = val ?? 'mg';
                                           });
                                         },
                                       ),
@@ -307,19 +399,44 @@ class _CustomMedicalTrackerBottomSheetState
   }
 
   void onPressedSave() {
-    final bool hasValidMedications = selectedMedications.any(
-      (med) =>
-          (med.amount != null && med.amount!.isNotEmpty) &&
-          (med.unit != null && med.unit!.isNotEmpty),
-    );
+    // Validation: Check if at least one medication is selected
+    if (selectedMedications.isEmpty) {
+      _showError(context.tr("please_enter_medication") ?? 
+          "Please enter a medication");
+      return;
+    }
 
-    if (!hasValidMedications) {
-      showCustomFlushbar(
-        context,
-        'Warning',
-        'Please enter a medication.',
-        Icons.warning_outlined,
-      );
+    // Validation: Check if all medications have amount and unit
+    final invalidMedications = selectedMedications.where(
+      (med) => 
+          (med.amount.isEmpty) ||
+          (med.unit.isEmpty || med.unit == 'none'),
+    ).toList();
+
+    if (invalidMedications.isNotEmpty) {
+      _showError(context.tr("please_enter_amount_and_unit") ?? 
+          "Please enter amount and unit for all medications");
+      return;
+    }
+
+    // Validation: Check date
+    if (selectedDatetime == null) {
+      _showError(context.tr("please_select_time") ?? 
+          "Please select a time");
+      return;
+    }
+
+    final now = DateTime.now();
+    if (selectedDatetime!.isAfter(now)) {
+      _showError(context.tr("date_in_future") ?? 
+          "Date cannot be in the future");
+      return;
+    }
+
+    final oneYearAgo = now.subtract(const Duration(days: 365));
+    if (selectedDatetime!.isBefore(oneYearAgo)) {
+      _showError(context.tr("date_too_old") ?? 
+          "Date cannot be more than 1 year ago");
       return;
     }
 
@@ -336,15 +453,15 @@ class _CustomMedicalTrackerBottomSheetState
       updatedAt: DateTime.now(),
       activityDateTime: selectedDatetime!,
       data: {
-        'startTimeHour': selectedDatetime?.hour,
-        'startTimeMin': selectedDatetime?.minute,
-        'notes': notesController.text,
+        'startTimeHour': selectedDatetime!.hour,
+        'startTimeMin': selectedDatetime!.minute,
+        'notes': notesController.text.trim(),
         'medications':
             selectedMedications
                 .where(
                   (med) =>
-                      (med.amount != null && med.amount!.isNotEmpty) &&
-                      (med.unit != null && med.unit!.isNotEmpty),
+                      med.amount.isNotEmpty &&
+                      med.unit.isNotEmpty && med.unit != 'none',
                 )
                 .map(
                   (med) => {
@@ -373,12 +490,21 @@ class _CustomMedicalTrackerBottomSheetState
     // BlocListener will handle closing the bottom sheet after state is emitted
   }
 
-  _onPressedDelete(BuildContext context) {
+  void _onPressedDelete(BuildContext context) {
     setState(() {
       selectedDatetime = DateTime.now();
       notesController.clear();
+      // Dispose medication controllers
+      for (var med in selectedMedications) {
+        med.controller?.dispose();
+      }
       selectedMedications.clear();
     });
+
+    // Clear notes cache
+    if (!widget.isEdit) {
+      SharedPrefsHelper.clearMedicalTrackerNotes(widget.babyID);
+    }
 
     showCustomFlushbar(
       context,

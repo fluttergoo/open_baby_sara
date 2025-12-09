@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_baby_sara/app/routes/navigation_wrapper.dart';
 import 'package:open_baby_sara/blocs/activity/activity_bloc.dart';
 import 'package:open_baby_sara/core/app_colors.dart';
+import 'package:open_baby_sara/core/utils/shared_prefs_helper.dart';
 import 'package:open_baby_sara/data/models/activity_model.dart';
 import 'package:open_baby_sara/data/repositories/locator.dart';
 import 'package:open_baby_sara/data/services/firebase/analytics_service.dart';
@@ -49,13 +50,28 @@ class _CustomTeethingTrackerBottomSheetState
 
   @override
   void initState() {
-    if (widget.existingActivity != null) {
+    super.initState();
+
+    if (widget.isEdit && widget.existingActivity != null) {
       selectedDatetime = widget.existingActivity!.activityDateTime;
       notesController.text = widget.existingActivity!.data['notes'] ?? '';
       isErupted = widget.existingActivity!.data['isErupted'] ?? false;
       isShed = widget.existingActivity!.data['isShed'] ?? false;
       teethingIsoNumber = widget.existingActivity!.data['teethingIsoNumber'];
+    } else {
+      // New record mode - load temporarily saved notes
+      Future.microtask(() async {
+        final savedNotes = await SharedPrefsHelper.getTeethingTrackerNotes(widget.babyID);
+        if (savedNotes != null && savedNotes.isNotEmpty && mounted) {
+          setState(() {
+            notesController.text = savedNotes;
+          });
+        }
+      });
     }
+
+    // Listen to notes changes and save
+    notesController.addListener(_onNotesChanged);
 
     context.read<ActivityBloc>().add(
       FetchToothIsoNumber(
@@ -63,8 +79,33 @@ class _CustomTeethingTrackerBottomSheetState
         activityType: ActivityType.teething.name,
       ),
     );
-    super.initState();
     getIt<AnalyticsService>().logScreenView('TeethingActivityTracker');
+  }
+
+  void _onNotesChanged() {
+    if (!widget.isEdit) {
+      // Only save temporarily in new record mode
+      SharedPrefsHelper.saveTeethingTrackerNotes(widget.babyID, notesController.text);
+    }
+  }
+
+  @override
+  void dispose() {
+    // Remove notes listener
+    notesController.removeListener(_onNotesChanged);
+    // Dispose controller
+    notesController.dispose();
+    super.dispose();
+  }
+
+  void _showError(String message) {
+    showCustomFlushbar(
+      context,
+      context.tr('error') ?? 'Error',
+      message,
+      Icons.error_outline,
+      color: Colors.red,
+    );
   }
 
   @override
@@ -190,66 +231,84 @@ class _CustomTeethingTrackerBottomSheetState
     );
   }
 
-  void onPressedSave() {
+  void onPressedSave() async {
     final activityName = ActivityType.teething.name;
 
-    if (teethingIsoNumber == null || isErupted == false && isShed == false) {
-      showCustomFlushbar(
-        context,
-        context.tr('warning'),
-        context.tr('please_enter_teething_information'),
-        Icons.warning_outlined,
-      );
-    } else if (initilizeTeeth!.contains(teethingIsoNumber)) {
-      showCustomFlushbar(
-        context,
-        context.tr('already_added'),
-        context.tr('already_added_body'),
-        Icons.warning_outlined,
-      );
-    } else {
-      final activityModel = ActivityModel(
-        activityID:
-            widget.isEdit
-                ? widget.existingActivity!.activityID
-                : const Uuid().v4(),
-        activityType: activityName,
-        createdAt:
-            widget.isEdit ? widget.existingActivity!.createdAt : DateTime.now(),
-        updatedAt: DateTime.now(),
-        activityDateTime: selectedDatetime!,
-        data: {
-          'startTimeHour': selectedDatetime?.hour,
-          'startTimeMin': selectedDatetime?.minute,
-          'notes': notesController.text,
-          'teethingIsoNumber': teethingIsoNumber,
-          isErupted == true ? 'isErupted' : 'isShed': true,
-        },
-        isSynced: false,
-        createdBy: widget.firstName,
-        babyID: widget.babyID,
-      );
+    // Scenario 3.1: Diş veya Erupted/Shed seçimi kontrolü
+    if (teethingIsoNumber == null || (isErupted == false && isShed == false)) {
+      _showError(context.tr('please_enter_teething_information') ?? 
+          "Please enter teething information");
+      return;
+    }
 
-      try {
-        if (widget.isEdit) {
-          context.read<ActivityBloc>().add(
-            UpdateActivity(activityModel: activityModel),
-          );
-        } else {
-          context.read<ActivityBloc>().add(
-            AddActivity(activityModel: activityModel),
-          );
-        }
+    // Scenario 3.2: Gelecekteki tarih kontrolü
+    if (selectedDatetime == null) {
+      _showError(context.tr("please_select_time") ?? 
+          "Please select time");
+      return;
+    }
 
-        // BlocListener will handle closing the bottom sheet after state is emitted
-      } catch (e) {
-        showCustomFlushbar(
-          context,
-          context.tr('warning'),
-          'Error ${e.toString()}',
-          Icons.warning_outlined,
+    final now = DateTime.now();
+    if (selectedDatetime!.isAfter(now)) {
+      _showError(context.tr("date_in_future") ?? 
+          "Date cannot be in the future");
+      return;
+    }
+
+    // Scenario 3.3: Çok eski tarih kontrolü (1 yıl öncesi)
+    final oneYearAgo = now.subtract(const Duration(days: 365));
+    if (selectedDatetime!.isBefore(oneYearAgo)) {
+      _showError(context.tr("date_too_old") ?? 
+          "Date cannot be more than 1 year ago");
+      return;
+    }
+
+    // Scenario 1.4: Aynı diş tekrar kaydedilme engelleme
+    if (initilizeTeeth != null && initilizeTeeth!.contains(teethingIsoNumber)) {
+      _showError(context.tr('already_added_body') ?? 
+          "This tooth has already been added");
+      return;
+    }
+
+    final activityModel = ActivityModel(
+      activityID:
+          widget.isEdit
+              ? widget.existingActivity!.activityID
+              : const Uuid().v4(),
+      activityType: activityName,
+      createdAt:
+          widget.isEdit ? widget.existingActivity!.createdAt : DateTime.now(),
+      updatedAt: DateTime.now(),
+      activityDateTime: selectedDatetime!,
+      data: {
+        // Backward compatibility: Hour/minute info
+        'startTimeHour': selectedDatetime?.hour,
+        'startTimeMin': selectedDatetime?.minute,
+        'notes': notesController.text,
+        'teethingIsoNumber': teethingIsoNumber,
+        isErupted == true ? 'isErupted' : 'isShed': true,
+      },
+      isSynced: false,
+      createdBy: widget.firstName,
+      babyID: widget.babyID,
+    );
+
+    try {
+      if (widget.isEdit) {
+        context.read<ActivityBloc>().add(
+          UpdateActivity(activityModel: activityModel),
         );
+      } else {
+        context.read<ActivityBloc>().add(
+          AddActivity(activityModel: activityModel),
+        );
+        // Clear temporarily saved notes after successful save
+        await SharedPrefsHelper.clearTeethingTrackerNotes(widget.babyID);
       }
+
+      // BlocListener will handle closing the bottom sheet after state is emitted
+    } catch (e) {
+      _showError('Error ${e.toString()}');
     }
   }
 
@@ -294,9 +353,44 @@ class _CustomTeethingTrackerBottomSheetState
                             children: [
                               Text(context.tr('time')),
                               CustomDateTimePicker(
+                                key: ValueKey('dialog_time_${selectedDatetime?.millisecondsSinceEpoch}'),
                                 initialText: 'initialText',
+                                initialDateTime: selectedDatetime,
+                                maxDate: DateTime.now(), // Prevent future dates
+                                minDate: DateTime.now().subtract(const Duration(days: 365)), // 1 year ago limit
                                 onDateTimeSelected: (selected) {
-                                  selectedDatetime = selected;
+                                  // Future date check
+                                  final now = DateTime.now();
+                                  if (selected.isAfter(now)) {
+                                    showCustomFlushbar(
+                                      context,
+                                      context.tr('error') ?? 'Error',
+                                      context.tr("date_in_future") ?? 
+                                          "Date cannot be in the future",
+                                      Icons.error_outline,
+                                      color: Colors.red,
+                                    );
+                                    return;
+                                  }
+                                  
+                                  // Too old date check (1 year ago)
+                                  final oneYearAgo = now.subtract(const Duration(days: 365));
+                                  if (selected.isBefore(oneYearAgo)) {
+                                    showCustomFlushbar(
+                                      context,
+                                      context.tr('error') ?? 'Error',
+                                      context.tr("date_too_old") ?? 
+                                          "Date cannot be more than 1 year ago",
+                                      Icons.error_outline,
+                                      color: Colors.red,
+                                    );
+                                    return;
+                                  }
+                                  
+                                  // Update main form's date (Scenario 1.5: Dialog içinde tarih seçildiğinde ana formdaki tarih güncellenmeli)
+                                  setState(() {
+                                    selectedDatetime = selected;
+                                  });
                                 },
                               ),
                             ],
@@ -457,13 +551,29 @@ class _CustomTeethingTrackerBottomSheetState
                             Text(
                               DateFormat(
                                 'MMM dd, yyyy',
-                              ).format(activity.createdAt!),
+                              ).format(activity.activityDateTime),
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                             Text(
-                              '${context.tr('time')}: ${activity.createdAt!.hour.toString().padLeft(2, '0')}:${activity.createdAt!.minute.toString().padLeft(2, '0')}',
+                              '${context.tr('time')}: ${activity.activityDateTime.hour.toString().padLeft(2, '0')}:${activity.activityDateTime.minute.toString().padLeft(2, '0')}',
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
+                            if (activity.data['isErupted'] == true)
+                              Text(
+                                context.tr('erupted'),
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )
+                            else if (activity.data['isShed'] == true)
+                              Text(
+                                context.tr('shed'),
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: Colors.orange,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             Text(
                               '${context.tr("created_by")} ${widget.firstName}',
                               style: Theme.of(context).textTheme.bodyMedium,

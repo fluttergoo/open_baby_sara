@@ -100,4 +100,94 @@ class SharedPrefsHelper {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('baby_firsts_tracker_notes_$babyID');
   }
+
+  static Future<void> saveDoctorVisitNotes(String babyID, String notes) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('doctor_visit_notes_$babyID', notes);
+  }
+
+  static Future<String?> getDoctorVisitNotes(String babyID) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('doctor_visit_notes_$babyID');
+  }
+
+  static Future<void> clearDoctorVisitNotes(String babyID) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('doctor_visit_notes_$babyID');
+  }
+
+  static Future<void> saveDoctorVisitDiagnosis(String babyID, String diagnosis) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('doctor_visit_diagnosis_$babyID', diagnosis);
+  }
+
+  static Future<String?> getDoctorVisitDiagnosis(String babyID) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('doctor_visit_diagnosis_$babyID');
+  }
+
+  static Future<void> clearDoctorVisitDiagnosis(String babyID) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('doctor_visit_diagnosis_$babyID');
+  }
+
+  static Future<void> saveFeverTrackerNotes(String babyID, String notes) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('fever_tracker_notes_$babyID', notes);
+  }
+
+  static Future<String?> getFeverTrackerNotes(String babyID) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('fever_tracker_notes_$babyID');
+  }
+
+  static Future<void> clearFeverTrackerNotes(String babyID) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('fever_tracker_notes_$babyID');
+  }
+
+  static Future<void> saveMedicalTrackerNotes(String babyID, String notes) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('medical_tracker_notes_$babyID', notes);
+  }
+
+  static Future<String?> getMedicalTrackerNotes(String babyID) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('medical_tracker_notes_$babyID');
+  }
+
+  static Future<void> clearMedicalTrackerNotes(String babyID) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('medical_tracker_notes_$babyID');
+  }
+
+  static Future<void> saveTeethingTrackerNotes(String babyID, String notes) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('teething_tracker_notes_$babyID', notes);
+  }
+
+  static Future<String?> getTeethingTrackerNotes(String babyID) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('teething_tracker_notes_$babyID');
+  }
+
+  static Future<void> clearTeethingTrackerNotes(String babyID) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('teething_tracker_notes_$babyID');
+  }
+
+  static Future<void> saveVaccinationTrackerNotes(String babyID, String notes) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('vaccination_tracker_notes_$babyID', notes);
+  }
+
+  static Future<String?> getVaccinationTrackerNotes(String babyID) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('vaccination_tracker_notes_$babyID');
+  }
+
+  static Future<void> clearVaccinationTrackerNotes(String babyID) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('vaccination_tracker_notes_$babyID');
+  }
 }

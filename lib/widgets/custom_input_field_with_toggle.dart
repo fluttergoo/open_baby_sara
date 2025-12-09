@@ -8,6 +8,8 @@ class CustomInputFieldWithToggle extends StatefulWidget {
   final void Function(double value, String unit)? onChanged;
   bool vertical;
   final String title;
+  final double? initialValue;
+  final String? initialUnit;
 
   CustomInputFieldWithToggle({
     super.key,
@@ -15,6 +17,8 @@ class CustomInputFieldWithToggle extends StatefulWidget {
     this.vertical = false,
     required this.onChanged,
     required this.title,
+    this.initialValue,
+    this.initialUnit,
   });
 
   @override
@@ -32,6 +36,52 @@ class _CustomInputFieldWithToggleState
   final TextEditingController _controller = TextEditingController();
 
   List<bool> isSelected = [true, false];
+
+  @override
+  void initState() {
+    super.initState();
+    
+    // Set initial value if provided
+    if (widget.initialValue != null) {
+      _controller.text = widget.initialValue!.toStringAsFixed(1);
+    }
+    
+    // Set initial unit if provided
+    if (widget.initialUnit != null) {
+      final units = handleToggleUnit();
+      final unitIndex = units.indexWhere((unit) => unit.data == widget.initialUnit);
+      if (unitIndex >= 0) {
+        isSelected = List.generate(units.length, (index) => index == unitIndex);
+      }
+    }
+  }
+
+  @override
+  void didUpdateWidget(CustomInputFieldWithToggle oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    
+    // Update value if initialValue changed
+    if (widget.initialValue != null && widget.initialValue != oldWidget.initialValue) {
+      _controller.text = widget.initialValue!.toStringAsFixed(1);
+    }
+    
+    // Update unit if initialUnit changed
+    if (widget.initialUnit != null && widget.initialUnit != oldWidget.initialUnit) {
+      final units = handleToggleUnit();
+      final unitIndex = units.indexWhere((unit) => unit.data == widget.initialUnit);
+      if (unitIndex >= 0) {
+        setState(() {
+          isSelected = List.generate(units.length, (index) => index == unitIndex);
+        });
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

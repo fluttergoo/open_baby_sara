@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_baby_sara/app/routes/navigation_wrapper.dart';
 import 'package:open_baby_sara/blocs/activity/activity_bloc.dart';
 import 'package:open_baby_sara/core/app_colors.dart';
+import 'package:open_baby_sara/core/utils/shared_prefs_helper.dart';
 import 'package:open_baby_sara/data/models/activity_model.dart';
 import 'package:open_baby_sara/data/repositories/locator.dart';
 import 'package:open_baby_sara/data/services/firebase/analytics_service.dart';
@@ -43,17 +44,63 @@ class _CustomFeverTrackerBottomSheetState
 
   @override
   void initState() {
+    super.initState();
+
     if (widget.isEdit && widget.existingActivity != null) {
       final activity = widget.existingActivity!;
-      selectedDatetime = activity.activityDateTime;
-      notesController.text = activity.data['notes'] ?? '';
-      temperature = (activity.data['temperature'] as num?)?.toDouble();
-      temperatureUnit = activity.data['temperatureUnit'];
+      final data = activity.data;
+      
+      // Backward compatibility: use feverTimeDate if available, otherwise use activityDateTime
+      if (data['feverTimeDate'] != null) {
+        selectedDatetime = DateTime.parse(data['feverTimeDate']);
+      } else {
+        selectedDatetime = activity.activityDateTime;
+      }
+      
+      notesController.text = data['notes'] ?? '';
+      temperature = (data['temperature'] as num?)?.toDouble();
+      temperatureUnit = data['temperatureUnit'];
     } else {
       selectedDatetime = DateTime.now();
+      
+      // New record mode - load temporarily saved notes
+      Future.microtask(() async {
+        final savedNotes = await SharedPrefsHelper.getFeverTrackerNotes(widget.babyID);
+        if (savedNotes != null && savedNotes.isNotEmpty) {
+          notesController.text = savedNotes;
+        }
+      });
     }
-    super.initState();
+
+    // Listen to notes changes and save
+    notesController.addListener(_onNotesChanged);
+
     getIt<AnalyticsService>().logScreenView('FeverActivityTracker');
+  }
+
+  void _onNotesChanged() {
+    if (!widget.isEdit) {
+      // Only save temporarily in new record mode
+      SharedPrefsHelper.saveFeverTrackerNotes(widget.babyID, notesController.text);
+    }
+  }
+
+  @override
+  void dispose() {
+    // Remove notes listener
+    notesController.removeListener(_onNotesChanged);
+    // Dispose controller
+    notesController.dispose();
+    super.dispose();
+  }
+
+  void _showError(String message) {
+    showCustomFlushbar(
+      context,
+      context.tr('warning'),
+      message,
+      Icons.warning_outlined,
+    );
   }
 
   @override
@@ -97,7 +144,7 @@ class _CustomFeverTrackerBottomSheetState
             bottom: MediaQuery.of(context).viewInsets.bottom,
           ),
           child: Container(
-            height: 600.h,
+            height: MediaQuery.of(context).size.height * 0.85,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
@@ -132,21 +179,48 @@ class _CustomFeverTrackerBottomSheetState
                           children: [
                             Text(context.tr('time')),
                             CustomDateTimePicker(
+                              key: ValueKey('fever_time_${selectedDatetime?.millisecondsSinceEpoch}'),
                               initialText: 'initialText',
+                              initialDateTime: selectedDatetime,
+                              maxDate: DateTime.now(), // Prevent future dates
+                              minDate: DateTime.now().subtract(const Duration(days: 365)), // 1 year ago limit
                               onDateTimeSelected: (selected) {
-                                selectedDatetime = selected;
+                                // Future date check
+                                final now = DateTime.now();
+                                if (selected.isAfter(now)) {
+                                  _showError(context.tr("date_in_future") ?? 
+                                      "Date cannot be in the future");
+                                  return;
+                                }
+                                
+                                // Too old date check (1 year ago)
+                                final oneYearAgo = now.subtract(const Duration(days: 365));
+                                if (selected.isBefore(oneYearAgo)) {
+                                  _showError(context.tr("date_too_old") ?? 
+                                      "Date cannot be more than 1 year ago");
+                                  return;
+                                }
+                                
+                                setState(() {
+                                  selectedDatetime = selected;
+                                });
                               },
                             ),
                           ],
                         ),
                         Divider(color: Colors.grey.shade300),
                         CustomInputFieldWithToggle(
+                          key: ValueKey('temperature_${temperature}_${temperatureUnit}'),
                           title: context.tr('enter_baby_temperature'),
                           selectedMeasurementOfUnit:
                               MeasurementOfUnitNames.temperature,
+                          initialValue: temperature,
+                          initialUnit: temperatureUnit,
                           onChanged: (val, unit) {
-                            temperature = val;
-                            temperatureUnit = unit;
+                            setState(() {
+                              temperature = val;
+                              temperatureUnit = unit;
+                            });
                           },
                         ),
                         Divider(color: Colors.grey.shade300),
@@ -208,15 +282,53 @@ class _CustomFeverTrackerBottomSheetState
   void onPressedSave() {
     final activityName = ActivityType.fever.name;
 
+    // Scenario 3.1: Temperature validation
     if (temperature == null) {
-      showCustomFlushbar(
-        context,
-        context.tr('warning'),
-        context.tr('please_enter_a_temperature'),
-        Icons.warning_outlined,
-      );
+      _showError(context.tr('please_enter_a_temperature') ?? 
+          'Please enter a temperature');
       return;
     }
+
+    // Scenario 3.2: Temperature unit validation
+    if (temperatureUnit == null || temperatureUnit!.isEmpty) {
+      _showError(context.tr('please_select_temperature_unit') ?? 
+          'Please select a temperature unit');
+      return;
+    }
+
+    // Scenario 3.3: Future date check
+    if (selectedDatetime == null) {
+      _showError(context.tr("please_complete_all_fields") ?? 
+          "Please complete all fields");
+      return;
+    }
+
+    final now = DateTime.now();
+    if (selectedDatetime!.isAfter(now)) {
+      _showError(context.tr("date_in_future") ?? 
+          "Date cannot be in the future");
+      return;
+    }
+
+    // Scenario 3.4: Too old date check (1 year ago)
+    final oneYearAgo = now.subtract(const Duration(days: 365));
+    if (selectedDatetime!.isBefore(oneYearAgo)) {
+      _showError(context.tr("date_too_old") ?? 
+          "Date cannot be more than 1 year ago");
+      return;
+    }
+
+    // Build activity data with full DateTime format
+    final activityData = <String, dynamic>{
+      // Backward compatibility: keep old format for existing records
+      'startTimeHour': selectedDatetime!.hour,
+      'startTimeMin': selectedDatetime!.minute,
+      // New format: full DateTime ISO string
+      'feverTimeDate': selectedDatetime!.toIso8601String(),
+      'notes': notesController.text,
+      'temperature': temperature,
+      'temperatureUnit': temperatureUnit,
+    };
 
     final activityModel = ActivityModel(
       activityID:
@@ -228,13 +340,7 @@ class _CustomFeverTrackerBottomSheetState
           widget.isEdit ? widget.existingActivity!.createdAt : DateTime.now(),
       updatedAt: DateTime.now(),
       activityDateTime: selectedDatetime!,
-      data: {
-        'startTimeHour': selectedDatetime?.hour,
-        'startTimeMin': selectedDatetime?.minute,
-        'notes': notesController.text,
-        'temperature': temperature,
-        'temperatureUnit': temperatureUnit,
-      },
+      data: activityData,
       isSynced: false,
       createdBy: widget.firstName,
       babyID: widget.babyID,
@@ -248,18 +354,26 @@ class _CustomFeverTrackerBottomSheetState
       context.read<ActivityBloc>().add(
         AddActivity(activityModel: activityModel),
       );
+      
+      // Clear temporary notes after successful save
+      SharedPrefsHelper.clearFeverTrackerNotes(widget.babyID);
     }
 
     // BlocListener will handle closing the bottom sheet after state is emitted
   }
 
-  _onPressedDelete(BuildContext context) {
+  void _onPressedDelete(BuildContext context) {
     setState(() {
       selectedDatetime = DateTime.now();
       notesController.clear();
       temperature = null;
       temperatureUnit = null;
     });
+
+    // Clear temporary notes
+    if (!widget.isEdit) {
+      SharedPrefsHelper.clearFeverTrackerNotes(widget.babyID);
+    }
 
     showCustomFlushbar(
       context,
