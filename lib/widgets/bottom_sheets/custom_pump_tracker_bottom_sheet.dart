@@ -142,16 +142,36 @@ class _CustomPumpTrackerBottomSheetState
   @override
   Widget build(BuildContext context) {
     return BlocListener<ActivityBloc, ActivityState>(
+      listenWhen: (previous, current) => 
+          current is ActivityAdded || current is ActivityUpdated,
       listener: (context, state) {
-        if (state is ActivityAdded) {
-          showCustomFlushbar(
-            context,
-            context.tr('success'),
-            context.tr('activity_was_added'),
-            Icons.add_task_outlined,
-            color: Colors.green,
-          );
+        // Get root navigator context for showing flushbar
+        final rootNavigator = Navigator.of(context, rootNavigator: true);
+        final rootContext = rootNavigator.context;
+        
+        // Close bottom sheet first
+        if (mounted) {
+          final bottomSheetNavigator = Navigator.of(context, rootNavigator: false);
+          if (bottomSheetNavigator.canPop()) {
+            bottomSheetNavigator.pop();
+          }
         }
+        
+        // Show flushbar in root context after a short delay
+        Future.delayed(const Duration(milliseconds: 150), () {
+          if (rootContext.mounted) {
+            final message = state is ActivityAdded
+                ? context.tr('activity_was_added')
+                : (context.tr('activity_was_updated') ?? context.tr('activity_was_added'));
+            showCustomFlushbar(
+              rootContext,
+              context.tr('success'),
+              message,
+              Icons.add_task_outlined,
+              color: Colors.green,
+            );
+          }
+        });
       },
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
@@ -527,9 +547,7 @@ class _CustomPumpTrackerBottomSheetState
         );
       }
 
-      Navigator.of(
-        context,
-      ).pushReplacement(MaterialPageRoute(builder: (_) => NavigationWrapper()));
+      // BlocListener will handle closing the bottom sheet after state is emitted
 
       context.read<pumpLeft.PumpLeftSideTimerBloc>().add(
         pumpLeft.ResetTimer(activityType: 'leftPumpTimer'),

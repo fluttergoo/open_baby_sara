@@ -66,6 +66,7 @@ class _CustomFeedTrackerBottomSheetState
   double? rightSideAmout;
   String? rightSideUnit;
   TextEditingController notesController = TextEditingController();
+  String selectedSide = 'left'; // Track selected side: 'left' or 'right'
 
   @override
   void dispose() {
@@ -275,16 +276,36 @@ class _CustomFeedTrackerBottomSheetState
   @override
   Widget build(BuildContext context) {
     return BlocListener<ActivityBloc, ActivityState>(
+      listenWhen: (previous, current) => 
+          current is ActivityAdded || current is ActivityUpdated,
       listener: (context, state) {
-        if (state is ActivityAdded) {
-          showCustomFlushbar(
-            context,
-            context.tr('success'),
-            context.tr('activity_was_added'),
-            Icons.add_task_outlined,
-            color: Colors.green,
-          );
+        // Get root navigator context for showing flushbar
+        final rootNavigator = Navigator.of(context, rootNavigator: true);
+        final rootContext = rootNavigator.context;
+        
+        // Close bottom sheet first
+        if (mounted) {
+          final bottomSheetNavigator = Navigator.of(context, rootNavigator: false);
+          if (bottomSheetNavigator.canPop()) {
+            bottomSheetNavigator.pop();
+          }
         }
+        
+        // Show flushbar in root context after a short delay
+        Future.delayed(const Duration(milliseconds: 150), () {
+          if (rootContext.mounted) {
+            final message = state is ActivityAdded
+                ? context.tr('activity_was_added')
+                : (context.tr('activity_was_updated') ?? context.tr('activity_was_added'));
+            showCustomFlushbar(
+              rootContext,
+              context.tr('success'),
+              message,
+              Icons.add_task_outlined,
+              color: Colors.green,
+            );
+          }
+        });
       },
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
@@ -582,9 +603,7 @@ class _CustomFeedTrackerBottomSheetState
         rightBreastfeed.ResetTimer(activityType: 'rightPumpTimer'),
       );
       
-      Navigator.of(
-        context,
-      ).pushReplacement(MaterialPageRoute(builder: (_) => NavigationWrapper()));
+      // BlocListener will handle closing the bottom sheet after state is emitted
     } catch (e) {
       showCustomFlushbar(
         context,
@@ -617,6 +636,7 @@ class _CustomFeedTrackerBottomSheetState
       rightSideAmout = null;
       rightSideUnit = null;
       notesController.clear();
+      selectedSide = 'left'; // Reset to left side
     });
 
     // Clear temporary notes
@@ -1207,231 +1227,123 @@ class _CustomFeedTrackerBottomSheetState
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
-
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            /// Text('Start Time - End Time Picker Placeholder'),
-            SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Flexible(
-                  flex: 1,
-                  child: Column(
-                    children: [
-                      Text(
-                        context.tr("left_side"),
-                        style: Theme.of(
-                          context,
-                        ).textTheme.titleMedium?.copyWith(
-                          color: Theme.of(context).primaryColor,
-                          // fontWeight: FontWeight.bold,
+            SizedBox(height: 8.h),
+            // Modern Left Side / Right Side Selector
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(16.r),
+              ),
+              padding: EdgeInsets.all(4.w),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedSide = 'left';
+                        });
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 8.w),
+                        decoration: BoxDecoration(
+                          color: selectedSide == 'left' ? Colors.white : Colors.transparent,
+                          borderRadius: BorderRadius.circular(selectedSide == 'left' ? 12.r : 16.r),
+                          boxShadow: selectedSide == 'left'
+                              ? [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.08),
+                                    blurRadius: 4,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ]
+                              : null,
+                        ),
+                        child: Center(
+                          child: Text(
+                            context.tr("left_side"),
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: selectedSide == 'left' ? FontWeight.w600 : FontWeight.normal,
+                              color: selectedSide == 'left' 
+                                  ? Theme.of(context).primaryColor 
+                                  : Colors.grey.shade600,
+                            ),
+                          ),
                         ),
                       ),
-                      SizedBox(height: 10.h),
-                      BreastfeedLeftSideTimer(
-                        size: 140,
-                        activityType: 'leftPumpTimer',
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-                Container(height: 120.h, width: 1, color: Colors.grey.shade300),
-                Flexible(
-                  flex: 1,
-                  child: Column(
-                    children: [
-                      Text(
-                        context.tr("right_side"),
-                        style: Theme.of(
-                          context,
-                        ).textTheme.titleMedium?.copyWith(
-                          color: Theme.of(context).primaryColor,
-                          //fontWeight: FontWeight.bold,
+                  SizedBox(width: 4.w),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedSide = 'right';
+                        });
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 8.w),
+                        decoration: BoxDecoration(
+                          color: selectedSide == 'right' ? Colors.white : Colors.transparent,
+                          borderRadius: BorderRadius.circular(selectedSide == 'right' ? 12.r : 16.r),
+                          boxShadow: selectedSide == 'right'
+                              ? [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.08),
+                                    blurRadius: 4,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ]
+                              : null,
+                        ),
+                        child: Center(
+                          child: Text(
+                            context.tr("right_side"),
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: selectedSide == 'right' ? FontWeight.w600 : FontWeight.normal,
+                              color: selectedSide == 'right' 
+                                  ? Theme.of(context).primaryColor 
+                                  : Colors.grey.shade600,
+                            ),
+                          ),
                         ),
                       ),
-                      SizedBox(height: 10.h),
-                      BreastfeedRightSideTimer(
-                        size: 140,
-                        activityType: 'rightPumpTimer',
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.start,
-
+            SizedBox(height: 20.h),
+            // Show only the selected side timer
+            if (selectedSide == 'left')
+              BreastfeedLeftSideTimer(
+                size: 140,
+                activityType: 'leftPumpTimer',
+              )
+            else
+              BreastfeedRightSideTimer(
+                size: 140,
+                activityType: 'rightPumpTimer',
+              ),
+            SizedBox(height: 24.h),
+            // Unified Information Box - Show both sides info
+            Column(
               children: [
-                /// LEFT SIDE
-                BlocBuilder<
-                  leftBreastfeed.BreasfeedLeftSideTimerBloc,
-                  leftBreastfeed.BreasfeedLeftSideTimerState
-                >(
-                  builder: (context, state) {
-                    if (state is leftBreastfeed.TimerStopped &&
-                        state.activityType == 'leftPumpTimer') {
-                      leftSideEndTime = state.endTime;
-                      leftSideTotalTime = state.duration;
-                      if (state.startTime != null) {
-                        leftSideStartTime = state.startTime;
-                      }
-                    }
-                    if (state is leftBreastfeed.TimerRunning &&
-                        state.activityType == 'leftPumpTimer') {
-                      leftSideEndTime = null;
-                      leftSideStartTime = state.startTime;
-                      leftSideTotalTime = state.duration;
-                    }
-
-                    if (state is leftBreastfeed.TimerReset) {
-                      rightSideEndTime = null;
-                      rightSideStartTime = null;
-                      rightSideTotalTime = null;
-                      leftSideEndTime = null;
-                      leftSideStartTime = null;
-                      leftSideTotalTime = null;
-                    }
-                    final isLeftTimerRunning = state is leftBreastfeed.TimerRunning && 
-                                                 state.activityType == 'leftPumpTimer';
-                    
-                    return Expanded(
-                      child: Column(
-                        children: [
-                          SizedBox(height: 16.h),
-                          buildTimeInfo(
-                            context.tr("start_time"),
-                            leftSideStartTime,
-                            true, // isStartTime
-                            'left',
-                            true, // enabled
-                          ),
-                          buildTimeInfo(
-                            context.tr("end_time"),
-                            leftSideEndTime,
-                            false, // isStartTime
-                            'left',
-                            !isLeftTimerRunning, // disabled while timer is running
-                          ),
-                          Divider(color: Colors.grey.shade300),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(context.tr("total_time")),
-                              TextButton(
-                                onPressed: () {
-                                  _onPressedShowDurationSet(context, 'left');
-                                },
-                                child: Text(
-                                  leftSideTotalTime != null
-                                      ? formatDuration(leftSideTotalTime!)
-                                      : '00:00',
-                                ),
-                              ),
-                            ],
-                          ),
-                          Divider(color: Colors.grey.shade300),
-
-                          UnitInputFieldWithToggle(
-                            onChanged: (value, unit) {
-                              leftSideAmout = value;
-                              leftSideUnit = unit;
-                            },
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-
-                /// RIGHT SIDE
-                BlocBuilder<
-                  rightBreastfeed.BreastfeedRightSideTimerBloc,
-                  rightBreastfeed.BreastfeedRightSideTimerState
-                >(
-                  builder: (context, state) {
-                    if (state is rightBreastfeed.TimerStopped &&
-                        state.activityType == 'rightPumpTimer') {
-                      rightSideEndTime = state.endTime;
-                      rightSideTotalTime = state.duration;
-                      if (state.startTime != null) {
-                        rightSideStartTime = state.startTime;
-                      }
-                    }
-                    if (state is rightBreastfeed.TimerRunning &&
-                        state.activityType == 'rightPumpTimer') {
-                      rightSideEndTime = null;
-                      rightSideStartTime = state.startTime;
-                      rightSideTotalTime = state.duration;
-                    }
-
-                    if (state is rightBreastfeed.TimerReset) {
-                      rightSideEndTime = null;
-                      rightSideStartTime = null;
-                      rightSideTotalTime = null;
-                      rightSideAmout = null;
-                      rightSideUnit = null;
-                    }
-
-                    final isRightTimerRunning = state is rightBreastfeed.TimerRunning && 
-                                                  state.activityType == 'rightPumpTimer';
-                    
-                    return Expanded(
-                      child: Column(
-                        children: [
-                          SizedBox(height: 16.h),
-                          buildTimeInfo(
-                            context.tr("start_time"),
-                            rightSideStartTime,
-                            true, // isStartTime
-                            'right',
-                            true, // enabled
-                          ),
-                          buildTimeInfo(
-                            context.tr("end_time"),
-                            rightSideEndTime,
-                            false, // isStartTime
-                            'right',
-                            !isRightTimerRunning, // disabled while timer is running
-                          ),
-                          Divider(color: Colors.grey.shade300),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(context.tr("total_time")),
-                              TextButton(
-                                onPressed: () {
-                                  _onPressedShowDurationSet(context, 'right');
-                                },
-                                child: Text(
-                                  rightSideTotalTime != null
-                                      ? formatDuration(rightSideTotalTime!)
-                                      : '00:00',
-                                ),
-                              ),
-                            ],
-                          ),
-                          Divider(color: Colors.grey.shade300),
-                          UnitInputFieldWithToggle(
-                            onChanged: (value, unit) {
-                              setState(() {
-                                rightSideAmout = value;
-                                rightSideUnit = unit;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
+                // Left Side Information Box
+                _buildLeftSideInfoBox(),
+                SizedBox(height: 16.h),
+                // Right Side Information Box
+                _buildRightSideInfoBox(),
               ],
             ),
-            Divider(color: Colors.grey.shade300),
+            SizedBox(height: 16.h),
+            // Notes section
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
@@ -1441,19 +1353,14 @@ class _CustomFeedTrackerBottomSheetState
                 ).textTheme.titleSmall!.copyWith(fontSize: 16.sp),
               ),
             ),
-
             SizedBox(height: 5.h),
             CustomTextFormField(
               hintText: '',
               isNotes: true,
               controller: notesController,
             ),
-            SizedBox(height: 5.h),
-
-            Divider(color: Colors.grey.shade300),
-
             SizedBox(height: 20.h),
-
+            // Created by and Reset
             Text(
               '${context.tr("created_by")} ${widget.firstName}',
               style: Theme.of(context).textTheme.titleSmall!.copyWith(
@@ -1462,7 +1369,6 @@ class _CustomFeedTrackerBottomSheetState
               ),
             ),
             SizedBox(height: 10.h),
-
             TextButton(
               onPressed: () {
                 _onPressedDelete(context);
@@ -1478,6 +1384,199 @@ class _CustomFeedTrackerBottomSheetState
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildLeftSideInfoBox() {
+    return BlocBuilder<
+      leftBreastfeed.BreasfeedLeftSideTimerBloc,
+      leftBreastfeed.BreasfeedLeftSideTimerState
+    >(
+      builder: (context, state) {
+        if (state is leftBreastfeed.TimerStopped &&
+            state.activityType == 'leftPumpTimer') {
+          leftSideEndTime = state.endTime;
+          leftSideTotalTime = state.duration;
+          if (state.startTime != null) {
+            leftSideStartTime = state.startTime;
+          }
+        }
+        if (state is leftBreastfeed.TimerRunning &&
+            state.activityType == 'leftPumpTimer') {
+          leftSideEndTime = null;
+          leftSideStartTime = state.startTime;
+          leftSideTotalTime = state.duration;
+        }
+        if (state is leftBreastfeed.TimerReset) {
+          leftSideEndTime = null;
+          leftSideStartTime = null;
+          leftSideTotalTime = null;
+        }
+        final isLeftTimerRunning = state is leftBreastfeed.TimerRunning && 
+                                     state.activityType == 'leftPumpTimer';
+
+        return _buildInfoBox(
+          'left',
+          context.tr("left_side"),
+          leftSideStartTime,
+          leftSideEndTime,
+          leftSideTotalTime,
+          !isLeftTimerRunning,
+        );
+      },
+    );
+  }
+
+  Widget _buildRightSideInfoBox() {
+    return BlocBuilder<
+      rightBreastfeed.BreastfeedRightSideTimerBloc,
+      rightBreastfeed.BreastfeedRightSideTimerState
+    >(
+      builder: (context, state) {
+        if (state is rightBreastfeed.TimerStopped &&
+            state.activityType == 'rightPumpTimer') {
+          rightSideEndTime = state.endTime;
+          rightSideTotalTime = state.duration;
+          if (state.startTime != null) {
+            rightSideStartTime = state.startTime;
+          }
+        }
+        if (state is rightBreastfeed.TimerRunning &&
+            state.activityType == 'rightPumpTimer') {
+          rightSideEndTime = null;
+          rightSideStartTime = state.startTime;
+          rightSideTotalTime = state.duration;
+        }
+        if (state is rightBreastfeed.TimerReset) {
+          rightSideEndTime = null;
+          rightSideStartTime = null;
+          rightSideTotalTime = null;
+        }
+        final isRightTimerRunning = state is rightBreastfeed.TimerRunning && 
+                                       state.activityType == 'rightPumpTimer';
+
+        return _buildInfoBox(
+          'right',
+          context.tr("right_side"),
+          rightSideStartTime,
+          rightSideEndTime,
+          rightSideTotalTime,
+          !isRightTimerRunning,
+        );
+      },
+    );
+  }
+
+  Widget _buildInfoBox(
+    String side,
+    String title,
+    DateTime? startTime,
+    DateTime? endTime,
+    Duration? totalTime,
+    bool endTimeEnabled,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Title above border - positioned to left, border starts after text
+        Stack(
+          children: [
+            // Border container that starts after the title
+            Padding(
+              padding: EdgeInsets.only(top:12.h, bottom: 10.h, right: 10.w, left: 5.w), // Space for title, shifted right more
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(color: Color(0xFFE1BEE7), width: 1.5),
+                ),
+                padding: EdgeInsets.all(8.w),
+                child: Column(
+                  children: [
+                    // Start Time
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(context.tr("start_time")),
+                        CustomDateTimePicker(
+                          key: ValueKey('${side}_start_${startTime?.millisecondsSinceEpoch ?? 0}'),
+                          initialText: 'initialText',
+                          initialDateTime: startTime,
+                          enabled: true,
+                          maxDate: DateTime.now(),
+                          minDate: DateTime.now().subtract(const Duration(days: 365)),
+                          onDateTimeSelected: (selected) {
+                            _onStartTimeSelected(selected, side);
+                          },
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 6.h),
+                    Divider(color: Colors.grey.shade300, height: 1),
+                    SizedBox(height: 6.h),
+                    // End Time
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(context.tr("end_time")),
+                        CustomDateTimePicker(
+                          key: ValueKey('${side}_end_${endTime?.millisecondsSinceEpoch ?? 0}_$endTimeEnabled'),
+                          initialText: 'initialText',
+                          initialDateTime: endTime,
+                          enabled: endTimeEnabled,
+                          maxDate: DateTime.now(),
+                          minDate: side == 'left' 
+                              ? (leftSideStartTime ?? DateTime.now().subtract(const Duration(days: 365)))
+                              : (rightSideStartTime ?? DateTime.now().subtract(const Duration(days: 365))),
+                          onDateTimeSelected: (selected) {
+                            _onEndTimeSelected(selected, side);
+                          },
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 6.h),
+                    Divider(color: Colors.grey.shade300, height: 1),
+                    SizedBox(height: 6.h),
+                    // Total Time
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(context.tr("total_time")),
+                        TextButton(
+                          onPressed: () {
+                            _onPressedShowDurationSet(context, side);
+                          },
+                          child: Text(
+                            totalTime != null
+                                ? formatDuration(totalTime)
+                                : '00:00',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            // Title positioned to align with border's left edge (border starts at 16.w)
+            Positioned(
+              left: 16.w,
+              top: 0,
+              child: Container(
+                color: Colors.white, // Background to cover border
+                padding: EdgeInsets.only(right: 8.w),
+                child: Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16.sp,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
