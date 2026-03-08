@@ -50,11 +50,12 @@ class _CustomCardState extends State<CustomCard> {
   Widget build(BuildContext context) {
     return BlocBuilder<ActivityBloc, ActivityState>(
       buildWhen: (previous, current) {
-        // Sadece ilgili state'lerde rebuild ol
+        // Only rebuild for relevant states.
+        // ActivityLoading is intentionally excluded — teething bottom sheet
+        // emits TeethingLoading (not ActivityLoading) to avoid affecting cards.
         return current is SleepActivityLoaded ||
             current is PumpActivityLoaded ||
-            current is ActivitiesWithDateLoaded ||
-            current is ActivityLoading;
+            current is ActivitiesWithDateLoaded;
       },
       builder: (context, state) {
         if (state is SleepActivityLoaded) {
@@ -72,74 +73,68 @@ class _CustomCardState extends State<CustomCard> {
           diaperActivities = state.diaperActivities;
         }
 
-        return state is ActivityLoading
-            ? Center(child: CircularProgressIndicator())
-            : Card(
-              color: widget.color,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.r),
-              ),
-              child: SizedBox(
-                height: 110.h,
-                child: Stack(
-                  children: [
-                    /// Title
-                    Positioned(
-                      top: 6.h,
-                      left: 10.w,
-                      right: 30.w,
-                      child: Text(
-                        widget.title,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18.sp,
-                        ),
-                      ),
+        return Card(
+          color: widget.color,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.r),
+          ),
+          child: SizedBox(
+            height: 110.h,
+            child: Stack(
+              children: [
+                /// Title
+                Positioned(
+                  top: 6.h,
+                  left: 10.w,
+                  right: 30.w,
+                  child: Text(
+                    widget.title,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18.sp,
                     ),
-
-                    /// Add new activity icon
-                    Positioned(
-                      top: 4.h,
-                      right: 6.w,
-                      child: CircleAvatar(
-                        radius: 16.r,
-                        backgroundColor: Theme.of(context).primaryColor,
-                        child: IconButton(
-                          onPressed: widget.voidCallback,
-                          icon: Icon(
-                            Icons.add,
-                            color: Colors.white,
-                            size: 20.sp,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    // Sol alt icon (asset image)
-                    Positioned(
-                      bottom: 10.h,
-                      left: 6.w,
-                      child: Image.asset(
-                        widget.imgUrl,
-                        height: 40.h,
-                        width: 40.w,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-
-                    // Icon'un yanındaki metin
-                    Positioned(
-                      bottom: 8.h,
-                      left: 45.w,
-                      right: 5.w,
-                      child: getLastActivityText(widget.activityType),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            );
+
+                /// Add new activity icon
+                Positioned(
+                  top: 4.h,
+                  right: 6.w,
+                  child: GestureDetector(
+                    onTap: widget.voidCallback,
+                    child: Icon(
+                      Icons.add_circle,
+                      color: Theme.of(context).primaryColor,
+                      size: 32.sp,
+                    ),
+                  ),
+                ),
+
+                // Sol alt icon (asset image)
+                Positioned(
+                  bottom: 10.h,
+                  left: 6.w,
+                  child: Image.asset(
+                    widget.imgUrl,
+                    height: 40.h,
+                    width: 40.w,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+
+                // Icon'un yanındaki metin
+                Positioned(
+                  bottom: 8.h,
+                  left: 45.w,
+                  right: 5.w,
+                  child: getLastActivityText(widget.activityType),
+                ),
+              ],
+            ),
+          ),
+        );
       },
     );
   }
@@ -229,7 +224,7 @@ class _CustomCardState extends State<CustomCard> {
   }
 
   getLastPumpUpdated() {
-    if (lastSleepActivityText == '0') {
+    if (lastPumpActivityText == '0') {
       return Align(
         alignment: Alignment.center,
         child: Text(
@@ -299,7 +294,7 @@ class _CustomCardState extends State<CustomCard> {
 
       case 'diaper':
         displayText =
-            pumpActivities != null
+            diaperActivities != null
                 ? getLastDiaperSummary(diaperActivities!, context)
                 : '➕ ${context.tr('tap_to_start_only')}';
         break;
