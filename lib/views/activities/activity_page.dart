@@ -21,7 +21,7 @@ import 'package:open_baby_sara/widgets/bottom_sheets/custom_medical_tracker_bott
 import 'package:open_baby_sara/widgets/bottom_sheets/custom_sleep_tracker_bottom_sheet.dart';
 import 'package:open_baby_sara/widgets/bottom_sheets/custom_teething_tracker_bottom_sheet.dart';
 import 'package:open_baby_sara/widgets/bottom_sheets/custom_vaccination_tracker_bottom_sheet.dart';
-import 'package:open_baby_sara/widgets/custom_baby_header_card.dart';
+import 'package:open_baby_sara/widgets/baby_profile_header.dart';
 import 'package:open_baby_sara/widgets/custom_card.dart';
 import 'package:open_baby_sara/widgets/bottom_sheets/custom_pump_tracker_bottom_sheet.dart';
 import 'package:open_baby_sara/widgets/custom_today_summary_card.dart';
@@ -72,10 +72,11 @@ class _ActivityPageState extends State<ActivityPage> {
           },
           child: BlocBuilder<BabyBloc, BabyState>(
             buildWhen: (previous, current) {
-              // Only rebuild if state type changed or babies/selectedBaby changed
+              if (current is BabyImagePathLoaded) return false;
               if (previous is BabyLoaded && current is BabyLoaded) {
                 return previous.babies.length != current.babies.length ||
-                    previous.selectedBaby?.babyID != current.selectedBaby?.babyID;
+                    previous.selectedBaby?.babyID != current.selectedBaby?.babyID ||
+                    previous.imagePath != current.imagePath;
               }
               return previous.runtimeType != current.runtimeType;
             },
@@ -116,7 +117,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                   ///
                                   /// Avatar Image, Age, 3 dots.
                                   ///
-                                  CustomBabyHeaderCard(babiesList: babiesList),
+                                  BabyProfileHeader(babiesList: babiesList),
 
                                   ///
                                   /// Today Summary
