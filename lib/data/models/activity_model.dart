@@ -28,11 +28,13 @@ class ActivityModel {
 
   final Map<String, dynamic> data;
 
-  /// All baby activity information will come in here
-
   final bool isSynced;
 
-  /// compare local storage and firestore
+  /// true = marked for deletion locally, pending sync to Firestore
+  final bool isPendingDelete;
+
+  /// timestamp when this record was soft-deleted locally
+  final DateTime? deletedAt;
 
   final String createdBy;
   final String babyID;
@@ -47,6 +49,8 @@ class ActivityModel {
     required this.createdBy,
     required this.babyID,
     required this.activityDateTime,
+    this.isPendingDelete = false,
+    this.deletedAt,
   });
 
   ActivityModel copyWith({
@@ -57,6 +61,8 @@ class ActivityModel {
     DateTime? activityDateTime,
     Map<String, dynamic>? data,
     bool? isSynced,
+    bool? isPendingDelete,
+    DateTime? deletedAt,
     String? createdBy,
     String? babyID,
   }) {
@@ -68,6 +74,8 @@ class ActivityModel {
       activityDateTime: activityDateTime ?? this.activityDateTime,
       data: data ?? this.data,
       isSynced: isSynced ?? this.isSynced,
+      isPendingDelete: isPendingDelete ?? this.isPendingDelete,
+      deletedAt: deletedAt ?? this.deletedAt,
       createdBy: createdBy ?? this.createdBy,
       babyID: babyID ?? this.babyID,
     );
@@ -97,11 +105,12 @@ class ActivityModel {
           map['activityDateTime'] is Timestamp
               ? (map['activityDateTime'] as Timestamp).toDate()
               : DateTime.parse(map['activityDateTime']),
-      // fallback
       data: Map<String, dynamic>.from(map['data']),
       createdBy: map['createdBy'],
       babyID: map['babyID'],
-      isSynced: map['isSynced'] ?? true,
+      isSynced: true,
+      isPendingDelete: false,
+      deletedAt: null,
     );
   }
 
@@ -116,6 +125,8 @@ class ActivityModel {
       'createdBy': createdBy,
       'babyID': babyID,
       'isSynced': isSynced ? 1 : 0,
+      'isPendingDelete': isPendingDelete ? 1 : 0,
+      'deletedAt': deletedAt?.toIso8601String(),
     };
   }
 
@@ -133,6 +144,9 @@ class ActivityModel {
       createdBy: map['createdBy'],
       babyID: map['babyID'],
       isSynced: map['isSynced'] == 1,
+      isPendingDelete: (map['isPendingDelete'] ?? 0) == 1,
+      deletedAt:
+          map['deletedAt'] != null ? DateTime.parse(map['deletedAt']) : null,
     );
   }
 }
