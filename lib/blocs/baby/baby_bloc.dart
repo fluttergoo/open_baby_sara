@@ -191,7 +191,16 @@ class BabyBloc extends Bloc<BabyEvent, BabyState> {
         event.imagePath,
       );
       if (newPath != null) {
-        emit(BabyImagePathLoaded(imagePath: newPath));
+        if (state is BabyLoaded) {
+          final current = state as BabyLoaded;
+          emit(BabyLoaded(
+            babies: current.babies,
+            selectedBaby: current.selectedBaby,
+            imagePath: newPath,
+          ));
+        } else {
+          emit(BabyImagePathLoaded(imagePath: newPath));
+        }
       } else {
         emit(BabyFailure('Failed to save image.'));
       }
@@ -200,7 +209,16 @@ class BabyBloc extends Bloc<BabyEvent, BabyState> {
     on<LoadBabyImagePath>((event, emit) async {
       final file = await _babyRepository.getLocalBabyImage(event.babyID);
       if (file != null) {
-        emit(BabyImagePathLoaded(imagePath: file.path));
+        if (state is BabyLoaded) {
+          final current = state as BabyLoaded;
+          emit(BabyLoaded(
+            babies: current.babies,
+            selectedBaby: current.selectedBaby,
+            imagePath: file.path,
+          ));
+        } else {
+          emit(BabyImagePathLoaded(imagePath: file.path));
+        }
       }
     });
   }
