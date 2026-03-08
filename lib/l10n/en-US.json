@@ -640,9 +640,8 @@
   "history": "History",
   "sounds": "Sounds",
   "activity": "Activity",
-  "recipes":"Recipes",
+  "recipes": "Recipes",
   "profile": "Profile",
-
   "activity_was_added": "Activity was added successfully.",
   "success": "Success",
   "your_baby_is_now_sleeping": "Your baby \nis now sleeping.",
@@ -660,13 +659,13 @@
   "last_pump": "Last pump",
   "tooth": "Tooth",
   "caregiver_first_name": "Caregiver First Name",
-  "Check-up":"Check-up" ,
+  "Check-up": "Check-up",
   "Vaccination": "Vaccination",
   "Illness / Sick Visit": "Illness / Sick Visit",
   "Injury": "Injury",
   "Developmental Concern": "Developmental Concern",
   "Other": "Other",
-  "Calm":"Calm",
+  "Calm": "Calm",
   "Cried briefly": "Cried briefly",
   "Cried a lot": "Cried a lot",
   "Sleepy": "Sleepy",
@@ -710,7 +709,6 @@
   "Tooth erupted": "Tooth erupted",
   "Tooth shed": "Tooth shed",
   "Teething activity": "Teething activity",
-
   "White Noise": "White Noise",
   "Rain": "Rain",
   "Heartbeat": "Heartbeat",
@@ -723,11 +721,16 @@
   "good_news_a_newer": "Good news! A newer, better version of the app is ready for you.",
   "whats_new:": "What's New:",
   "performance_improvements": "- Performance improvements\n- Bug fixes for a smoother experience\n- Exciting new features (details in update notes)",
-  "current_version:":"Current Version:",
+  "current_version:": "Current Version:",
   "latest_version:": "Latest Version:",
   "update_now": "Update Now",
-  "maybe_later": "Maybe Later"
-
-
-
+  "maybe_later": "Maybe Later",
+  "activity_history": "Activity History",
+  "today": "Today",
+  "this_week": "This Week",
+  "custom": "Custom",
+  "yes_delete": "Yes, Delete",
+  "all": "All",
+  "edit": "Edit",
+  "change_photo": "Change Photo"
 }
