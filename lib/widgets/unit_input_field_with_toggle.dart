@@ -3,8 +3,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class UnitInputFieldWithToggle extends StatefulWidget {
   final void Function(double value, String unit) onChanged;
+  final double? initialValue;
+  final String? initialUnit;
 
-  const UnitInputFieldWithToggle({super.key, required this.onChanged});
+  const UnitInputFieldWithToggle({
+    super.key,
+    required this.onChanged,
+    this.initialValue,
+    this.initialUnit,
+  });
 
   @override
   State<UnitInputFieldWithToggle> createState() =>
@@ -14,8 +21,17 @@ class UnitInputFieldWithToggle extends StatefulWidget {
 class _UnitInputFieldWithToggleState extends State<UnitInputFieldWithToggle> {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
-  String selectedUnit = 'oz';
+  late String selectedUnit;
   double? convertedValue;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedUnit = widget.initialUnit ?? 'oz';
+    if (widget.initialValue != null) {
+      _controller.text = widget.initialValue!.toStringAsFixed(1);
+    }
+  }
 
   double convert(double value, String fromUnit) {
     if (fromUnit == 'oz') {
