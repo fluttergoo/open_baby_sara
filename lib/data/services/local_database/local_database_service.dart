@@ -16,13 +16,23 @@ class LocalDatabaseService {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          await db.execute(
+            'ALTER TABLE activities ADD COLUMN deletedAt TEXT',
+          );
+          await db.execute(
+            'ALTER TABLE activities ADD COLUMN isPendingDelete INTEGER DEFAULT 0',
+          );
+        }
+      },
       onCreate: (db, version) async {
         await db.execute(
           '''CREATE TABLE timer(id INTEGER PRIMARY KEY,startTime TEXT, isRunning INTEGER)''',
         );
         await db.execute(
-          '''CREATE TABLE activities(activityID TEXT PRIMARY KEY, activityType TEXT, createdAt TEXT,updatedAt TEXT,activityDateTime TEXT,data TEXT,createdBy TEXT,babyID TEXT,isSynced INTEGER)''',
+          '''CREATE TABLE activities(activityID TEXT PRIMARY KEY, activityType TEXT, createdAt TEXT,updatedAt TEXT,activityDateTime TEXT,data TEXT,createdBy TEXT,babyID TEXT,isSynced INTEGER,deletedAt TEXT,isPendingDelete INTEGER DEFAULT 0)''',
         );
         await db.execute(
           '''CREATE TABLE leftPumpTimer(id INTEGER PRIMARY KEY,startTime TEXT, isRunning INTEGER)''',
