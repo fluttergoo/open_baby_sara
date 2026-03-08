@@ -158,10 +158,14 @@ class _CustomCardState extends State<CustomCard> {
         break;
 
       case 'pumpTotal':
-        displayText =
-            pumpActivities != null
-                ? getLastPumpSummary(pumpActivities!, context)
-                : '➕ ${context.tr('tap_to_start_only')}';
+        if (isRunning) {
+          displayText = '🍼 ${context.tr('pump_is_running')}';
+        } else {
+          displayText =
+              pumpActivities != null
+                  ? getLastPumpSummary(pumpActivities!, context)
+                  : '➕ ${context.tr('tap_to_start_only')}';
+        }
         break;
 
       case 'diaper':
