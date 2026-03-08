@@ -34,6 +34,12 @@ class HistoryPage extends StatefulWidget {
 class _HistoryPageState extends State<HistoryPage> {
   List<BabyModel> babiesList = [];
 
+  // Last-used filter params — needed to re-fetch after edit/delete
+  DateTime? _lastStartDay;
+  DateTime? _lastEndDay;
+  String? _lastBabyID;
+  String? _lastActivityType;
+
   @override
   void initState() {
     super.initState();
@@ -90,6 +96,11 @@ class _HistoryPageState extends State<HistoryPage> {
                               if (startDateTime != null &&
                                   endDateTime != null &&
                                   babyID != null) {
+                                // Save filter params so we can re-fetch after edit/delete
+                                _lastStartDay = startDateTime;
+                                _lastEndDay = endDateTime;
+                                _lastBabyID = babyID;
+                                _lastActivityType = activityFilter;
                                 context.read<ActivityBloc>().add(
                                   LoadActivitiesByDateRange(
                                     startDay: startDateTime,
@@ -113,7 +124,25 @@ class _HistoryPageState extends State<HistoryPage> {
                           ),
                           SizedBox(height: 10.h),
                           BlocListener<ActivityBloc, ActivityState>(
+                            listenWhen: (previous, current) =>
+                                current is ActivityDeleted ||
+                                current is ActivityUpdated,
                             listener: (context, state) {
+                              void reloadList() {
+                                if (_lastStartDay != null &&
+                                    _lastEndDay != null &&
+                                    _lastBabyID != null) {
+                                  context.read<ActivityBloc>().add(
+                                    LoadActivitiesByDateRange(
+                                      startDay: _lastStartDay!,
+                                      endDay: _lastEndDay!,
+                                      babyID: _lastBabyID!,
+                                      activityType: _lastActivityType,
+                                    ),
+                                  );
+                                }
+                              }
+
                               if (state is ActivityDeleted) {
                                 showCustomFlushbar(
                                   context,
@@ -121,7 +150,9 @@ class _HistoryPageState extends State<HistoryPage> {
                                   context.tr('activity_deleted_body'),
                                   Icons.delete_forever_outlined,
                                 );
-                                context.read<BabyBloc>().add(LoadBabies());
+                                reloadList();
+                              } else if (state is ActivityUpdated) {
+                                reloadList();
                               }
                             },
                             child: BlocBuilder<ActivityBloc, ActivityState>(
