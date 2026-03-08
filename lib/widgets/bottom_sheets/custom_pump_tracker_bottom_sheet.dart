@@ -752,7 +752,9 @@ class _CustomPumpTrackerBottomSheetState
               builder: (context, state) {
                 if (state is pumpTotal.TimerStopped &&
                     state.activityType == 'pumpTotalTimer') {
-                  totalEndTime = state.endTime;
+                  // Only sync from bloc when bloc has actual values.
+                  // In edit mode the initial state may have null times — keep pre-loaded data.
+                  if (state.endTime != null) totalEndTime = state.endTime;
                   totalTotalTime = state.duration;
                   if (state.startTime != null) {
                     totalStartTime = state.startTime;
@@ -765,9 +767,12 @@ class _CustomPumpTrackerBottomSheetState
                   totalTotalTime = state.duration;
                 }
                 if (state is pumpTotal.TimerReset) {
-                  totalEndTime = null;
-                  totalStartTime = null;
-                  totalTotalTime = null;
+                  // In edit mode, don't wipe pre-loaded data on initial reset state.
+                  if (!widget.isEdit) {
+                    totalEndTime = null;
+                    totalStartTime = null;
+                    totalTotalTime = null;
+                  }
                 }
                 final isTotalTimerRunning = state is pumpTotal.TimerRunning && 
                                              state.activityType == 'pumpTotalTimer';
@@ -1111,7 +1116,8 @@ class _CustomPumpTrackerBottomSheetState
       builder: (context, state) {
         if (state is pumpLeft.TimerStopped &&
             state.activityType == 'leftPumpTimer') {
-          leftSideEndTime = state.endTime;
+          // Only sync from bloc when bloc has actual values to avoid clearing edit data.
+          if (state.endTime != null) leftSideEndTime = state.endTime;
           leftSideTotalTime = state.duration;
           if (state.startTime != null) {
             leftSideStartTime = state.startTime;
@@ -1124,9 +1130,11 @@ class _CustomPumpTrackerBottomSheetState
           leftSideTotalTime = state.duration;
         }
         if (state is pumpLeft.TimerReset) {
-          leftSideEndTime = null;
-          leftSideStartTime = null;
-          leftSideTotalTime = null;
+          if (!widget.isEdit) {
+            leftSideEndTime = null;
+            leftSideStartTime = null;
+            leftSideTotalTime = null;
+          }
         }
         final isLeftTimerRunning = state is pumpLeft.TimerRunning && 
                                      state.activityType == 'leftPumpTimer';
@@ -1153,7 +1161,8 @@ class _CustomPumpTrackerBottomSheetState
       builder: (context, state) {
         if (state is pumpRight.TimerStopped &&
             state.activityType == 'rightPumpTimer') {
-          rightSideEndTime = state.endTime;
+          // Only sync from bloc when bloc has actual values to avoid clearing edit data.
+          if (state.endTime != null) rightSideEndTime = state.endTime;
           rightSideTotalTime = state.duration;
           if (state.startTime != null) {
             rightSideStartTime = state.startTime;
@@ -1166,9 +1175,11 @@ class _CustomPumpTrackerBottomSheetState
           rightSideTotalTime = state.duration;
         }
         if (state is pumpRight.TimerReset) {
-          rightSideEndTime = null;
-          rightSideStartTime = null;
-          rightSideTotalTime = null;
+          if (!widget.isEdit) {
+            rightSideEndTime = null;
+            rightSideStartTime = null;
+            rightSideTotalTime = null;
+          }
         }
         final isRightTimerRunning = state is pumpRight.TimerRunning && 
                                        state.activityType == 'rightPumpTimer';
