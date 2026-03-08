@@ -725,6 +725,9 @@ class _CustomFeedTrackerBottomSheetState
           SizedBox(height: 10.h),
           Divider(color: Colors.grey.shade300),
           UnitInputFieldWithToggle(
+            key: ValueKey('feedAmount_${widget.isEdit}_${widget.existingActivity?.activityID}'),
+            initialValue: feedAmout != 0 ? feedAmout : null,
+            initialUnit: feedUnit,
             onChanged: (value, unit) {
               feedAmout = value;
               feedUnit = unit;

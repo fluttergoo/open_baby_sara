@@ -778,6 +778,9 @@ class _CustomPumpTrackerBottomSheetState
             SizedBox(height: 16.h),
             // Amount section
             UnitInputFieldWithToggle(
+              key: ValueKey('totalAmount_${widget.isEdit}_${widget.existingActivity?.activityID}'),
+              initialValue: totalAmount != 0 ? totalAmount : null,
+              initialUnit: totalUnit,
               onChanged: (value, unit) {
                 setState(() {
                   totalAmount = value;

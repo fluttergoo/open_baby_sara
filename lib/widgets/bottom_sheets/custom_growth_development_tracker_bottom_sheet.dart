@@ -45,6 +45,7 @@ class _CustomGrowthDevelopmentState
   String? heightUnit;
   double? headSize;
   String? headSizeUnit;
+  int _resetCounter = 0;
 
   @override
   void initState() {
@@ -209,9 +210,12 @@ class _CustomGrowthDevelopmentState
                         ),
                         Divider(color: Colors.grey.shade300),
                         CustomInputFieldWithToggle(
+                          key: ValueKey('weight_$_resetCounter'),
                           title: context.tr('add_weight'),
                           selectedMeasurementOfUnit:
                               MeasurementOfUnitNames.weight,
+                          initialValue: weight,
+                          initialUnit: weightUnit,
                           onChanged: (val, unit) {
                             weight = val;
                             weightUnit = unit;
@@ -219,9 +223,12 @@ class _CustomGrowthDevelopmentState
                         ),
                         Divider(color: Colors.grey.shade300),
                         CustomInputFieldWithToggle(
+                          key: ValueKey('height_$_resetCounter'),
                           title: context.tr('add_height'),
                           selectedMeasurementOfUnit:
                               MeasurementOfUnitNames.height,
+                          initialValue: height,
+                          initialUnit: heightUnit,
                           onChanged: (val, unit) {
                             height = val;
                             heightUnit = unit;
@@ -229,9 +236,12 @@ class _CustomGrowthDevelopmentState
                         ),
                         Divider(color: Colors.grey.shade300),
                         CustomInputFieldWithToggle(
+                          key: ValueKey('headSize_$_resetCounter'),
                           title: context.tr('add_head_size'),
                           selectedMeasurementOfUnit:
                               MeasurementOfUnitNames.height,
+                          initialValue: headSize,
+                          initialUnit: headSizeUnit,
                           onChanged: (val, unit) {
                             headSize = val;
                             headSizeUnit = unit;
@@ -388,6 +398,7 @@ class _CustomGrowthDevelopmentState
       headSizeUnit = null;
       notesController.clear();
       selectedDatetime = DateTime.now();
+      _resetCounter++;
     });
 
     // Clear temporary notes
