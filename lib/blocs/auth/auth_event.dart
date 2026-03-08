@@ -22,7 +22,11 @@ class SignInWithEmailAndPassword extends AuthEvent {
   SignInWithEmailAndPassword({required this.email, required this.password});
 }
 
-class SignInWithGoogle extends AuthEvent {}
+class SignInWithGoogle extends AuthEvent {
+  final bool isSignUp;
+  
+  SignInWithGoogle({this.isSignUp = false});
+}
 
 class AppStarted extends AuthEvent {}
 

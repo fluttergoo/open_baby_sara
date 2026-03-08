@@ -136,32 +136,12 @@ class _CaregiverSignInPageState extends State<CaregiverSignInPage> {
                                 width: double.infinity,
                                 height: 50.h,
                                 child: ElevatedButton(
-                                  onPressed: () async {
-                                    try {
-                                      final authService = getIt<AuthService>();
-                                      final user = await authService.signInWithGoogle();
-                                      if (user != null) {
-                                        final email = user.email ?? '';
-                                        final displayName = user.displayName ?? 'User';
-                                        final firstName = displayName.split(' ').first;
-                                        
-                                        context.read<CaregiverBloc>().add(
-                                              CaregiverSignUpWithGoogle(
-                                                firstName: firstName,
-                                                email: email,
-                                              ),
-                                            );
-                                      }
-                                      // If user is null, Google Sign-In was cancelled - no error needed
-                                    } catch (e) {
-                                      // Only show error for actual exceptions, not cancellations
-                                      showCustomFlushbar(
-                                        context,
-                                        context.tr('error'),
-                                        e.toString(),
-                                        Icons.warning_outlined,
-                                      );
-                                    }
+                                  onPressed: () {
+                                    // Trigger Google Sign-In through the bloc
+                                    // The bloc will handle the Google Sign-In flow and extract user info
+                                    context.read<CaregiverBloc>().add(
+                                          CaregiverSignUpWithGoogle(),
+                                        );
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.white,

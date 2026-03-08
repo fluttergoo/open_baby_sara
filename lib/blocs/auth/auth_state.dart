@@ -43,3 +43,5 @@ class ForgotPasswordFailure extends AuthState {
   final String error;
   ForgotPasswordFailure(this.error);
 }
+
+class UserAlreadyExists extends AuthState {}

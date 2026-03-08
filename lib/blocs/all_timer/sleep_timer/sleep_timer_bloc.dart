@@ -24,17 +24,23 @@ class SleepTimerBloc extends Bloc<SleepTimerEvent, SleepTimerState> {
     });
     on<StartTimer>((event, emit) {
       _timer?.cancel();
-      _startTime ??= DateTime.now();
-      final now = DateTime.now();
-      final dateTime = DateTime(
-        now.year,
-        now.month,
-        now.day,
-        _startTime!.hour,
-        _startTime!.minute,
-        _startTime!.second,
-      );
-      _timerRepository.saveTimerStart(dateTime, event.activityType);
+      
+      // If timerStart exists in event use it, otherwise if _startTime exists use it, otherwise use current time
+      if (event.timerStart != null) {
+        _startTime = event.timerStart;
+      } else {
+        _startTime ??= DateTime.now();
+      }
+      
+      // Save to timer repository
+      _timerRepository.saveTimerStart(_startTime!, event.activityType);
+
+      // Initialize duration - calculate if endTime exists, otherwise start from zero
+      if (_startTime != null && _endTime != null) {
+        _duration = _calculateDuration(_startTime!, _endTime!);
+      } else {
+        _duration = Duration.zero;
+      }
 
       _timer = Timer.periodic(Duration(seconds: 1), (_) {
         if (!isClosed) {
@@ -42,9 +48,6 @@ class SleepTimerBloc extends Bloc<SleepTimerEvent, SleepTimerState> {
         }
       });
 
-      if (_startTime != null && _endTime != null) {
-        _duration = _calculateDuration(_startTime!, _endTime!);
-      }
       emit(
         TimerRunning(
           duration: _duration,
@@ -66,31 +69,26 @@ class SleepTimerBloc extends Bloc<SleepTimerEvent, SleepTimerState> {
     });
 
     on<SetStartTimeTimer>((event, emit) {
+      // Stop timer if running
+      _timer?.cancel();
+      
       _startTime = event.startTime;
 
       if (_startTime != null) {
-        final now = DateTime.now();
-        final selectedStart = DateTime(
-          now.year,
-          now.month,
-          now.day,
-          _startTime!.hour,
-          _startTime!.minute,
-          _startTime!.second,
-        );
-        final current = DateTime.now();
-
-        if (selectedStart.isBefore(current)) {
-          _duration = current.difference(selectedStart);
-          _timerRepository.saveTimerStart(selectedStart, event.activityType);
+        // If endTime exists, calculate duration
+        if (_endTime != null) {
+          _duration = _calculateDuration(_startTime!, _endTime!);
         } else {
+          // If endTime doesn't exist, duration should be zero
+          // Duration should not be calculated until user manually selects end time
           _duration = Duration.zero;
         }
       } else {
         _duration = Duration.zero;
       }
 
-      _endTime ??= DateTime.now();
+      // Don't change endTime - user should select it manually
+      // EndTime can remain null, don't automatically set to DateTime.now()
 
       emit(
         TimerStopped(
@@ -115,34 +113,58 @@ class SleepTimerBloc extends Bloc<SleepTimerEvent, SleepTimerState> {
       emit(
         TimerStopped(
           duration: _duration,
+          startTime: _startTime, // Also emit start time
           endTime: _endTime,
           activityType: event.activityType,
         ),
       );
     });
     on<SetEndTimeTimer>((event, emit) {
+      // Stop timer if running
+      _timer?.cancel();
+      
       _endTime = event.endTime;
+      
+      // If start time exists in event, use it (user manually selected it)
+      // Otherwise keep current start time
+      if (event.startTime != null) {
+        _startTime = event.startTime;
+      }
 
       if (_startTime != null && _endTime != null) {
         _duration = _calculateDuration(_startTime!, _endTime!);
+      } else {
+        _duration = Duration.zero;
       }
 
       emit(
         TimerStopped(
           duration: _duration,
           endTime: _endTime,
+          startTime: _startTime,
           activityType: event.activityType,
         ),
       );
     });
     on<SetDurationTimer>((event, emit) {
-      _endTime = DateTime.now();
+      // Stop timer if running
+      _timer?.cancel();
+      
+      // If endTime already exists use it, otherwise use current time
+      _endTime ??= DateTime.now();
 
-      _startTime = _calculateStartTime(_endTime!, event.duration);
+      // Calculate startTime by subtracting duration from endTime
+      if (_endTime != null) {
+        _startTime = _endTime!.subtract(event.duration);
+      } else {
+        _startTime = null;
+      }
+
+      _duration = event.duration;
 
       emit(
         TimerStopped(
-          duration: event.duration,
+          duration: _duration,
           activityType: event.activityType,
           endTime: _endTime,
           startTime: _startTime,
@@ -167,21 +189,18 @@ class SleepTimerBloc extends Bloc<SleepTimerEvent, SleepTimerState> {
 
       final data = await _timerRepository.loadTimer(event.activityType);
       if (data != null && data['isRunning'] == 1) {
+        // Use dated DateTime directly
         final getTime = DateTime.parse(data['startTime']);
-
-        _startTime = DateTime(
-          getTime.year,
-          getTime.month,
-          getTime.day,
-          getTime.hour,
-          getTime.minute,
-          getTime.second,
-        );
+        _startTime = getTime;
         _endTime = null;
+        
+        // Calculate duration from current time to start time
         _duration = DateTime.now().difference(getTime);
 
         _timer = Timer.periodic(Duration(seconds: 1), (_) {
-          add(Tick(activityType: event.activityType));
+          if (!isClosed) {
+            add(Tick(activityType: event.activityType));
+          }
         });
         emit(
           TimerRunning(
@@ -197,29 +216,14 @@ class SleepTimerBloc extends Bloc<SleepTimerEvent, SleepTimerState> {
   }
 
   Duration _calculateDuration(DateTime start, DateTime end) {
-    final now = DateTime.now();
-    final startDateTime = DateTime(
-      now.year,
-      now.month,
-      now.day,
-      start.hour,
-      start.minute,
-      start.second,
-    );
-    var endDateTime = DateTime(
-      now.year,
-      now.month,
-      now.day,
-      end.hour,
-      end.minute,
-      end.second,
-    );
-
-    if (endDateTime.isBefore(startDateTime)) {
-      endDateTime = endDateTime.add(const Duration(days: 1)); // Night spillover
+    // Calculate difference directly since full DateTime objects are now used
+    // If end is before start (crossed midnight), add one day
+    if (end.isBefore(start)) {
+      // Midnight crossing case - add one day to end
+      return end.add(const Duration(days: 1)).difference(start);
     }
-
-    return endDateTime.difference(startDateTime);
+    
+    return end.difference(start);
   }
 
   @override
@@ -229,26 +233,7 @@ class SleepTimerBloc extends Bloc<SleepTimerEvent, SleepTimerState> {
   }
 
   DateTime? _calculateStartTime(DateTime endTime, Duration duration) {
-    final now = DateTime.now();
-
-    final endDateTime = DateTime(
-      now.year,
-      now.month,
-      now.day,
-      endTime.hour,
-      endTime.minute,
-      endTime.second,
-    );
-
-    final startDateTime = endDateTime.subtract(duration);
-
-    return DateTime(
-      startDateTime.year,
-      startDateTime.month,
-      startDateTime.day,
-      startDateTime.hour,
-      startDateTime.minute,
-      startDateTime.second,
-    );
+    // Subtract directly since full DateTime is now used
+    return endTime.subtract(duration);
   }
 }

@@ -10,6 +10,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:uuid/uuid.dart';
 import 'package:open_baby_sara/blocs/activity/activity_bloc.dart';
 import 'package:open_baby_sara/core/app_colors.dart';
+import 'package:open_baby_sara/core/utils/shared_prefs_helper.dart';
 import 'package:open_baby_sara/widgets/custom_date_time_picker.dart';
 import 'package:open_baby_sara/widgets/custom_text_form_field.dart';
 
@@ -68,28 +69,96 @@ class _CustomDoctorVisitTrackerBottomSheetState
     selectedReaction = dropdownItemReaction.first;
     if (widget.isEdit && widget.existingActivity != null) {
       final data = widget.existingActivity!.data;
-      selectedDatetime = widget.existingActivity!.activityDateTime;
+      // Backward compatibility: use visitTimeDate if available, otherwise use activityDateTime
+      if (data['visitTimeDate'] != null) {
+        selectedDatetime = DateTime.parse(data['visitTimeDate']);
+      } else {
+        selectedDatetime = widget.existingActivity!.activityDateTime;
+      }
       selectedReason = data['reason'] ?? dropdownItemReason.first;
       selectedReaction = data['reaction'] ?? dropdownItemReaction.first;
       diagnosisController.text = data['diagnosis'] ?? '';
       notesController.text = data['notes'] ?? '';
+    } else {
+      // New record mode - load temporarily saved notes and diagnosis
+      Future.microtask(() async {
+        final savedNotes = await SharedPrefsHelper.getDoctorVisitNotes(widget.babyID);
+        if (savedNotes != null && savedNotes.isNotEmpty) {
+          notesController.text = savedNotes;
+        }
+        
+        final savedDiagnosis = await SharedPrefsHelper.getDoctorVisitDiagnosis(widget.babyID);
+        if (savedDiagnosis != null && savedDiagnosis.isNotEmpty) {
+          diagnosisController.text = savedDiagnosis;
+        }
+      });
     }
+    
+    // Listen to notes and diagnosis changes and save temporarily
+    notesController.addListener(_onNotesChanged);
+    diagnosisController.addListener(_onDiagnosisChanged);
+    
     getIt<AnalyticsService>().logScreenView('DoctorVisitActivityTracker');
+  }
+
+  void _onNotesChanged() {
+    if (!widget.isEdit) {
+      // Only save temporarily in new record mode
+      SharedPrefsHelper.saveDoctorVisitNotes(widget.babyID, notesController.text);
+    }
+  }
+
+  void _onDiagnosisChanged() {
+    if (!widget.isEdit) {
+      // Only save temporarily in new record mode
+      SharedPrefsHelper.saveDoctorVisitDiagnosis(widget.babyID, diagnosisController.text);
+    }
+  }
+
+  @override
+  void dispose() {
+    // Remove listeners
+    notesController.removeListener(_onNotesChanged);
+    diagnosisController.removeListener(_onDiagnosisChanged);
+    // Dispose controllers
+    notesController.dispose();
+    diagnosisController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<ActivityBloc, ActivityState>(
+      listenWhen: (previous, current) => 
+          current is ActivityAdded || current is ActivityUpdated,
       listener: (context, state) {
-        if (state is ActivityAdded) {
-          showCustomFlushbar(
-            context,
-            context.tr('success'),
-            context.tr('activity_was_added'),
-            Icons.add_task_outlined,
-            color: Colors.green,
-          );
+        // Get root navigator context for showing flushbar
+        final rootNavigator = Navigator.of(context, rootNavigator: true);
+        final rootContext = rootNavigator.context;
+        
+        // Close bottom sheet first
+        if (mounted) {
+          final bottomSheetNavigator = Navigator.of(context, rootNavigator: false);
+          if (bottomSheetNavigator.canPop()) {
+            bottomSheetNavigator.pop();
+          }
         }
+        
+        // Show flushbar in root context after a short delay
+        Future.delayed(const Duration(milliseconds: 150), () {
+          if (rootContext.mounted) {
+            final message = state is ActivityAdded
+                ? context.tr('activity_was_added')
+                : (context.tr('activity_was_updated') ?? context.tr('activity_was_added'));
+            showCustomFlushbar(
+              rootContext,
+              context.tr('success'),
+              message,
+              Icons.add_task_outlined,
+              color: Colors.green,
+            );
+          }
+        });
       },
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -128,9 +197,31 @@ class _CustomDoctorVisitTrackerBottomSheetState
                           Text(context.tr('visit_time')),
                           SizedBox(width: 20.w),
                           CustomDateTimePicker(
-                            initialText: context.tr('select_visit_time'),
+                            key: ValueKey('visit_time_${selectedDatetime.millisecondsSinceEpoch}'),
+                            initialText: 'initialText',
+                            initialDateTime: selectedDatetime,
+                            maxDate: DateTime.now(), // Prevent future dates
+                            minDate: DateTime.now().subtract(const Duration(days: 365)), // 1 year ago limit
                             onDateTimeSelected: (selected) {
-                              selectedDatetime = selected;
+                              // Future date check
+                              final now = DateTime.now();
+                              if (selected.isAfter(now)) {
+                                _showError(context.tr("date_in_future") ?? 
+                                    "Date cannot be in the future");
+                                return;
+                              }
+                              
+                              // Too old date check (1 year ago)
+                              final oneYearAgo = now.subtract(const Duration(days: 365));
+                              if (selected.isBefore(oneYearAgo)) {
+                                _showError(context.tr("date_too_old") ?? 
+                                    "Date cannot be more than 1 year ago");
+                                return;
+                              }
+                              
+                              setState(() {
+                                selectedDatetime = selected;
+                              });
                             },
                           ),
                         ],
@@ -299,13 +390,26 @@ class _CustomDoctorVisitTrackerBottomSheetState
   }
 
   void onPressedSave() {
+    // Validation: Reason and reaction must be selected
     if (selectedReason.isEmpty || selectedReaction.isEmpty) {
-      showCustomFlushbar(
-        context,
-        context.tr('warning'),
-        context.tr('please_fill_reason'),
-        Icons.warning_outlined,
-      );
+      _showError(context.tr('please_fill_reason') ?? 
+          "Please select reason and reaction");
+      return;
+    }
+
+    // Validation: Date cannot be in the future
+    final now = DateTime.now();
+    if (selectedDatetime.isAfter(now)) {
+      _showError(context.tr("date_in_future") ?? 
+          "Date cannot be in the future");
+      return;
+    }
+
+    // Validation: Date cannot be more than 1 year ago
+    final oneYearAgo = now.subtract(const Duration(days: 365));
+    if (selectedDatetime.isBefore(oneYearAgo)) {
+      _showError(context.tr("date_too_old") ?? 
+          "Date cannot be more than 1 year ago");
       return;
     }
 
@@ -322,8 +426,11 @@ class _CustomDoctorVisitTrackerBottomSheetState
       updatedAt: DateTime.now(),
       activityDateTime: selectedDatetime,
       data: {
+        // Backward compatibility: keep hour/minute for old format
         'startTimeHour': selectedDatetime.hour,
         'startTimeMin': selectedDatetime.minute,
+        // New format: full DateTime ISO string
+        'visitTimeDate': selectedDatetime.toIso8601String(),
         'reason': selectedReason,
         'reaction': selectedReaction,
         'diagnosis': diagnosisController.text.trim(),
@@ -338,9 +445,15 @@ class _CustomDoctorVisitTrackerBottomSheetState
       context.read<ActivityBloc>().add(UpdateActivity(activityModel: activity));
     } else {
       context.read<ActivityBloc>().add(AddActivity(activityModel: activity));
+      
+      // Clear temporarily saved notes and diagnosis after successful save
+      SharedPrefsHelper.clearDoctorVisitNotes(widget.babyID);
+      SharedPrefsHelper.clearDoctorVisitDiagnosis(widget.babyID);
     }
+  }
 
-    Navigator.of(context).pop();
+  void _showError(String message) {
+    showCustomFlushbar(context, context.tr("warning"), message, Icons.warning);
   }
 
   void _onPressedDelete(BuildContext context) {
@@ -351,6 +464,12 @@ class _CustomDoctorVisitTrackerBottomSheetState
       diagnosisController.clear();
       notesController.clear();
     });
+
+    // Clear temporarily saved notes and diagnosis
+    if (!widget.isEdit) {
+      SharedPrefsHelper.clearDoctorVisitNotes(widget.babyID);
+      SharedPrefsHelper.clearDoctorVisitDiagnosis(widget.babyID);
+    }
 
     showCustomFlushbar(
       context,

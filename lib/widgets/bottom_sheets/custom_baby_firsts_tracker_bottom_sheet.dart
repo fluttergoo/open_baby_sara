@@ -5,6 +5,7 @@ import 'package:open_baby_sara/app/routes/navigation_wrapper.dart';
 import 'package:open_baby_sara/blocs/activity/activity_bloc.dart';
 import 'package:open_baby_sara/blocs/milestone/milestone_bloc.dart';
 import 'package:open_baby_sara/core/app_colors.dart';
+import 'package:open_baby_sara/core/utils/shared_prefs_helper.dart';
 import 'package:open_baby_sara/data/models/activity_model.dart';
 import 'package:open_baby_sara/data/models/milestones_model.dart';
 import 'package:open_baby_sara/data/repositories/locator.dart';
@@ -39,7 +40,9 @@ class _CustomBabyFirstsTrackerBottomSheetState
     extends State<CustomBabyFirstsTrackerBottomSheet> {
   @override
   void initState() {
-    if (widget.existingActivity != null) {
+    super.initState();
+
+    if (widget.isEdit && widget.existingActivity != null) {
       selectedDatetime = widget.existingActivity!.activityDateTime;
       notesController.text = widget.existingActivity!.data['notes'] ?? '';
       selectedMilestoneTitle = List<String>.from(
@@ -48,12 +51,39 @@ class _CustomBabyFirstsTrackerBottomSheetState
       selectedMilestoneDesc = List<String>.from(
         widget.existingActivity!.data['milestoneDesc'] ?? [],
       );
+    } else {
+      // New record mode - load temporarily saved notes
+      Future.microtask(() async {
+        final savedNotes = await SharedPrefsHelper.getBabyFirstsTrackerNotes(widget.babyID);
+        if (savedNotes != null && savedNotes.isNotEmpty && mounted) {
+          setState(() {
+            notesController.text = savedNotes;
+          });
+        }
+      });
     }
+
+    // Listen to notes changes and save
+    notesController.addListener(_onNotesChanged);
 
     context.read<MilestoneBloc>().add(LoadMilestones());
     getIt<AnalyticsService>().logScreenView('BabyFirstActivityTracker');
+  }
 
-    super.initState();
+  void _onNotesChanged() {
+    if (!widget.isEdit) {
+      // Only save temporarily in new record mode
+      SharedPrefsHelper.saveBabyFirstsTrackerNotes(widget.babyID, notesController.text);
+    }
+  }
+
+  @override
+  void dispose() {
+    // Remove notes listener
+    notesController.removeListener(_onNotesChanged);
+    // Dispose controller
+    notesController.dispose();
+    super.dispose();
   }
 
   DateTime? selectedDatetime = DateTime.now();
@@ -62,19 +92,49 @@ class _CustomBabyFirstsTrackerBottomSheetState
   List<String>? selectedMilestoneTitle;
   List<String>? selectedMilestoneDesc;
 
+  void _showError(String message) {
+    showCustomFlushbar(
+      context,
+      context.tr('error') ?? 'Error',
+      message,
+      Icons.error_outline,
+      color: Colors.red,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<ActivityBloc, ActivityState>(
+      listenWhen: (previous, current) => 
+          current is ActivityAdded || current is ActivityUpdated,
       listener: (context, state) {
-        if (state is ActivityAdded) {
-          showCustomFlushbar(
-            context,
-            context.tr('success'),
-            context.tr('activity_was_added'),
-            Icons.add_task_outlined,
-            color: Colors.green,
-          );
+        // Get root navigator context for showing flushbar
+        final rootNavigator = Navigator.of(context, rootNavigator: true);
+        final rootContext = rootNavigator.context;
+        
+        // Close bottom sheet first
+        if (mounted) {
+          final bottomSheetNavigator = Navigator.of(context, rootNavigator: false);
+          if (bottomSheetNavigator.canPop()) {
+            bottomSheetNavigator.pop();
+          }
         }
+        
+        // Show flushbar in root context after a short delay
+        Future.delayed(const Duration(milliseconds: 150), () {
+          if (rootContext.mounted) {
+            final message = state is ActivityAdded
+                ? context.tr('activity_was_added')
+                : (context.tr('activity_was_updated') ?? context.tr('activity_was_added'));
+            showCustomFlushbar(
+              rootContext,
+              context.tr('success'),
+              message,
+              Icons.add_task_outlined,
+              color: Colors.green,
+            );
+          }
+        });
       },
       child: BlocBuilder<MilestoneBloc, MilestoneState>(
         builder: (context, state) {
@@ -132,9 +192,31 @@ class _CustomBabyFirstsTrackerBottomSheetState
                               children: [
                                 Text(context.tr('time')),
                                 CustomDateTimePicker(
+                                  key: ValueKey('baby_firsts_time_${selectedDatetime?.millisecondsSinceEpoch}'),
                                   initialText: 'initialText',
+                                  initialDateTime: selectedDatetime,
+                                  maxDate: DateTime.now(), // Prevent future dates
+                                  minDate: DateTime.now().subtract(const Duration(days: 365)), // 1 year ago limit
                                   onDateTimeSelected: (selected) {
-                                    selectedDatetime = selected;
+                                    // Future date check
+                                    final now = DateTime.now();
+                                    if (selected.isAfter(now)) {
+                                      _showError(context.tr("date_in_future") ?? 
+                                          "Date cannot be in the future");
+                                      return;
+                                    }
+                                    
+                                    // Too old date check (1 year ago)
+                                    final oneYearAgo = now.subtract(const Duration(days: 365));
+                                    if (selected.isBefore(oneYearAgo)) {
+                                      _showError(context.tr("date_too_old") ?? 
+                                          "Date cannot be more than 1 year ago");
+                                      return;
+                                    }
+                                    
+                                    setState(() {
+                                      selectedDatetime = selected;
+                                    });
                                   },
                                 ),
                               ],
@@ -212,13 +294,35 @@ class _CustomBabyFirstsTrackerBottomSheetState
   void onPressedSave() {
     final activityName = ActivityType.babyFirsts.name;
 
-    if (selectedMilestoneTitle == null && selectedMilestoneDesc == null) {
-      showCustomFlushbar(
-        context,
-        'Warning',
-        'Please enter baby first activity',
-        Icons.warning_outlined,
-      );
+    // Scenario 3.1: Milestone seçimi kontrolü
+    if (selectedMilestoneTitle == null || 
+        selectedMilestoneTitle!.isEmpty ||
+        selectedMilestoneDesc == null ||
+        selectedMilestoneDesc!.isEmpty) {
+      _showError(context.tr("please_enter_baby_first_activity") ?? 
+          "Please enter baby first activity");
+      return;
+    }
+
+    // Scenario 3.2: Gelecekteki tarih kontrolü
+    if (selectedDatetime == null) {
+      _showError(context.tr("please_select_time") ?? 
+          "Please select time");
+      return;
+    }
+
+    final now = DateTime.now();
+    if (selectedDatetime!.isAfter(now)) {
+      _showError(context.tr("date_in_future") ?? 
+          "Date cannot be in the future");
+      return;
+    }
+
+    // Scenario 3.3: Çok eski tarih kontrolü (1 yıl öncesi)
+    final oneYearAgo = now.subtract(const Duration(days: 365));
+    if (selectedDatetime!.isBefore(oneYearAgo)) {
+      _showError(context.tr("date_too_old") ?? 
+          "Date cannot be more than 1 year ago");
       return;
     }
 
@@ -251,18 +355,13 @@ class _CustomBabyFirstsTrackerBottomSheetState
         context.read<ActivityBloc>().add(
           AddActivity(activityModel: activityModel),
         );
+        // Clear temporarily saved notes after successful save
+        SharedPrefsHelper.clearBabyFirstsTrackerNotes(widget.babyID);
       }
 
-      Navigator.of(
-        context,
-      ).pushReplacement(MaterialPageRoute(builder: (_) => NavigationWrapper()));
+      // BlocListener will handle closing the bottom sheet after state is emitted
     } catch (e) {
-      showCustomFlushbar(
-        context,
-        'Warning',
-        'Error ${e.toString()}',
-        Icons.warning_outlined,
-      );
+      _showError('Error ${e.toString()}');
     }
   }
 
@@ -273,6 +372,11 @@ class _CustomBabyFirstsTrackerBottomSheetState
       selectedMilestoneTitle = [];
       selectedMilestoneDesc = [];
     });
+
+    // Clear temporarily saved notes
+    if (!widget.isEdit) {
+      SharedPrefsHelper.clearBabyFirstsTrackerNotes(widget.babyID);
+    }
 
     showCustomFlushbar(
       context,
@@ -328,6 +432,66 @@ class _CustomBabyFirstsTrackerBottomSheetState
                           icon: Icon(Icons.close),
                         ),
                       ],
+                    ),
+                    Divider(color: Colors.grey.shade300),
+
+                    /// Date Picker in Dialog (Scenario 1.5, 5.5)
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8.h),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            context.tr('time'),
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16.sp,
+                            ),
+                          ),
+                          CustomDateTimePicker(
+                            key: ValueKey('dialog_time_${selectedDatetime?.millisecondsSinceEpoch}'),
+                            initialText: 'initialText',
+                            initialDateTime: selectedDatetime,
+                            maxDate: DateTime.now(), // Prevent future dates
+                            minDate: DateTime.now().subtract(const Duration(days: 365)), // 1 year ago limit
+                            onDateTimeSelected: (selected) {
+                              // Future date check
+                              final now = DateTime.now();
+                              if (selected.isAfter(now)) {
+                                showCustomFlushbar(
+                                  context,
+                                  context.tr('error') ?? 'Error',
+                                  context.tr("date_in_future") ?? 
+                                      "Date cannot be in the future",
+                                  Icons.error_outline,
+                                  color: Colors.red,
+                                );
+                                return;
+                              }
+                              
+                              // Too old date check (1 year ago)
+                              final oneYearAgo = now.subtract(const Duration(days: 365));
+                              if (selected.isBefore(oneYearAgo)) {
+                                showCustomFlushbar(
+                                  context,
+                                  context.tr('error') ?? 'Error',
+                                  context.tr("date_too_old") ?? 
+                                      "Date cannot be more than 1 year ago",
+                                  Icons.error_outline,
+                                  color: Colors.red,
+                                );
+                                return;
+                              }
+                              
+                              // Update main form's date (Scenario 1.5: Dialog içinde tarih seçildiğinde ana formdaki tarih güncellenmeli)
+                              // Note: setState here refers to the outer widget's state since we're in a closure
+                              setState(() {
+                                selectedDatetime = selected;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                     Divider(color: Colors.grey.shade300),
 

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:open_baby_sara/data/models/invite_model.dart';
 import 'package:open_baby_sara/data/models/user_model.dart';
 import 'package:open_baby_sara/data/repositories/user_repository.dart';
@@ -7,6 +8,7 @@ import 'package:open_baby_sara/data/repositories/user_repository.dart';
 class UserRepositoryImpl implements UserRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   @override
   Future<void> createUserInFireStore(UserModel user) async {
@@ -42,10 +44,13 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   Future<void> signOut() async {
+    // Sign out from Firebase Auth
     final user = _firebaseAuth.currentUser;
     if (user != null) {
       await _firebaseAuth.signOut();
     }
+    // Also sign out from Google Sign-In to clear cached account
+    await _googleSignIn.signOut();
   }
 
   @override

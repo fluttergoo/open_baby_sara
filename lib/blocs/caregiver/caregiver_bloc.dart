@@ -72,10 +72,20 @@ class CaregiverBloc extends Bloc<CaregiverEvent, CaregiverState> {
           return;
         }
 
+        // Extract user information from Google account
+        final email = user.email ?? '';
+        if (email.isEmpty) {
+          emit(CaregiverError('Email not found in Google account'));
+          return;
+        }
+
+        final displayName = user.displayName ?? 'User';
+        final firstName = displayName.split(' ').first;
+
         // Email kontrolü ve Firestore işlemlerini yap
         await _caregiverRepository.signUpCaregiverWithGoogle(
-          event.firstName,
-          event.email,
+          firstName,
+          email,
         );
         emit(CaregiverSignedUp());
       } catch (e) {

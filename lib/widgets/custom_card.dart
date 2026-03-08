@@ -49,6 +49,13 @@ class _CustomCardState extends State<CustomCard> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ActivityBloc, ActivityState>(
+      buildWhen: (previous, current) {
+        // Sadece ilgili state'lerde rebuild ol
+        return current is SleepActivityLoaded ||
+            current is PumpActivityLoaded ||
+            current is ActivitiesWithDateLoaded ||
+            current is ActivityLoading;
+      },
       builder: (context, state) {
         if (state is SleepActivityLoaded) {
           final ActivityModel? lastSleepActivity = state.activityModel;
@@ -268,7 +275,6 @@ class _CustomCardState extends State<CustomCard> {
 
   Widget getLastActivityText(String title) {
     final isRunning = widget.isActivityRunning ?? false;
-    debugPrint(title);
     final String? displayText;
     switch (title) {
       case 'sleep':

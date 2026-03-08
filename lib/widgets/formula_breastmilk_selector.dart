@@ -34,6 +34,7 @@ class _FormulaBreastmilkSelectorState extends State<FormulaBreastmilkSelector> {
 
   Widget buildToggleButton(String label) {
     final isSelected = selected == label;
+    final lightPurple = Color(0xFFE1BEE7); // Açık mor renk
 
     return GestureDetector(
       onTap: () => toggleSelection(label),
@@ -41,15 +42,15 @@ class _FormulaBreastmilkSelectorState extends State<FormulaBreastmilkSelector> {
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
         margin: const EdgeInsets.symmetric(horizontal: 5),
         decoration: BoxDecoration(
-          color: isSelected ? Theme.of(context).primaryColor : Colors.white,
+          color: isSelected ? lightPurple.withOpacity(0.3) : Colors.white,
           borderRadius: BorderRadius.circular(10.r),
-          border: Border.all(color: Theme.of(context).primaryColor),
+          border: Border.all(color: lightPurple),
         ),
         child: Center(
           child: Text(
             label,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: isSelected ? Colors.white : Theme.of(context).primaryColor,
+              color: isSelected ? Color(0xFFBA68C8) : Color(0xFFBA68C8),
               fontSize: 16.sp,
               // fontWeight: FontWeight.bold,
             ),

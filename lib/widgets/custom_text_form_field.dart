@@ -27,6 +27,7 @@ class CustomTextFormField extends StatefulWidget {
 
 class _CustomTextFormFieldState extends State<CustomTextFormField> {
   bool _obscure = true;
+  final FocusNode _focusNode = FocusNode();
 
   void _toggleObscure() {
     setState(() {
@@ -35,68 +36,98 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   }
 
   @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: widget.controller,
-      obscureText: widget.isPassword ? _obscure : false,
-      validator: widget.validator,
-      maxLines: widget.isNotes ? null : 1,
-      onChanged: widget.onChanged,
-      keyboardType:
-          widget.isNotes ? TextInputType.multiline : widget.keyboardType,
-      style: Theme.of(
-        context,
-      ).textTheme.titleMedium?.copyWith(color: Colors.black, fontSize: 16.sp),
-      decoration: InputDecoration(
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          borderSide: BorderSide(color: Colors.grey.shade400),
-        ),
-        errorStyle: TextStyle(
-          fontSize: 12.sp,
-          color: Colors.redAccent,
-          fontWeight: FontWeight.w500,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          borderSide: BorderSide(
-            color: Theme.of(context).primaryColor,
-            width: 2,
+    final isFocused = _focusNode.hasFocus;
+    final borderColor = isFocused 
+        ? Color(0xFFBA68C8) // Daha belirgin mor (focus)
+        : Color(0xFFE1BEE7); // Açık mor (normal)
+
+    return Focus(
+      onFocusChange: (hasFocus) {
+        setState(() {});
+      },
+      child: TextFormField(
+        controller: widget.controller,
+        focusNode: _focusNode,
+        obscureText: widget.isPassword ? _obscure : false,
+        validator: widget.validator,
+        maxLines: widget.isNotes ? null : 1,
+        minLines: widget.isNotes ? 4 : 1, // Notes için minimum 4 satır
+        onChanged: widget.onChanged,
+        keyboardType:
+            widget.isNotes ? TextInputType.multiline : widget.keyboardType,
+        style: Theme.of(
+          context,
+        ).textTheme.titleMedium?.copyWith(color: Colors.black, fontSize: 16.sp),
+        decoration: InputDecoration(
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: BorderSide(
+              color: borderColor,
+              width: 1.5,
+            ),
           ),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          borderSide: BorderSide(color: Colors.redAccent),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          borderSide: BorderSide(color: Colors.red, width: 2),
-        ),
-        disabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          borderSide: BorderSide(color: Colors.grey.shade300),
-        ),
-        contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+          errorStyle: TextStyle(
+            fontSize: 12.sp,
+            color: Colors.redAccent,
+            fontWeight: FontWeight.w500,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: BorderSide(
+              color: borderColor,
+              width: 1.5, // Kalınlık her zaman aynı, sadece renk değişiyor
+            ),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: BorderSide(color: Colors.redAccent),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: BorderSide(color: Colors.red, width: 2),
+          ),
+          disabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 12.w, 
+            vertical: widget.isNotes ? 16.h : 12.h, // Notes için daha fazla padding
+          ),
 
-        floatingLabelStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
-          color: Theme.of(context).primaryColor,
-          fontSize: 14.sp,
-          fontWeight: FontWeight.bold,
-        ),
+          floatingLabelStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
+            color: Color(0xFFBA68C8),
+            fontSize: 14.sp,
+            fontWeight: FontWeight.bold,
+          ),
 
-        hintText: widget.hintText,
-        suffixIcon:
-            widget.isPassword
-                ? IconButton(
-                  icon: Icon(
-                    _obscure
-                        ? Icons.visibility_off_outlined
-                        : Icons.visibility_outlined,
-                    color: Colors.grey,
-                  ),
-                  onPressed: _toggleObscure,
-                )
-                : null,
+          hintText: widget.isNotes && widget.hintText.isEmpty 
+              ? 'Add any notes here...' 
+              : widget.hintText,
+          hintStyle: TextStyle(
+            color: Colors.grey.shade400,
+            fontSize: 16.sp,
+          ),
+          suffixIcon:
+              widget.isPassword
+                  ? IconButton(
+                    icon: Icon(
+                      _obscure
+                          ? Icons.visibility_off_outlined
+                          : Icons.visibility_outlined,
+                      color: Colors.grey,
+                    ),
+                    onPressed: _toggleObscure,
+                  )
+                  : null,
+        ),
       ),
     );
   }
