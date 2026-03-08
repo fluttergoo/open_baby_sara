@@ -255,35 +255,17 @@ class _CustomSleepTrackerBottomSheetState
                               // Only update when actually different (prevent unnecessary rebuilds)
                               bool needsUpdate = false;
                               
-                              // End time: if null in state and exists locally, set to null
-                              // if exists in state and different from local, update
-                              if (state.endTime == null) {
-                                if (endTime != null) {
-                                  endTime = null;
-                                  needsUpdate = true;
-                                }
-                              } else {
-                                if (endTime != state.endTime) {
-                                  endTime = state.endTime;
-                                  needsUpdate = true;
-                                }
+                              // Only sync start/end times from bloc when bloc has actual values.
+                              // In edit mode the initial StopTimer dispatch has null times — don't
+                              // overwrite the values that were loaded from the existing activity.
+                              if (state.endTime != null && endTime != state.endTime) {
+                                endTime = state.endTime;
+                                needsUpdate = true;
                               }
                               
-                              // Start time: update from state, but only if different
-                              // Since SetEndTimeTimer event now also sends start time,
-                              // start time in bloc state will be correct
-                              if (state.startTime == null) {
-                                if (start != null) {
-                                  start = null;
-                                  needsUpdate = true;
-                                }
-                              } else {
-                                // Update if state start time differs from local
-                                // But only if state start time is newer or different
-                                if (start != state.startTime) {
-                                  start = state.startTime;
-                                  needsUpdate = true;
-                                }
+                              if (state.startTime != null && start != state.startTime) {
+                                start = state.startTime;
+                                needsUpdate = true;
                               }
                               
                               // Duration: update from state
@@ -320,7 +302,11 @@ class _CustomSleepTrackerBottomSheetState
                                 setState(() {});
                               }
                             } else if (state is TimerReset) {
-                              // Clear everything in reset state
+                              // In edit mode the initial setup dispatches StopTimer which
+                              // briefly transitions through reset — don't wipe pre-loaded data.
+                              if (widget.isEdit) return;
+                              
+                              // Clear everything in reset state (new-record mode only)
                               bool needsUpdate = false;
                               if (start != null) {
                                 start = null;
