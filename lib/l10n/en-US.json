@@ -645,6 +645,7 @@
   "activity_was_added": "Activity was added successfully.",
   "success": "Success",
   "your_baby_is_now_sleeping": "Your baby \nis now sleeping.",
+  "pump_is_running": "Pumping \nis in progress.",
   "end_time_before_start": "End time cannot be before start time.",
   "end_time_in_future": "End time cannot be in the future.",
   "sleep_duration_exceeds_one_day": "Sleep duration cannot exceed 24 hours.",

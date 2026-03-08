@@ -644,6 +644,7 @@
   "activity_was_added": "活动已成功添加。",
   "success": "成功",
   "your_baby_is_now_sleeping": "您的宝宝\n正在睡觉。",
+  "pump_is_running": "吸乳\n进行中。",
   "end_time_before_start": "结束时间不能在开始时间之前。",
   "end_time_in_future": "结束时间不能在未来。",
   "cannot_start_timer_past_date": "無法使用過去的日期啟動計時器。請為開始時間選擇今天的日期。",

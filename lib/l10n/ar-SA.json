@@ -644,6 +644,7 @@
   "activity_was_added": "تمت إضافة النشاط بنجاح.",
   "success": "نجاح",
   "your_baby_is_now_sleeping": "طفلك \nنائم الآن.",
+  "pump_is_running": "الشفط \nجارٍ الآن.",
   "end_time_before_start": "لا يمكن أن يكون وقت الانتهاء قبل وقت البدء.",
   "end_time_in_future": "لا يمكن أن يكون وقت الانتهاء في المستقبل.",
   "cannot_start_timer_past_date": "لا يمكن بدء المؤقت بتاريخ سابق. يرجى اختيار تاريخ اليوم لوقت البداية.",

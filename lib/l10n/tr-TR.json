@@ -645,6 +645,7 @@
   "activity_was_added": "Aktivite başarıyla eklendi.",
   "success": "Başarılı",
   "your_baby_is_now_sleeping": "Bebeğiniz\nşimdi uyuyor.",
+  "pump_is_running": "Pump\nyapılıyor.",
   "end_time_before_start": "Bitiş zamanı başlangıçtan önce olamaz.",
   "end_time_in_future": "Bitiş zamanı gelecekte olamaz.",
   "sleep_duration_exceeds_one_day": "Uyku süresi 24 saati geçemez.",
