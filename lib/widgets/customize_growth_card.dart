@@ -35,69 +35,65 @@ class _CustomizeGrowthCardState extends State<CustomizeGrowthCard> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ActivityBloc, ActivityState>(
-      buildWhen: (previous, current) {
-        // Sadece ActivitiesWithDateLoaded veya ActivityLoading state'lerinde rebuild ol
-        return current is ActivitiesWithDateLoaded || current is ActivityLoading;
-      },
+      buildWhen: (previous, current) =>
+          current is ActivitiesWithDateLoaded,
       builder: (context, state) {
         if (state is ActivitiesWithDateLoaded) {
           growthActivities = state.growthActivities;
         }
 
-        return state is ActivityLoading
-            ? Center(child: CircularProgressIndicator())
-            : Card(
-              color: widget.color,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.r),
-              ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-                child: Row(
-                  children: [
-                    /// Left Image
-                    Image.asset(
-                      widget.imgUrl,
-                      height: 40.h,
-                      width: 40.w,
-                      fit: BoxFit.contain,
-                    ),
-                    SizedBox(width: 12.w),
-
-                    /// Weight, Height, Head Size Columns
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          _buildInfoColumn(
-                            context.tr('weight'),
-                            getLastWeight(growthActivities!, context),
-                          ),
-                          _buildInfoColumn(
-                            context.tr('height'),
-                            getLastHeight(growthActivities!, context),
-                          ),
-                          _buildInfoColumn(
-                            context.tr('head_size'),
-                            getLastHeadSize(growthActivities!, context),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    /// Add Button
-                    CircleAvatar(
-                      radius: 16.r,
-                      backgroundColor: Theme.of(context).primaryColor,
-                      child: IconButton(
-                        onPressed: widget.voidCallback,
-                        icon: Icon(Icons.add, color: Colors.white, size: 16.sp),
-                      ),
-                    ),
-                  ],
+        return Card(
+          color: widget.color,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.r),
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+            child: Row(
+              children: [
+                /// Left Image
+                Image.asset(
+                  widget.imgUrl,
+                  height: 40.h,
+                  width: 40.w,
+                  fit: BoxFit.contain,
                 ),
-              ),
-            );
+                SizedBox(width: 12.w),
+
+                /// Weight, Height, Head Size Columns
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildInfoColumn(
+                        context.tr('weight'),
+                        getLastWeight(growthActivities!, context),
+                      ),
+                      _buildInfoColumn(
+                        context.tr('height'),
+                        getLastHeight(growthActivities!, context),
+                      ),
+                      _buildInfoColumn(
+                        context.tr('head_size'),
+                        getLastHeadSize(growthActivities!, context),
+                      ),
+                    ],
+                  ),
+                ),
+
+                /// Add Button
+                GestureDetector(
+                  onTap: widget.voidCallback,
+                  child: Icon(
+                    Icons.add_circle,
+                    color: Theme.of(context).primaryColor,
+                    size: 32.sp,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
       },
     );
   }
