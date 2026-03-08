@@ -316,7 +316,10 @@ class _HistoryPageState extends State<HistoryPage> {
                                 if (actState is ActivityByDateRangeLoaded) {
                                   final activities = actState.activities;
                                   if (activities.isEmpty) {
-                                    return _EmptyState();
+                                    return _EmptyState(
+                                      hasFilter:
+                                          _selectedFilterType != null,
+                                    );
                                   }
 
                                   final grouped = _groupByDate(activities);
@@ -375,7 +378,9 @@ class _HistoryPageState extends State<HistoryPage> {
                                       child: Text(actState.message));
                                 }
 
-                                return _EmptyState();
+                                return _EmptyState(
+                                  hasFilter: _selectedFilterType != null,
+                                );
                               },
                             ),
                           ),
@@ -395,7 +400,7 @@ class _HistoryPageState extends State<HistoryPage> {
   void _updateActivity(ActivityModel activityModel) {
     final activityType = activityModel.activityType;
     final babyID = activityModel.babyID;
-    final firstName = activityModel.createdBy ?? '';
+    final firstName = activityModel.createdBy;
 
     if (activityType == ActivityType.babyFirsts.name) {
       showModalBottomSheet(
@@ -562,16 +567,26 @@ class _DateSeparator extends StatelessWidget {
 }
 
 class _EmptyState extends StatelessWidget {
+  final bool hasFilter;
+
+  const _EmptyState({this.hasFilter = false});
+
   @override
   Widget build(BuildContext context) {
+    final emoji = hasFilter ? '🔍' : '🌸';
+    final message = hasFilter
+        ? context.tr('no_activities_with_filter')
+        : context.tr('no_activities_date_range');
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('🌸', style: TextStyle(fontSize: 48.sp)),
+          Text(emoji, style: TextStyle(fontSize: 48.sp)),
           SizedBox(height: 16.h),
           Text(
-            context.tr('no_activities_found'),
+            message,
+            textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 16.sp,
               color: Colors.grey[500],
