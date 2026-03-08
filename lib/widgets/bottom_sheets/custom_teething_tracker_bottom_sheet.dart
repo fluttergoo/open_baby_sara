@@ -144,13 +144,17 @@ class _CustomTeethingTrackerBottomSheetState
       },
 
       child: BlocBuilder<ActivityBloc, ActivityState>(
+        buildWhen: (previous, current) =>
+            current is TeethingLoading ||
+            current is FetchToothIsoNumberLoaded ||
+            current is ActivityError,
         builder: (context, state) {
           if (state is FetchToothIsoNumberLoaded) {
             initilizeTeeth = state.toothIsoNumber;
             fetchTeethingActivity = state.toothActivities;
           }
 
-          return state is ActivityLoading
+          return state is TeethingLoading
               ? Center(child: CircularProgressIndicator())
               : GestureDetector(
                 onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
