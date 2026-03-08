@@ -722,5 +722,18 @@
   "current_version:":"Version Actuelle :",
   "latest_version:": "Dernière Version :",
   "update_now": "Mettre à Jour Maintenant",
-  "maybe_later": "Peut-être Plus Tard"
+  "maybe_later": "Peut-être Plus Tard",
+  "yesterday_at": "Hier à {time}",
+  "reason_label": "Raison",
+  "reaction_label": "Réaction",
+  "diagnosis_label": "Diagnostic",
+  "notes_label": "Notes",
+  "no_medication_details": "Aucun détail médicament",
+  "activity_recorded": "Enregistré",
+  "today_insight_feed_sleep": "{name} a mangé {feedCount} fois · dormi {sleepDuration} aujourd'hui 🌸",
+  "today_insight_feed_only": "{name} a mangé {feedCount} fois aujourd'hui 🍼",
+  "today_insight_sleep_only": "{name} a dormi {sleepDuration} aujourd'hui 🌙",
+  "today_insight_empty": "Aucun enregistrement aujourd'hui. Ajoutez la première activité ! 👶",
+  "no_activities_with_filter": "Aucune activité pour ce filtre.",
+  "no_activities_date_range": "Aucune activité dans la plage de dates."
 }

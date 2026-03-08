@@ -722,6 +722,18 @@
   "current_version:":"Текущая версия:",
   "latest_version:": "Последняя версия:",
   "update_now": "Обновить сейчас",
-  "maybe_later": "Может быть, позже"
-
+  "maybe_later": "Может быть, позже",
+  "yesterday_at": "Вчера в {time}",
+  "reason_label": "Причина",
+  "reaction_label": "Реакция",
+  "diagnosis_label": "Диагноз",
+  "notes_label": "Заметки",
+  "no_medication_details": "Нет данных о лекарствах",
+  "activity_recorded": "Записано",
+  "today_insight_feed_sleep": "{name} поел {feedCount} раз · спал {sleepDuration} сегодня 🌸",
+  "today_insight_feed_only": "{name} поел {feedCount} раз сегодня 🍼",
+  "today_insight_sleep_only": "{name} спал {sleepDuration} сегодня 🌙",
+  "today_insight_empty": "Сегодня записей нет. Добавьте первую активность! 👶",
+  "no_activities_with_filter": "Активности для этого фильтра не найдены.",
+  "no_activities_date_range": "В выбранном периоде активностей нет."
 }

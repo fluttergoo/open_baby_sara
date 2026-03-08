@@ -732,5 +732,18 @@
   "yes_delete": "Evet, Sil",
   "all": "Tümü",
   "edit": "Düzenle",
-  "change_photo": "Fotoğraf Değiştir"
+  "change_photo": "Fotoğraf Değiştir",
+  "yesterday_at": "Dün {time}",
+  "reason_label": "Neden",
+  "reaction_label": "Tepki",
+  "diagnosis_label": "Teşhis",
+  "notes_label": "Notlar",
+  "no_medication_details": "İlaç detayı yok",
+  "activity_recorded": "Kaydedildi",
+  "today_insight_feed_sleep": "{name} bugün {feedCount} kez beslendi · {sleepDuration} uyudu 🌸",
+  "today_insight_feed_only": "{name} bugün {feedCount} kez beslendi 🍼",
+  "today_insight_sleep_only": "{name} bugün {sleepDuration} uyudu 🌙",
+  "today_insight_empty": "Bugün henüz kayıt yok. İlk aktiviteyi ekle! 👶",
+  "no_activities_with_filter": "Bu filtre için aktivite bulunamadı.",
+  "no_activities_date_range": "Seçilen tarih aralığında aktivite yok."
 }

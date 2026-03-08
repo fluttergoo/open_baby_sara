@@ -722,5 +722,18 @@
   "current_version:":"目前版本：",
   "latest_version:": "最新版本：",
   "update_now": "立即更新",
-  "maybe_later": "稍後再說"
+  "maybe_later": "稍後再說",
+  "yesterday_at": "昨天 {time}",
+  "reason_label": "原因",
+  "reaction_label": "反應",
+  "diagnosis_label": "診斷",
+  "notes_label": "備注",
+  "no_medication_details": "無藥物詳情",
+  "activity_recorded": "已記錄",
+  "today_insight_feed_sleep": "{name} 今天餵了 {feedCount} 次 · 睡了 {sleepDuration} 🌸",
+  "today_insight_feed_only": "{name} 今天餵了 {feedCount} 次 🍼",
+  "today_insight_sleep_only": "{name} 今天睡了 {sleepDuration} 🌙",
+  "today_insight_empty": "今天還沒有記錄。新增第一個活動！👶",
+  "no_activities_with_filter": "此篩選條件無活動記錄。",
+  "no_activities_date_range": "所選日期範圍內無活動記錄。"
 }

@@ -723,5 +723,18 @@
   "current_version:":"Versi Saat Ini:",
   "latest_version:": "Versi Terbaru:",
   "update_now": "Perbarui Sekarang",
-  "maybe_later": "Mungkin Nanti"
+  "maybe_later": "Mungkin Nanti",
+  "yesterday_at": "Kemarin {time}",
+  "reason_label": "Alasan",
+  "reaction_label": "Reaksi",
+  "diagnosis_label": "Diagnosa",
+  "notes_label": "Catatan",
+  "no_medication_details": "Tidak ada detail obat",
+  "activity_recorded": "Dicatat",
+  "today_insight_feed_sleep": "{name} makan {feedCount} kali · tidur {sleepDuration} hari ini 🌸",
+  "today_insight_feed_only": "{name} makan {feedCount} kali hari ini 🍼",
+  "today_insight_sleep_only": "{name} tidur {sleepDuration} hari ini 🌙",
+  "today_insight_empty": "Belum ada catatan hari ini. Tambahkan aktivitas pertama! 👶",
+  "no_activities_with_filter": "Tidak ada aktivitas untuk filter ini.",
+  "no_activities_date_range": "Tidak ada aktivitas dalam rentang tanggal."
 }

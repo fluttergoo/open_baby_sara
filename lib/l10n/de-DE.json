@@ -722,5 +722,18 @@
   "current_version:":"Aktuelle Version:",
   "latest_version:": "Neueste Version:",
   "update_now": "Jetzt aktualisieren",
-  "maybe_later": "Vielleicht später"
+  "maybe_later": "Vielleicht später",
+  "yesterday_at": "Gestern um {time}",
+  "reason_label": "Grund",
+  "reaction_label": "Reaktion",
+  "diagnosis_label": "Diagnose",
+  "notes_label": "Notizen",
+  "no_medication_details": "Keine Medikamentendetails",
+  "activity_recorded": "Aufgezeichnet",
+  "today_insight_feed_sleep": "{name} heute {feedCount}× gefüttert · {sleepDuration} geschlafen 🌸",
+  "today_insight_feed_only": "{name} heute {feedCount}× gefüttert 🍼",
+  "today_insight_sleep_only": "{name} heute {sleepDuration} geschlafen 🌙",
+  "today_insight_empty": "Heute noch keine Einträge. Erste Aktivität hinzufügen! 👶",
+  "no_activities_with_filter": "Keine Aktivitäten für diesen Filter.",
+  "no_activities_date_range": "Keine Aktivitäten im gewählten Zeitraum."
 }

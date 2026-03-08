@@ -732,5 +732,18 @@
   "yes_delete": "Yes, Delete",
   "all": "All",
   "edit": "Edit",
-  "change_photo": "Change Photo"
+  "change_photo": "Change Photo",
+  "yesterday_at": "Yesterday at {time}",
+  "reason_label": "Reason",
+  "reaction_label": "Reaction",
+  "diagnosis_label": "Diagnosis",
+  "notes_label": "Notes",
+  "no_medication_details": "No medication details",
+  "activity_recorded": "Recorded",
+  "today_insight_feed_sleep": "{name} fed {feedCount} times · slept {sleepDuration} today 🌸",
+  "today_insight_feed_only": "{name} fed {feedCount} times today 🍼",
+  "today_insight_sleep_only": "{name} slept {sleepDuration} today 🌙",
+  "today_insight_empty": "No records yet today. Add the first activity! 👶",
+  "no_activities_with_filter": "No activities found for this filter.",
+  "no_activities_date_range": "No activities in the selected date range."
 }

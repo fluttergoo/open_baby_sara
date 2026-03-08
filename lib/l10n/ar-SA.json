@@ -721,5 +721,18 @@
   "current_version:":"الإصدار الحالي:",
   "latest_version:": "آخر إصدار:",
   "update_now": "تحديث الآن",
-  "maybe_later": "ربما لاحقًا"
+  "maybe_later": "ربما لاحقًا",
+  "yesterday_at": "أمس {time}",
+  "reason_label": "السبب",
+  "reaction_label": "رد الفعل",
+  "diagnosis_label": "التشخيص",
+  "notes_label": "ملاحظات",
+  "no_medication_details": "لا تفاصيل للدواء",
+  "activity_recorded": "مسجل",
+  "today_insight_feed_sleep": "{name} رضعت {feedCount} مرة · نامت {sleepDuration} اليوم 🌸",
+  "today_insight_feed_only": "{name} رضعت {feedCount} مرة اليوم 🍼",
+  "today_insight_sleep_only": "{name} نامت {sleepDuration} اليوم 🌙",
+  "today_insight_empty": "لا سجلات اليوم بعد. أضيفي أول نشاط! 👶",
+  "no_activities_with_filter": "لا توجد أنشطة لهذا الفلتر.",
+  "no_activities_date_range": "لا توجد أنشطة في الفترة المحددة."
 }

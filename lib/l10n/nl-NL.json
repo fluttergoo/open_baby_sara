@@ -722,5 +722,18 @@
   "current_version:":"Huidige Versie:",
   "latest_version:": "Nieuwste Versie:",
   "update_now": "Nu Updaten",
-  "maybe_later": "Misschien Later"
+  "maybe_later": "Misschien Later",
+  "yesterday_at": "Gisteren {time}",
+  "reason_label": "Reden",
+  "reaction_label": "Reactie",
+  "diagnosis_label": "Diagnose",
+  "notes_label": "Notities",
+  "no_medication_details": "Geen medicatiedetails",
+  "activity_recorded": "Vastgelegd",
+  "today_insight_feed_sleep": "{name} at {feedCount} keer · sliep {sleepDuration} vandaag 🌸",
+  "today_insight_feed_only": "{name} at {feedCount} keer vandaag 🍼",
+  "today_insight_sleep_only": "{name} sliep {sleepDuration} vandaag 🌙",
+  "today_insight_empty": "Nog geen records vandaag. Voeg de eerste activiteit toe! 👶",
+  "no_activities_with_filter": "Geen activiteiten voor dit filter.",
+  "no_activities_date_range": "Geen activiteiten in geselecteerd datumbereik."
 }
