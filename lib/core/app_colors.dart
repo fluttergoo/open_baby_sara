@@ -16,6 +16,24 @@ class AppColors {
   static const Color summaryHeader = Color(0xFFFFF0D9);
   static const Color summaryBody = Color(0xFFFFF4E2);
 
+  // History Page
+  static const Color historyBackground = Color(0xFFF7F4FB);
+  static const Color historyPink = Color(0xFFFF6F91);
+  static const Color historyChipBg = Color(0xFFEDE8F5);
+
+  // Activity Icon Accent Colors (vibrant versions for icons)
+  static const Color sleepIconColor = Color(0xFF7C6CF7);
+  static const Color feedIconColor = Color(0xFFF5A623);
+  static const Color growthIconColor = Color(0xFF3DBFA0);
+  static const Color diaperIconColor = Color(0xFFE57ABA);
+  static const Color pumpIconColor = Color(0xFFFF6F91);
+  static const Color babyFirstsIconColor = Color(0xFFFF7B7B);
+  static const Color teethingIconColor = Color(0xFF26C6DA);
+  static const Color medicationIconColor = Color(0xFFFF9966);
+  static const Color feverIconColor = Color(0xFFEF5350);
+  static const Color vaccinationIconColor = Color(0xFF9C27B0);
+  static const Color doctorVisitIconColor = Color(0xFF29B6F6);
+
   // 🎀 GIRL THEME COLORS
   static const Color girlPrimary = Color(0xFFE91E63);
   static const Color girlBackground = Color(0xFFFFF8E1);
