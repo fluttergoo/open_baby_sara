@@ -29,6 +29,11 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
         );
         await ReviewService().incrementRecordCount();
         emit(ActivityAdded());
+        // Refresh today's activity cards immediately after saving
+        add(LoadActivitiesWithDate(
+          babyID: event.activityModel.babyID,
+          day: DateTime.now(),
+        ));
       } catch (e) {
         emit(ActivityError(e.toString()));
       }
@@ -37,8 +42,9 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
       _syncTimer?.cancel();
       _syncTimer = Timer.periodic(Duration(minutes: 1), (_) async {
         try {
-          final connectivityResult = await Connectivity().checkConnectivity();
-          if (connectivityResult != ConnectivityResult.none) {
+          final connectivityResults = await Connectivity().checkConnectivity();
+          if (!connectivityResults.contains(ConnectivityResult.none) &&
+              connectivityResults.isNotEmpty) {
             await _activityRepository.syncActivities();
           }
         } catch (e) {
@@ -61,7 +67,7 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
     });
     on<FetchToothIsoNumber>((event, emit) async {
       try {
-        emit(ActivityLoading());
+        emit(TeethingLoading());
 
         final List<ActivityModel>? result = await _activityRepository
             .fetchAllTypeOfActivity(event.babyID, event.activityType);
@@ -199,6 +205,11 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
       try {
         await _activityRepository.updateActivity(event.activityModel);
         emit(ActivityUpdated());
+        // Refresh today's activity cards immediately after updating
+        add(LoadActivitiesWithDate(
+          babyID: event.activityModel.babyID,
+          day: DateTime.now(),
+        ));
       } catch (e) {
         emit(ActivityUpdateError(e.toString()));
       }

@@ -7,6 +7,10 @@ final class ActivityInitial extends ActivityState {}
 
 final class ActivityLoading extends ActivityState {}
 
+// Teething-specific loading — prevents global ActivityLoading from affecting
+// CustomCard and CustomTodaySummaryCard when teething bottom sheet is open
+final class TeethingLoading extends ActivityState {}
+
 final class ActivityAdded extends ActivityState {
   ActivityAdded();
 }
