@@ -139,7 +139,7 @@ class _NewActivityCardState extends State<NewActivityCard>
         borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 10,
             offset: const Offset(0, 3),
           ),
@@ -196,7 +196,7 @@ class _NewActivityCardState extends State<NewActivityCard>
                               fontSize: 12.sp,
                               color: Colors.grey[500],
                             ),
-                            maxLines: 1,
+                            maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ],
@@ -273,22 +273,44 @@ class _ExpandedSection extends StatelessWidget {
       margin: EdgeInsets.fromLTRB(12.w, 0, 12.w, 12.h),
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: iconBg.withOpacity(0.6),
+        color: iconBg.withValues(alpha: 0.6),
         borderRadius: BorderRadius.circular(14.r),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (summary != null && summary!.isNotEmpty) ...[
-            Text(
-              summary!,
-              style: TextStyle(
-                fontSize: 13.sp,
-                color: Colors.grey[700],
-                height: 1.4,
+            // Render each line of the summary as a separate row for clarity.
+            ...summary!.split('\n').where((l) => l.trim().isNotEmpty).map(
+              (line) => Padding(
+                padding: EdgeInsets.only(bottom: 4.h),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(top: 5.h, right: 6.w),
+                      width: 4.w,
+                      height: 4.w,
+                      decoration: BoxDecoration(
+                        color: iconColor,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        line.trim(),
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          color: Colors.grey[700],
+                          height: 1.4,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-            SizedBox(height: 12.h),
+            SizedBox(height: 10.h),
           ],
           Row(
             children: [
