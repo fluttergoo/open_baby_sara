@@ -50,8 +50,10 @@ class _CustomTodaySummaryCardState extends State<CustomTodaySummaryCard> {
   Widget build(BuildContext context) {
     return BlocBuilder<ActivityBloc, ActivityState>(
       buildWhen: (previous, current) {
-        // Sadece ActivitiesWithDateLoaded veya ActivityLoading state'lerinde rebuild ol
-        return current is ActivitiesWithDateLoaded || current is ActivityLoading;
+        // Only rebuild when today's activities are loaded.
+        // ActivityLoading is excluded to prevent teething/other bottom sheets
+        // from triggering a loading spinner on this card.
+        return current is ActivitiesWithDateLoaded;
       },
       builder: (context, state) {
         if (state is ActivitiesWithDateLoaded) {
@@ -185,7 +187,7 @@ class _CustomTodaySummaryCardState extends State<CustomTodaySummaryCard> {
                             Row(
                               children: [
                                 Text(
-                                  totalDiaper!,
+                                  totalDiaper,
                                   style: Theme.of(context).textTheme.titleSmall
                                       ?.copyWith(fontSize: 12.sp),
                                 ),
@@ -243,10 +245,8 @@ class _CustomTodaySummaryCardState extends State<CustomTodaySummaryCard> {
               ],
             ),
           );
-        } else if (state is ActivityLoading) {
-          return Center(child: CircularProgressIndicator());
         } else {
-          return const SizedBox(); // ya da boş Container()
+          return const SizedBox();
         }
       },
     );
@@ -272,7 +272,7 @@ class _CustomTodaySummaryCardState extends State<CustomTodaySummaryCard> {
               color: Colors.white.withAlpha(150),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withValues(alpha: 0.2),
                   blurRadius: 8,
                   offset: Offset(2, 4),
                 ),
