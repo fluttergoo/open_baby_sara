@@ -65,4 +65,26 @@ class ActivityServiceImpl extends ActivityService {
       debugPrint('Update error: $e');
     }
   }
+
+  @override
+  Future<List<ActivityModel>> fetchActivitiesSince(
+    String babyID,
+    DateTime since,
+  ) async {
+    try {
+      final snapshot =
+          await _firestore
+              .collection('babies')
+              .doc(babyID)
+              .collection('activities')
+              .where('updatedAt', isGreaterThan: Timestamp.fromDate(since))
+              .get();
+      return snapshot.docs
+          .map((d) => ActivityModel.fromFirestore(d.data()))
+          .toList();
+    } catch (e) {
+      debugPrint('fetchActivitiesSince error: $e');
+      return [];
+    }
+  }
 }
