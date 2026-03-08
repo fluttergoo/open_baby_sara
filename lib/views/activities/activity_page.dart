@@ -2,6 +2,12 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_baby_sara/blocs/all_timer/pump_left_side_timer/pump_left_side_timer_bloc.dart'
+    as pumpLeft;
+import 'package:open_baby_sara/blocs/all_timer/pump_right_side_timer/pump_right_side_timer_bloc.dart'
+    as pumpRight;
+import 'package:open_baby_sara/blocs/all_timer/pump_total_timer/pump_total_timer_bloc.dart'
+    as pumpTotal;
 import 'package:open_baby_sara/blocs/all_timer/sleep_timer/sleep_timer_bloc.dart';
 import 'package:open_baby_sara/blocs/auth/auth_bloc.dart';
 import 'package:open_baby_sara/blocs/baby/baby_bloc.dart';
@@ -130,7 +136,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                       colorSummaryBody: AppColors.summaryBody,
                                       title: 'title',
                                       babyID: selectedBaby.babyID,
-                                      firstName: firstName ?? '',
+                                      firstName: selectedBaby.firstName,
                                     ),
                                   ),
 
@@ -179,7 +185,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                   ///
                                   SizedBox(
                                     width: double.infinity,
-                                    height: 100.h,
+                                    height: 110.h,
                                     child: CustomizeGrowthCard(
                                       color: AppColors.growthColor,
                                       title: 'Weight',
@@ -205,7 +211,7 @@ class _ActivityPageState extends State<ActivityPage> {
                                     ),
                                   ),
 
-                                  SizedBox(height: 5.h),
+                                  SizedBox(height: 6.h),
 
                                   _GrowthDevelopmentGrid(
                                     selectedBabyID: selectedBaby.babyID,
@@ -296,108 +302,139 @@ class _ActivityGrid extends StatelessWidget {
     return BlocSelector<SleepTimerBloc, SleepTimerState, bool>(
       selector: (state) => state is TimerRunning,
       builder: (context, isSleepActivityRunning) {
-        return GridView.count(
-          crossAxisCount: 2,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisSpacing: 6.w,
-          mainAxisSpacing: 6.h,
-          childAspectRatio: 1.6,
-          children: [
-            CustomCard(
-              color: AppColors.feedColor,
-              title: context.tr("feed"),
-              activityType: ActivityType.breastFeed.name,
-              babyID: selectedBabyID,
-              firstName: firstName,
-              imgUrl: 'assets/images/feed_icon.png',
-              voidCallback: () {
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(20.r),
-                    ),
-                  ),
-                  builder: (context) => CustomFeedTrackerBottomSheet(
-                    babyID: selectedBabyID,
-                    firstName: firstName,
-                  ),
+        return BlocBuilder<pumpTotal.PumpTotalTimerBloc,
+            pumpTotal.PumpTotalTimerState>(
+          buildWhen: (prev, curr) =>
+              (prev is pumpTotal.TimerRunning) !=
+              (curr is pumpTotal.TimerRunning),
+          builder: (context, pumpTotalState) {
+            return BlocBuilder<pumpLeft.PumpLeftSideTimerBloc,
+                pumpLeft.PumpLeftSideTimerState>(
+              buildWhen: (prev, curr) =>
+                  (prev is pumpLeft.TimerRunning) !=
+                  (curr is pumpLeft.TimerRunning),
+              builder: (context, pumpLeftState) {
+                return BlocBuilder<pumpRight.PumpRightSideTimerBloc,
+                    pumpRight.PumpRightSideTimerState>(
+                  buildWhen: (prev, curr) =>
+                      (prev is pumpRight.TimerRunning) !=
+                      (curr is pumpRight.TimerRunning),
+                  builder: (context, pumpRightState) {
+                    final isPumpRunning =
+                        pumpTotalState is pumpTotal.TimerRunning ||
+                            pumpLeftState is pumpLeft.TimerRunning ||
+                            pumpRightState is pumpRight.TimerRunning;
+
+                    return GridView.count(
+                      crossAxisCount: 2,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisSpacing: 6.w,
+                      mainAxisSpacing: 6.h,
+                      childAspectRatio: 1.6,
+                      children: [
+                        CustomCard(
+                          color: AppColors.feedColor,
+                          title: context.tr("feed"),
+                          activityType: ActivityType.breastFeed.name,
+                          babyID: selectedBabyID,
+                          firstName: firstName,
+                          imgUrl: 'assets/images/feed_icon.png',
+                          voidCallback: () {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(20.r),
+                                ),
+                              ),
+                              builder: (context) => CustomFeedTrackerBottomSheet(
+                                babyID: selectedBabyID,
+                                firstName: firstName,
+                              ),
+                            );
+                          },
+                        ),
+                        CustomCard(
+                          color: AppColors.pumpColor,
+                          title: context.tr("pump"),
+                          activityType: ActivityType.pumpTotal.name,
+                          babyID: selectedBabyID,
+                          firstName: firstName,
+                          imgUrl: 'assets/images/pump_icon.png',
+                          isActivityRunning: isPumpRunning,
+                          voidCallback: () {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(20.r),
+                                ),
+                              ),
+                              builder: (context) => CustomPumpTrackerBottomSheet(
+                                babyID: selectedBabyID,
+                                firstName: firstName,
+                              ),
+                            );
+                          },
+                        ),
+                        CustomCard(
+                          color: AppColors.diaperColor,
+                          title: context.tr("diaper"),
+                          activityType: ActivityType.diaper.name,
+                          babyID: selectedBabyID,
+                          firstName: firstName,
+                          imgUrl: 'assets/images/diaper_icon.png',
+                          voidCallback: () {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(20.r),
+                                ),
+                              ),
+                              builder: (context) =>
+                                  CustomDiaperTrackerBottomSheet(
+                                babyID: selectedBabyID,
+                                firstName: firstName,
+                              ),
+                            );
+                          },
+                        ),
+                        CustomCard(
+                          color: AppColors.sleepColor,
+                          title: context.tr('sleep'),
+                          activityType: ActivityType.sleep.name,
+                          babyID: selectedBabyID,
+                          firstName: firstName,
+                          imgUrl: 'assets/images/sleep_icon.png',
+                          isActivityRunning: isSleepActivityRunning,
+                          voidCallback: () {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(20.r),
+                                ),
+                              ),
+                              builder: (context) => CustomSleepTrackerBottomSheet(
+                                babyID: selectedBabyID,
+                                firstName: firstName,
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    );
+                  },
                 );
               },
-            ),
-            CustomCard(
-              color: AppColors.pumpColor,
-              title: context.tr("pump"),
-              activityType: ActivityType.pumpTotal.name,
-              babyID: selectedBabyID,
-              firstName: firstName,
-              imgUrl: 'assets/images/pump_icon.png',
-              voidCallback: () {
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(20.r),
-                    ),
-                  ),
-                  builder: (context) => CustomPumpTrackerBottomSheet(
-                    babyID: selectedBabyID,
-                    firstName: firstName,
-                  ),
-                );
-              },
-            ),
-            CustomCard(
-              color: AppColors.diaperColor,
-              title: context.tr("diaper"),
-              activityType: ActivityType.diaper.name,
-              babyID: selectedBabyID,
-              firstName: firstName,
-              imgUrl: 'assets/images/diaper_icon.png',
-              voidCallback: () {
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(20.r),
-                    ),
-                  ),
-                  builder: (context) => CustomDiaperTrackerBottomSheet(
-                    babyID: selectedBabyID,
-                    firstName: firstName,
-                  ),
-                );
-              },
-            ),
-            CustomCard(
-              color: AppColors.sleepColor,
-              title: context.tr('sleep'),
-              activityType: ActivityType.sleep.name,
-              babyID: selectedBabyID,
-              firstName: firstName,
-              imgUrl: 'assets/images/sleep_icon.png',
-              isActivityRunning: isSleepActivityRunning,
-              voidCallback: () {
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(20.r),
-                    ),
-                  ),
-                  builder: (context) => CustomSleepTrackerBottomSheet(
-                    babyID: selectedBabyID,
-                    firstName: firstName,
-                  ),
-                );
-              },
-            ),
-          ],
+            );
+          },
         );
       },
     );
