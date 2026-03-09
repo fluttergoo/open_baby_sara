@@ -23,6 +23,7 @@ class BabyProfileHeader extends StatefulWidget {
 class _BabyProfileHeaderState extends State<BabyProfileHeader> {
   BabyModel? _cachedBaby;
   String? _cachedImagePath;
+  int _imageVersion = 0;
 
   @override
   void initState() {
@@ -84,11 +85,12 @@ class _BabyProfileHeaderState extends State<BabyProfileHeader> {
           setState(() {
             _cachedBaby = state.selectedBaby;
             _cachedImagePath = state.imagePath;
+            _imageVersion++;
           });
         } else if (state is BabyImagePathLoaded) {
           setState(() {
             _cachedImagePath = state.imagePath;
-            // _cachedBaby stays the same
+            _imageVersion++;
           });
         }
       },
@@ -103,6 +105,7 @@ class _BabyProfileHeaderState extends State<BabyProfileHeader> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             _AvatarWithPicker(
+              key: ValueKey(_imageVersion),
               babyID: selectedBaby?.babyID,
               imagePath: imagePath,
               onTap: () {
@@ -195,6 +198,7 @@ class _AvatarWithPicker extends StatefulWidget {
   final VoidCallback onTap;
 
   const _AvatarWithPicker({
+    super.key,
     required this.babyID,
     required this.imagePath,
     required this.onTap,
@@ -216,8 +220,7 @@ class _AvatarWithPickerState extends State<_AvatarWithPicker> {
   @override
   void didUpdateWidget(covariant _AvatarWithPicker oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.babyID != widget.babyID ||
-        oldWidget.imagePath != widget.imagePath) {
+    if (oldWidget.babyID != widget.babyID) {
       _evictCacheAndReload();
     }
   }
