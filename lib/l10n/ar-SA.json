@@ -734,6 +734,7 @@
   "today_insight_feed_only": "{name} رضعت {feedCount} مرة اليوم 🍼",
   "today_insight_sleep_only": "{name} نامت {sleepDuration} اليوم 🌙",
   "today_insight_empty": "لا سجلات اليوم بعد. أضيفي أول نشاط! 👶",
+  "today_insight_other_activities": "{name} اليوم: {activities} 👶",
   "no_activities_with_filter": "لا توجد أنشطة لهذا الفلتر.",
   "no_activities_date_range": "لا توجد أنشطة في الفترة المحددة."
 }

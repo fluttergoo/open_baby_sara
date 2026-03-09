@@ -735,6 +735,7 @@
   "today_insight_feed_only": "{name} comió {feedCount} veces hoy 🍼",
   "today_insight_sleep_only": "{name} durmió {sleepDuration} hoy 🌙",
   "today_insight_empty": "Sin registros hoy. ¡Añade la primera actividad! 👶",
+  "today_insight_other_activities": "{name} hoy: {activities} 👶",
   "no_activities_with_filter": "No hay actividades para este filtro.",
   "no_activities_date_range": "No hay actividades en el rango de fechas."
 }

@@ -745,6 +745,7 @@
   "today_insight_feed_only": "{name} fed {feedCount} times today 🍼",
   "today_insight_sleep_only": "{name} slept {sleepDuration} today 🌙",
   "today_insight_empty": "No records yet today. Add the first activity! 👶",
+  "today_insight_other_activities": "{name} today: {activities} 👶",
   "no_activities_with_filter": "No activities found for this filter.",
   "no_activities_date_range": "No activities in the selected date range."
 }

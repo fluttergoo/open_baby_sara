@@ -736,6 +736,7 @@
   "today_insight_feed_only": "{name} makan {feedCount} kali hari ini 🍼",
   "today_insight_sleep_only": "{name} tidur {sleepDuration} hari ini 🌙",
   "today_insight_empty": "Belum ada catatan hari ini. Tambahkan aktivitas pertama! 👶",
+  "today_insight_other_activities": "{name} hari ini: {activities} 👶",
   "no_activities_with_filter": "Tidak ada aktivitas untuk filter ini.",
   "no_activities_date_range": "Tidak ada aktivitas dalam rentang tanggal."
 }

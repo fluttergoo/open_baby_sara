@@ -735,6 +735,7 @@
   "today_insight_feed_only": "{name} поел {feedCount} раз сегодня 🍼",
   "today_insight_sleep_only": "{name} спал {sleepDuration} сегодня 🌙",
   "today_insight_empty": "Сегодня записей нет. Добавьте первую активность! 👶",
+  "today_insight_other_activities": "{name} сегодня: {activities} 👶",
   "no_activities_with_filter": "Активности для этого фильтра не найдены.",
   "no_activities_date_range": "В выбранном периоде активностей нет."
 }

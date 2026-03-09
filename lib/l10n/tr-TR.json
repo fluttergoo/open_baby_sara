@@ -745,6 +745,7 @@
   "today_insight_feed_only": "{name} bugün {feedCount} kez beslendi 🍼",
   "today_insight_sleep_only": "{name} bugün {sleepDuration} uyudu 🌙",
   "today_insight_empty": "Bugün henüz kayıt yok. İlk aktiviteyi ekle! 👶",
+  "today_insight_other_activities": "{name} bugün: {activities} 👶",
   "no_activities_with_filter": "Bu filtre için aktivite bulunamadı.",
   "no_activities_date_range": "Seçilen tarih aralığında aktivite yok."
 }

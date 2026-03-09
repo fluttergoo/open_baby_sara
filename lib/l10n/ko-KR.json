@@ -735,6 +735,7 @@
   "today_insight_feed_only": "{name} 오늘 {feedCount}번 먹었어요 🍼",
   "today_insight_sleep_only": "{name} 오늘 {sleepDuration} 잠들었어요 🌙",
   "today_insight_empty": "오늘 기록이 없어요. 첫 번째 활동을 추가해보세요! 👶",
+  "today_insight_other_activities": "{name} 오늘: {activities} 👶",
   "no_activities_with_filter": "이 필터에 해당하는 활동이 없습니다.",
   "no_activities_date_range": "선택한 날짜 범위에 활동이 없습니다."
 }
