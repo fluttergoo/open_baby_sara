@@ -45,29 +45,69 @@ class _CustomTodaySummaryCardState extends State<CustomTodaySummaryCard> {
     }
   }
 
-  /// Builds the smart insight sentence shown at the top of the card.
+  /// Builds a short "other activities" phrase (e.g. "2 diaper, 1 pump") from
+  /// non-feed, non-sleep activities for appending to the insight sentence.
+  String _buildOtherActivitiesPhrase(
+    ActivitiesWithDateLoaded state,
+    BuildContext context,
+  ) {
+    final parts = <String>[];
+    if (state.diaperActivities.isNotEmpty) {
+      parts.add('${state.diaperActivities.length} ${context.tr('diaper')}');
+    }
+    if (state.pumpActivities.isNotEmpty) {
+      parts.add('${state.pumpActivities.length} ${context.tr('pump')}');
+    }
+    if (state.medicationActivities.isNotEmpty) {
+      parts.add(
+        '${state.medicationActivities.length} ${context.tr('medication')}',
+      );
+    }
+    if (state.feverActivities.isNotEmpty) {
+      parts.add('${state.feverActivities.length} ${context.tr('fever')}');
+    }
+    if (state.vaccinationActivities.isNotEmpty) {
+      parts.add(
+        '${state.vaccinationActivities.length} ${context.tr('vaccination')}',
+      );
+    }
+    if (state.doctorVisitActivities.isNotEmpty) {
+      parts.add(
+        '${state.doctorVisitActivities.length} ${context.tr('doctor_visit')}',
+      );
+    }
+    if (state.babyFirstsActivities.isNotEmpty) {
+      parts.add(
+        '${state.babyFirstsActivities.length} ${context.tr('baby_firsts')}',
+      );
+    }
+    if (state.teethingActivities.isNotEmpty) {
+      parts.add(
+        '${state.teethingActivities.length} ${context.tr('teething')}',
+      );
+    }
+    return parts.join(', ');
+  }
+
+  /// Builds the smart insight sentence shown at the top of the card,
+  /// considering all activity types (feed, sleep, diaper, pump, health, etc.).
   String _buildInsightSentence(
     ActivitiesWithDateLoaded state,
     BuildContext context,
   ) {
     final hasFeed = state.feedActivities.isNotEmpty;
     final hasSleep = state.sleepActivities.isNotEmpty;
-    final hasAnyActivity =
-        hasFeed ||
-        hasSleep ||
-        state.diaperActivities.isNotEmpty ||
-        state.pumpActivities.isNotEmpty ||
-        state.medicationActivities.isNotEmpty ||
-        state.feverActivities.isNotEmpty ||
-        state.vaccinationActivities.isNotEmpty ||
-        state.doctorVisitActivities.isNotEmpty;
+    final otherPhrase = _buildOtherActivitiesPhrase(state, context);
+    final hasOther = otherPhrase.isNotEmpty;
+    final hasAnyActivity = hasFeed || hasSleep || hasOther;
 
     if (!hasAnyActivity) {
       return context.tr('today_insight_empty');
     }
 
+    String base;
     if (hasFeed && hasSleep) {
-      return context.tr(
+      base = context.tr(
         'today_insight_feed_sleep',
         namedArgs: {
           'name': widget.firstName,
@@ -75,29 +115,37 @@ class _CustomTodaySummaryCardState extends State<CustomTodaySummaryCard> {
           'sleepDuration': formatSleepDuration(state.sleepActivities),
         },
       );
-    }
-
-    if (hasFeed) {
-      return context.tr(
+    } else if (hasFeed) {
+      base = context.tr(
         'today_insight_feed_only',
         namedArgs: {
           'name': widget.firstName,
           'feedCount': state.feedActivities.length.toString(),
         },
       );
-    }
-
-    if (hasSleep) {
-      return context.tr(
+    } else if (hasSleep) {
+      base = context.tr(
         'today_insight_sleep_only',
         namedArgs: {
           'name': widget.firstName,
           'sleepDuration': formatSleepDuration(state.sleepActivities),
         },
       );
+    } else {
+      // Only other activities (diaper, pump, health, etc.) — no feed/sleep
+      return context.tr(
+        'today_insight_other_activities',
+        namedArgs: {
+          'name': widget.firstName,
+          'activities': otherPhrase,
+        },
+      );
     }
 
-    return context.tr('today_insight_empty');
+    if (hasOther) {
+      base = '$base · $otherPhrase';
+    }
+    return base;
   }
 
   @override
@@ -125,7 +173,8 @@ class _CustomTodaySummaryCardState extends State<CustomTodaySummaryCard> {
             context,
           );
 
-          final insightSentence = _buildInsightSentence(state, context);
+          // Sonra yapılacak: Bugünün özet cümlesi (tüm aktivitelere göre)
+          // final insightSentence = _buildInsightSentence(state, context);
           final locale = context.locale.toLanguageTag();
 
           return Card(
@@ -170,22 +219,23 @@ class _CustomTodaySummaryCardState extends State<CustomTodaySummaryCard> {
                   ),
                 ),
 
-                // Smart insight sentence
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 12.w,
-                    vertical: 6.h,
-                  ),
-                  child: Text(
-                    insightSentence,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontSize: 12.sp,
-                      fontStyle: FontStyle.italic,
-                      color: Colors.black54,
-                    ),
-                  ),
-                ),
+                // Sonra yapılacak: Üstte gösterilen bugün özet cümlesi
+                // // Smart insight sentence
+                // Padding(
+                //   padding: EdgeInsets.symmetric(
+                //     horizontal: 12.w,
+                //     vertical: 6.h,
+                //   ),
+                //   child: Text(
+                //     insightSentence,
+                //     textAlign: TextAlign.center,
+                //     style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                //       fontSize: 12.sp,
+                //       fontStyle: FontStyle.italic,
+                //       color: Colors.black54,
+                //     ),
+                //   ),
+                // ),
 
                 // Today Summary Body
                 SingleChildScrollView(
